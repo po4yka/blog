@@ -1,8 +1,9 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getDb, getAllRoles, upsertRole, type Role } from "@/lib/db";
+import { getDb, getAllRoles, upsertRole } from "@/lib/db";
 import { requireAuth } from "@/lib/auth";
+import { roleSchema, validationError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = getDb(locals.runtime.env);
@@ -14,7 +15,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDb(locals.runtime.env);
   await requireAuth(request, db);
-  const role = (await request.json()) as Role;
-  await upsertRole(db, role);
+  const parsed = roleSchema.safeParse(await request.json());
+  if (!parsed.success) return validationError(parsed.error);
+  await upsertRole(db, parsed.data);
   return Response.json({ ok: true });
 };

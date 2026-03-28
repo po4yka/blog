@@ -3,9 +3,12 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { getDb } from "@/lib/db";
 import { createSession } from "@/lib/auth";
+import { loginSchema, validationError } from "@/lib/validation";
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const { password } = await request.json() as { password: string };
+  const parsed = loginSchema.safeParse(await request.json());
+  if (!parsed.success) return validationError(parsed.error);
+  const { password } = parsed.data;
   const env = locals.runtime.env;
 
   if (password !== env.ADMIN_PASSWORD) {
