@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { useState, useCallback } from "react";
 import { Cmd, Accent, MacWindow, OutputBlock } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -32,67 +33,69 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        adb <Accent>devices</Accent> -l
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          adb <Accent>devices</Accent> -l
+        </Cmd>
 
-      <MacWindow title="adb — devices" dimLights delay={delay + 0.05}>
-        <div ref={ref}>
-          <motion.div
-            className="text-muted-foreground/40 pb-2"
-            style={{ fontSize: "0.8125rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 }}
-          >
-            List of devices attached
-          </motion.div>
-          {devices.map((d, i) => (
+        <MacWindow title="adb — devices" dimLights delay={delay + 0.05}>
+          <div ref={ref}>
             <motion.div
-              key={d.serial}
-              className="flex items-baseline gap-4 py-1 -mx-2 px-2 cursor-pointer"
-              style={{
-                fontSize: "0.8125rem",
-                lineHeight: 1.7,
-                borderRadius: "4px",
-                backgroundColor: hoveredSerial === d.serial ? "rgba(139, 124, 246, 0.05)" : "transparent",
-                transition: "background-color 0.15s ease",
-              }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.3, delay: delay + 0.12 + i * 0.05 }}
-              onMouseEnter={() => setHoveredSerial(d.serial)}
-              onMouseLeave={() => setHoveredSerial(null)}
-              onClick={() => copy(d.serial)}
-              title="Click to copy serial"
+              className="text-muted-foreground/40 pb-2"
+              style={{ fontSize: "0.8125rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.08 }}
             >
-              <span className="text-foreground/60 shrink-0" style={{ minWidth: "140px" }}>
-                {d.serial}
-                {copiedText === d.serial && (
-                  <span className="text-accent/60 ml-2" style={{ fontSize: "0.625rem" }}>copied!</span>
-                )}
-              </span>
-              <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>
-                {d.state}
-              </span>
-              <span className="text-muted-foreground/35">
-                model:{d.model}
-              </span>
+              List of devices attached
             </motion.div>
-          ))}
-          <motion.div
-            className="text-muted-foreground/25 pt-2"
-            style={{ fontSize: "0.75rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.3 }}
-          >
-            3 devices connected
-          </motion.div>
-        </div>
-      </MacWindow>
-    </section>
+            {devices.map((d, i) => (
+              <motion.div
+                key={d.serial}
+                className="flex items-baseline gap-4 py-1 -mx-2 px-2 cursor-pointer"
+                style={{
+                  fontSize: "0.8125rem",
+                  lineHeight: 1.7,
+                  borderRadius: "4px",
+                  backgroundColor: hoveredSerial === d.serial ? "rgba(139, 124, 246, 0.05)" : "transparent",
+                  transition: "background-color 0.15s ease",
+                }}
+                initial={{ opacity: 0, x: -4 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.3, delay: delay + 0.12 + i * 0.05 }}
+                onMouseEnter={() => setHoveredSerial(d.serial)}
+                onMouseLeave={() => setHoveredSerial(null)}
+                onClick={() => copy(d.serial)}
+                title="Click to copy serial"
+              >
+                <span className="text-foreground/60 shrink-0" style={{ minWidth: "140px" }}>
+                  {d.serial}
+                  {copiedText === d.serial && (
+                    <span className="text-accent/60 ml-2" style={{ fontSize: "0.625rem" }}>copied!</span>
+                  )}
+                </span>
+                <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>
+                  {d.state}
+                </span>
+                <span className="text-muted-foreground/35">
+                  model:{d.model}
+                </span>
+              </motion.div>
+            ))}
+            <motion.div
+              className="text-muted-foreground/25 pt-2"
+              style={{ fontSize: "0.75rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.3 }}
+            >
+              3 devices connected
+            </motion.div>
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -113,69 +116,71 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        ./gradlew <Accent>assembleRelease</Accent> --parallel
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          ./gradlew <Accent>assembleRelease</Accent> --parallel
+        </Cmd>
 
-      <MacWindow title="gradle — build" delay={delay + 0.05}>
-        <div ref={ref}>
-          <motion.div
-            className="text-muted-foreground/30 pb-2"
-            style={{ fontSize: "0.75rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 }}
-          >
-            &gt; Configure project :app
-          </motion.div>
-
-          {tasks.map((task, i) => (
+        <MacWindow title="gradle — build" delay={delay + 0.05}>
+          <div ref={ref}>
             <motion.div
-              key={task.name}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
-              style={{
-                fontSize: "0.8125rem",
-                lineHeight: 1.7,
-                borderRadius: "4px",
-                backgroundColor: hoveredTask === task.name ? "rgba(139, 124, 246, 0.04)" : "transparent",
-                transition: "background-color 0.15s ease",
-              }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
-              onMouseEnter={() => setHoveredTask(task.name)}
-              onMouseLeave={() => setHoveredTask(null)}
+              className="text-muted-foreground/30 pb-2"
+              style={{ fontSize: "0.75rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.08 }}
             >
-              <motion.span
-                style={{ color: "var(--ok)", fontWeight: 500, opacity: 0.8 }}
-                whileHover={{ scale: 1.2, rotate: 10 }}
-              >
-                ✓
-              </motion.span>
-              <span className="text-foreground/55 flex-1">{task.name}</span>
-              <span className="text-muted-foreground/30 shrink-0">{task.time}</span>
+              &gt; Configure project :app
             </motion.div>
-          ))}
 
-          <motion.div
-            className="pt-3 mt-3 space-y-1"
-            style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.45 }}
-          >
-            <div className="text-foreground/50">
-              <span style={{ color: "var(--ok)", opacity: 0.8 }}>BUILD SUCCESSFUL</span>
-              <span className="text-muted-foreground/30"> in 36s</span>
-            </div>
-            <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
-              47 actionable tasks: 47 executed · 0 up-to-date
-            </div>
-          </motion.div>
-        </div>
-      </MacWindow>
-    </section>
+            {tasks.map((task, i) => (
+              <motion.div
+                key={task.name}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
+                style={{
+                  fontSize: "0.8125rem",
+                  lineHeight: 1.7,
+                  borderRadius: "4px",
+                  backgroundColor: hoveredTask === task.name ? "rgba(139, 124, 246, 0.04)" : "transparent",
+                  transition: "background-color 0.15s ease",
+                }}
+                initial={{ opacity: 0, x: -4 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
+                onMouseEnter={() => setHoveredTask(task.name)}
+                onMouseLeave={() => setHoveredTask(null)}
+              >
+                <motion.span
+                  style={{ color: "var(--ok)", fontWeight: 500, opacity: 0.8 }}
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                >
+                  ✓
+                </motion.span>
+                <span className="text-foreground/55 flex-1">{task.name}</span>
+                <span className="text-muted-foreground/30 shrink-0">{task.time}</span>
+              </motion.div>
+            ))}
+
+            <motion.div
+              className="pt-3 mt-3 space-y-1"
+              style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.45 }}
+            >
+              <div className="text-foreground/50">
+                <span style={{ color: "var(--ok)", opacity: 0.8 }}>BUILD SUCCESSFUL</span>
+                <span className="text-muted-foreground/30"> in 36s</span>
+              </div>
+              <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
+                47 actionable tasks: 47 executed · 0 up-to-date
+              </div>
+            </motion.div>
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -204,65 +209,67 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        xcrun simctl <Accent>list devices</Accent> available
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          xcrun simctl <Accent>list devices</Accent> available
+        </Cmd>
 
-      <MacWindow title="simctl — devices" dimLights delay={delay + 0.05}>
-        <div ref={ref} className="space-y-4">
-          {runtimes.map((rt, ri) => (
-            <div key={rt.runtime}>
-              <motion.div
-                className="text-foreground/60 pb-1.5"
-                style={{ fontSize: "0.8125rem", fontWeight: 500 }}
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.3, delay: delay + 0.1 + ri * 0.1 }}
-              >
-                -- {rt.runtime} --
-              </motion.div>
-              {rt.devices.map((dev, di) => (
+        <MacWindow title="simctl — devices" dimLights delay={delay + 0.05}>
+          <div ref={ref} className="space-y-4">
+            {runtimes.map((rt, ri) => (
+              <div key={rt.runtime}>
                 <motion.div
-                  key={dev.udid}
-                  className="flex items-baseline gap-3 py-[3px] pl-4 -mx-2 px-2 cursor-default"
-                  style={{
-                    fontSize: "0.8125rem",
-                    lineHeight: 1.7,
-                    borderRadius: "4px",
-                    backgroundColor: hoveredDevice === dev.udid ? "rgba(139, 124, 246, 0.04)" : "transparent",
-                    transition: "background-color 0.15s ease",
-                  }}
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.25, delay: delay + 0.15 + ri * 0.1 + di * 0.04 }}
-                  onMouseEnter={() => setHoveredDevice(dev.udid)}
-                  onMouseLeave={() => setHoveredDevice(null)}
+                  className="text-foreground/60 pb-1.5"
+                  style={{ fontSize: "0.8125rem", fontWeight: 500 }}
+                  initial={{ opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.3, delay: delay + 0.1 + ri * 0.1 }}
                 >
-                  <span className="text-foreground/55 flex-1">{dev.name}</span>
-                  <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
-                    ({dev.udid})
-                  </span>
-                  <motion.span
-                    className="shrink-0"
-                    style={{
-                      fontSize: "0.6875rem",
-                      fontWeight: 500,
-                      color: dev.state === "Booted" ? "var(--signal-green)" : "var(--muted-foreground)",
-                      opacity: dev.state === "Booted" ? 0.8 : 0.3,
-                    }}
-                    animate={dev.state === "Booted" ? { scale: [1, 1.05, 1] } : {}}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    {dev.state}
-                  </motion.span>
+                  -- {rt.runtime} --
                 </motion.div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </MacWindow>
-    </section>
+                {rt.devices.map((dev, di) => (
+                  <motion.div
+                    key={dev.udid}
+                    className="flex items-baseline gap-3 py-[3px] pl-4 -mx-2 px-2 cursor-default"
+                    style={{
+                      fontSize: "0.8125rem",
+                      lineHeight: 1.7,
+                      borderRadius: "4px",
+                      backgroundColor: hoveredDevice === dev.udid ? "rgba(139, 124, 246, 0.04)" : "transparent",
+                      transition: "background-color 0.15s ease",
+                    }}
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.25, delay: delay + 0.15 + ri * 0.1 + di * 0.04 }}
+                    onMouseEnter={() => setHoveredDevice(dev.udid)}
+                    onMouseLeave={() => setHoveredDevice(null)}
+                  >
+                    <span className="text-foreground/55 flex-1">{dev.name}</span>
+                    <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
+                      ({dev.udid})
+                    </span>
+                    <motion.span
+                      className="shrink-0"
+                      style={{
+                        fontSize: "0.6875rem",
+                        fontWeight: 500,
+                        color: dev.state === "Booted" ? "var(--signal-green)" : "var(--muted-foreground)",
+                        opacity: dev.state === "Booted" ? 0.8 : 0.3,
+                      }}
+                      animate={dev.state === "Booted" ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      {dev.state}
+                    </motion.span>
+                  </motion.div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -283,59 +290,61 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        fastlane <Accent>deploy</Accent> --env production
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          fastlane <Accent>deploy</Accent> --env production
+        </Cmd>
 
-      <MacWindow title="fastlane — deploy" delay={delay + 0.05}>
-        <div ref={ref}>
-          <motion.div
-            className="text-muted-foreground/25 pb-3"
-            style={{ fontSize: "0.6875rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 }}
-          >
-            [19:42:08]: Driving the lane 'deploy' 🚀
-          </motion.div>
-
-          {lanes.map((lane, i) => (
+        <MacWindow title="fastlane — deploy" delay={delay + 0.05}>
+          <div ref={ref}>
             <motion.div
-              key={lane.step}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-              style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
+              className="text-muted-foreground/25 pb-3"
+              style={{ fontSize: "0.6875rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.08 }}
             >
-              <motion.span
-                style={{ color: lane.color, fontWeight: 500, opacity: 0.8 }}
-                whileHover={{ scale: 1.2, rotate: 10 }}
-              >
-                {lane.icon}
-              </motion.span>
-              <span className="text-foreground/55">{lane.step}</span>
+              [19:42:08]: Driving the lane 'deploy' 🚀
             </motion.div>
-          ))}
 
-          <motion.div
-            className="pt-3 mt-3 space-y-1"
-            style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.5 }}
-          >
-            <div className="text-foreground/50">
-              <span style={{ color: "var(--ok)", opacity: 0.8 }}>fastlane.tools finished successfully</span>
-            </div>
-            <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
-              Duration: 4 minutes 12 seconds · Build #247
-            </div>
-          </motion.div>
-        </div>
-      </MacWindow>
-    </section>
+            {lanes.map((lane, i) => (
+              <motion.div
+                key={lane.step}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
+                style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
+                initial={{ opacity: 0, x: -4 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
+              >
+                <motion.span
+                  style={{ color: lane.color, fontWeight: 500, opacity: 0.8 }}
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                >
+                  {lane.icon}
+                </motion.span>
+                <span className="text-foreground/55">{lane.step}</span>
+              </motion.div>
+            ))}
+
+            <motion.div
+              className="pt-3 mt-3 space-y-1"
+              style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.5 }}
+            >
+              <div className="text-foreground/50">
+                <span style={{ color: "var(--ok)", opacity: 0.8 }}>fastlane.tools finished successfully</span>
+              </div>
+              <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
+                Duration: 4 minutes 12 seconds · Build #247
+              </div>
+            </motion.div>
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -357,69 +366,71 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        git log <Accent>--oneline</Accent> --decorate -7
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          git log <Accent>--oneline</Accent> --decorate -7
+        </Cmd>
 
-      <MacWindow title="git — log" dimLights delay={delay + 0.05}>
-        <div ref={ref}>
-          {commits.map((c, i) => (
-            <motion.div
-              key={c.hash}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
-              style={{
-                fontSize: "0.8125rem",
-                lineHeight: 1.7,
-                borderRadius: "4px",
-                backgroundColor: hoveredHash === c.hash ? "rgba(139, 124, 246, 0.04)" : "transparent",
-                transition: "background-color 0.15s ease",
-              }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.08 + i * 0.04 }}
-              onMouseEnter={() => setHoveredHash(c.hash)}
-              onMouseLeave={() => setHoveredHash(null)}
-            >
-              <motion.span
-                className="cursor-pointer select-none"
+        <MacWindow title="git — log" dimLights delay={delay + 0.05}>
+          <div ref={ref}>
+            {commits.map((c, i) => (
+              <motion.div
+                key={c.hash}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
                 style={{
-                  color: copiedText === c.hash ? "var(--accent)" : "var(--signal-yellow)",
-                  opacity: hoveredHash === c.hash ? 0.9 : 0.6,
-                  fontSize: "0.75rem",
-                  transition: "opacity 0.15s ease",
+                  fontSize: "0.8125rem",
+                  lineHeight: 1.7,
+                  borderRadius: "4px",
+                  backgroundColor: hoveredHash === c.hash ? "rgba(139, 124, 246, 0.04)" : "transparent",
+                  transition: "background-color 0.15s ease",
                 }}
-                onClick={() => copy(c.hash)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Click to copy hash"
+                initial={{ opacity: 0, x: -4 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.25, delay: delay + 0.08 + i * 0.04 }}
+                onMouseEnter={() => setHoveredHash(c.hash)}
+                onMouseLeave={() => setHoveredHash(null)}
               >
-                {copiedText === c.hash ? "copied!" : c.hash}
-              </motion.span>
-              {c.tag && (
                 <motion.span
-                  className="shrink-0 px-1.5 py-0"
+                  className="cursor-pointer select-none"
                   style={{
-                    fontSize: "0.625rem",
-                    borderRadius: "3px",
-                    color: "var(--accent)",
-                    backgroundColor: "rgba(139,124,246,0.1)",
-                    fontWeight: 500,
+                    color: copiedText === c.hash ? "var(--accent)" : "var(--signal-yellow)",
+                    opacity: hoveredHash === c.hash ? 0.9 : 0.6,
+                    fontSize: "0.75rem",
+                    transition: "opacity 0.15s ease",
                   }}
-                  whileHover={{ scale: 1.1 }}
+                  onClick={() => copy(c.hash)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Click to copy hash"
                 >
-                  {c.tag}
+                  {copiedText === c.hash ? "copied!" : c.hash}
                 </motion.span>
-              )}
-              <span className="text-foreground/55 flex-1">{c.msg}</span>
-              <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
-                {c.time}
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </MacWindow>
-    </section>
+                {c.tag && (
+                  <motion.span
+                    className="shrink-0 px-1.5 py-0"
+                    style={{
+                      fontSize: "0.625rem",
+                      borderRadius: "3px",
+                      color: "var(--accent)",
+                      backgroundColor: "rgba(139,124,246,0.1)",
+                      fontWeight: 500,
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    {c.tag}
+                  </motion.span>
+                )}
+                <span className="text-foreground/55 flex-1">{c.msg}</span>
+                <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
+                  {c.time}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -444,82 +455,83 @@ export function AdbLogcat({ delay = 0 }: { delay?: number }) {
   const uniqueTags = [...new Set(logs.map((l) => l.tag))];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        adb logcat <Accent>-s AppStartup KoinInit RoomDB</Accent> --format=time
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          adb logcat <Accent>-s AppStartup KoinInit RoomDB</Accent> --format=time
+        </Cmd>
 
-      <MacWindow title="logcat — app output" dimLights delay={delay + 0.05}>
-        <div ref={ref} className="overflow-x-auto">
-          {/* Filter buttons */}
-          <div className="flex flex-wrap gap-1 pb-3" style={{ fontSize: "0.625rem" }}>
-            <motion.button
-              className={`px-1.5 py-0.5 cursor-pointer ${
-                !filter ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
-              }`}
-              style={{ borderRadius: "3px", fontFamily: mono }}
-              onClick={() => setFilter(null)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              all
-            </motion.button>
-            {uniqueTags.map((tag) => (
+        <MacWindow title="logcat — app output" dimLights delay={delay + 0.05}>
+          <div ref={ref} className="overflow-x-auto">
+            {/* Filter buttons */}
+            <div className="flex flex-wrap gap-1 pb-3" style={{ fontSize: "0.625rem" }}>
               <motion.button
-                key={tag}
                 className={`px-1.5 py-0.5 cursor-pointer ${
-                  filter === tag ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
+                  !filter ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
                 }`}
                 style={{ borderRadius: "3px", fontFamily: mono }}
-                onClick={() => setFilter(filter === tag ? null : tag)}
+                onClick={() => setFilter(null)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {tag}
+                all
               </motion.button>
-            ))}
-          </div>
+              {uniqueTags.map((tag) => (
+                <motion.button
+                  key={tag}
+                  className={`px-1.5 py-0.5 cursor-pointer ${
+                    filter === tag ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
+                  }`}
+                  style={{ borderRadius: "3px", fontFamily: mono }}
+                  onClick={() => setFilter(filter === tag ? null : tag)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {tag}
+                </motion.button>
+              ))}
+            </div>
 
-          {filteredLogs.map((log, i) => (
+            {filteredLogs.map((log, i) => (
+              <motion.div
+                key={`${log.time}-${log.tag}`}
+                className="flex items-baseline gap-2 py-[2px] whitespace-nowrap hover:bg-accent/[0.03] -mx-1 px-1 transition-colors duration-100"
+                style={{ fontSize: "0.75rem", lineHeight: 1.7, borderRadius: "3px" }}
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.2, delay: delay + 0.08 + i * 0.035 }}
+              >
+                <span className="text-muted-foreground/25 shrink-0">{log.time}</span>
+                <span
+                  className="shrink-0"
+                  style={{ color: log.color, opacity: 0.7, fontWeight: 500, minWidth: "12px", textAlign: "center" }}
+                >
+                  {log.level}
+                </span>
+                <motion.span
+                  className="text-foreground/45 shrink-0 cursor-pointer"
+                  style={{ minWidth: "100px" }}
+                  onClick={() => setFilter(filter === log.tag ? null : log.tag)}
+                  whileHover={{ color: "var(--accent)" }}
+                >
+                  {log.tag}
+                </motion.span>
+                <span className="text-foreground/55">{log.msg}</span>
+              </motion.div>
+            ))}
             <motion.div
-              key={`${log.time}-${log.tag}`}
-              className="flex items-baseline gap-2 py-[2px] whitespace-nowrap hover:bg-accent/[0.03] -mx-1 px-1 transition-colors duration-100"
-              style={{ fontSize: "0.75rem", lineHeight: 1.7, borderRadius: "3px" }}
+              className="text-muted-foreground/20 pt-2"
+              style={{ fontSize: "0.6875rem" }}
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.2, delay: delay + 0.08 + i * 0.035 }}
-              layout
+              transition={{ duration: 0.3, delay: delay + 0.4 }}
             >
-              <span className="text-muted-foreground/25 shrink-0">{log.time}</span>
-              <span
-                className="shrink-0"
-                style={{ color: log.color, opacity: 0.7, fontWeight: 500, minWidth: "12px", textAlign: "center" }}
-              >
-                {log.level}
-              </span>
-              <motion.span
-                className="text-foreground/45 shrink-0 cursor-pointer"
-                style={{ minWidth: "100px" }}
-                onClick={() => setFilter(filter === log.tag ? null : log.tag)}
-                whileHover={{ color: "var(--accent)" }}
-              >
-                {log.tag}
-              </motion.span>
-              <span className="text-foreground/55">{log.msg}</span>
+              — waiting for more logs —
             </motion.div>
-          ))}
-          <motion.div
-            className="text-muted-foreground/20 pt-2"
-            style={{ fontSize: "0.6875rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.4 }}
-          >
-            — waiting for more logs —
-          </motion.div>
-        </div>
-      </MacWindow>
-    </section>
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -537,60 +549,62 @@ export function SwiftPackageResolve({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        swift package <Accent>resolve</Accent>
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          swift package <Accent>resolve</Accent>
+        </Cmd>
 
-      <MacWindow title="spm — resolve" dimLights delay={delay + 0.05}>
-        <div ref={ref}>
-          <motion.div
-            className="text-muted-foreground/30 pb-2"
-            style={{ fontSize: "0.75rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 }}
-          >
-            Fetching and resolving dependencies…
-          </motion.div>
-
-          {packages.map((pkg, i) => (
+        <MacWindow title="spm — resolve" dimLights delay={delay + 0.05}>
+          <div ref={ref}>
             <motion.div
-              key={pkg.name}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-              style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
+              className="text-muted-foreground/30 pb-2"
+              style={{ fontSize: "0.75rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.08 }}
             >
-              <motion.span
-                style={{ color: "var(--ok)", opacity: 0.7 }}
-                whileHover={{ scale: 1.2, rotate: 10 }}
-              >
-                ✓
-              </motion.span>
-              <span className="text-foreground/60">{pkg.name}</span>
-              <span style={{ color: "var(--accent)", opacity: 0.5, fontSize: "0.6875rem" }}>
-                {pkg.version}
-              </span>
-              <span className="text-muted-foreground/20" style={{ fontSize: "0.6875rem" }}>
-                {pkg.source}
-              </span>
+              Fetching and resolving dependencies…
             </motion.div>
-          ))}
 
-          <motion.div
-            className="text-muted-foreground/30 pt-3"
-            style={{ fontSize: "0.75rem", borderTop: "1px solid var(--border)", marginTop: "12px", paddingTop: "12px" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.38 }}
-          >
-            Resolved 5 packages in 2.8s
-          </motion.div>
-        </div>
-      </MacWindow>
-    </section>
+            {packages.map((pkg, i) => (
+              <motion.div
+                key={pkg.name}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
+                style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
+                initial={{ opacity: 0, x: -4 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
+              >
+                <motion.span
+                  style={{ color: "var(--ok)", opacity: 0.7 }}
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                >
+                  ✓
+                </motion.span>
+                <span className="text-foreground/60">{pkg.name}</span>
+                <span style={{ color: "var(--accent)", opacity: 0.5, fontSize: "0.6875rem" }}>
+                  {pkg.version}
+                </span>
+                <span className="text-muted-foreground/20" style={{ fontSize: "0.6875rem" }}>
+                  {pkg.source}
+                </span>
+              </motion.div>
+            ))}
+
+            <motion.div
+              className="text-muted-foreground/30 pt-3"
+              style={{ fontSize: "0.75rem", borderTop: "1px solid var(--border)", marginTop: "12px", paddingTop: "12px" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.38 }}
+            >
+              Resolved 5 packages in 2.8s
+            </motion.div>
+          </div>
+        </MacWindow>
+      </section>
+    </MotionProvider>
   );
 }
 
@@ -600,62 +614,64 @@ export function KtlintCheck({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
 
   return (
-    <section className="space-y-4">
-      <Cmd delay={delay}>
-        ./gradlew <Accent>detektAll</Accent> ktlintCheck
-      </Cmd>
+    <MotionProvider>
+      <section className="space-y-4">
+        <Cmd delay={delay}>
+          ./gradlew <Accent>detektAll</Accent> ktlintCheck
+        </Cmd>
 
-      <OutputBlock delay={delay + 0.05}>
-        <div
-          ref={ref}
-          className="space-y-1"
-          style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
-        >
-          <motion.div
-            className="text-muted-foreground/35"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.25, delay: delay + 0.08 }}
+        <OutputBlock delay={delay + 0.05}>
+          <div
+            ref={ref}
+            className="space-y-1"
+            style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
           >
-            &gt; Task :app:detekt
-          </motion.div>
-          <motion.div
-            className="text-foreground/50"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.25, delay: delay + 0.12 }}
-          >
-            <span style={{ color: "var(--ok)", opacity: 0.7 }}>✓</span>{" "}
-            detekt — 0 issues found in 247 files
-          </motion.div>
-          <motion.div
-            className="text-muted-foreground/35"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.25, delay: delay + 0.16 }}
-          >
-            &gt; Task :app:ktlintCheck
-          </motion.div>
-          <motion.div
-            className="text-foreground/50"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.25, delay: delay + 0.2 }}
-          >
-            <span style={{ color: "var(--ok)", opacity: 0.7 }}>✓</span>{" "}
-            ktlint — all files formatted correctly
-          </motion.div>
-          <motion.div
-            className="text-muted-foreground/25 pt-1"
-            style={{ fontSize: "0.75rem" }}
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.28 }}
-          >
-            BUILD SUCCESSFUL in 8s · 4 actionable tasks executed
-          </motion.div>
-        </div>
-      </OutputBlock>
-    </section>
+            <motion.div
+              className="text-muted-foreground/35"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.25, delay: delay + 0.08 }}
+            >
+              &gt; Task :app:detekt
+            </motion.div>
+            <motion.div
+              className="text-foreground/50"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.25, delay: delay + 0.12 }}
+            >
+              <span style={{ color: "var(--ok)", opacity: 0.7 }}>✓</span>{" "}
+              detekt — 0 issues found in 247 files
+            </motion.div>
+            <motion.div
+              className="text-muted-foreground/35"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.25, delay: delay + 0.16 }}
+            >
+              &gt; Task :app:ktlintCheck
+            </motion.div>
+            <motion.div
+              className="text-foreground/50"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.25, delay: delay + 0.2 }}
+            >
+              <span style={{ color: "var(--ok)", opacity: 0.7 }}>✓</span>{" "}
+              ktlint — all files formatted correctly
+            </motion.div>
+            <motion.div
+              className="text-muted-foreground/25 pt-1"
+              style={{ fontSize: "0.75rem" }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.3, delay: delay + 0.28 }}
+            >
+              BUILD SUCCESSFUL in 8s · 4 actionable tasks executed
+            </motion.div>
+          </div>
+        </OutputBlock>
+      </section>
+    </MotionProvider>
   );
 }

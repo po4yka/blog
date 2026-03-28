@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef, type ReactNode } fro
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 
@@ -138,7 +139,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
   }, [post.readingTime]);
 
   return (
-    <>
+    <MotionProvider>
       <ReadingProgress />
       <ScrollToTop />
 
@@ -250,6 +251,6 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
           ) : <span />}
         </div>
       </div>
-    </>
+    </MotionProvider>
   );
 }

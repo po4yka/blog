@@ -1,9 +1,11 @@
 import { motion } from "motion/react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { CpuMonitor, MemoryPanel, NetworkGraph } from "./Decorations";
+import { MotionProvider } from "./MotionProvider";
 
 export function Hero() {
   return (
+    <MotionProvider>
     <section className="space-y-8 pt-8">
       {/* Boot messages */}
       <BootBlock
@@ -99,5 +101,6 @@ export function Hero() {
         </div>
       </div>
     </section>
+    </MotionProvider>
   );
 }

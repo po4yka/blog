@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { Cmd, Accent } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -17,6 +18,7 @@ export function Links() {
   const { ref, inView } = useInView(0.1);
 
   return (
+    <MotionProvider>
     <section className="space-y-5">
       <Cmd>
         cat <Accent>~/.config/links.toml</Accent>
@@ -67,5 +69,6 @@ export function Links() {
         ))}
       </motion.div>
     </section>
+    </MotionProvider>
   );
 }

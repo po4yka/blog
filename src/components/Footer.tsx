@@ -1,11 +1,13 @@
 import { TerminalPrompt } from "./Terminal";
 import { UptimeStrip } from "./Decorations";
 import { motion } from "motion/react";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 
 export function Footer() {
   return (
+    <MotionProvider>
     <footer className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
       <div className="space-y-6">
         <UptimeStrip delay={0} />
@@ -40,5 +42,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </MotionProvider>
   );
 }

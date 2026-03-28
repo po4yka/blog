@@ -4,6 +4,7 @@ import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { ProcessTable, UptimeStrip } from "./Decorations";
 import { useInView } from "./useInView";
 import { projects, type Project } from "./projectsData";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -115,6 +116,7 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
 
 export function ProjectsPage() {
   return (
+    <MotionProvider>
     <div className="space-y-8">
       {/* Boot */}
       <BootBlock
@@ -148,5 +150,6 @@ export function ProjectsPage() {
       <UptimeStrip delay={0.1} />
       <ProcessTable delay={0.15} />
     </div>
+    </MotionProvider>
   );
 }

@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Menu, X, Sun, Moon, Monitor } from "lucide-react";
 import { useThrottledCallback } from "./useThrottle";
 import { useSettings } from "../stores/settingsStore";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 
@@ -21,10 +22,14 @@ interface NavProps {
 export function Nav({ pathname: initialPathname }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = initialPathname ?? (typeof window !== "undefined" ? window.location.pathname : "/");
   const { theme, setTheme } = useSettings();
 
-  // Scroll progress
+  useEffect(() => setMounted(true), []);
+
+  // Scroll progress — hooks are safe to call (motion handles SSR),
+  // but we only render the progress bar after mount to avoid hydration mismatch
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
@@ -53,6 +58,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
 
   return (
+    <MotionProvider>
     <motion.nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled ? "backdrop-blur-xl" : ""
@@ -68,21 +74,23 @@ export function Nav({ pathname: initialPathname }: NavProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Scroll progress bar */}
-      <motion.div
-        style={{
-          scaleX,
-          transformOrigin: "left",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "2px",
-          background: "var(--accent)",
-          opacity: 0.6,
-          zIndex: 10,
-        }}
-      />
+      {/* Scroll progress bar — only render after mount to avoid SSR mismatch */}
+      {mounted && (
+        <motion.div
+          style={{
+            scaleX,
+            transformOrigin: "left",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "2px",
+            background: "var(--accent)",
+            opacity: 0.6,
+            zIndex: 10,
+          }}
+        />
+      )}
 
       <div className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
         {/* Logo / prefix */}
@@ -236,5 +244,6 @@ export function Nav({ pathname: initialPathname }: NavProps) {
         )}
       </AnimatePresence>
     </motion.nav>
+    </MotionProvider>
   );
 }

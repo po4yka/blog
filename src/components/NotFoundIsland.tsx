@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -17,6 +18,7 @@ export function NotFound() {
   }, []);
 
   return (
+    <MotionProvider>
     <div className="pt-16" style={{ fontFamily: mono }}>
       <motion.div
         className="overflow-hidden"
@@ -121,5 +123,6 @@ export function NotFound() {
         </div>
       </motion.div>
     </div>
+    </MotionProvider>
   );
 }

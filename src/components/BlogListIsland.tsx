@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "./useInView";
 import { CpuGraph } from "./Decorations";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -35,6 +36,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
   const featured = posts.find((p) => p.featured);
 
   return (
+    <MotionProvider>
     <div className="space-y-8">
       {/* Boot block */}
       <BootBlock
@@ -172,5 +174,6 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
       {/* Decorative CPU history graph */}
       <CpuGraph delay={0.1} />
     </div>
+    </MotionProvider>
   );
 }

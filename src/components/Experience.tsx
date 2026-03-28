@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { roles } from "./experienceData";
 import { Cmd, Accent, MacWindow } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -10,6 +11,7 @@ export function Experience() {
   const { ref, inView } = useInView(0.05);
 
   return (
+    <MotionProvider>
     <section id="experience" className="space-y-5">
       <Cmd>
         git log <Accent>--author=po4yka</Accent> --format=career | head -3
@@ -99,5 +101,6 @@ export function Experience() {
         </motion.a>
       </motion.div>
     </section>
+    </MotionProvider>
   );
 }

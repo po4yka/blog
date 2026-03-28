@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { projects } from "./projectsData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -11,6 +12,7 @@ export function Projects() {
   const homeProjects = projects.slice(0, 4);
 
   return (
+    <MotionProvider>
     <section id="projects" className="space-y-5">
       <Cmd>
         ./gradlew <Accent>:projects:list</Accent> --format=compact | head -4
@@ -99,5 +101,6 @@ export function Projects() {
         </motion.a>
       </motion.div>
     </section>
+    </MotionProvider>
   );
 }

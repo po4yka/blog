@@ -1,11 +1,13 @@
 import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { Cmd, OutputBlock, Accent } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 export function About() {
   const { ref, inView } = useInView(0.1);
 
   return (
+    <MotionProvider>
     <section id="about" className="space-y-5">
       <Cmd>
         cat <Accent>README.md</Accent> | head -20
@@ -55,5 +57,6 @@ export function About() {
         </div>
       </OutputBlock>
     </section>
+    </MotionProvider>
   );
 }

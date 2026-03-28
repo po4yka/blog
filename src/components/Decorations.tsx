@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -144,6 +145,7 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   const avgLoad = (cores.reduce((s, c) => s + c.pct, 0) / cores.length).toFixed(0);
 
   return (
+    <MotionProvider>
     <PanelShell label="cpu" labelRight={`avg ${avgLoad}%`} delay={delay}>
       <div ref={ref} className="px-5 py-3.5 space-y-1.5">
         {cores.map((core, i) => (
@@ -169,6 +171,7 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
         <span className="text-foreground/25">0.98</span>
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -185,6 +188,7 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
+    <MotionProvider>
     <PanelShell label="mem" labelRight="15.2 GiB" delay={delay}>
       <div ref={ref} className="px-5 py-3.5 space-y-1.5">
         {rows.map((row, i) => (
@@ -203,6 +207,7 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
         ))}
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -246,6 +251,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   );
 
   return (
+    <MotionProvider>
     <PanelShell label="net" labelRight="enp0s31f6" delay={delay}>
       <div ref={ref} className="px-5 py-4">
         <svg
@@ -312,6 +318,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
         </div>
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -331,6 +338,7 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
+    <MotionProvider>
     <PanelShell label="proc" delay={delay}>
       <div ref={ref}>
         {/* Options row */}
@@ -409,6 +417,7 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
         </div>
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -433,6 +442,7 @@ export function UptimeStrip({ delay = 0 }: { delay?: number }) {
   }, []);
 
   return (
+    <MotionProvider>
     <motion.div
       ref={ref}
       className="flex flex-wrap items-center gap-x-7 gap-y-2 px-2 py-2"
@@ -464,6 +474,7 @@ export function UptimeStrip({ delay = 0 }: { delay?: number }) {
         </motion.span>
       ))}
     </motion.div>
+    </MotionProvider>
   );
 }
 
@@ -478,6 +489,7 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
+    <MotionProvider>
     <PanelShell label="disks" labelRight="+94K" delay={delay}>
       <div ref={ref} className="px-5 py-3.5 space-y-2">
         {disks.map((d, i) => {
@@ -499,6 +511,7 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
         })}
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -527,6 +540,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   }, []);
 
   return (
+    <MotionProvider>
     <PanelShell label="cpu history" labelRight="6 cores · 3.7 GHz" delay={delay}>
       <div ref={ref} className="px-5 py-4 relative">
         <div className="flex flex-col gap-[3px]">
@@ -577,6 +591,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
         )}
       </div>
     </PanelShell>
+    </MotionProvider>
   );
 }
 
@@ -584,16 +599,19 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
 
 export function SystemSidebar({ delay = 0 }: { delay?: number }) {
   return (
+    <MotionProvider>
     <div className="space-y-4">
       <CpuMonitor delay={delay} />
       <MemoryPanel delay={delay + 0.08} />
       <DiskBars delay={delay + 0.16} />
     </div>
+    </MotionProvider>
   );
 }
 
 export function SystemBottomBar({ delay = 0 }: { delay?: number }) {
   return (
+    <MotionProvider>
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <NetworkGraph delay={delay} />
@@ -601,5 +619,6 @@ export function SystemBottomBar({ delay = 0 }: { delay?: number }) {
       </div>
       <ProcessTable delay={delay + 0.1} />
     </div>
+    </MotionProvider>
   );
 }

@@ -3,6 +3,7 @@ import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { NetworkGraph, CpuGraph } from "./Decorations";
 import { useInView } from "./useInView";
 import { roles, skills, type Role, type SkillGroup } from "./experienceData";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -117,6 +118,7 @@ export function ExperiencePage() {
   const { ref: skillsRef, inView: skillsInView } = useInView(0.1);
 
   return (
+    <MotionProvider>
     <div className="space-y-8">
       {/* Boot */}
       <BootBlock
@@ -183,5 +185,6 @@ export function ExperiencePage() {
         <CpuGraph delay={0.1} />
       </div>
     </div>
+    </MotionProvider>
   );
 }

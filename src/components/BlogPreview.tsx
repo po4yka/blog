@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { blogPosts } from "./blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -11,6 +12,7 @@ export function BlogPreview() {
   const previewPosts = blogPosts.slice(0, 3);
 
   return (
+    <MotionProvider>
     <section id="blog-preview" className="space-y-5">
       <Cmd>
         find <Accent>./posts/</Accent> -name "*.md" -mtime -30 | head -3
@@ -84,5 +86,6 @@ export function BlogPreview() {
         </motion.a>
       </motion.div>
     </section>
+    </MotionProvider>
   );
 }
