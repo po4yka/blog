@@ -1,0 +1,30 @@
+---
+title: "iOS Background Downloads Done Right"
+date: "Oct 2025"
+summary: "Implementing reliable background downloads on iOS using URLSession background configuration, handling edge cases, and keeping the user informed."
+tags: ["iOS", "Swift"]
+category: "iOS"
+---
+
+Background downloads on iOS are deceptively complex. URLSession's background configuration handles the heavy lifting, but the edge cases will get you.
+
+## The basics
+
+Create a URLSession with a background configuration. The system manages the download even if your app is suspended or terminated. When the download completes, the system relaunches your app to handle it.
+
+## Edge cases that bit us
+
+- Downloads resuming after app update (session identifier must be stable)
+- Cellular vs WiFi policy changes mid-download
+- Disk space running out during download
+- User revoking background app refresh permission
+
+## Our architecture
+
+We built a DownloadManager that wraps URLSession and provides:
+- Progress tracking via Combine publishers
+- Automatic retry with exponential backoff
+- Queue management (max 3 concurrent downloads)
+- Persistent download state in CoreData
+
+The key insight: treat the download manager as infrastructure, not a feature. It should be boring and reliable.

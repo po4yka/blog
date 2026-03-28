@@ -1,0 +1,176 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
+import { useInView } from "./useInView";
+import { CpuGraph } from "./Decorations";
+
+const mono = "'JetBrains Mono', monospace";
+const ease = [0.25, 0.46, 0.45, 0.94] as const;
+
+export interface BlogPostMeta {
+  slug: string;
+  title: string;
+  date: string;
+  summary: string;
+  tags: string[];
+  category: string;
+  featured?: boolean;
+  readingTime?: number;
+}
+
+interface BlogListIslandProps {
+  posts: BlogPostMeta[];
+  categories: string[];
+}
+
+export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const { ref, inView } = useInView(0.05);
+
+  const filtered =
+    activeCategory === "All"
+      ? posts
+      : posts.filter((p) => p.category === activeCategory);
+
+  const featured = posts.find((p) => p.featured);
+
+  return (
+    <div className="space-y-8">
+      {/* Boot block */}
+      <BootBlock
+        lines={[
+          {
+            status: "OK",
+            text: (
+              <>
+                Mounted <Accent>po4yka.dev/blog</Accent>
+              </>
+            ),
+          },
+          {
+            status: "OK",
+            text: `${posts.length} published posts — more queued`,
+          },
+          {
+            status: "INFO",
+            text: featured ? (
+              <>
+                Reading: <Accent>posts/{featured.slug}.txt</Accent>
+              </>
+            ) : (
+              "Browse all posts below"
+            ),
+          },
+        ]}
+      />
+
+      {/* Post listing */}
+      <div className="space-y-5">
+        <Cmd>
+          ls -lt <Accent>./posts/</Accent>
+        </Cmd>
+
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2 pl-1">
+          {categories.map((cat) => (
+            <motion.button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-2.5 py-1 transition-all duration-200 cursor-pointer ${
+                activeCategory === cat
+                  ? "text-accent bg-accent/10"
+                  : "text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted-foreground/5"
+              }`}
+              style={{ fontFamily: mono, fontSize: "0.6875rem", borderRadius: "5px" }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {cat}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Posts */}
+        <MacWindow title={`posts — ${activeCategory.toLowerCase()}`} dimLights delay={0.05}>
+          <div ref={ref}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2 }}
+              >
+                {filtered.map((post, i) => (
+                  <motion.a
+                    key={post.slug}
+                    href={`/blog/${post.slug}`}
+                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline"
+                    style={{ fontFamily: mono, borderRadius: "6px", display: "flex" }}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.04, ease }}
+                    whileHover={{
+                      x: 4,
+                      backgroundColor: "rgba(139, 124, 246, 0.04)",
+                      transition: { type: "spring", stiffness: 300, damping: 25 },
+                    }}
+                    whileTap={{ scale: 0.995 }}
+                  >
+                    {/* Marker */}
+                    <span
+                      className="text-muted-foreground/20 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      ›
+                    </span>
+
+                    {/* Title */}
+                    <div className="flex-1 min-w-0 relative">
+                      <span
+                        className="text-foreground/75 group-hover:text-foreground transition-colors duration-200"
+                        style={{ fontSize: "0.875rem" }}
+                      >
+                        {post.title}
+                      </span>
+                      <p
+                        className="mt-0.5 text-muted-foreground/40 group-hover:text-muted-foreground/55 transition-colors duration-200 truncate"
+                        style={{ fontSize: "0.75rem" }}
+                      >
+                        {post.summary}
+                      </p>
+                      {/* Hover underline */}
+                      <span
+                        className="absolute top-[1.3em] left-0 right-0 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
+                        style={{ backgroundColor: "var(--accent)", opacity: 0.25 }}
+                      />
+                    </div>
+
+                    {/* Date */}
+                    <span
+                      className="text-accent/40 shrink-0"
+                      style={{ fontSize: "0.6875rem" }}
+                    >
+                      {post.date}
+                    </span>
+                  </motion.a>
+                ))}
+                {filtered.length === 0 && (
+                  <p
+                    className="py-8 text-center text-muted-foreground/30"
+                    style={{ fontFamily: mono, fontSize: "0.8125rem" }}
+                  >
+                    no posts found
+                  </p>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </MacWindow>
+      </div>
+
+      {/* Decorative CPU history graph */}
+      <CpuGraph delay={0.1} />
+    </div>
+  );
+}

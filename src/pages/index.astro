@@ -1,0 +1,66 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { Hero } from "@/components/Hero";
+import { About } from "@/components/About";
+import { Links } from "@/components/Links";
+import { Projects } from "@/components/Projects";
+import { Experience } from "@/components/Experience";
+import { BlogPreview } from "@/components/BlogPreview";
+import { UptimeStrip, SystemBottomBar, MemoryPanel, DiskBars } from "@/components/Decorations";
+import {
+  AdbDevices,
+  GradleBuild,
+  XcodeSimulators,
+  FastlaneDeploy,
+  GitLog,
+  AdbLogcat,
+  SwiftPackageResolve,
+  KtlintCheck,
+} from "@/components/MobileTerminal";
+---
+<MainLayout>
+  <div class="space-y-14">
+    <Hero client:visible />
+    <About client:visible />
+
+    <!-- Mobile dev: connected devices -->
+    <AdbDevices client:visible delay={0.05} />
+
+    <Links client:visible />
+
+    <!-- Decorative system metrics strip -->
+    <UptimeStrip client:visible delay={0.05} />
+
+    <!-- Mobile dev: Gradle build output -->
+    <GradleBuild client:visible delay={0.05} />
+
+    <Projects client:visible />
+
+    <!-- Mobile dev: iOS simulators + SPM resolve side-by-side on desktop -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <XcodeSimulators client:visible delay={0.05} />
+      <SwiftPackageResolve client:visible delay={0.1} />
+    </div>
+
+    <!-- Decorative memory + disk panels -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <MemoryPanel client:visible delay={0.05} />
+      <DiskBars client:visible delay={0.1} />
+    </div>
+
+    <Experience client:visible />
+
+    <!-- Mobile dev: git log + lint check -->
+    <GitLog client:visible delay={0.05} />
+    <KtlintCheck client:visible delay={0.05} />
+
+    <BlogPreview client:visible />
+
+    <!-- Mobile dev: logcat + fastlane deploy -->
+    <AdbLogcat client:visible delay={0.05} />
+    <FastlaneDeploy client:visible delay={0.05} />
+
+    <!-- Bottom system bar -->
+    <SystemBottomBar client:visible delay={0.05} />
+  </div>
+</MainLayout>

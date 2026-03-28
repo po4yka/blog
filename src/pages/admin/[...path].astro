@@ -1,0 +1,45 @@
+---
+// Catch-all route for the admin React SPA.
+// All /admin/* routes are handled client-side by React Router.
+import "@/styles/index.css";
+
+export function getStaticPaths() {
+  // Generate a single catch-all page that React Router handles client-side.
+  // All admin sub-routes (login, blog, projects, etc.) are handled by the SPA.
+  return [
+    { params: { path: undefined } },
+    { params: { path: "login" } },
+    { params: { path: "blog" } },
+    { params: { path: "blog/new" } },
+    { params: { path: "projects" } },
+    { params: { path: "experience" } },
+    { params: { path: "settings" } },
+  ];
+}
+---
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — po4yka.dev</title>
+    <script is:inline>
+    (function() {
+      try {
+        var raw = localStorage.getItem('site_preferences');
+        var prefs = raw ? JSON.parse(raw) : {};
+        var theme = prefs.theme || 'dark';
+        var resolved = theme === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme;
+        document.documentElement.classList.add(resolved);
+      } catch(e) {}
+    })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-background text-foreground" style="font-family: 'JetBrains Mono', monospace;">
+    <div id="admin-root"></div>
+    <script>
+      import "@/admin/mount";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import MainLayout from "@/layouts/MainLayout.astro";
+import { BlogListIsland } from "@/components/BlogListIsland";
+
+const posts = await getCollection("blog");
+
+// Sort by date descending (newest first)
+posts.sort((a, b) => {
+  const dateA = new Date(a.data.date);
+  const dateB = new Date(b.data.date);
+  return dateB.getTime() - dateA.getTime();
+});
+
+const serializedPosts = posts.map((p) => ({
+  slug: p.id,
+  ...p.data,
+}));
+
+const categories = [
+  "All",
+  ...new Set(posts.map((p) => p.data.category)),
+];
+---
+<MainLayout title="Blog — Nikita Pochaev">
+  <BlogListIsland client:load posts={serializedPosts} categories={categories} />
+</MainLayout>

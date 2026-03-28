@@ -1,0 +1,32 @@
+---
+title: "Cutting Gradle Build Times in Half"
+date: "Nov 2025"
+summary: "Practical techniques for reducing Android build times: configuration cache, build cache, modularization, and avoiding common pitfalls."
+tags: ["Android", "Tooling"]
+category: "Tooling"
+featured: false
+---
+
+Slow builds kill productivity. Here's what actually worked for us when we needed to cut our 15-minute clean build down to something reasonable.
+
+## Configuration cache
+
+The Gradle configuration cache is the single biggest win. It caches the result of the configuration phase, so subsequent builds skip all that plugin initialization and dependency resolution.
+
+Enable it in gradle.properties. Fix the incompatible plugins. It's worth it.
+
+## Build cache
+
+Remote build cache means your CI builds warm the cache for everyone. A developer pulling main gets cache hits for all the modules they didn't change.
+
+## Modularization done right
+
+Don't modularize for modularization's sake. Modularize along build boundaries — modules that change independently should be separate. This maximizes cache hits and enables parallel compilation.
+
+## Results
+
+- Clean build: 15 min -> 8 min (modularization + parallel)
+- Incremental build: 4 min -> 45 sec (configuration cache)
+- CI build: 12 min -> 4 min (remote cache)
+
+The investment was about two weeks of focused work. The payoff is every single day.

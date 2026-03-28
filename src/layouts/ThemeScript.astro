@@ -1,0 +1,26 @@
+---
+// Inline script that runs synchronously before paint to prevent FOUC.
+// Reads theme preference from localStorage and applies .dark/.light to <html>.
+---
+<script is:inline>
+(function() {
+  try {
+    var raw = localStorage.getItem('site_preferences');
+    var prefs = raw ? JSON.parse(raw) : {};
+    var theme = prefs.theme || 'dark';
+    var resolved = theme === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+    document.documentElement.classList.add(resolved);
+    if (prefs.reduceMotion) document.documentElement.classList.add('reduce-motion');
+    if (prefs.fontSize) {
+      var sizes = { compact: '15px', 'default': '16px', large: '17px' };
+      var size = sizes[prefs.fontSize];
+      if (size) document.documentElement.style.setProperty('--font-size', size);
+    }
+    if (prefs.reduceMotion) {
+      document.documentElement.style.setProperty('--motion-duration-scale', '0');
+    }
+  } catch(e) {}
+})();
+</script>

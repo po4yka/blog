@@ -1,0 +1,33 @@
+---
+title: "A Deep Dive into Compose Stability"
+date: "Dec 2025"
+summary: "Understanding the Compose compiler's stability inference, why your composables recompose too often, and how to fix it without @Stable annotations everywhere."
+tags: ["Android", "Compose"]
+category: "Android"
+---
+
+If you've ever wondered why your Compose UI feels sluggish, the answer is almost always unnecessary recomposition. The Compose compiler tries to skip recomposition for composables whose parameters haven't changed — but it can only do this for "stable" types.
+
+## What makes a type stable?
+
+A type is stable if:
+- All public properties are val (immutable)
+- All property types are themselves stable
+- It's a primitive, String, or annotated with @Stable/@Immutable
+
+## The problem
+
+Data classes from your domain layer often aren't stable — they might contain List&lt;T&gt;, Map&lt;K,V&gt;, or other types the compiler can't verify as stable.
+
+## Solutions (ranked by preference)
+
+1. **Use kotlinx.collections.immutable** — ImmutableList and ImmutableMap are stable
+2. **Structure your composable parameters** — pass primitives instead of complex objects
+3. **Use @Stable annotation** — but only when you can guarantee the contract
+4. **Use Compose compiler metrics** — to identify the actual problem spots
+
+## Measuring
+
+Enable Compose compiler metrics in your build.gradle:
+
+The metrics report will show you exactly which composables are skippable and which aren't. Fix the unstable ones first — the ones that recompose most frequently.

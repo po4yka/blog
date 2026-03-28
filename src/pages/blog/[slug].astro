@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from "astro:content";
+import MainLayout from "@/layouts/MainLayout.astro";
+import { BlogPostIsland } from "@/components/BlogPostIsland";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  // Sort by date descending for consistent prev/next ordering
+  posts.sort((a, b) => {
+    const dateA = new Date(a.data.date);
+    const dateB = new Date(b.data.date);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  return posts.map((post, idx) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prev: idx > 0 ? { slug: posts[idx - 1]!.id, title: posts[idx - 1]!.data.title } : null,
+      next: idx < posts.length - 1 ? { slug: posts[idx + 1]!.id, title: posts[idx + 1]!.data.title } : null,
+    },
+  }));
+}
+
+const { post, prev, next } = Astro.props;
+const { Content } = await render(post);
+---
+<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary}>
+  <BlogPostIsland
+    client:load
+    post={post.data}
+    slug={post.id}
+    prev={prev}
+    next={next}
+  >
+    <Content />
+  </BlogPostIsland>
+</MainLayout>
