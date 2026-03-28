@@ -1,4 +1,4 @@
-import { Toaster as Sonner, ToasterProps } from "sonner";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 import { useSettings } from "../../stores/settingsStore";
 
 const Toaster = ({ ...props }: ToasterProps) => {

@@ -63,7 +63,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const cycleTheme = () => {
     const order = ["dark", "light", "system"] as const;
     const idx = order.indexOf(theme);
-    setTheme(order[(idx + 1) % order.length]);
+    setTheme(order[(idx + 1) % order.length] ?? "dark");
   };
 
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;

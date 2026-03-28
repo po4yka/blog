@@ -197,7 +197,7 @@ export async function deleteRole(db: D1Database, id: string): Promise<void> {
 
 export async function getCategories(db: D1Database): Promise<string[]> {
   const { results } = await db.prepare("SELECT name FROM categories ORDER BY name ASC").all<{ name: string }>();
-  return results.map((r) => r.name);
+  return results.map((r: { name: string }) => r.name);
 }
 
 export async function addCategory(db: D1Database, name: string): Promise<void> {

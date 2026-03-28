@@ -292,21 +292,21 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
               />
               <circle
                 cx={hoverIdx * step}
-                cy={h - (points[hoverIdx] / 100) * h}
+                cy={h - ((points[hoverIdx] ?? 0) / 100) * h}
                 r="3"
                 fill="var(--accent)"
                 fillOpacity="0.7"
               />
               <text
                 x={hoverIdx * step + (hoverIdx > points.length / 2 ? -8 : 8)}
-                y={h - (points[hoverIdx] / 100) * h - 8}
+                y={h - ((points[hoverIdx] ?? 0) / 100) * h - 8}
                 fill="var(--accent)"
                 fontSize="9"
                 className="font-mono"
                 textAnchor={hoverIdx > points.length / 2 ? "end" : "start"}
                 fillOpacity="0.8"
               >
-                {((points[hoverIdx] / 100) * 8.5).toFixed(1)} MiB/s
+                {(((points[hoverIdx] ?? 0) / 100) * 8.5).toFixed(1)} MiB/s
               </text>
             </>
           )}
@@ -565,7 +565,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
             <div key={r} className="flex gap-[3px]">
               {row.map((val, c) => {
                 const baseOpacity = Math.max(0.06, val / 100) * 0.8;
-                const waveOpacity = Math.max(0.04, Math.min(0.9, baseOpacity + waveOffsets[r][c]));
+                const waveOpacity = Math.max(0.04, Math.min(0.9, baseOpacity + (waveOffsets[r]?.[c] ?? 0)));
                 const color =
                   val > 75
                     ? "var(--signal-red)"
@@ -602,7 +602,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
           <div
             className="absolute top-2 right-5 text-muted-foreground/50 text-xs"
           >
-            Core {hoveredCell.r + 1} · {baseGrid[hoveredCell.r][hoveredCell.c].toFixed(0)}%
+            Core {hoveredCell.r + 1} · {(baseGrid[hoveredCell.r]?.[hoveredCell.c] ?? 0).toFixed(0)}%
           </div>
         )}
       </div>

@@ -197,7 +197,7 @@ export function AdminProjects() {
           >
             <div className="flex items-center gap-3 px-4 py-3.5">
               <button
-                onClick={() => setExpanded(expanded === project.id ? null : project.id)}
+                onClick={() => setExpanded(expanded === project.id ? null : project.id ?? null)}
                 className="shrink-0 text-muted-foreground/25 hover:text-foreground/50 transition-colors cursor-pointer p-0.5"
               >
                 {expanded === project.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -228,7 +228,7 @@ export function AdminProjects() {
                 Edit
               </button>
               <button
-                onClick={() => handleDelete(project.id)}
+                onClick={() => handleDelete(project.id!)}
                 className={`shrink-0 p-1 transition-colors cursor-pointer ${
                   confirmDelete === project.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
                 }`}
@@ -342,7 +342,7 @@ function LinksEditor({ links, onChange }: { links: { type: string; href: string 
   const addLink = () => onChange([...links, { type: "GitHub", href: "#" }]);
   const updateLink = (i: number, field: "type" | "href", value: string) => {
     const updated = [...links];
-    updated[i] = { ...updated[i], [field]: value };
+    updated[i] = { ...updated[i]!, [field]: value };
     onChange(updated);
   };
   const removeLink = (i: number) => onChange(links.filter((_, j) => j !== i));

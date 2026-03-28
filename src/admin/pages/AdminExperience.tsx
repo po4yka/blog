@@ -226,7 +226,7 @@ export function AdminExperience() {
                 Edit
               </button>
               <button
-                onClick={() => handleDelete(role.id)}
+                onClick={() => handleDelete(role.id!)}
                 className={`shrink-0 p-1 transition-colors cursor-pointer ${
                   confirmDelete === role.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
                 }`}
