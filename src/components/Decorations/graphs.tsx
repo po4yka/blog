@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { useInView } from "../useInView";
+import { useInView } from "@/components/useInView";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { MotionProvider } from "../MotionProvider";
+import { MotionProvider } from "@/components/MotionProvider";
 import { seeded, barColor, PanelShell } from "./_helpers";
 
 // ─── Network Sparkline with hover crosshair ────────────────────────

@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import * as api from "../api";
-import type { Project, Role } from "../api";
-import type { BlogPost } from "../../components/blogData";
+import * as api from "@/admin/api";
+import type { Project, Role } from "@/admin/api";
+import type { BlogPost } from "@/components/blogData";
 
 // --- Query Keys ---
 

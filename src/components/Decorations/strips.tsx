@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { useInView } from "../useInView";
+import { useInView } from "@/components/useInView";
 import { useState, useEffect } from "react";
-import { MotionProvider } from "../MotionProvider";
+import { MotionProvider } from "@/components/MotionProvider";
 import { ease } from "@/lib/motion";
 import { NetworkGraph, CpuGraph, ProcessTable } from "./graphs";
 

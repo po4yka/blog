@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "../useInView";
+import { useInView } from "@/components/useInView";
 import { ease } from "@/lib/motion";
 
 export function seeded(seed: number) {

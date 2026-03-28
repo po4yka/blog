@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor } from "lucide-react";
-import { useSettings, type FontSize, type ThemeMode } from "../stores/settingsStore";
+import { useSettings, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";

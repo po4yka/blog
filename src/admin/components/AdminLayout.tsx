@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
 import { useEffect, Suspense } from "react";
-import { useAuthContext } from "../contexts/AuthContext";
+import { useAuthContext } from "@/admin/contexts/AuthContext";
 import {
   LayoutDashboard,
   FileText,

@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { useInView } from "../useInView";
+import { useInView } from "@/components/useInView";
 import { useState, useEffect, useMemo } from "react";
-import { MotionProvider } from "../MotionProvider";
+import { MotionProvider } from "@/components/MotionProvider";
 import { seeded, PanelShell, UsageBar } from "./_helpers";
 
 // ─── CPU Panel with live-updating values ───────────────────────────

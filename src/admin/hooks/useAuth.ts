@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { login as apiLogin, logout as apiLogout, isTokenPresent } from "../api";
+import { login as apiLogin, logout as apiLogout, isTokenPresent } from "@/admin/api";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(isTokenPresent);

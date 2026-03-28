@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Plus, Trash2, Star, StarOff, Search, FileText } from "lucide-react";
-import { usePosts, useSavePost, useDeletePost } from "../hooks/useAdminQueries";
+import { usePosts, useSavePost, useDeletePost } from "@/admin/hooks/useAdminQueries";
 
 export function AdminBlogList() {
   const { data: blogPosts = [] } = usePosts();

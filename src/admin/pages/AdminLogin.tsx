@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Lock, ArrowRight, AlertCircle } from "lucide-react";
-import { useAuthContext } from "../contexts/AuthContext";
+import { useAuthContext } from "@/admin/contexts/AuthContext";
 
 export function AdminLogin() {
   const [password, setPassword] = useState("");

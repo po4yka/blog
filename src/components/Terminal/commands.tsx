@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "../useInView";
+import { useInView } from "@/components/useInView";
 import { useState, useCallback, type ReactNode } from "react";
 import { ease, duration } from "@/lib/motion";
 

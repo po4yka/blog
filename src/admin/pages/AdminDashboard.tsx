@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { FileText, FolderKanban, Briefcase, Clock, ArrowRight, ArrowUpRight } from "lucide-react";
-import { usePosts, useProjects, useRoles, useAdminSettings } from "../hooks/useAdminQueries";
+import { usePosts, useProjects, useRoles, useAdminSettings } from "@/admin/hooks/useAdminQueries";
 
 export function AdminDashboard() {
   const { data: blogPosts = [] } = usePosts();

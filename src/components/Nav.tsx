@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Menu, X, Sun, Moon, Monitor } from "lucide-react";
 import { useThrottledCallback } from "./useThrottle";
-import { useSettings } from "../stores/settingsStore";
+import { useSettings } from "@/stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
 
 const navLinks = [

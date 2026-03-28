@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
-import type { Role } from "../api";
-import { useRoles, useSaveRole, useDeleteRole } from "../hooks/useAdminQueries";
+import type { Role } from "@/admin/api";
+import { useRoles, useSaveRole, useDeleteRole } from "@/admin/hooks/useAdminQueries";
 
 function newRole(): Role {
   return {

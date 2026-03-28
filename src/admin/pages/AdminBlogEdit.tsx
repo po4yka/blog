@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
-import type { BlogPost } from "../../components/blogData";
-import { usePosts, useSavePost, useCategories, useAddCategory } from "../hooks/useAdminQueries";
+import type { BlogPost } from "@/components/blogData";
+import { usePosts, useSavePost, useCategories, useAddCategory } from "@/admin/hooks/useAdminQueries";
+import { FieldBlock } from "@/admin/components/FormPrimitives";
+import { BlogPreviewPane } from "@/admin/components/BlogPreviewPane";
 
 function generateSlug(title: string): string {
   return title
@@ -76,7 +78,6 @@ export function AdminBlogEdit() {
 
   const handleSave = () => {
     if (!form.title.trim() || !form.slug.trim()) return;
-    // Ensure category exists
     if (!categories.includes(form.category)) {
       addCategoryMutation.mutate(form.category);
     }
@@ -150,64 +151,11 @@ export function AdminBlogEdit() {
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {preview ? (
-          /* Preview mode */
-          <div className="border border-border/50 bg-card p-6 md:p-8" style={{ borderRadius: "4px" }}>
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.date}</span>
-              <span className="text-border">·</span>
-              <span className="font-mono text-accent/60" style={{ fontSize: "0.6875rem" }}>{form.category}</span>
-              <span className="text-border">·</span>
-              <span className="font-mono text-muted-foreground/40" style={{ fontSize: "0.6875rem" }}>{readingTime} min read</span>
-            </div>
-            <h2 className="text-foreground" style={{ fontSize: "1.5rem", fontWeight: 600, lineHeight: 1.25 }}>
-              {form.title || "Untitled"}
-            </h2>
-            <p className="mt-3 text-foreground/50" style={{ fontSize: "0.9375rem", lineHeight: 1.7 }}>
-              {form.summary}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {form.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/50 border border-border/50"
-                  style={{ fontSize: "0.625rem", borderRadius: "2px" }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="mt-6 border-t border-border/40 pt-6">
-              {form.content.split("\n\n").map((para, i) => {
-                const trimmed = para.trim();
-                if (trimmed.startsWith("## "))
-                  return (
-                    <h3 key={i} className="mt-6 mb-3 text-foreground" style={{ fontSize: "1.125rem", fontWeight: 600 }}>
-                      {trimmed.replace("## ", "")}
-                    </h3>
-                  );
-                if (trimmed.startsWith("- "))
-                  return (
-                    <ul key={i} className="mb-3 ml-4 space-y-1">
-                      {trimmed.split("\n").filter((l) => l.startsWith("- ")).map((l, j) => (
-                        <li key={j} className="text-foreground/60 list-disc" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
-                          {l.replace("- ", "")}
-                        </li>
-                      ))}
-                    </ul>
-                  );
-                return (
-                  <p key={i} className="mb-3 text-foreground/60" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
-                    {trimmed}
-                  </p>
-                );
-              })}
-            </div>
-          </div>
+          <BlogPreviewPane form={form} readingTime={readingTime} />
         ) : (
           /* Edit mode */
           <div className="space-y-5">
-            {/* Title */}
-            <Field label="Title" required>
+            <FieldBlock label="Title" required>
               <input
                 type="text"
                 value={form.title}
@@ -216,10 +164,9 @@ export function AdminBlogEdit() {
                 className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
                 style={{ fontSize: "0.875rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
-            </Field>
+            </FieldBlock>
 
-            {/* Slug */}
-            <Field label="Slug">
+            <FieldBlock label="Slug">
               <input
                 type="text"
                 value={form.slug}
@@ -228,11 +175,10 @@ export function AdminBlogEdit() {
                 className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
-            </Field>
+            </FieldBlock>
 
-            {/* Date + Category row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Date">
+              <FieldBlock label="Date">
                 <input
                   type="text"
                   value={form.date}
@@ -241,8 +187,8 @@ export function AdminBlogEdit() {
                   className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 />
-              </Field>
-              <Field label="Category">
+              </FieldBlock>
+              <FieldBlock label="Category">
                 <select
                   value={form.category}
                   onChange={(e) => updateField("category", e.target.value)}
@@ -253,10 +199,9 @@ export function AdminBlogEdit() {
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
-              </Field>
+              </FieldBlock>
             </div>
 
-            {/* Featured */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => updateField("featured", !form.featured)}
@@ -272,8 +217,7 @@ export function AdminBlogEdit() {
               </button>
             </div>
 
-            {/* Summary */}
-            <Field label="Summary">
+            <FieldBlock label="Summary">
               <textarea
                 value={form.summary}
                 onChange={(e) => updateField("summary", e.target.value)}
@@ -282,10 +226,9 @@ export function AdminBlogEdit() {
                 className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200 resize-y"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
               />
-            </Field>
+            </FieldBlock>
 
-            {/* Tags */}
-            <Field label="Tags">
+            <FieldBlock label="Tags">
               <div className="flex flex-wrap items-center gap-2 p-2.5 bg-card border border-border/50 min-h-[42px]" style={{ borderRadius: "3px" }}>
                 {form.tags.map((tag) => (
                   <span
@@ -318,10 +261,9 @@ export function AdminBlogEdit() {
                   style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </div>
-            </Field>
+            </FieldBlock>
 
-            {/* Content */}
-            <Field label={`Content`}>
+            <FieldBlock label="Content">
               <div className="relative">
                 <textarea
                   value={form.content}
@@ -340,9 +282,8 @@ export function AdminBlogEdit() {
                   </span>
                 </div>
               </div>
-            </Field>
+            </FieldBlock>
 
-            {/* Save */}
             <div className="flex items-center justify-between pt-4">
               <button
                 onClick={() => navigate("/admin/blog")}
@@ -364,23 +305,6 @@ export function AdminBlogEdit() {
           </div>
         )}
       </motion.div>
-    </div>
-  );
-}
-
-// --- Field wrapper ---
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <div>
-      <label
-        className="block font-mono text-muted-foreground/60 mb-1.5"
-        style={{ fontSize: "0.6875rem", letterSpacing: "0.02em", fontWeight: 400, lineHeight: 1.5 }}
-      >
-        {label}
-        {required && <span className="text-accent ml-0.5">*</span>}
-      </label>
-      {children}
     </div>
   );
 }

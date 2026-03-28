@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
-import type { SiteSettings } from "../api";
+import type { SiteSettings } from "@/admin/api";
 import {
   useAdminSettings,
   useUpdateSettings,
   useCategories,
   useAddCategory,
   useRemoveCategory,
-} from "../hooks/useAdminQueries";
+} from "@/admin/hooks/useAdminQueries";
 
 const defaultSettings: SiteSettings = {
   name: "", handle: "", role: "", bio: "", github: "", email: "", telegram: "", linkedin: "",
