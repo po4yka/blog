@@ -1,0 +1,287 @@
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK THEME (default — Ghostty terminal aesthetic)
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --font-size: 15px;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --radius: 10px;
+}
+
+/* Dark is the default — applied via .dark on <html> or as base */
+.dark, :root:not(.light) {
+  --background: #191a21;
+  --foreground: #cdd6f4;
+  --card: #24273a;
+  --card-foreground: #cdd6f4;
+  --popover: #24273a;
+  --popover-foreground: #cdd6f4;
+  --primary: #cdd6f4;
+  --primary-foreground: #191a21;
+  --secondary: #1e2030;
+  --secondary-foreground: #cdd6f4;
+  --muted: #232637;
+  --muted-foreground: #6c7086;
+  --accent: #8b7cf6;
+  --accent-foreground: #191a21;
+  --destructive: #f38ba8;
+  --destructive-foreground: #191a21;
+  --border: rgba(205, 214, 244, 0.07);
+  --input: transparent;
+  --input-background: #1e2030;
+  --switch-background: #363a4f;
+  --signal-green: #a6e3a1;
+  --signal-yellow: #f9e2af;
+  --signal-red: #f38ba8;
+  --signal: #a6e3a1;
+  --signal-dim: rgba(166, 227, 161, 0.12);
+  --signal-amber: #f9e2af;
+  --signal-amber-dim: rgba(249, 226, 175, 0.10);
+  --info: #89b4fa;
+  --ok: #a6e3a1;
+  --ring: rgba(139, 124, 246, 0.25);
+  --chart-1: #8b7cf6;
+  --chart-2: #a6e3a1;
+  --chart-3: #89b4fa;
+  --chart-4: #f9e2af;
+  --chart-5: #f38ba8;
+  --sidebar: #1e2030;
+  --sidebar-foreground: #cdd6f4;
+  --sidebar-primary: #8b7cf6;
+  --sidebar-primary-foreground: #191a21;
+  --sidebar-accent: #232637;
+  --sidebar-accent-foreground: #cdd6f4;
+  --sidebar-border: rgba(205, 214, 244, 0.07);
+  --sidebar-ring: rgba(139, 124, 246, 0.25);
+  --titlebar: #2a2d3d;
+  --titlebar-border: rgba(205, 214, 244, 0.05);
+  --window-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --window-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
+  /* Nav glass for dark */
+  --nav-glass: rgba(25, 26, 33, 0.82);
+  --nav-glass-subtle: rgba(25, 26, 33, 0.5);
+  --mobile-menu-bg: rgba(25, 26, 33, 0.95);
+  /* Decorations panel bg */
+  --panel-bg: rgba(36, 39, 58, 0.45);
+  /* Usage bar empty blocks */
+  --bar-empty: rgba(205, 214, 244, 0.06);
+  /* Dim traffic light dots */
+  --dot-dim: rgba(205, 214, 244, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT THEME — editorial / macOS-light aesthetic, same purple accent
+   ═══════════════════════════════════════════════════════════════════ */
+
+.light {
+  --background: #f6f5f8;
+  --foreground: #1c1b22;
+  --card: #ffffff;
+  --card-foreground: #1c1b22;
+  --popover: #ffffff;
+  --popover-foreground: #1c1b22;
+  --primary: #1c1b22;
+  --primary-foreground: #f6f5f8;
+  --secondary: #eceaf0;
+  --secondary-foreground: #1c1b22;
+  --muted: #eae8ee;
+  --muted-foreground: #78758a;
+  --accent: #7c6cf5;
+  --accent-foreground: #ffffff;
+  --destructive: #e04668;
+  --destructive-foreground: #ffffff;
+  --border: rgba(28, 27, 34, 0.09);
+  --input: transparent;
+  --input-background: #f0eef4;
+  --switch-background: #d4d1dc;
+  --signal-green: #40a845;
+  --signal-yellow: #c09a1a;
+  --signal-red: #d94058;
+  --signal: #40a845;
+  --signal-dim: rgba(64, 168, 69, 0.10);
+  --signal-amber: #c09a1a;
+  --signal-amber-dim: rgba(192, 154, 26, 0.10);
+  --info: #3574d4;
+  --ok: #40a845;
+  --ring: rgba(124, 108, 245, 0.25);
+  --chart-1: #7c6cf5;
+  --chart-2: #40a845;
+  --chart-3: #3574d4;
+  --chart-4: #c09a1a;
+  --chart-5: #d94058;
+  --sidebar: #f0eef4;
+  --sidebar-foreground: #1c1b22;
+  --sidebar-primary: #7c6cf5;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eae8ee;
+  --sidebar-accent-foreground: #1c1b22;
+  --sidebar-border: rgba(28, 27, 34, 0.08);
+  --sidebar-ring: rgba(124, 108, 245, 0.20);
+  --titlebar: #edebf1;
+  --titlebar-border: rgba(28, 27, 34, 0.06);
+  --window-shadow: 0 8px 32px rgba(28, 27, 34, 0.08), 0 2px 8px rgba(28, 27, 34, 0.05);
+  --window-shadow-sm: 0 4px 16px rgba(28, 27, 34, 0.06), 0 1px 4px rgba(28, 27, 34, 0.04);
+  /* Nav glass for light */
+  --nav-glass: rgba(246, 245, 248, 0.82);
+  --nav-glass-subtle: rgba(246, 245, 248, 0.55);
+  --mobile-menu-bg: rgba(246, 245, 248, 0.95);
+  /* Decorations panel bg */
+  --panel-bg: rgba(236, 234, 240, 0.55);
+  /* Usage bar empty blocks */
+  --bar-empty: rgba(28, 27, 34, 0.06);
+  /* Dim traffic light dots */
+  --dot-dim: rgba(28, 27, 34, 0.10);
+}
+
+/* Smooth theme transition on key elements */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.125rem; }
+  h3 { font-size: 1rem; }
+  h4 { font-size: 0.875rem; }
+
+  label, button, input {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes bar-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* macOS-style selection */
+::selection {
+  background: rgba(139, 124, 246, 0.25);
+  color: #e8eaf6;
+}
+
+.light ::selection {
+  background: rgba(124, 108, 245, 0.18);
+  color: #1c1b22;
+}
+
+/* Scrollbar — thin macOS style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(205, 214, 244, 0.08);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(205, 214, 244, 0.15);
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(28, 27, 34, 0.08);
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(28, 27, 34, 0.14);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

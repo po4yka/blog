@@ -1,0 +1,99 @@
+export interface Project {
+  name: string;
+  slug: string;
+  description: string;
+  longDescription?: string;
+  platforms: string[];
+  tags: string[];
+  links: { type: string; href: string }[];
+  featured?: boolean;
+  previewLabel: string;
+  year?: string;
+  status?: string;
+}
+
+export const projects: Project[] = [
+  {
+    name: "Meridian",
+    slug: "meridian",
+    description: "Cross-platform habit tracker built with Kotlin Multiplatform. Shared business logic, native UI on both platforms.",
+    longDescription: "Meridian started as an experiment in sharing 60% of codebase across Android and iOS using Kotlin Multiplatform. The shared module handles networking (Ktor), local persistence (SQLDelight), and domain logic. Each platform keeps its own native UI — Jetpack Compose on Android, SwiftUI on iOS — so the app feels right on both. Offline-first sync, daily reminders, streak tracking, and a minimal widget for quick check-ins.",
+    platforms: ["Android", "iOS"],
+    tags: ["KMP", "Compose", "SwiftUI", "SQLDelight", "Ktor"],
+    links: [
+      { type: "GitHub", href: "#" },
+      { type: "Google Play", href: "#" },
+      { type: "App Store", href: "#" },
+    ],
+    featured: true,
+    previewLabel: "meridian",
+    year: "2025",
+    status: "Active",
+  },
+  {
+    name: "Deploybot",
+    slug: "deploybot",
+    description: "Internal release automation tool for mobile teams. Manages build variants, signing configs, and distribution channels.",
+    longDescription: "A Gradle plugin and companion CLI that automates the release pipeline for Android apps. Handles build variant selection, keystore management, ProGuard mapping uploads, changelog generation from conventional commits, and distribution to internal testing tracks. Built to reduce the friction of shipping multiple variants (staging, production, canary) across different distribution channels.",
+    platforms: ["Android"],
+    tags: ["MobileOps", "Gradle Plugin", "Internal Tooling", "CLI", "Fastlane"],
+    links: [{ type: "GitHub", href: "#" }],
+    previewLabel: "deploybot",
+    year: "2024",
+    status: "Maintained",
+  },
+  {
+    name: "Compose Metrics Dashboard",
+    slug: "compose-metrics",
+    description: "Visualization tool for Jetpack Compose compiler metrics. Tracks recomposition counts, stability, and performance regressions.",
+    longDescription: "Parses Compose compiler reports and renders them as a browsable dashboard. Shows stability status for every composable, highlights unstable parameters, tracks recomposition counts over time, and flags performance regressions between builds. Designed to be integrated into CI — generates HTML reports that can be published as build artifacts.",
+    platforms: ["Android"],
+    tags: ["Compose", "Performance", "Tooling", "Compiler Metrics"],
+    links: [
+      { type: "GitHub", href: "#" },
+      { type: "Google Play", href: "#" },
+    ],
+    previewLabel: "compose-metrics",
+    year: "2024",
+    status: "Active",
+  },
+  {
+    name: "Castaway",
+    slug: "castaway",
+    description: "Podcast player with offline-first architecture. Background downloads, queue management, and playback speed control.",
+    longDescription: "A podcast player focused on reliability and offline experience. Uses URLSession background configuration for downloads that survive app termination, CoreData for persistent queue state, and AVFoundation for playback with variable speed, silence trimming, and chapter navigation. Designed for commuters with unreliable connectivity.",
+    platforms: ["iOS"],
+    tags: ["Swift", "AVFoundation", "CoreData", "Offline-first"],
+    links: [
+      { type: "GitHub", href: "#" },
+      { type: "App Store", href: "#" },
+    ],
+    previewLabel: "castaway",
+    year: "2023",
+    status: "Maintained",
+  },
+  {
+    name: "KMP Starter",
+    slug: "kmp-starter",
+    description: "Opinionated project template for Kotlin Multiplatform apps. Pre-configured CI, dependency injection, and modular architecture.",
+    longDescription: "A GitHub template repository for bootstrapping KMP projects. Ships with Koin for DI, Ktor + SQLDelight for networking and persistence, a modular Gradle setup with convention plugins, GitHub Actions CI with caching, and a sample feature module demonstrating the architecture. Saves about two weeks of setup time for new projects.",
+    platforms: ["Android", "iOS"],
+    tags: ["KMP", "Template", "Architecture", "CI/CD"],
+    links: [{ type: "GitHub", href: "#" }],
+    previewLabel: "kmp-starter",
+    year: "2025",
+    status: "Active",
+  },
+  {
+    name: "Logline",
+    slug: "logline",
+    description: "Structured logging library for Android with Timber-compatible API. Ships logs to remote collectors with batching and retry.",
+    longDescription: "Drop-in logging library with a Timber-compatible API surface. Adds structured fields, log levels, batched remote shipping (to Loki, Datadog, or custom endpoints), offline queue with retry, and a debug viewer overlay for on-device log inspection. Designed for teams that need production-grade logging without rebuilding everything.",
+    platforms: ["Android"],
+    tags: ["Kotlin", "Logging", "Library", "Timber"],
+    links: [{ type: "GitHub", href: "#" }],
+    previewLabel: "logline",
+    year: "2023",
+    status: "Stable",
+  },
+];
