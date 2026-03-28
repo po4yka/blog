@@ -16,8 +16,8 @@ export function About() {
       <OutputBlock delay={0.05}>
         <div
           ref={ref}
-          className="space-y-5 text-foreground/70"
-          style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.875rem", lineHeight: 1.8 }}
+          className="space-y-5 font-mono text-sm text-foreground/70"
+          style={{ lineHeight: 1.8 }}
         >
           <motion.p
             initial={{ opacity: 0, y: 6 }}

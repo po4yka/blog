@@ -3,7 +3,6 @@ import { useInView } from "./useInView";
 import { useState, useCallback, type ReactNode } from "react";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
-const mono = "'JetBrains Mono', monospace";
 
 /**
  * macOS traffic-light dots — hover to reveal close / minimize / maximize icons
@@ -26,7 +25,7 @@ function TrafficLights({ dim = false }: { dim?: boolean }) {
       {dots.map((dot, i) => (
         <span
           key={i}
-          className="w-[11px] h-[11px] rounded-full flex items-center justify-center select-none"
+          className="w-[11px] h-[11px] rounded-full flex items-center justify-center select-none text-2xs font-bold"
           style={{
             backgroundColor: dim && !hovered
               ? "var(--dot-dim)"
@@ -34,10 +33,8 @@ function TrafficLights({ dim = false }: { dim?: boolean }) {
             opacity: dim && !hovered ? 1 : 0.85,
             transition: "all 0.2s ease",
             cursor: hovered ? "pointer" : "default",
-            fontSize: "0.5rem",
             lineHeight: 1,
             color: hovered ? "rgba(0,0,0,0.6)" : "transparent",
-            fontWeight: 700,
           }}
         >
           {hovered ? dot.icon : ""}
@@ -70,9 +67,8 @@ export function MacWindow({
   return (
     <motion.div
       ref={ref}
-      className={`overflow-hidden ${className}`}
+      className={`overflow-hidden rounded-[10px] ${className}`}
       style={{
-        borderRadius: "10px",
         background: "var(--card)",
         border: "1px solid var(--border)",
         boxShadow: "var(--window-shadow-sm)",
@@ -97,8 +93,7 @@ export function MacWindow({
         <TrafficLights dim={dimLights} />
         {title && (
           <span
-            className="flex-1 text-center text-muted-foreground/50 select-none"
-            style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+            className="flex-1 text-center text-muted-foreground/50 select-none font-mono text-label"
           >
             {title}
           </span>
@@ -106,15 +101,14 @@ export function MacWindow({
         {!title && <span className="flex-1" />}
         {subtitle && (
           <span
-            className="text-muted-foreground/25 select-none"
-            style={{ fontFamily: mono, fontSize: "0.5625rem" }}
+            className="text-muted-foreground/25 select-none font-mono text-3xs"
           >
             {subtitle}
           </span>
         )}
       </div>
       {/* Content */}
-      <div className="p-5 md:p-6" style={{ fontFamily: mono }}>
+      <div className="p-5 md:p-6 font-mono">
         {children}
       </div>
     </motion.div>
@@ -136,13 +130,11 @@ export function BootBlock({
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden"
+      className="overflow-hidden rounded-[10px] font-mono"
       style={{
-        borderRadius: "10px",
         background: "var(--card)",
         border: "1px solid var(--border)",
         boxShadow: "var(--window-shadow-sm)",
-        fontFamily: mono,
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -163,8 +155,7 @@ export function BootBlock({
       >
         <TrafficLights dim />
         <span
-          className="flex-1 text-center text-muted-foreground/30 select-none"
-          style={{ fontSize: "0.625rem" }}
+          className="flex-1 text-center text-muted-foreground/30 select-none text-xs"
         >
           system output
         </span>
@@ -175,14 +166,14 @@ export function BootBlock({
         {lines.map((line, i) => (
           <motion.div
             key={i}
-            className="flex gap-2 items-start py-[1px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-            style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
+            className="flex gap-2 items-start py-[1px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-mono rounded-[4px]"
+            style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.3, delay: delay + 0.08 + i * 0.06 }}
           >
             <span
-              className="shrink-0"
+              className="shrink-0 font-medium"
               style={{
                 color:
                   line.status === "OK"
@@ -190,7 +181,6 @@ export function BootBlock({
                     : line.status === "WARN"
                     ? "var(--signal-amber)"
                     : "var(--info)",
-                fontWeight: 500,
               }}
             >
               [ {line.status} ]
@@ -236,8 +226,7 @@ export function Cmd({
   return (
     <motion.div
       ref={ref}
-      className="flex items-baseline gap-2 group cursor-pointer"
-      style={{ fontFamily: mono, fontSize: "0.9375rem" }}
+      className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg"
       initial={{ opacity: 0, y: 6 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.35, delay, ease }}
@@ -252,8 +241,7 @@ export function Cmd({
       </span>
       {/* Copy indicator */}
       <motion.span
-        className="text-accent/60 select-none"
-        style={{ fontSize: "0.625rem" }}
+        className="text-accent/60 select-none text-xs"
         initial={{ opacity: 0, x: -4 }}
         animate={copied ? { opacity: 1, x: 0 } : { opacity: 0, x: -4 }}
         transition={{ duration: 0.2 }}
@@ -263,8 +251,7 @@ export function Cmd({
       {/* Copy icon hint on hover */}
       {!copied && (
         <span
-          className="text-muted-foreground/0 group-hover:text-muted-foreground/30 transition-colors duration-200 select-none"
-          style={{ fontSize: "0.625rem" }}
+          className="text-muted-foreground/0 group-hover:text-muted-foreground/30 transition-colors duration-200 select-none text-xs"
         >
           ⌘C
         </span>
@@ -290,8 +277,7 @@ export function OutputBlock({
   return (
     <motion.div
       ref={ref}
-      className={`border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 ${className}`}
-      style={{ fontFamily: mono }}
+      className={`border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 font-mono ${className}`}
       initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay, ease }}
@@ -320,9 +306,8 @@ export function LessViewer({
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden"
+      className="overflow-hidden rounded-[10px]"
       style={{
-        borderRadius: "10px",
         background: "var(--card)",
         border: "1px solid var(--border)",
         boxShadow: "var(--window-shadow)",
@@ -345,22 +330,20 @@ export function LessViewer({
       >
         <TrafficLights />
         <span
-          className="flex-1 text-center text-muted-foreground/45 select-none"
-          style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+          className="flex-1 text-center text-muted-foreground/45 select-none font-mono text-label"
         >
           {filename}
         </span>
         {meta && (
           <span
-            className="text-muted-foreground/25 select-none"
-            style={{ fontFamily: mono, fontSize: "0.5625rem" }}
+            className="text-muted-foreground/25 select-none font-mono text-3xs"
           >
             {meta}
           </span>
         )}
       </div>
       {/* Content */}
-      <div className="p-5 md:p-7" style={{ fontFamily: mono }}>
+      <div className="p-5 md:p-7 font-mono">
         {children}
       </div>
     </motion.div>
@@ -382,8 +365,7 @@ export function InfoTable({
   return (
     <motion.div
       ref={ref}
-      className="space-y-0"
-      style={{ fontFamily: mono }}
+      className="space-y-0 font-mono"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.4, delay, ease }}
@@ -391,8 +373,8 @@ export function InfoTable({
       {rows.map((row, i) => (
         <motion.div
           key={row.label}
-          className="flex gap-6 py-1.5 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-          style={{ fontSize: "0.875rem", lineHeight: 1.6, borderRadius: "4px" }}
+          className="flex gap-6 py-1.5 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-sm rounded-[4px]"
+          style={{ lineHeight: 1.6 }}
           initial={{ opacity: 0, x: -4 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.3, delay: delay + 0.04 + i * 0.04 }}
@@ -455,8 +437,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div
       ref={ref}
-      className="space-y-1"
-      style={{ fontFamily: mono, fontSize: "0.8125rem" }}
+      className="space-y-1 font-mono text-mono"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.35, delay }}
@@ -484,8 +465,8 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
           onChange={(e) => setInput(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="flex-1 bg-transparent outline-none text-foreground/70 ml-1 placeholder:text-muted-foreground/20"
-          style={{ fontSize: "0.8125rem", fontFamily: mono, caretColor: "var(--accent)" }}
+          className="flex-1 bg-transparent outline-none text-foreground/70 ml-1 placeholder:text-muted-foreground/20 text-mono font-mono"
+          style={{ caretColor: "var(--accent)" }}
           placeholder={focused ? "" : "type a command…"}
           autoComplete="off"
           spellCheck={false}
@@ -525,17 +506,13 @@ export function Tag({
 }) {
   return (
     <motion.span
-      className={`inline-block px-2 py-0.5 cursor-default ${
+      className={`inline-block px-2 py-0.5 cursor-default font-mono text-xs uppercase rounded-[4px] ${
         variant === "highlight"
           ? "text-accent bg-accent/10"
           : "text-muted-foreground/60 bg-muted-foreground/5"
       }`}
       style={{
-        fontFamily: mono,
-        fontSize: "0.625rem",
         letterSpacing: "0.06em",
-        textTransform: "uppercase",
-        borderRadius: "4px",
       }}
       whileHover={{
         scale: 1.08,

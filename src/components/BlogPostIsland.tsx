@@ -4,8 +4,6 @@ import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
-
 interface PostMeta {
   title: string;
   date: string;
@@ -79,8 +77,7 @@ function CopyLinkButton() {
   return (
     <motion.button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer"
-      style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+      className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer font-mono text-label"
       title="Copy link"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -111,8 +108,8 @@ function ScrollToTop() {
 
   return (
     <motion.button
-      className="fixed bottom-8 right-8 z-50 p-2 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer"
-      style={{ borderRadius: "8px", boxShadow: "var(--window-shadow-sm)" }}
+      className="fixed bottom-8 right-8 z-50 p-2 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer rounded-lg"
+      style={{ boxShadow: "var(--window-shadow-sm)" }}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -147,8 +144,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
         {/* Back */}
         <motion.a
           href="/blog"
-          className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline"
-          style={{ fontFamily: mono, fontSize: "0.75rem" }}
+          className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
@@ -173,19 +169,16 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
           {/* Article header */}
           <div className="mb-8">
             <h1
-              className="text-foreground"
+              className="text-foreground font-mono font-medium"
               style={{
-                fontFamily: mono,
                 fontSize: "1.25rem",
-                fontWeight: 500,
                 lineHeight: 1.35,
               }}
             >
               {post.title}
             </h1>
             <div
-              className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/50"
-              style={{ fontFamily: mono, fontSize: "0.75rem" }}
+              className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/50 font-mono text-mono-sm"
             >
               <span>
                 author <span className="text-accent/70">Nikita Pochaev</span>
@@ -212,8 +205,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
             {post.tags.map((tag) => (
               <motion.span
                 key={tag}
-                className="text-muted-foreground/40 cursor-default"
-                style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+                className="text-muted-foreground/40 cursor-default font-mono text-label"
                 whileHover={{ color: "var(--accent)", scale: 1.05 }}
                 transition={{ duration: 0.15 }}
               >
@@ -226,7 +218,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
         </LessViewer>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between pt-4" style={{ fontFamily: mono, fontSize: "0.75rem" }}>
+        <div className="flex items-center justify-between pt-4 font-mono text-mono-sm">
           {prev ? (
             <motion.a
               href={`/blog/${prev.slug}`}

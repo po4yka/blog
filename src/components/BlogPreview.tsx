@@ -4,7 +4,6 @@ import { blogPosts } from "./blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function BlogPreview() {
@@ -24,8 +23,7 @@ export function BlogPreview() {
             <motion.a
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group flex items-start gap-3 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2"
-              style={{ fontFamily: mono, borderRadius: "6px" }}
+              className="group flex items-start gap-3 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono rounded-[6px]"
               initial={{ opacity: 0, y: 8 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.06, ease }}
@@ -38,8 +36,8 @@ export function BlogPreview() {
             >
               {/* Date */}
               <span
-                className="text-muted-foreground/30 shrink-0 pt-0.5"
-                style={{ fontSize: "0.6875rem", minWidth: "65px" }}
+                className="text-muted-foreground/30 shrink-0 pt-0.5 text-label"
+                style={{ minWidth: "65px" }}
               >
                 {post.date}
               </span>
@@ -54,8 +52,7 @@ export function BlogPreview() {
               {/* Title — underline draw on hover */}
               <div className="flex-1 min-w-0 relative">
                 <span
-                  className="text-foreground/70 group-hover:text-foreground transition-colors duration-200"
-                  style={{ fontSize: "0.8125rem" }}
+                  className="text-foreground/70 group-hover:text-foreground transition-colors duration-200 text-mono"
                 >
                   {post.title}
                 </span>
@@ -77,8 +74,7 @@ export function BlogPreview() {
       >
         <motion.a
           href="/blog"
-          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block"
-          style={{ fontFamily: mono, fontSize: "0.75rem" }}
+          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >

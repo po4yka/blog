@@ -5,8 +5,6 @@ import { useThrottledCallback } from "./useThrottle";
 import { useSettings } from "../stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
-
 const navLinks = [
   { label: "home", href: "/", exact: true },
   { label: "projects", href: "/projects" },
@@ -60,11 +58,10 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   return (
     <MotionProvider>
     <motion.nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 font-mono transition-all duration-300 ${
         scrolled ? "backdrop-blur-xl" : ""
       }`}
       style={{
-        fontFamily: mono,
         background: scrolled
           ? "var(--nav-glass)"
           : "var(--nav-glass-subtle)",
@@ -96,8 +93,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
         {/* Logo / prefix */}
         <motion.a
           href="/"
-          className="flex items-center gap-2 text-foreground/70 hover:text-accent transition-colors duration-300 shrink-0"
-          style={{ fontSize: "0.8125rem" }}
+          className="flex items-center gap-2 text-mono text-foreground/70 hover:text-accent transition-colors duration-300 shrink-0"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
         >
@@ -121,14 +117,12 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               <a
                 key={link.label}
                 href={link.href}
-                className={`relative px-3 py-1.5 transition-colors duration-200 group ${
+                className={`relative px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
                   active
                     ? "text-foreground"
                     : "text-muted-foreground/50 hover:text-foreground/70"
                 }`}
                 style={{
-                  fontSize: "0.75rem",
-                  borderRadius: "6px",
                   backgroundColor: active ? "rgba(139, 124, 246, 0.08)" : "transparent",
                 }}
               >
@@ -151,8 +145,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           {/* Theme toggle */}
           <motion.button
             onClick={cycleTheme}
-            className="flex items-center gap-1.5 px-2 py-1 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.5625rem", borderRadius: "5px" }}
+            className="flex items-center gap-1.5 px-2 py-1 text-3xs rounded-[5px] text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer"
             title={`Theme: ${theme}`}
             aria-label={`Switch theme (current: ${theme})`}
             whileHover={{ scale: 1.08 }}
@@ -169,7 +162,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               className="w-[5px] h-[5px] rounded-full"
               style={{ backgroundColor: "var(--signal-green)", animation: "pulse-scale 3s ease-in-out infinite" }}
             />
-            <span className="text-muted-foreground/25" style={{ fontSize: "0.5625rem" }}>
+            <span className="text-3xs text-muted-foreground/25">
               online
             </span>
           </span>
@@ -219,14 +212,12 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                   <motion.a
                     key={link.label}
                     href={link.href}
-                    className={`py-2 px-3 transition-colors duration-200 ${
+                    className={`py-2 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
                       active
                         ? "text-foreground"
                         : "text-muted-foreground/50 hover:text-foreground/70"
                     }`}
                     style={{
-                      fontSize: "0.8125rem",
-                      borderRadius: "6px",
                       backgroundColor: active ? "rgba(139, 124, 246, 0.08)" : "transparent",
                     }}
                     onClick={() => setMenuOpen(false)}

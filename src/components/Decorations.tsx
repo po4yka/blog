@@ -3,7 +3,6 @@ import { useInView } from "./useInView";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 // ─── Helpers ───────────────────────────────────────────────────────
@@ -39,12 +38,10 @@ function PanelShell({
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden"
+      className="overflow-hidden rounded-[10px] font-mono"
       style={{
-        borderRadius: "10px",
         border: "1px solid var(--border)",
         background: "var(--panel-bg)",
-        fontFamily: mono,
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -59,13 +56,13 @@ function PanelShell({
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <span
-          className="text-muted-foreground/50 uppercase"
-          style={{ fontSize: "0.75rem", letterSpacing: "0.12em", fontWeight: 500 }}
+          className="text-muted-foreground/50 uppercase text-mono-sm font-medium"
+          style={{ letterSpacing: "0.12em" }}
         >
           {label}
         </span>
         {labelRight && (
-          <span className="text-muted-foreground/30" style={{ fontSize: "0.6875rem" }}>
+          <span className="text-muted-foreground/30 text-label">
             {labelRight}
           </span>
         )}
@@ -100,10 +97,10 @@ function UsageBar({
       transition={{ duration: 0.4, delay }}
       title={`${pct}%`}
     >
-      <span style={{ color, fontSize: "0.75rem", letterSpacing: "-0.5px" }}>
+      <span className="text-mono-sm" style={{ color, letterSpacing: "-0.5px" }}>
         {"█".repeat(filled)}
       </span>
-      <span style={{ color: "var(--bar-empty)", fontSize: "0.75rem", letterSpacing: "-0.5px" }}>
+      <span className="text-mono-sm" style={{ color: "var(--bar-empty)", letterSpacing: "-0.5px" }}>
         {"█".repeat(empty)}
       </span>
     </motion.span>
@@ -151,8 +148,7 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
         {cores.map((core, i) => (
           <motion.div
             key={core.label}
-            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150"
-            style={{ fontSize: "0.6875rem", borderRadius: "3px" }}
+            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
           >
             <span className="text-muted-foreground/35 w-[48px] shrink-0">{core.label}</span>
             <UsageBar pct={core.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
@@ -162,8 +158,8 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
         ))}
       </div>
       <div
-        className="flex items-center gap-5 px-5 py-2 text-muted-foreground/25"
-        style={{ borderTop: "1px solid var(--border)", fontSize: "0.625rem" }}
+        className="flex items-center gap-5 px-5 py-2 text-muted-foreground/25 text-xs"
+        style={{ borderTop: "1px solid var(--border)" }}
       >
         <span>Load Average:</span>
         <span className="text-foreground/35">1.47</span>
@@ -194,8 +190,7 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
         {rows.map((row, i) => (
           <motion.div
             key={row.label}
-            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150"
-            style={{ fontSize: "0.6875rem", borderRadius: "3px" }}
+            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
           >
             <span className="text-muted-foreground/35 w-[42px] shrink-0">{row.label}</span>
             <UsageBar pct={row.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
@@ -296,7 +291,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
                 y={h - (points[hoverIdx] / 100) * h - 8}
                 fill="var(--accent)"
                 fontSize="9"
-                fontFamily={mono}
+                className="font-mono"
                 textAnchor={hoverIdx > points.length / 2 ? "end" : "start"}
                 fillOpacity="0.8"
               >
@@ -306,8 +301,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
           )}
         </svg>
         <div
-          className="flex items-center justify-between mt-3 text-muted-foreground/35"
-          style={{ fontSize: "0.6875rem" }}
+          className="flex items-center justify-between mt-3 text-muted-foreground/35 text-label"
         >
           <span>
             <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>▼</span> 4.20 MiB/s
@@ -343,8 +337,8 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
       <div ref={ref}>
         {/* Options row */}
         <div
-          className="flex items-center justify-end gap-5 px-5 py-1.5 text-muted-foreground/25"
-          style={{ fontSize: "0.625rem", borderBottom: "1px solid var(--border)" }}
+          className="flex items-center justify-end gap-5 px-5 py-1.5 text-muted-foreground/25 text-xs"
+          style={{ borderBottom: "1px solid var(--border)" }}
         >
           {["filter", "tree", "per-core"].map((opt) => (
             <motion.span
@@ -359,12 +353,10 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
         </div>
         {/* Column headers */}
         <div
-          className="grid px-5 py-2 text-muted-foreground/35"
+          className="grid px-5 py-2 text-muted-foreground/35 text-label font-medium"
           style={{
             gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
             borderBottom: "1px solid var(--border)",
-            fontSize: "0.6875rem",
-            fontWeight: 500,
           }}
         >
           <span>Pid</span>
@@ -379,11 +371,9 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
           {procs.map((p, i) => (
             <motion.div
               key={p.pid}
-              className="grid py-[5px] -mx-2 px-2 cursor-default"
+              className="grid py-[5px] -mx-2 px-2 cursor-default text-label rounded-[3px]"
               style={{
                 gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
-                fontSize: "0.6875rem",
-                borderRadius: "3px",
                 backgroundColor: hoveredPid === p.pid ? "rgba(139, 124, 246, 0.06)" : "transparent",
                 transition: "background-color 0.15s ease",
               }}
@@ -406,8 +396,8 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
               <span className="text-muted-foreground/25 truncate">{p.args}</span>
               <span className="text-right text-muted-foreground/30">{p.threads}</span>
               <span
-                className="text-right"
-                style={{ color: barColor(p.cpu * 10), opacity: 0.6, fontWeight: 500 }}
+                className="text-right font-medium"
+                style={{ color: barColor(p.cpu * 10), opacity: 0.6 }}
               >
                 {p.cpu.toFixed(1)}
               </span>
@@ -445,8 +435,7 @@ export function UptimeStrip({ delay = 0 }: { delay?: number }) {
     <MotionProvider>
     <motion.div
       ref={ref}
-      className="flex flex-wrap items-center gap-x-7 gap-y-2 px-2 py-2"
-      style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+      className="flex flex-wrap items-center gap-x-7 gap-y-2 px-2 py-2 font-mono text-label"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.5, delay, ease }}
@@ -497,8 +486,7 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
           return (
             <motion.div
               key={d.label}
-              className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150"
-              style={{ fontSize: "0.6875rem", borderRadius: "3px" }}
+              className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
             >
               <span className="text-muted-foreground/35 w-[46px] shrink-0">{d.label}</span>
               <span className="text-muted-foreground/30 w-[54px]">Used: {pct}%</span>
@@ -558,11 +546,10 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
                 return (
                   <motion.span
                     key={c}
-                    className="inline-block cursor-crosshair"
+                    className="inline-block cursor-crosshair rounded-sm"
                     style={{
                       width: "10px",
                       height: "10px",
-                      borderRadius: "2px",
                       backgroundColor: color,
                       opacity: isHovered ? 1 : baseOpacity,
                       transition: "opacity 0.1s ease",
@@ -583,8 +570,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
         {/* Hover value display */}
         {hoveredCell && (
           <div
-            className="absolute top-2 right-5 text-muted-foreground/50"
-            style={{ fontSize: "0.625rem" }}
+            className="absolute top-2 right-5 text-muted-foreground/50 text-xs"
           >
             Core {hoveredCell.r + 1} · {grid[hoveredCell.r][hoveredCell.c].toFixed(0)}%
           </div>

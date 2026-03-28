@@ -2,7 +2,6 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function NotFound() {
@@ -19,11 +18,10 @@ export function NotFound() {
 
   return (
     <MotionProvider>
-    <div className="pt-16" style={{ fontFamily: mono }}>
+    <div className="pt-16 font-mono">
       <motion.div
-        className="overflow-hidden"
+        className="overflow-hidden rounded-[10px]"
         style={{
-          borderRadius: "10px",
           background: "var(--card)",
           border: "1px solid var(--border)",
           boxShadow: "var(--window-shadow-sm)",
@@ -57,7 +55,7 @@ export function NotFound() {
             <span className="w-[11px] h-[11px] rounded-full" style={{ backgroundColor: "var(--dot-dim)" }} />
             <span className="w-[11px] h-[11px] rounded-full" style={{ backgroundColor: "var(--dot-dim)" }} />
           </div>
-          <span className="flex-1 text-center text-muted-foreground/40 select-none" style={{ fontSize: "0.6875rem" }}>
+          <span className="flex-1 text-center text-muted-foreground/40 select-none text-label">
             error — 404
           </span>
           <span style={{ width: 54 }} />
@@ -65,7 +63,8 @@ export function NotFound() {
         {/* Content */}
         <div className="p-6 space-y-6">
           <motion.div
-            style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
+            className="text-mono"
+            style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.3 }}
@@ -76,7 +75,8 @@ export function NotFound() {
             </span>
           </motion.div>
           <motion.div
-            style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
+            className="text-mono"
+            style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.3 }}
@@ -110,8 +110,7 @@ export function NotFound() {
 
           <motion.button
             onClick={() => { window.location.href = "/"; }}
-            className="text-accent hover:text-accent/80 transition-colors cursor-pointer inline-flex items-center gap-2"
-            style={{ fontSize: "0.8125rem" }}
+            className="text-accent hover:text-accent/80 transition-colors cursor-pointer inline-flex items-center gap-2 text-mono"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}

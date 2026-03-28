@@ -6,4 +6,13 @@
 @theme inline {
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Custom font sizes matching the design system */
+  --text-2xs: 0.5rem;       /* 8px  */
+  --text-3xs: 0.5625rem;    /* 9px  */
+  --text-xs: 0.625rem;      /* 10px */
+  --text-label: 0.6875rem;  /* 11px */
+  --text-mono-sm: 0.75rem;  /* 12px */
+  --text-mono: 0.8125rem;   /* 13px */
+  --text-mono-lg: 0.9375rem; /* 15px */
 }

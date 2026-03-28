@@ -3,7 +3,6 @@ import { useInView } from "./useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 const links = [
@@ -37,11 +36,8 @@ export function Links() {
             href={link.href}
             target={link.href.startsWith("http") ? "_blank" : undefined}
             rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 hover:text-accent hover:bg-accent/5 transition-all duration-250"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 hover:text-accent hover:bg-accent/5 transition-all duration-250 font-mono text-mono rounded-[6px]"
             style={{
-              fontFamily: mono,
-              fontSize: "0.8125rem",
-              borderRadius: "6px",
               border: "1px solid var(--border)",
             }}
             initial={{ opacity: 0, y: 6 }}
@@ -58,8 +54,7 @@ export function Links() {
             }}
           >
             <motion.span
-              className="text-muted-foreground/35"
-              style={{ fontSize: "0.75rem" }}
+              className="text-muted-foreground/35 text-mono-sm"
               whileHover={{ scale: 1.2, rotate: 10 }}
             >
               {link.icon}

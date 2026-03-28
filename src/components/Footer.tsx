@@ -3,8 +3,6 @@ import { UptimeStrip } from "./Decorations";
 import { motion } from "motion/react";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
-
 export function Footer() {
   return (
     <MotionProvider>
@@ -21,7 +19,7 @@ export function Footer() {
             border: "1px solid var(--border)",
           }}
         >
-          <div className="text-muted-foreground/20 pb-2" style={{ fontSize: "0.5625rem", fontFamily: mono }}>
+          <div className="text-3xs font-mono text-muted-foreground/20 pb-2">
             interactive shell — try: help, whoami, date, ls, neofetch, clear
           </div>
           <TerminalPrompt />
@@ -32,8 +30,7 @@ export function Footer() {
           style={{ borderTop: "1px solid var(--titlebar-border)" }}
         >
           <motion.p
-            className="text-center text-muted-foreground/20"
-            style={{ fontFamily: mono, fontSize: "0.6875rem" }}
+            className="text-center font-mono text-label text-muted-foreground/20"
             whileHover={{ color: "var(--muted-foreground)", opacity: 0.4 }}
             transition={{ duration: 0.3 }}
           >

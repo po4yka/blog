@@ -5,7 +5,6 @@ import { useInView } from "./useInView";
 import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 function RoleEntry({ role, index }: { role: Role; index: number }) {
@@ -14,8 +13,7 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
   return (
     <motion.div
       ref={ref}
-      className="py-5 border-b border-border/40 last:border-b-0 -mx-2 px-2 group"
-      style={{ fontFamily: mono, borderRadius: "6px" }}
+      className="py-5 border-b border-border/40 last:border-b-0 -mx-2 px-2 group font-mono rounded-[6px]"
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
@@ -27,14 +25,14 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
     >
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
-          <span className="text-accent/50" style={{ fontSize: "0.6875rem" }}>
+          <span className="text-accent/50 text-label">
             {role.period}
           </span>
-          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-200" style={{ fontSize: "0.9375rem", fontWeight: 500 }}>
+          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-200 text-mono-lg font-medium">
             {role.title}
           </h3>
         </div>
-        <span className="text-muted-foreground/35" style={{ fontSize: "0.75rem" }}>
+        <span className="text-muted-foreground/35 text-mono-sm">
           {role.company}
           {role.location && (
             <span className="text-muted-foreground/25 ml-2">{role.location}</span>
@@ -42,7 +40,7 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 pl-0" style={{ fontSize: "0.8125rem", lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 pl-0 text-mono" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
@@ -52,8 +50,8 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
           {role.highlights.map((h, i) => (
             <motion.li
               key={i}
-              className="text-foreground/40 list-disc marker:text-accent/25"
-              style={{ fontSize: "0.75rem", lineHeight: 1.7 }}
+              className="text-foreground/40 list-disc marker:text-accent/25 text-mono-sm"
+              style={{ lineHeight: 1.7 }}
               whileHover={{ color: "var(--foreground)", opacity: 0.65 }}
               transition={{ duration: 0.15 }}
             >
@@ -69,8 +67,7 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
           {role.tags.map((tag) => (
             <motion.span
               key={tag}
-              className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default"
-              style={{ fontSize: "0.625rem", borderRadius: "4px" }}
+              className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
               whileHover={{
                 scale: 1.08,
                 color: "var(--accent)",
@@ -90,8 +87,7 @@ function RoleEntry({ role, index }: { role: Role; index: number }) {
 function SkillsSection({ group }: { group: SkillGroup }) {
   return (
     <motion.div
-      className="flex gap-4 py-1 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-      style={{ fontFamily: mono, fontSize: "0.75rem", borderRadius: "4px" }}
+      className="flex gap-4 py-1 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 font-mono text-mono-sm rounded-[4px]"
     >
       <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: "100px" }}>
         {group.label}
@@ -170,7 +166,7 @@ export function ExperiencePage() {
 
       {/* Download CV hint */}
       <motion.div
-        style={{ fontFamily: mono, fontSize: "0.75rem" }}
+        className="font-mono text-mono-sm"
         whileHover={{ x: 4 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
       >

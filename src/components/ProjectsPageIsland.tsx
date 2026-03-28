@@ -6,7 +6,6 @@ import { useInView } from "./useInView";
 import { projects, type Project } from "./projectsData";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 function ProjectEntry({ project, index }: { project: Project; index: number }) {
@@ -15,8 +14,7 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
   return (
     <motion.div
       ref={ref}
-      className="py-5 border-b border-border/40 last:border-b-0 -mx-2 px-2 group"
-      style={{ fontFamily: mono, borderRadius: "6px" }}
+      className="py-5 border-b border-border/40 last:border-b-0 -mx-2 px-2 group font-mono rounded-[6px]"
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
@@ -30,30 +28,28 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
           <span
-            className="text-muted-foreground/20 group-hover:text-accent/40 transition-colors duration-200 shrink-0"
-            style={{ fontSize: "0.6875rem" }}
+            className="text-muted-foreground/20 group-hover:text-accent/40 transition-colors duration-200 shrink-0 text-label"
           >
             ›
           </span>
           <h3
-            className="text-foreground/85 group-hover:text-foreground transition-colors duration-200"
-            style={{ fontSize: "0.9375rem", fontWeight: 500 }}
+            className="text-foreground/85 group-hover:text-foreground transition-colors duration-200 text-mono-lg font-medium"
           >
             {project.name}
           </h3>
           {project.featured && <Tag variant="highlight">featured</Tag>}
           {project.status && (
-            <span className="text-muted-foreground/35" style={{ fontSize: "0.6875rem" }}>
+            <span className="text-muted-foreground/35 text-label">
               {project.status}
             </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground/30" style={{ fontSize: "0.6875rem" }}>
+          <span className="text-muted-foreground/30 text-label">
             {project.platforms.join(" / ")}
           </span>
           {project.year && (
-            <span className="text-accent/50" style={{ fontSize: "0.6875rem" }}>
+            <span className="text-accent/50 text-label">
               {project.year}
             </span>
           )}
@@ -61,13 +57,13 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 pl-6" style={{ fontSize: "0.8125rem", lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 pl-6 text-mono" style={{ lineHeight: 1.75 }}>
         {project.description}
       </p>
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/35 pl-6" style={{ fontSize: "0.75rem", lineHeight: 1.7 }}>
+        <p className="mt-2 text-foreground/35 pl-6 text-mono-sm" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}
@@ -78,8 +74,7 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
           {project.tags.map((tag) => (
             <motion.span
               key={tag}
-              className="px-2 py-0.5 text-muted-foreground/40 bg-muted-foreground/5 cursor-default"
-              style={{ fontSize: "0.625rem", borderRadius: "4px" }}
+              className="px-2 py-0.5 text-muted-foreground/40 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
               whileHover={{
                 scale: 1.08,
                 color: "var(--accent)",
@@ -97,8 +92,7 @@ function ProjectEntry({ project, index }: { project: Project; index: number }) {
             <motion.a
               key={link.type}
               href={link.href}
-              className="inline-flex items-center gap-1 text-muted-foreground/40 hover:text-accent transition-colors duration-200"
-              style={{ fontSize: "0.6875rem" }}
+              className="inline-flex items-center gap-1 text-muted-foreground/40 hover:text-accent transition-colors duration-200 text-label"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ y: -1, scale: 1.05 }}

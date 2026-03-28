@@ -5,7 +5,6 @@ import { useInView } from "./useInView";
 import { CpuGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export interface BlogPostMeta {
@@ -78,12 +77,11 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
             <motion.button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-2.5 py-1 transition-all duration-200 cursor-pointer ${
+              className={`px-2.5 py-1 transition-all duration-200 cursor-pointer font-mono text-label rounded-[5px] ${
                 activeCategory === cat
                   ? "text-accent bg-accent/10"
                   : "text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted-foreground/5"
               }`}
-              style={{ fontFamily: mono, fontSize: "0.6875rem", borderRadius: "5px" }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -107,8 +105,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   <motion.a
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline"
-                    style={{ fontFamily: mono, borderRadius: "6px", display: "flex" }}
+                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline font-mono rounded-[6px]"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.04, ease }}
@@ -121,8 +118,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   >
                     {/* Marker */}
                     <span
-                      className="text-muted-foreground/20 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5"
-                      style={{ fontSize: "0.75rem" }}
+                      className="text-muted-foreground/20 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
                     >
                       ›
                     </span>
@@ -130,14 +126,12 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                     {/* Title */}
                     <div className="flex-1 min-w-0 relative">
                       <span
-                        className="text-foreground/75 group-hover:text-foreground transition-colors duration-200"
-                        style={{ fontSize: "0.875rem" }}
+                        className="text-foreground/75 group-hover:text-foreground transition-colors duration-200 text-sm"
                       >
                         {post.title}
                       </span>
                       <p
-                        className="mt-0.5 text-muted-foreground/40 group-hover:text-muted-foreground/55 transition-colors duration-200 truncate"
-                        style={{ fontSize: "0.75rem" }}
+                        className="mt-0.5 text-muted-foreground/40 group-hover:text-muted-foreground/55 transition-colors duration-200 truncate text-mono-sm"
                       >
                         {post.summary}
                       </p>
@@ -150,8 +144,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
 
                     {/* Date */}
                     <span
-                      className="text-accent/40 shrink-0"
-                      style={{ fontSize: "0.6875rem" }}
+                      className="text-accent/40 shrink-0 text-label"
                     >
                       {post.date}
                     </span>
@@ -159,8 +152,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                 ))}
                 {filtered.length === 0 && (
                   <p
-                    className="py-8 text-center text-muted-foreground/30"
-                    style={{ fontFamily: mono, fontSize: "0.8125rem" }}
+                    className="py-8 text-center text-muted-foreground/30 font-mono text-mono"
                   >
                     no posts found
                   </p>

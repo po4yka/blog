@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { Cmd, Accent, MacWindow, OutputBlock } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 /** Small hook for copy-to-clipboard with flash feedback */
@@ -42,8 +41,7 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
         <MacWindow title="adb — devices" dimLights delay={delay + 0.05}>
           <div ref={ref}>
             <motion.div
-              className="text-muted-foreground/40 pb-2"
-              style={{ fontSize: "0.8125rem" }}
+              className="text-muted-foreground/40 pb-2 text-mono"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.08 }}
@@ -53,11 +51,9 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
             {devices.map((d, i) => (
               <motion.div
                 key={d.serial}
-                className="flex items-baseline gap-4 py-1 -mx-2 px-2 cursor-pointer"
+                className="flex items-baseline gap-4 py-1 -mx-2 px-2 cursor-pointer text-mono rounded-[4px]"
                 style={{
-                  fontSize: "0.8125rem",
                   lineHeight: 1.7,
-                  borderRadius: "4px",
                   backgroundColor: hoveredSerial === d.serial ? "rgba(139, 124, 246, 0.05)" : "transparent",
                   transition: "background-color 0.15s ease",
                 }}
@@ -72,7 +68,7 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
                 <span className="text-foreground/60 shrink-0" style={{ minWidth: "140px" }}>
                   {d.serial}
                   {copiedText === d.serial && (
-                    <span className="text-accent/60 ml-2" style={{ fontSize: "0.625rem" }}>copied!</span>
+                    <span className="text-accent/60 ml-2 text-xs">copied!</span>
                   )}
                 </span>
                 <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>
@@ -84,8 +80,7 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
               </motion.div>
             ))}
             <motion.div
-              className="text-muted-foreground/25 pt-2"
-              style={{ fontSize: "0.75rem" }}
+              className="text-muted-foreground/25 pt-2 text-mono-sm"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.3 }}
@@ -125,8 +120,7 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
         <MacWindow title="gradle — build" delay={delay + 0.05}>
           <div ref={ref}>
             <motion.div
-              className="text-muted-foreground/30 pb-2"
-              style={{ fontSize: "0.75rem" }}
+              className="text-muted-foreground/30 pb-2 text-mono-sm"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.08 }}
@@ -137,11 +131,9 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
             {tasks.map((task, i) => (
               <motion.div
                 key={task.name}
-                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
                 style={{
-                  fontSize: "0.8125rem",
                   lineHeight: 1.7,
-                  borderRadius: "4px",
                   backgroundColor: hoveredTask === task.name ? "rgba(139, 124, 246, 0.04)" : "transparent",
                   transition: "background-color 0.15s ease",
                 }}
@@ -152,7 +144,8 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
                 onMouseLeave={() => setHoveredTask(null)}
               >
                 <motion.span
-                  style={{ color: "var(--ok)", fontWeight: 500, opacity: 0.8 }}
+                  className="font-medium"
+                  style={{ color: "var(--ok)", opacity: 0.8 }}
                   whileHover={{ scale: 1.2, rotate: 10 }}
                 >
                   ✓
@@ -163,8 +156,8 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
             ))}
 
             <motion.div
-              className="pt-3 mt-3 space-y-1"
-              style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
+              className="pt-3 mt-3 space-y-1 text-mono"
+              style={{ borderTop: "1px solid var(--border)" }}
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.45 }}
@@ -173,7 +166,7 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
                 <span style={{ color: "var(--ok)", opacity: 0.8 }}>BUILD SUCCESSFUL</span>
                 <span className="text-muted-foreground/30"> in 36s</span>
               </div>
-              <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
+              <div className="text-muted-foreground/30 text-mono-sm">
                 47 actionable tasks: 47 executed · 0 up-to-date
               </div>
             </motion.div>
@@ -220,8 +213,7 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
             {runtimes.map((rt, ri) => (
               <div key={rt.runtime}>
                 <motion.div
-                  className="text-foreground/60 pb-1.5"
-                  style={{ fontSize: "0.8125rem", fontWeight: 500 }}
+                  className="text-foreground/60 pb-1.5 text-mono font-medium"
                   initial={{ opacity: 0 }}
                   animate={inView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.3, delay: delay + 0.1 + ri * 0.1 }}
@@ -231,11 +223,9 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
                 {rt.devices.map((dev, di) => (
                   <motion.div
                     key={dev.udid}
-                    className="flex items-baseline gap-3 py-[3px] pl-4 -mx-2 px-2 cursor-default"
+                    className="flex items-baseline gap-3 py-[3px] pl-4 -mx-2 px-2 cursor-default text-mono rounded-[4px]"
                     style={{
-                      fontSize: "0.8125rem",
                       lineHeight: 1.7,
-                      borderRadius: "4px",
                       backgroundColor: hoveredDevice === dev.udid ? "rgba(139, 124, 246, 0.04)" : "transparent",
                       transition: "background-color 0.15s ease",
                     }}
@@ -246,14 +236,12 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
                     onMouseLeave={() => setHoveredDevice(null)}
                   >
                     <span className="text-foreground/55 flex-1">{dev.name}</span>
-                    <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
+                    <span className="text-muted-foreground/25 shrink-0 text-label">
                       ({dev.udid})
                     </span>
                     <motion.span
-                      className="shrink-0"
+                      className="shrink-0 text-label font-medium"
                       style={{
-                        fontSize: "0.6875rem",
-                        fontWeight: 500,
                         color: dev.state === "Booted" ? "var(--signal-green)" : "var(--muted-foreground)",
                         opacity: dev.state === "Booted" ? 0.8 : 0.3,
                       }}
@@ -299,8 +287,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
         <MacWindow title="fastlane — deploy" delay={delay + 0.05}>
           <div ref={ref}>
             <motion.div
-              className="text-muted-foreground/25 pb-3"
-              style={{ fontSize: "0.6875rem" }}
+              className="text-muted-foreground/25 pb-3 text-label"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.08 }}
@@ -311,14 +298,15 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
             {lanes.map((lane, i) => (
               <motion.div
                 key={lane.step}
-                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-                style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-mono rounded-[4px]"
+                style={{ lineHeight: 1.7 }}
                 initial={{ opacity: 0, x: -4 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
               >
                 <motion.span
-                  style={{ color: lane.color, fontWeight: 500, opacity: 0.8 }}
+                  className="font-medium"
+                  style={{ color: lane.color, opacity: 0.8 }}
                   whileHover={{ scale: 1.2, rotate: 10 }}
                 >
                   {lane.icon}
@@ -328,8 +316,8 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
             ))}
 
             <motion.div
-              className="pt-3 mt-3 space-y-1"
-              style={{ borderTop: "1px solid var(--border)", fontSize: "0.8125rem" }}
+              className="pt-3 mt-3 space-y-1 text-mono"
+              style={{ borderTop: "1px solid var(--border)" }}
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.5 }}
@@ -337,7 +325,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
               <div className="text-foreground/50">
                 <span style={{ color: "var(--ok)", opacity: 0.8 }}>fastlane.tools finished successfully</span>
               </div>
-              <div className="text-muted-foreground/30" style={{ fontSize: "0.75rem" }}>
+              <div className="text-muted-foreground/30 text-mono-sm">
                 Duration: 4 minutes 12 seconds · Build #247
               </div>
             </motion.div>
@@ -377,11 +365,9 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
             {commits.map((c, i) => (
               <motion.div
                 key={c.hash}
-                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2"
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
                 style={{
-                  fontSize: "0.8125rem",
                   lineHeight: 1.7,
-                  borderRadius: "4px",
                   backgroundColor: hoveredHash === c.hash ? "rgba(139, 124, 246, 0.04)" : "transparent",
                   transition: "background-color 0.15s ease",
                 }}
@@ -392,11 +378,10 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
                 onMouseLeave={() => setHoveredHash(null)}
               >
                 <motion.span
-                  className="cursor-pointer select-none"
+                  className="cursor-pointer select-none text-mono-sm"
                   style={{
                     color: copiedText === c.hash ? "var(--accent)" : "var(--signal-yellow)",
                     opacity: hoveredHash === c.hash ? 0.9 : 0.6,
-                    fontSize: "0.75rem",
                     transition: "opacity 0.15s ease",
                   }}
                   onClick={() => copy(c.hash)}
@@ -408,13 +393,10 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
                 </motion.span>
                 {c.tag && (
                   <motion.span
-                    className="shrink-0 px-1.5 py-0"
+                    className="shrink-0 px-1.5 py-0 text-xs rounded-[3px] font-medium"
                     style={{
-                      fontSize: "0.625rem",
-                      borderRadius: "3px",
                       color: "var(--accent)",
                       backgroundColor: "rgba(139,124,246,0.1)",
-                      fontWeight: 500,
                     }}
                     whileHover={{ scale: 1.1 }}
                   >
@@ -422,7 +404,7 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
                   </motion.span>
                 )}
                 <span className="text-foreground/55 flex-1">{c.msg}</span>
-                <span className="text-muted-foreground/25 shrink-0" style={{ fontSize: "0.6875rem" }}>
+                <span className="text-muted-foreground/25 shrink-0 text-label">
                   {c.time}
                 </span>
               </motion.div>
@@ -464,12 +446,11 @@ export function AdbLogcat({ delay = 0 }: { delay?: number }) {
         <MacWindow title="logcat — app output" dimLights delay={delay + 0.05}>
           <div ref={ref} className="overflow-x-auto">
             {/* Filter buttons */}
-            <div className="flex flex-wrap gap-1 pb-3" style={{ fontSize: "0.625rem" }}>
+            <div className="flex flex-wrap gap-1 pb-3 text-xs">
               <motion.button
                 className={`px-1.5 py-0.5 cursor-pointer ${
                   !filter ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
-                }`}
-                style={{ borderRadius: "3px", fontFamily: mono }}
+                } rounded-[3px] font-mono`}
                 onClick={() => setFilter(null)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -481,8 +462,7 @@ export function AdbLogcat({ delay = 0 }: { delay?: number }) {
                   key={tag}
                   className={`px-1.5 py-0.5 cursor-pointer ${
                     filter === tag ? "text-accent bg-accent/10" : "text-muted-foreground/30 hover:text-muted-foreground/50"
-                  }`}
-                  style={{ borderRadius: "3px", fontFamily: mono }}
+                  } rounded-[3px] font-mono`}
                   onClick={() => setFilter(filter === tag ? null : tag)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -495,16 +475,16 @@ export function AdbLogcat({ delay = 0 }: { delay?: number }) {
             {filteredLogs.map((log, i) => (
               <motion.div
                 key={`${log.time}-${log.tag}`}
-                className="flex items-baseline gap-2 py-[2px] whitespace-nowrap hover:bg-accent/[0.03] -mx-1 px-1 transition-colors duration-100"
-                style={{ fontSize: "0.75rem", lineHeight: 1.7, borderRadius: "3px" }}
+                className="flex items-baseline gap-2 py-[2px] whitespace-nowrap hover:bg-accent/[0.03] -mx-1 px-1 transition-colors duration-100 text-mono-sm rounded-[3px]"
+                style={{ lineHeight: 1.7 }}
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.2, delay: delay + 0.08 + i * 0.035 }}
               >
                 <span className="text-muted-foreground/25 shrink-0">{log.time}</span>
                 <span
-                  className="shrink-0"
-                  style={{ color: log.color, opacity: 0.7, fontWeight: 500, minWidth: "12px", textAlign: "center" }}
+                  className="shrink-0 font-medium"
+                  style={{ color: log.color, opacity: 0.7, minWidth: "12px", textAlign: "center" }}
                 >
                   {log.level}
                 </span>
@@ -520,8 +500,7 @@ export function AdbLogcat({ delay = 0 }: { delay?: number }) {
               </motion.div>
             ))}
             <motion.div
-              className="text-muted-foreground/20 pt-2"
-              style={{ fontSize: "0.6875rem" }}
+              className="text-muted-foreground/20 pt-2 text-label"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.4 }}
@@ -558,8 +537,7 @@ export function SwiftPackageResolve({ delay = 0 }: { delay?: number }) {
         <MacWindow title="spm — resolve" dimLights delay={delay + 0.05}>
           <div ref={ref}>
             <motion.div
-              className="text-muted-foreground/30 pb-2"
-              style={{ fontSize: "0.75rem" }}
+              className="text-muted-foreground/30 pb-2 text-mono-sm"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.08 }}
@@ -570,8 +548,8 @@ export function SwiftPackageResolve({ delay = 0 }: { delay?: number }) {
             {packages.map((pkg, i) => (
               <motion.div
                 key={pkg.name}
-                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150"
-                style={{ fontSize: "0.8125rem", lineHeight: 1.7, borderRadius: "4px" }}
+                className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-mono rounded-[4px]"
+                style={{ lineHeight: 1.7 }}
                 initial={{ opacity: 0, x: -4 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
@@ -583,18 +561,18 @@ export function SwiftPackageResolve({ delay = 0 }: { delay?: number }) {
                   ✓
                 </motion.span>
                 <span className="text-foreground/60">{pkg.name}</span>
-                <span style={{ color: "var(--accent)", opacity: 0.5, fontSize: "0.6875rem" }}>
+                <span className="text-label" style={{ color: "var(--accent)", opacity: 0.5 }}>
                   {pkg.version}
                 </span>
-                <span className="text-muted-foreground/20" style={{ fontSize: "0.6875rem" }}>
+                <span className="text-muted-foreground/20 text-label">
                   {pkg.source}
                 </span>
               </motion.div>
             ))}
 
             <motion.div
-              className="text-muted-foreground/30 pt-3"
-              style={{ fontSize: "0.75rem", borderTop: "1px solid var(--border)", marginTop: "12px", paddingTop: "12px" }}
+              className="text-muted-foreground/30 pt-3 text-mono-sm"
+              style={{ borderTop: "1px solid var(--border)", marginTop: "12px", paddingTop: "12px" }}
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.38 }}
@@ -623,8 +601,8 @@ export function KtlintCheck({ delay = 0 }: { delay?: number }) {
         <OutputBlock delay={delay + 0.05}>
           <div
             ref={ref}
-            className="space-y-1"
-            style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
+            className="space-y-1 text-mono"
+            style={{ lineHeight: 1.7 }}
           >
             <motion.div
               className="text-muted-foreground/35"
@@ -661,8 +639,7 @@ export function KtlintCheck({ delay = 0 }: { delay?: number }) {
               ktlint — all files formatted correctly
             </motion.div>
             <motion.div
-              className="text-muted-foreground/25 pt-1"
-              style={{ fontSize: "0.75rem" }}
+              className="text-muted-foreground/25 pt-1 text-mono-sm"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: delay + 0.28 }}

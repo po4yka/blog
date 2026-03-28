@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
@@ -33,7 +32,7 @@ export function Settings() {
 
   return (
     <MotionProvider>
-    <div className="space-y-8" style={{ fontFamily: mono }}>
+    <div className="space-y-8 font-mono">
       {/* Boot */}
       <BootBlock
         lines={[
@@ -70,11 +69,11 @@ export function Settings() {
                 ) : (
                   <Sun size={14} className="text-accent/60" />
                 )}
-                <span className="text-foreground/70" style={{ fontSize: "0.8125rem" }}>
+                <span className="text-foreground/70 text-mono">
                   theme
                 </span>
               </div>
-              <span className="text-muted-foreground/40" style={{ fontSize: "0.6875rem" }}>
+              <span className="text-muted-foreground/40 text-label">
                 {theme === "system" ? `system (${resolvedTheme})` : theme}
               </span>
             </div>
@@ -83,12 +82,11 @@ export function Settings() {
                 <button
                   key={value}
                   onClick={() => setTheme(value)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-200 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
                     theme === value
                       ? "text-accent bg-accent/10"
                       : "text-muted-foreground/40 hover:text-foreground/60 bg-muted-foreground/5"
                   }`}
-                  style={{ fontSize: "0.6875rem", borderRadius: "5px" }}
                 >
                   <Icon size={11} strokeWidth={2} />
                   {label}
@@ -102,11 +100,11 @@ export function Settings() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {reduceMotion ? <ZapOff size={14} className="text-muted-foreground/40" /> : <Zap size={14} className="text-accent/60" />}
-                <span className="text-foreground/70" style={{ fontSize: "0.8125rem" }}>
+                <span className="text-foreground/70 text-mono">
                   motion
                 </span>
               </div>
-              <span className="text-muted-foreground/40" style={{ fontSize: "0.6875rem" }}>
+              <span className="text-muted-foreground/40 text-label">
                 {reduceMotion ? "reduced" : "full"}
               </span>
             </div>
@@ -115,12 +113,11 @@ export function Settings() {
                 <button
                   key={String(val)}
                   onClick={() => setReduceMotion(val)}
-                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer ${
+                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
                     reduceMotion === val
                       ? "text-accent bg-accent/10"
                       : "text-muted-foreground/40 hover:text-foreground/60 bg-muted-foreground/5"
                   }`}
-                  style={{ fontSize: "0.6875rem", borderRadius: "5px" }}
                 >
                   {val ? "reduced" : "full"}
                 </button>
@@ -131,10 +128,10 @@ export function Settings() {
           {/* Font size */}
           <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
             <div className="flex items-center justify-between">
-              <span className="text-foreground/70" style={{ fontSize: "0.8125rem" }}>
+              <span className="text-foreground/70 text-mono">
                 font_size
               </span>
-              <span className="text-muted-foreground/40" style={{ fontSize: "0.6875rem" }}>
+              <span className="text-muted-foreground/40 text-label">
                 {fontSize}
               </span>
             </div>
@@ -143,12 +140,11 @@ export function Settings() {
                 <button
                   key={size}
                   onClick={() => setFontSize(size)}
-                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer ${
+                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
                     fontSize === size
                       ? "text-accent bg-accent/10"
                       : "text-muted-foreground/40 hover:text-foreground/60 bg-muted-foreground/5"
                   }`}
-                  style={{ fontSize: "0.6875rem", borderRadius: "5px" }}
                 >
                   {size}
                 </button>
@@ -160,8 +156,7 @@ export function Settings() {
           <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer"
-              style={{ fontSize: "0.75rem" }}
+              className="inline-flex items-center gap-2 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer text-mono-sm"
             >
               {resetDone ? <Check size={12} /> : <RotateCcw size={12} />}
               {resetDone ? "defaults restored" : "$ reset --defaults"}

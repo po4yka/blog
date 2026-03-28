@@ -4,7 +4,6 @@ import { roles } from "./experienceData";
 import { Cmd, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function Experience() {
@@ -22,8 +21,7 @@ export function Experience() {
           {roles.slice(0, 3).map((role, i) => (
             <motion.div
               key={role.period}
-              className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group"
-              style={{ fontFamily: mono, borderRadius: "6px" }}
+              className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group font-mono rounded-[6px]"
               initial={{ opacity: 0, y: 8 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
@@ -36,28 +34,25 @@ export function Experience() {
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div className="flex items-baseline gap-3">
                   <span
-                    className="text-foreground/80 group-hover:text-foreground transition-colors duration-200"
-                    style={{ fontSize: "0.875rem", fontWeight: 500 }}
+                    className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-sm font-medium"
                   >
                     {role.title}
                   </span>
                   <span
-                    className="text-muted-foreground/40"
-                    style={{ fontSize: "0.75rem" }}
+                    className="text-muted-foreground/40 text-mono-sm"
                   >
                     {role.company}
                   </span>
                 </div>
                 <span
-                  className="text-accent/50"
-                  style={{ fontSize: "0.75rem" }}
+                  className="text-accent/50 text-mono-sm"
                 >
                   {role.period}
                 </span>
               </div>
               <p
-                className="mt-1.5 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200"
-                style={{ fontSize: "0.8125rem", lineHeight: 1.7 }}
+                className="mt-1.5 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 text-mono"
+                style={{ lineHeight: 1.7 }}
               >
                 {role.description}
               </p>
@@ -66,8 +61,7 @@ export function Experience() {
                   {role.tags.map((tag) => (
                     <motion.span
                       key={tag}
-                      className="text-muted-foreground/35 bg-muted-foreground/5 px-1.5 py-0.5 cursor-default"
-                      style={{ fontSize: "0.6875rem", borderRadius: "4px" }}
+                      className="text-muted-foreground/35 bg-muted-foreground/5 px-1.5 py-0.5 cursor-default text-label rounded-[4px]"
                       whileHover={{
                         scale: 1.08,
                         color: "var(--accent)",
@@ -92,8 +86,7 @@ export function Experience() {
       >
         <motion.a
           href="/experience"
-          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block"
-          style={{ fontFamily: mono, fontSize: "0.75rem" }}
+          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >

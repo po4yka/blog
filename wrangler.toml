@@ -1,0 +1,7 @@
+name = "po4yka-blog"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blog-db"
+database_id = "local"  # Replace with real ID after `wrangler d1 create blog-db`
