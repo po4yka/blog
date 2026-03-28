@@ -4,4 +4,4 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "blog-db"
-database_id = "local"  # Replace with real ID after `wrangler d1 create blog-db`
+database_id = "93342834-5394-4f3e-8726-e8169f038ea8"
