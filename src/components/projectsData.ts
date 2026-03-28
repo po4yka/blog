@@ -1,3 +1,4 @@
+// Static data for public site build. Admin manages equivalent data in D1.
 import type { Project } from "@/types";
 
 export type { Project };
