@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import type { GitHubRepoSummary } from "@/types";
 
 interface GitHubRepo {
   name: string;
@@ -12,15 +13,6 @@ interface GitHubRepo {
   topics: string[];
   fork: boolean;
   archived: boolean;
-}
-
-export interface GitHubRepoSummary {
-  name: string;
-  description: string;
-  url: string;
-  stars: number;
-  language: string | null;
-  topics: string[];
 }
 
 export const GET: APIRoute = async () => {

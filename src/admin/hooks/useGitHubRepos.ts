@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { GitHubRepoSummary } from "@/pages/api/github/repos";
+import type { GitHubRepoSummary } from "@/types";
 
 export function useGitHubRepos() {
   return useQuery({

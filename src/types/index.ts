@@ -61,3 +61,12 @@ export interface SkillGroup {
   label: string;
   items: string[];
 }
+
+export interface GitHubRepoSummary {
+  name: string;
+  description: string;
+  url: string;
+  stars: number;
+  language: string | null;
+  topics: string[];
+}
