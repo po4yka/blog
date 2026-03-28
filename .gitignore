@@ -2,6 +2,7 @@ node_modules/
 dist/
 .vite/
 .astro/
+.wrangler/
 *.local
 .env
 .env.*
