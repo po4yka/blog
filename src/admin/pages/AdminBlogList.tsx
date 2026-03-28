@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Plus, Trash2, Star, StarOff, Search, FileText } from "lucide-react";
-import { useAdmin } from "../components/adminStore";
+import { useAdmin } from "../../stores/adminStore";
 
 export function AdminBlogList() {
   const { blogPosts, deleteBlogPost, saveBlogPost } = useAdmin();

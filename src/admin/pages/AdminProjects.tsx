@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, Star, StarOff, ChevronDown, ChevronUp } from "lucide-react";
-import { useAdmin, type Project } from "../components/adminStore";
+import { useAdmin, type Project } from "../../stores/adminStore";
 
 function newProject(): Project {
   return {

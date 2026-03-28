@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
 import { useEffect, Suspense } from "react";
-import { useAdmin } from "./adminStore";
+import { useAdmin } from "../../stores/adminStore";
 import {
   LayoutDashboard,
   FileText,

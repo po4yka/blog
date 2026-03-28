@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Save, RotateCcw, AlertTriangle, Plus, X, Check } from "lucide-react";
-import { useAdmin, type SiteSettings } from "../components/adminStore";
+import { useAdmin, type SiteSettings } from "../../stores/adminStore";
 
 export function AdminSettings() {
   const { settings, updateSettings, categories, addCategory, removeCategory, resetToDefaults } = useAdmin();

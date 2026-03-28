@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Lock, ArrowRight, AlertCircle } from "lucide-react";
-import { useAdmin } from "../components/adminStore";
+import { useAdmin } from "../../stores/adminStore";
 
 export function AdminLogin() {
   const [password, setPassword] = useState("");

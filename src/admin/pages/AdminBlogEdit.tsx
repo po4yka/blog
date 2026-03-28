@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
-import { useAdmin } from "../components/adminStore";
+import { useAdmin } from "../../stores/adminStore";
 import type { BlogPost } from "../../components/blogData";
 
 function generateSlug(title: string): string {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
-import { useAdmin, type Role } from "../components/adminStore";
+import { useAdmin, type Role } from "../../stores/adminStore";
 
 function newRole(): Role {
   return {

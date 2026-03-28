@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { FileText, FolderKanban, Briefcase, Clock, ArrowRight, ArrowUpRight } from "lucide-react";
-import { useAdmin } from "../components/adminStore";
+import { useAdmin } from "../../stores/adminStore";
 
 export function AdminDashboard() {
   const { blogPosts, projects, roles, settings } = useAdmin();

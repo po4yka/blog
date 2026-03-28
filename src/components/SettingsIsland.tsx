@@ -1,8 +1,9 @@
 import { motion } from "motion/react";
 import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor } from "lucide-react";
-import { useSettings, type FontSize, type ThemeMode } from "./settingsStore";
+import { useSettings, type FontSize, type ThemeMode } from "../stores/settingsStore";
 import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
+import { MotionProvider } from "./MotionProvider";
 
 const mono = "'JetBrains Mono', monospace";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -31,6 +32,7 @@ export function Settings() {
   };
 
   return (
+    <MotionProvider>
     <div className="space-y-8" style={{ fontFamily: mono }}>
       {/* Boot */}
       <BootBlock
@@ -168,5 +170,6 @@ export function Settings() {
         </motion.div>
       </MacWindow>
     </div>
+    </MotionProvider>
   );
 }

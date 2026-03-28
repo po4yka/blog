@@ -1,24 +1,21 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router";
-import { AdminProvider } from "./adminStore";
 
 export function AdminRoot() {
   return (
-    <AdminProvider>
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <span
-              className="text-muted-foreground/40"
-              style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem" }}
-            >
-              loading...
-            </span>
-          </div>
-        }
-      >
-        <Outlet />
-      </Suspense>
-    </AdminProvider>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <span
+            className="text-muted-foreground/40"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem" }}
+          >
+            loading...
+          </span>
+        </div>
+      }
+    >
+      <Outlet />
+    </Suspense>
   );
 }
