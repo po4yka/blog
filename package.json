@@ -9,7 +9,17 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "commit-msg": "npx commitlint --edit $1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --no-warn-ignored"
+    ]
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.4",
@@ -77,6 +87,8 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
@@ -84,6 +96,8 @@
     "eslint": "^10.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "lint-staged": "^16.4.0",
+    "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.2",
