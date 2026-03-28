@@ -221,7 +221,7 @@ export function Cmd({
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, []);
+  }, [ref]);
 
   return (
     <motion.div

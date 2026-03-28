@@ -5,13 +5,15 @@ import { MotionProvider } from "./MotionProvider";
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function NotFound() {
-  const [glitch, setGlitch] = useState(false);
+  const [glitchTransform, setGlitchTransform] = useState("none");
 
   // Periodic glitch effect on the 404 number
   useEffect(() => {
     const id = setInterval(() => {
-      setGlitch(true);
-      setTimeout(() => setGlitch(false), 150);
+      const x = Math.random() * 4 - 2;
+      const y = Math.random() * 2 - 1;
+      setGlitchTransform(`translate(${x}px, ${y}px)`);
+      setTimeout(() => setGlitchTransform("none"), 150);
     }, 4000);
     return () => clearInterval(id);
   }, []);
@@ -97,9 +99,9 @@ export function NotFound() {
               className="text-foreground/80"
               style={{
                 display: "inline-block",
-                transform: glitch ? `translate(${Math.random() * 4 - 2}px, ${Math.random() * 2 - 1}px)` : "none",
-                textShadow: glitch ? "2px 0 var(--accent), -2px 0 var(--destructive)" : "none",
-                transition: glitch ? "none" : "all 0.1s ease",
+                transform: glitchTransform,
+                textShadow: glitchTransform !== "none" ? "2px 0 var(--accent), -2px 0 var(--destructive)" : "none",
+                transition: glitchTransform !== "none" ? "none" : "all 0.1s ease",
               }}
             >
               404

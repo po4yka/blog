@@ -16,7 +16,7 @@ import { MotionProvider } from "./MotionProvider";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
-function ProjectEntry({ project, index }: { project: Project; index: number }) {
+function ProjectEntry({ project }: { project: Project }) {
   const { ref, inView } = useInView(0.08);
 
   return (
@@ -143,8 +143,8 @@ export function ProjectsPage() {
 
       {/* Project entries in macOS window */}
       <MacWindow title={`projects — ${projects.length} entries`} dimLights delay={0.05}>
-        {projects.map((project, i) => (
-          <ProjectEntry key={project.slug} project={project} index={i} />
+        {projects.map((project) => (
+          <ProjectEntry key={project.slug} project={project} />
         ))}
       </MacWindow>
 

@@ -7,7 +7,7 @@ import { MotionProvider } from "./MotionProvider";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
-function RoleEntry({ role, index }: { role: Role; index: number }) {
+function RoleEntry({ role }: { role: Role }) {
   const { ref, inView } = useInView(0.08);
 
   return (
@@ -138,8 +138,8 @@ export function ExperiencePage() {
           cat <Accent>resume.log</Accent>
         </Cmd>
         <MacWindow title="resume.log" dimLights delay={0.05}>
-          {roles.map((role, i) => (
-            <RoleEntry key={role.period} role={role} index={i} />
+          {roles.map((role) => (
+            <RoleEntry key={role.period} role={role} />
           ))}
         </MacWindow>
       </div>

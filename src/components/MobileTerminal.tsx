@@ -4,8 +4,6 @@ import { useState, useCallback } from "react";
 import { Cmd, Accent, MacWindow, OutputBlock } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
-
 /** Small hook for copy-to-clipboard with flash feedback */
 function useCopy() {
   const [copiedText, setCopiedText] = useState<string | null>(null);

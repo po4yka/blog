@@ -153,12 +153,12 @@ export function AdminExperience() {
                 </button>
                 <button
                   onClick={handleSave}
-                  disabled={!editing.title.trim()}
+                  disabled={!editing.title.trim() || saveRoleMutation.isPending}
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
                   style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
                 >
                   <Save size={13} />
-                  Save
+                  {saveRoleMutation.isPending ? "Saving..." : "Save"}
                 </button>
               </div>
             </div>

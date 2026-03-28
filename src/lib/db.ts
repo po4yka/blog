@@ -255,7 +255,8 @@ export async function removeCategory(db: D1Database, name: string): Promise<void
 export async function getSettings(db: D1Database): Promise<SiteSettings | null> {
   const row = await db.prepare("SELECT * FROM site_settings WHERE id = 1").first<SiteSettings & { id: number }>();
   if (!row) return null;
-  const { id: _, ...settings } = row;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id: _id, ...settings } = row;
   return settings;
 }
 

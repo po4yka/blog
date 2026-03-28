@@ -43,10 +43,11 @@ export function AdminBlogEdit() {
 
   const [tagInput, setTagInput] = useState("");
   const [preview, setPreview] = useState(false);
-  const [saved, setSaved] = useState(false);
 
+  // Sync form when existing post loads from server (external data source)
   useEffect(() => {
     if (existing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm(existing);
     }
   }, [existing]);
@@ -81,8 +82,6 @@ export function AdminBlogEdit() {
     }
     savePostMutation.mutate(form, {
       onSuccess: () => {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
         if (isNew) {
           navigate(`/admin/blog/edit/${form.slug}`, { replace: true });
         }
@@ -134,12 +133,12 @@ export function AdminBlogEdit() {
           </button>
           <button
             onClick={handleSave}
-            disabled={!form.title.trim()}
+            disabled={!form.title.trim() || savePostMutation.isPending}
             className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
           >
             <Save size={13} />
-            {saved ? "Saved!" : "Save"}
+            {savePostMutation.isPending ? "Saving..." : "Save"}
           </button>
         </div>
       </motion.div>
@@ -353,12 +352,12 @@ export function AdminBlogEdit() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={!form.title.trim()}
+                disabled={!form.title.trim() || savePostMutation.isPending}
                 className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
                 style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
               >
                 <Save size={14} />
-                {saved ? "Saved!" : "Save post"}
+                {savePostMutation.isPending ? "Saving..." : "Save post"}
               </button>
             </div>
           </div>

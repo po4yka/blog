@@ -162,12 +162,12 @@ export function AdminProjects() {
                 </button>
                 <button
                   onClick={handleSave}
-                  disabled={!editing.name.trim()}
+                  disabled={!editing.name.trim() || saveProjectMutation.isPending}
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
                   style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
                 >
                   <Save size={13} />
-                  Save
+                  {saveProjectMutation.isPending ? "Saving..." : "Save"}
                 </button>
               </div>
             </div>
