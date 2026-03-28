@@ -8,9 +8,12 @@ function GithubIcon({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
+import { lazy, Suspense } from "react";
 import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
-import { ProcessTable, UptimeStrip } from "./Decorations";
 import { useInView } from "./useInView";
+
+const ProcessTable = lazy(() => import("./Decorations").then(m => ({ default: m.ProcessTable })));
+const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
 import { projects, type Project } from "./projectsData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
@@ -149,8 +152,10 @@ export function ProjectsPage() {
       </MacWindow>
 
       {/* Decorative elements */}
-      <UptimeStrip delay={0.1} />
-      <ProcessTable delay={0.15} />
+      <Suspense fallback={null}>
+        <UptimeStrip delay={0.1} />
+        <ProcessTable delay={0.15} />
+      </Suspense>
     </div>
     </MotionProvider>
   );

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "./useInView";
-import { CpuGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
+
+const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { ease, duration, stagger, spring } from "@/lib/motion";
 
 export interface BlogPostMeta {
@@ -162,7 +163,9 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
       </div>
 
       {/* Decorative CPU history graph */}
-      <CpuGraph delay={0.1} />
+      <Suspense fallback={null}>
+        <CpuGraph delay={0.1} />
+      </Suspense>
     </div>
     </MotionProvider>
   );

@@ -1,7 +1,10 @@
 import { motion } from "motion/react";
+import { lazy, Suspense } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
-import { NetworkGraph, CpuGraph } from "./Decorations";
 import { useInView } from "./useInView";
+
+const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
+const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
@@ -176,10 +179,12 @@ export function ExperiencePage() {
       </motion.div>
 
       {/* Decorative system widgets */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <NetworkGraph delay={0.05} />
-        <CpuGraph delay={0.1} />
-      </div>
+      <Suspense fallback={null}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <NetworkGraph delay={0.05} />
+          <CpuGraph delay={0.1} />
+        </div>
+      </Suspense>
     </div>
     </MotionProvider>
   );

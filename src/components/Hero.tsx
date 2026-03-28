@@ -1,8 +1,10 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { useCallback } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
-import { CpuMonitor, NetworkGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
+
+const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
+const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
 
 const PARALLAX_PX = 4;
 
@@ -120,13 +122,15 @@ export function Hero() {
           </MacWindow>
 
           {/* Decorative system widgets — desktop only, with parallax */}
-          <motion.div
-            className="hidden lg:flex flex-col gap-4"
-            style={{ x: decorX, y: decorY }}
-          >
-            <CpuMonitor delay={0.2} />
-            <NetworkGraph delay={0.3} />
-          </motion.div>
+          <Suspense fallback={null}>
+            <motion.div
+              className="hidden lg:flex flex-col gap-4"
+              style={{ x: decorX, y: decorY }}
+            >
+              <CpuMonitor delay={0.2} />
+              <NetworkGraph delay={0.3} />
+            </motion.div>
+          </Suspense>
         </div>
       </div>
     </section>
