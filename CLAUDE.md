@@ -38,6 +38,22 @@ Key skills:
 
 Update skills: `bash scripts/update-impeccable.sh`
 
+## Taste Design Skills
+
+Additional design engineering skills from [taste-skill](https://github.com/Leonxlnx/taste-skill) in `.claude/skills/` and `.codex/skills/`.
+
+These supplement Impeccable with anti-AI-slop CSS patterns, output completeness, and parametric design dials.
+
+Key skills:
+- `/taste-skill` -- parametric design engineering (variance, motion, density dials)
+- `/redesign-skill` -- visual pattern audit and upgrade checklist
+- `/output-skill` -- prevents AI truncation and placeholder patterns
+- `/minimalist-skill` -- editorial minimalism (Notion/Linear aesthetic)
+
+These skills ban Inter font and purple accents by default. This project uses both intentionally. See `.claude/skills/taste-context/SKILL.md` for project overrides that take precedence.
+
+Update skills: `bash scripts/update-taste-skills.sh`
+
 ## Conventions
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
