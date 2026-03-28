@@ -20,13 +20,21 @@ import {
 ---
 <MainLayout>
   <div class="space-y-14">
-    <Hero client:visible />
-    <About client:visible />
+    <div class="section-reveal">
+      <Hero client:visible />
+    </div>
+    <div class="section-reveal" style="transition-delay:0.1s">
+      <About client:visible />
+    </div>
 
     <!-- Mobile dev: connected devices -->
-    <AdbDevices client:visible delay={0.05} />
+    <div class="section-reveal" style="transition-delay:0.15s">
+      <AdbDevices client:visible delay={0.05} />
+    </div>
 
-    <Links client:visible />
+    <div class="section-reveal" style="transition-delay:0.2s">
+      <Links client:visible />
+    </div>
 
     <!-- Decorative system metrics strip -->
     <UptimeStrip client:visible delay={0.05} />
@@ -63,4 +71,37 @@ import {
     <!-- Bottom system bar -->
     <SystemBottomBar client:visible delay={0.05} />
   </div>
+
+  <style>
+    .section-reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .section-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <script>
+    function initSectionReveal() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("visible");
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll(".section-reveal").forEach((el) => observer.observe(el));
+    }
+
+    // Run on initial load and on View Transition navigations
+    initSectionReveal();
+    document.addEventListener("astro:page-load", initSectionReveal);
+  </script>
 </MainLayout>

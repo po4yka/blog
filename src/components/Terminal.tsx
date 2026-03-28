@@ -1,8 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { useState, useCallback, type ReactNode } from "react";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease, duration, spring, stagger } from "@/lib/motion";
 
 /**
  * macOS traffic-light dots — hover to reveal close / minimize / maximize icons
@@ -75,7 +74,7 @@ export function MacWindow({
       }}
       initial={{ opacity: 0, y: 12 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay, ease }}
+      transition={{ duration: duration.slow, delay, ease }}
       whileHover={{
         boxShadow: "var(--window-shadow)",
         y: -1,
@@ -138,7 +137,7 @@ export function BootBlock({
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay, ease }}
+      transition={{ duration: duration.slow, delay, ease }}
       whileHover={{
         boxShadow: "var(--window-shadow)",
         y: -1,
@@ -170,7 +169,7 @@ export function BootBlock({
             style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 + i * 0.06 }}
+            transition={{ duration: 0.3, delay: delay + 0.08 + i * stagger.base }}
           >
             <span
               className="shrink-0 font-medium"
@@ -229,7 +228,7 @@ export function Cmd({
       className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg"
       initial={{ opacity: 0, y: 6 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.35, delay, ease }}
+      transition={{ duration: duration.base, delay, ease }}
       onClick={handleCopy}
       title="Click to copy command"
     >
@@ -239,12 +238,19 @@ export function Cmd({
       <span data-cmd-text className="text-foreground/90 group-hover:text-foreground transition-colors duration-200">
         {children}
       </span>
+      {/* Blinking cursor */}
+      <span
+        className="text-accent/40 select-none"
+        style={{ animation: "blink 1s step-end infinite" }}
+      >
+        _
+      </span>
       {/* Copy indicator */}
       <motion.span
         className="text-accent/60 select-none text-xs"
         initial={{ opacity: 0, x: -4 }}
         animate={copied ? { opacity: 1, x: 0 } : { opacity: 0, x: -4 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: duration.fast }}
       >
         {copied ? "copied!" : ""}
       </motion.span>
@@ -280,7 +286,7 @@ export function OutputBlock({
       className={`border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 font-mono ${className}`}
       initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay, ease }}
+      transition={{ duration: duration.slow, delay, ease }}
     >
       {children}
     </motion.div>
@@ -314,7 +320,7 @@ export function LessViewer({
       }}
       initial={{ opacity: 0, y: 12 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay, ease }}
+      transition={{ duration: duration.slow, delay, ease }}
       whileHover={{
         y: -1,
         transition: { duration: 0.25 },
@@ -368,7 +374,7 @@ export function InfoTable({
       className="space-y-0 font-mono"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.4, delay, ease }}
+      transition={{ duration: duration.base, delay, ease }}
     >
       {rows.map((row, i) => (
         <motion.div
@@ -377,7 +383,7 @@ export function InfoTable({
           style={{ lineHeight: 1.6 }}
           initial={{ opacity: 0, x: -4 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.3, delay: delay + 0.04 + i * 0.04 }}
+          transition={{ duration: 0.3, delay: delay + stagger.fast + i * stagger.fast }}
         >
           <span
             className="text-muted-foreground/50 shrink-0"
@@ -440,7 +446,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       className="space-y-1 font-mono text-mono"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.35, delay }}
+      transition={{ duration: duration.base, delay }}
     >
       {/* Previous commands */}
       {history.map((h, i) => (
@@ -516,7 +522,8 @@ export function Tag({
       }}
       whileHover={{
         scale: 1.08,
-        transition: { type: "spring", stiffness: 400, damping: 15 },
+        y: -1,
+        transition: spring.snappy,
       }}
       whileTap={{ scale: 0.95 }}
     >

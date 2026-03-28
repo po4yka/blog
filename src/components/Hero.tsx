@@ -1,12 +1,38 @@
-import { motion } from "motion/react";
+import { motion, useMotionValue, useTransform } from "motion/react";
+import { useCallback } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { CpuMonitor, NetworkGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
 
+const PARALLAX_PX = 4;
+
 export function Hero() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const decorX = useTransform(mouseX, [-1, 1], [-PARALLAX_PX, PARALLAX_PX]);
+  const decorY = useTransform(mouseY, [-1, 1], [-PARALLAX_PX, PARALLAX_PX]);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      mouseX.set(((e.clientX - rect.left) / rect.width) * 2 - 1);
+      mouseY.set(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    },
+    [mouseX, mouseY]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    mouseX.set(0);
+    mouseY.set(0);
+  }, [mouseX, mouseY]);
+
   return (
     <MotionProvider>
-    <section className="space-y-8 pt-8">
+    <section
+      className="space-y-8 pt-8"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Boot messages */}
       <BootBlock
         lines={[
@@ -93,11 +119,14 @@ export function Hero() {
             />
           </MacWindow>
 
-          {/* Decorative system widgets — desktop only */}
-          <div className="hidden lg:flex flex-col gap-4">
+          {/* Decorative system widgets — desktop only, with parallax */}
+          <motion.div
+            className="hidden lg:flex flex-col gap-4"
+            style={{ x: decorX, y: decorY }}
+          >
             <CpuMonitor delay={0.2} />
             <NetworkGraph delay={0.3} />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

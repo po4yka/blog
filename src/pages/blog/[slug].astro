@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import { slide } from "astro:transitions";
 import MainLayout from "@/layouts/MainLayout.astro";
 import { BlogPostIsland } from "@/components/BlogPostIsland";
 
@@ -26,14 +27,15 @@ const { post, prev, next } = Astro.props;
 const { Content } = await render(post);
 ---
 <MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary}>
-  <BlogPostIsland
-    client:load
-    post={post.data}
-    slug={post.id}
-    prev={prev}
-    next={next}
-    transition:name="blog-post"
-  >
-    <Content />
-  </BlogPostIsland>
+  <div transition:name="blog-content" transition:animate={slide({ duration: '0.3s' })}>
+    <BlogPostIsland
+      client:load
+      post={post.data}
+      slug={post.id}
+      prev={prev}
+      next={next}
+    >
+      <Content />
+    </BlogPostIsland>
+  </div>
 </MainLayout>

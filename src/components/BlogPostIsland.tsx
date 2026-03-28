@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { duration, spring } from "@/lib/motion";
 
 interface PostMeta {
   title: string;
@@ -147,7 +148,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
           className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: duration.base }}
           whileHover={{ x: -4 }}
           whileTap={{ scale: 0.97 }}
         >
@@ -206,8 +207,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
               <motion.span
                 key={tag}
                 className="text-muted-foreground/40 cursor-default font-mono text-label"
-                whileHover={{ color: "var(--accent)", scale: 1.05 }}
-                transition={{ duration: 0.15 }}
+                whileHover={{ color: "var(--accent)", scale: 1.08, y: -1, transition: spring.snappy }}
               >
                 #{tag}
               </motion.span>

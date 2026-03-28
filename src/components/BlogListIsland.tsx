@@ -4,8 +4,7 @@ import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "./useInView";
 import { CpuGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease, duration, stagger, spring } from "@/lib/motion";
 
 export interface BlogPostMeta {
   slug: string;
@@ -82,7 +81,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   ? "text-accent bg-accent/10"
                   : "text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted-foreground/5"
               }`}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.08, y: -1, transition: spring.snappy }}
               whileTap={{ scale: 0.95 }}
             >
               {cat}
@@ -99,7 +98,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: duration.fast }}
               >
                 {filtered.map((post, i) => (
                   <motion.a
@@ -108,7 +107,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                     className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline font-mono rounded-[6px]"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.04, ease }}
+                    transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     whileHover={{
                       x: 4,
                       backgroundColor: "rgba(139, 124, 246, 0.04)",
@@ -135,10 +134,9 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                       >
                         {post.summary}
                       </p>
-                      {/* Hover underline */}
+                      {/* Hover underline -- clip-path line-draw with opacity fade */}
                       <span
-                        className="absolute top-[1.3em] left-0 right-0 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
-                        style={{ backgroundColor: "var(--accent)", opacity: 0.25 }}
+                        className="blog-underline absolute top-[1.3em] left-0 right-0 h-[1px]"
                       />
                     </div>
 

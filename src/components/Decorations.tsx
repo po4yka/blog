@@ -85,24 +85,31 @@ function UsageBar({
   delay?: number;
   inView?: boolean;
 }) {
-  const filled = Math.round((pct / 100) * blocks);
-  const empty = blocks - filled;
+  const allBlocks = "█".repeat(blocks);
   const color = barColor(pct);
 
   return (
     <motion.span
-      className="inline-flex items-center cursor-default"
+      className="inline-flex items-center cursor-default relative"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.4, delay }}
       title={`${pct}%`}
     >
-      <span className="text-mono-sm" style={{ color, letterSpacing: "-0.5px" }}>
-        {"█".repeat(filled)}
-      </span>
+      {/* Empty (background) layer */}
       <span className="text-mono-sm" style={{ color: "var(--bar-empty)", letterSpacing: "-0.5px" }}>
-        {"█".repeat(empty)}
+        {allBlocks}
       </span>
+      {/* Filled layer with smooth width transition */}
+      <motion.span
+        className="absolute left-0 top-0 overflow-hidden"
+        animate={{ width: `${pct}%` }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+      >
+        <span className="text-mono-sm whitespace-nowrap" style={{ color, letterSpacing: "-0.5px" }}>
+          {allBlocks}
+        </span>
+      </motion.span>
     </motion.span>
   );
 }
@@ -517,7 +524,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   const cols = 36;
   const rows = 8;
   /* eslint-disable react-hooks/exhaustive-deps */
-  const grid = useMemo(() => {
+  const baseGrid = useMemo(() => {
     const g: number[][] = [];
     for (let r = 0; r < rows; r++) {
       const row: number[] = [];
@@ -533,15 +540,32 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   }, []);
   /* eslint-enable react-hooks/exhaustive-deps */
 
+  // Periodic wave: slightly shift opacity values every 12s
+  const [waveOffsets, setWaveOffsets] = useState<number[][]>(() =>
+    Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0))
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setWaveOffsets(
+        Array.from({ length: rows }, () =>
+          Array.from({ length: cols }, () => (Math.random() - 0.5) * 0.15)
+        )
+      );
+    }, 12_000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <MotionProvider>
     <PanelShell label="cpu history" labelRight="6 cores · 3.7 GHz" delay={delay}>
       <div ref={ref} className="px-5 py-4 relative">
         <div className="flex flex-col gap-[3px]">
-          {grid.map((row, r) => (
+          {baseGrid.map((row, r) => (
             <div key={r} className="flex gap-[3px]">
               {row.map((val, c) => {
                 const baseOpacity = Math.max(0.06, val / 100) * 0.8;
+                const waveOpacity = Math.max(0.04, Math.min(0.9, baseOpacity + waveOffsets[r][c]));
                 const color =
                   val > 75
                     ? "var(--signal-red)"
@@ -557,8 +581,8 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
                       width: "10px",
                       height: "10px",
                       backgroundColor: color,
-                      opacity: isHovered ? 1 : baseOpacity,
-                      transition: "opacity 0.1s ease",
+                      opacity: isHovered ? 1 : waveOpacity,
+                      transition: "opacity 1.5s ease",
                       boxShadow: isHovered ? `0 0 6px ${color}` : "none",
                     }}
                     initial={{ opacity: 0 }}
@@ -578,7 +602,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
           <div
             className="absolute top-2 right-5 text-muted-foreground/50 text-xs"
           >
-            Core {hoveredCell.r + 1} · {grid[hoveredCell.r][hoveredCell.c].toFixed(0)}%
+            Core {hoveredCell.r + 1} · {baseGrid[hoveredCell.r][hoveredCell.c].toFixed(0)}%
           </div>
         )}
       </div>

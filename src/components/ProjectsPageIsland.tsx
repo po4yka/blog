@@ -13,8 +13,7 @@ import { ProcessTable, UptimeStrip } from "./Decorations";
 import { useInView } from "./useInView";
 import { projects, type Project } from "./projectsData";
 import { MotionProvider } from "./MotionProvider";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease, spring } from "@/lib/motion";
 
 function ProjectEntry({ project }: { project: Project }) {
   const { ref, inView } = useInView(0.08);
@@ -85,9 +84,10 @@ function ProjectEntry({ project }: { project: Project }) {
               className="px-2 py-0.5 text-muted-foreground/40 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
               whileHover={{
                 scale: 1.08,
+                y: -1,
                 color: "var(--accent)",
                 backgroundColor: "rgba(139, 124, 246, 0.08)",
-                transition: { type: "spring", stiffness: 400, damping: 15 },
+                transition: spring.snappy,
               }}
             >
               {tag}

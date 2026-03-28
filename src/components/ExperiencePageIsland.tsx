@@ -4,8 +4,7 @@ import { NetworkGraph, CpuGraph } from "./Decorations";
 import { useInView } from "./useInView";
 import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease, spring } from "@/lib/motion";
 
 function RoleEntry({ role }: { role: Role }) {
   const { ref, inView } = useInView(0.08);
@@ -70,9 +69,10 @@ function RoleEntry({ role }: { role: Role }) {
               className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
               whileHover={{
                 scale: 1.08,
+                y: -1,
                 color: "var(--accent)",
                 backgroundColor: "rgba(139, 124, 246, 0.08)",
-                transition: { type: "spring", stiffness: 400, damping: 15 },
+                transition: spring.snappy,
               }}
             >
               {tag}
