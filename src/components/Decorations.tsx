@@ -113,6 +113,7 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const rng = seeded(42);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   const initialCores = useMemo(
     () =>
       Array.from({ length: 6 }, (_, i) => ({
@@ -122,6 +123,7 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
       })),
     []
   );
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const [cores, setCores] = useState(initialCores);
 
@@ -209,10 +211,11 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
 // ─── Network Sparkline with hover crosshair ────────────────────────
 
 export function NetworkGraph({ delay = 0 }: { delay?: number }) {
-  const { ref, inView } = useInView(0.1);
+  const { ref } = useInView(0.1);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const rng = seeded(77);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   const points = useMemo(() => {
     const pts: number[] = [];
     let val = 30;
@@ -223,6 +226,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
     }
     return pts;
   }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const w = 400;
   const h = 90;
@@ -512,6 +516,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
 
   const cols = 36;
   const rows = 8;
+  /* eslint-disable react-hooks/exhaustive-deps */
   const grid = useMemo(() => {
     const g: number[][] = [];
     for (let r = 0; r < rows; r++) {
@@ -526,6 +531,7 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
     }
     return g;
   }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   return (
     <MotionProvider>

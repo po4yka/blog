@@ -25,7 +25,7 @@ interface BlogListIslandProps {
 
 export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const { ref, inView } = useInView(0.05);
+  const { ref } = useInView(0.05);
 
   const filtered =
     activeCategory === "All"

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef, type ReactNode } from "react";
+import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer } from "./Terminal";

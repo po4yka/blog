@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
-import { CpuMonitor, MemoryPanel, NetworkGraph } from "./Decorations";
+import { CpuMonitor, NetworkGraph } from "./Decorations";
 import { MotionProvider } from "./MotionProvider";
 
 export function Hero() {

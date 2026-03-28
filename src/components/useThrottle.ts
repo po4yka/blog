@@ -19,7 +19,7 @@ export function useThrottledCallback<T extends (...args: unknown[]) => void>(
     callbackRef.current = callback;
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /* eslint-disable react-hooks/use-memo */
   return useCallback(
     ((...args: unknown[]) => {
       const now = Date.now();
@@ -36,4 +36,5 @@ export function useThrottledCallback<T extends (...args: unknown[]) => void>(
     }) as T,
     [delay]
   );
+  /* eslint-enable react-hooks/use-memo */
 }

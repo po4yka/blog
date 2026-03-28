@@ -26,6 +26,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   );
   const { theme, setTheme } = useSettings();
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   // Update pathname on View Transition navigation (Nav is persisted)

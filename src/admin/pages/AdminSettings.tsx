@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Save, RotateCcw, AlertTriangle, Plus, X, Check } from "lucide-react";
+import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
 import type { SiteSettings } from "../api";
 import {
   useAdminSettings,
@@ -27,6 +27,7 @@ export function AdminSettings() {
   const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (settings) setForm(settings);
   }, [settings]);
 
