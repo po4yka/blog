@@ -1,12 +1,6 @@
-export interface Role {
-  period: string;
-  company: string;
-  title: string;
-  description: string;
-  tags?: string[];
-  highlights?: string[];
-  location?: string;
-}
+import type { Role, SkillGroup } from "@/types";
+
+export type { Role, SkillGroup };
 
 export const roles: Role[] = [
   {
@@ -63,11 +57,6 @@ export const roles: Role[] = [
     ],
   },
 ];
-
-export interface SkillGroup {
-  label: string;
-  items: string[];
-}
 
 export const skills: SkillGroup[] = [
   { label: "Languages", items: ["Kotlin", "Swift", "TypeScript", "Dart"] },
