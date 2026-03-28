@@ -91,8 +91,9 @@ export function AdminBlogEdit() {
 
   const availableCategories = categories.filter((c) => c !== "All");
 
+  const WORDS_PER_MINUTE = 220;
   const wordCount = form.content.trim().split(/\s+/).filter(Boolean).length;
-  const readingTime = Math.max(1, Math.round(wordCount / 220));
+  const readingTime = Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[800px]">
