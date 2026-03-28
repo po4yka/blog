@@ -21,10 +21,22 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const pathname = initialPathname ?? (typeof window !== "undefined" ? window.location.pathname : "/");
+  const [currentPathname, setCurrentPathname] = useState(
+    initialPathname ?? (typeof window !== "undefined" ? window.location.pathname : "/")
+  );
   const { theme, setTheme } = useSettings();
 
   useEffect(() => setMounted(true), []);
+
+  // Update pathname on View Transition navigation (Nav is persisted)
+  useEffect(() => {
+    const onSwap = () => {
+      setCurrentPathname(window.location.pathname);
+      setMenuOpen(false);
+    };
+    document.addEventListener("astro:after-swap", onSwap);
+    return () => document.removeEventListener("astro:after-swap", onSwap);
+  }, []);
 
   // Scroll progress — hooks are safe to call (motion handles SSR),
   // but we only render the progress bar after mount to avoid hydration mismatch
@@ -42,8 +54,8 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   }, [onScroll]);
 
   const isActive = (link: (typeof navLinks)[number]) => {
-    if (link.exact) return pathname === link.href;
-    return pathname.startsWith(link.href);
+    if (link.exact) return currentPathname === link.href;
+    return currentPathname.startsWith(link.href);
   };
 
   // Cycle: dark → light → system → dark

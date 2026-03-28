@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "accesslint": {
+      "command": "node",
+      "args": [".claude/accesslint-mcp/dist/index.js"]
+    }
+  }
+}

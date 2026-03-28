@@ -104,3 +104,10 @@
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
+
+/* Disable View Transition animations when reduce-motion is enabled */
+.reduce-motion ::view-transition-group(*),
+.reduce-motion ::view-transition-old(*),
+.reduce-motion ::view-transition-new(*) {
+  animation: none !important;
+}

@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
+import { fade } from "astro:transitions";
 import BaseHead from "./BaseHead.astro";
 import ThemeScript from "./ThemeScript.astro";
 import { Nav } from "@/components/Nav";
@@ -17,17 +19,21 @@ const { pathname } = Astro.url;
   <head>
     <BaseHead title={title} description={description} />
     <ThemeScript />
+    <ClientRouter />
   </head>
   <body>
     <div
       class="min-h-screen bg-background text-foreground transition-colors duration-300"
       style="font-family: 'JetBrains Mono', monospace;"
     >
-      <Nav client:load pathname={pathname} />
-      <main class="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20">
+      <Nav client:load pathname={pathname} transition:persist />
+      <main
+        class="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
+        transition:animate={fade({ duration: '0.2s' })}
+      >
         <slot />
       </main>
-      <Footer client:load />
+      <Footer client:load transition:persist />
     </div>
   </body>
 </html>

@@ -24,3 +24,25 @@
   } catch(e) {}
 })();
 </script>
+<script>
+  // Re-apply theme after View Transition DOM swap to prevent flash
+  function applyThemeFromStorage() {
+    try {
+      const raw = localStorage.getItem("site_preferences");
+      if (!raw) return;
+      const prefs = JSON.parse(raw);
+      const theme = prefs.theme || "dark";
+      const resolved = theme === "system"
+        ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        : theme;
+      document.documentElement.classList.toggle("dark", resolved === "dark");
+      document.documentElement.classList.toggle("light", resolved === "light");
+      document.documentElement.classList.toggle("reduce-motion", !!prefs.reduceMotion);
+      document.documentElement.style.setProperty(
+        "--motion-duration-scale",
+        prefs.reduceMotion ? "0" : "1"
+      );
+    } catch {}
+  }
+  document.addEventListener("astro:after-swap", applyThemeFromStorage);
+</script>

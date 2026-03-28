@@ -32,6 +32,7 @@ const { Content } = await render(post);
     slug={post.id}
     prev={prev}
     next={next}
+    transition:name="blog-post"
   >
     <Content />
   </BlogPostIsland>
