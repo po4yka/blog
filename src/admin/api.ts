@@ -1,39 +1,9 @@
 // Thin fetch wrapper for admin API routes.
 // Attaches auth token from sessionStorage.
 
-import type { BlogPost } from "../components/blogData";
+import type { BlogPost, Project, Role, SiteSettings } from "@/types";
 
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  platforms: string[];
-  tags: string[];
-  links: { type: string; href: string }[];
-  featured: boolean;
-  sortOrder: number;
-}
-
-export interface Role {
-  id: string;
-  period: string;
-  company: string;
-  title: string;
-  description: string;
-  tags: string[];
-  sortOrder: number;
-}
-
-export interface SiteSettings {
-  name: string;
-  handle: string;
-  role: string;
-  bio: string;
-  github: string;
-  email: string;
-  telegram: string;
-  linkedin: string;
-}
+export type { BlogPost, Project, Role, SiteSettings };
 
 const TOKEN_KEY = "admin_token";
 

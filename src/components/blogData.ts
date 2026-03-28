@@ -1,14 +1,7 @@
-export interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  summary: string;
-  tags: string[];
-  category: string;
-  content: string;
-  featured?: boolean;
-  readingTime?: number;
-}
+// Static data for public site build. Admin manages equivalent data in D1.
+import type { BlogPost } from "@/types";
+
+export type { BlogPost };
 
 export const blogPosts: BlogPost[] = [
   {

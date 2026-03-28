@@ -26,7 +26,6 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   );
   const { theme, setTheme } = useSettings();
 
-  // One-time hydration flag — not a cascading render
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 

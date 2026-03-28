@@ -113,7 +113,6 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const rng = seeded(42);
 
-  // rng is a deterministic seeded PRNG — stable across renders
   /* eslint-disable react-hooks/exhaustive-deps */
   const initialCores = useMemo(
     () =>

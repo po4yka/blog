@@ -1,16 +1,7 @@
-export interface Project {
-  name: string;
-  slug: string;
-  description: string;
-  longDescription?: string;
-  platforms: string[];
-  tags: string[];
-  links: { type: string; href: string }[];
-  featured?: boolean;
-  previewLabel: string;
-  year?: string;
-  status?: string;
-}
+// Static data for public site build. Admin manages equivalent data in D1.
+import type { Project } from "@/types";
+
+export type { Project };
 
 export const projects: Project[] = [
   {

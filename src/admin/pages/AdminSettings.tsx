@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Save, RotateCcw, AlertTriangle, Plus } from "lucide-react";
+import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
 import type { SiteSettings } from "../api";
 import {
   useAdminSettings,
@@ -21,11 +21,11 @@ export function AdminSettings() {
   const addCategoryMutation = useAddCategory();
   const removeCategoryMutation = useRemoveCategory();
 
-  const [form, setForm] = useState<SiteSettings>(() => settings ?? defaultSettings);
+  const [form, setForm] = useState<SiteSettings>(settings ?? defaultSettings);
   const [newCat, setNewCat] = useState("");
+  const [saved, setSaved] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
 
-  // Sync form when settings load from server (not a cascading render — external data source)
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (settings) setForm(settings);
@@ -36,7 +36,12 @@ export function AdminSettings() {
   };
 
   const handleSave = () => {
-    updateSettingsMutation.mutate(form);
+    updateSettingsMutation.mutate(form, {
+      onSuccess: () => {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      },
+    });
   };
 
   const handleReset = () => {
@@ -237,12 +242,11 @@ export function AdminSettings() {
 
           <button
             onClick={handleSave}
-            disabled={updateSettingsMutation.isPending}
-            className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
+            className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
             style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
           >
-            <Save size={14} />
-            {updateSettingsMutation.isPending ? "Saving..." : "Save settings"}
+            {saved ? <Check size={14} /> : <Save size={14} />}
+            {saved ? "Saved!" : "Save settings"}
           </button>
         </div>
       </motion.div>

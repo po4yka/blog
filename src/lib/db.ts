@@ -1,54 +1,12 @@
 // Typed data access layer for Cloudflare D1
 // JSON array fields are stored as TEXT in SQLite and parsed here.
 
+import type { BlogPost, Project, Role, SiteSettings } from "@/types";
+
+export type { BlogPost, Project, Role, SiteSettings };
+
 export function getDb(env: CloudflareEnv): D1Database {
   return env.DB;
-}
-
-// --- Types (mirror the client-side types) ---
-
-export interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  summary: string;
-  tags: string[];
-  category: string;
-  content: string;
-  featured: boolean;
-  readingTime?: number;
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  platforms: string[];
-  tags: string[];
-  links: { type: string; href: string }[];
-  featured: boolean;
-  sortOrder: number;
-}
-
-export interface Role {
-  id: string;
-  period: string;
-  company: string;
-  title: string;
-  description: string;
-  tags: string[];
-  sortOrder: number;
-}
-
-export interface SiteSettings {
-  name: string;
-  handle: string;
-  role: string;
-  bio: string;
-  github: string;
-  email: string;
-  telegram: string;
-  linkedin: string;
 }
 
 // --- Row → Domain mappers ---
