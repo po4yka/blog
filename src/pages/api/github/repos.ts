@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { GITHUB_USERNAME } from "@/lib/constants";
 
 interface GitHubRepo {
   name: string;
@@ -23,10 +24,10 @@ export interface GitHubRepoSummary {
 }
 
 export const GET: APIRoute = async () => {
-  const res = await fetch("https://api.github.com/users/po4yka/repos?per_page=100&sort=updated", {
+  const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`, {
     headers: {
       Accept: "application/vnd.github+json",
-      "User-Agent": "po4yka-blog",
+      "User-Agent": `${GITHUB_USERNAME}-blog`,
     },
   });
 

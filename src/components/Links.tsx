@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "./useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { GITHUB_USERNAME } from "@/lib/constants";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -9,7 +10,7 @@ const links = [
   { icon: "✉", label: "email", href: "mailto:hello@po4yka.dev" },
   { icon: "⊞", label: "google play", href: "#" },
   { icon: "◉", label: "linkedin", href: "#" },
-  { icon: "⌘", label: "github", href: "https://github.com/po4yka" },
+  { icon: "⌘", label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
   { icon: "✈", label: "telegram", href: "#" },
 ];
 
