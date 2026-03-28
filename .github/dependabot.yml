@@ -1,0 +1,49 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "chore"
+    labels:
+      - dependencies
+    open-pull-requests-limit: 10
+    groups:
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript-eslint"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      mui:
+        patterns:
+          - "@mui/*"
+          - "@emotion/*"
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies
+      - ci
