@@ -81,6 +81,19 @@ export const updateSettings = (settings: SiteSettings) =>
   api<{ ok: true }>("settings", { method: "PUT", body: JSON.stringify(settings) });
 
 // --- Auth (different base path) ---
+export async function logout(): Promise<void> {
+  if (!token) return;
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    // Best-effort: clear client state even if the request fails
+  }
+  setToken(null);
+}
+
 export async function login(password: string): Promise<string> {
   const res = await fetch("/api/auth/login", {
     method: "POST",

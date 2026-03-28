@@ -16,6 +16,10 @@ export async function createSession(db: D1Database): Promise<string> {
   return token;
 }
 
+export async function deleteSession(db: D1Database, token: string): Promise<void> {
+  await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(token).run();
+}
+
 export async function requireAuth(request: Request, db: D1Database): Promise<void> {
   const header = request.headers.get("Authorization");
   if (!header?.startsWith("Bearer ")) {
