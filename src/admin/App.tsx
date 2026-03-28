@@ -1,6 +1,19 @@
 import { Suspense } from "react";
 import { RouterProvider } from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { router } from "./routes";
+import { AuthProvider } from "./contexts/AuthContext";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function LoadingFallback() {
   return (
@@ -17,8 +30,13 @@ function LoadingFallback() {
 
 export default function AdminApp() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <RouterProvider router={router} />
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

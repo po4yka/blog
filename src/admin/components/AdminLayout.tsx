@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
 import { useEffect, Suspense } from "react";
-import { useAdmin } from "../../stores/adminStore";
+import { useAuthContext } from "../contexts/AuthContext";
 import {
   LayoutDashboard,
   FileText,
@@ -20,7 +20,7 @@ const sidebarLinks = [
 ];
 
 export function AdminLayout() {
-  const { isAuthenticated, logout } = useAdmin();
+  const { isAuthenticated, logout } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
 

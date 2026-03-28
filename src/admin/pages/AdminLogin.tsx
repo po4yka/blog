@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Lock, ArrowRight, AlertCircle } from "lucide-react";
-import { useAdmin } from "../../stores/adminStore";
+import { useAuthContext } from "../contexts/AuthContext";
 
 export function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
-  const { login, isAuthenticated } = useAdmin();
+  const { login, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,9 +17,10 @@ export function AdminLogin() {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(password)) {
+    const success = await login(password);
+    if (success) {
       navigate("/admin");
     } else {
       setError(true);

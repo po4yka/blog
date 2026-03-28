@@ -1,21 +1,9 @@
 ---
 // Catch-all route for the admin React SPA.
 // All /admin/* routes are handled client-side by React Router.
+// Server-rendered so any admin path works without static enumeration.
+export const prerender = false;
 import "@/styles/index.css";
-
-export function getStaticPaths() {
-  // Generate a single catch-all page that React Router handles client-side.
-  // All admin sub-routes (login, blog, projects, etc.) are handled by the SPA.
-  return [
-    { params: { path: undefined } },
-    { params: { path: "login" } },
-    { params: { path: "blog" } },
-    { params: { path: "blog/new" } },
-    { params: { path: "projects" } },
-    { params: { path: "experience" } },
-    { params: { path: "settings" } },
-  ];
-}
 ---
 <html lang="en">
   <head>

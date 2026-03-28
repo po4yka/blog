@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
-import { useAdmin, type Role } from "../../stores/adminStore";
+import type { Role } from "../api";
+import { useRoles, useSaveRole, useDeleteRole } from "../hooks/useAdminQueries";
 
 function newRole(): Role {
   return {
@@ -11,23 +12,25 @@ function newRole(): Role {
     title: "",
     description: "",
     tags: [],
+    sortOrder: 0,
   };
 }
 
 export function AdminExperience() {
-  const { roles, saveRole, deleteRole } = useAdmin();
+  const { data: roles = [] } = useRoles();
+  const saveRoleMutation = useSaveRole();
+  const deleteRoleMutation = useDeleteRole();
   const [editing, setEditing] = useState<Role | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const handleSave = () => {
     if (!editing || !editing.title.trim()) return;
-    saveRole(editing);
-    setEditing(null);
+    saveRoleMutation.mutate(editing, { onSuccess: () => setEditing(null) });
   };
 
   const handleDelete = (id: string) => {
     if (confirmDelete === id) {
-      deleteRole(id);
+      deleteRoleMutation.mutate(id);
       setConfirmDelete(null);
       if (editing?.id === id) setEditing(null);
     } else {

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
-import { useAdmin } from "../../stores/adminStore";
 import type { BlogPost } from "../../components/blogData";
+import { usePosts, useSavePost, useCategories, useAddCategory } from "../hooks/useAdminQueries";
 
 function generateSlug(title: string): string {
   return title
@@ -22,7 +22,10 @@ function currentDateLabel(): string {
 export function AdminBlogEdit() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { blogPosts, saveBlogPost, categories, addCategory } = useAdmin();
+  const { data: blogPosts = [] } = usePosts();
+  const { data: categories = [] } = useCategories();
+  const savePostMutation = useSavePost();
+  const addCategoryMutation = useAddCategory();
   const isNew = !slug || slug === "new";
 
   const existing = isNew ? null : blogPosts.find((p) => p.slug === slug);
@@ -74,14 +77,17 @@ export function AdminBlogEdit() {
     if (!form.title.trim() || !form.slug.trim()) return;
     // Ensure category exists
     if (!categories.includes(form.category)) {
-      addCategory(form.category);
+      addCategoryMutation.mutate(form.category);
     }
-    saveBlogPost(form);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-    if (isNew) {
-      navigate(`/admin/blog/edit/${form.slug}`, { replace: true });
-    }
+    savePostMutation.mutate(form, {
+      onSuccess: () => {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+        if (isNew) {
+          navigate(`/admin/blog/edit/${form.slug}`, { replace: true });
+        }
+      },
+    });
   };
 
   const availableCategories = categories.filter((c) => c !== "All");

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, Star, StarOff, ChevronDown, ChevronUp } from "lucide-react";
-import { useAdmin, type Project } from "../../stores/adminStore";
+import type { Project } from "../api";
+import { useProjects, useSaveProject, useDeleteProject } from "../hooks/useAdminQueries";
 
 function newProject(): Project {
   return {
@@ -12,24 +13,26 @@ function newProject(): Project {
     tags: [],
     links: [],
     featured: false,
+    sortOrder: 0,
   };
 }
 
 export function AdminProjects() {
-  const { projects, saveProject, deleteProject } = useAdmin();
+  const { data: projects = [] } = useProjects();
+  const saveProjectMutation = useSaveProject();
+  const deleteProjectMutation = useDeleteProject();
   const [editing, setEditing] = useState<Project | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const handleSave = () => {
     if (!editing || !editing.name.trim()) return;
-    saveProject(editing);
-    setEditing(null);
+    saveProjectMutation.mutate(editing, { onSuccess: () => setEditing(null) });
   };
 
   const handleDelete = (id: string) => {
     if (confirmDelete === id) {
-      deleteProject(id);
+      deleteProjectMutation.mutate(id);
       setConfirmDelete(null);
       if (editing?.id === id) setEditing(null);
     } else {

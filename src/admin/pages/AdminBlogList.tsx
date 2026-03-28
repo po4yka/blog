@@ -2,10 +2,12 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Plus, Trash2, Star, StarOff, Search, FileText } from "lucide-react";
-import { useAdmin } from "../../stores/adminStore";
+import { usePosts, useSavePost, useDeletePost } from "../hooks/useAdminQueries";
 
 export function AdminBlogList() {
-  const { blogPosts, deleteBlogPost, saveBlogPost } = useAdmin();
+  const { data: blogPosts = [] } = usePosts();
+  const savePostMutation = useSavePost();
+  const deletePostMutation = useDeletePost();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -25,15 +27,15 @@ export function AdminBlogList() {
     // Un-feature all others, toggle this one
     blogPosts.forEach((p) => {
       if (p.slug !== slug && p.featured) {
-        saveBlogPost({ ...p, featured: false });
+        savePostMutation.mutate({ ...p, featured: false });
       }
     });
-    saveBlogPost({ ...post, featured: !post.featured });
+    savePostMutation.mutate({ ...post, featured: !post.featured });
   };
 
   const handleDelete = (slug: string) => {
     if (confirmDelete === slug) {
-      deleteBlogPost(slug);
+      deletePostMutation.mutate(slug);
       setConfirmDelete(null);
     } else {
       setConfirmDelete(slug);

@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { FileText, FolderKanban, Briefcase, Clock, ArrowRight, ArrowUpRight } from "lucide-react";
-import { useAdmin } from "../../stores/adminStore";
+import { usePosts, useProjects, useRoles, useAdminSettings } from "../hooks/useAdminQueries";
 
 export function AdminDashboard() {
-  const { blogPosts, projects, roles, settings } = useAdmin();
+  const { data: blogPosts = [] } = usePosts();
+  const { data: projects = [] } = useProjects();
+  const { data: roles = [] } = useRoles();
+  const { data: settings } = useAdminSettings();
   const navigate = useNavigate();
 
   const stats = [
@@ -33,7 +36,7 @@ export function AdminDashboard() {
             className="font-mono text-muted-foreground/30"
             style={{ fontSize: "0.625rem" }}
           >
-            {settings.handle}
+            {settings?.handle}
           </span>
         </div>
         <p className="text-muted-foreground/50" style={{ fontSize: "0.8125rem", lineHeight: 1.5 }}>

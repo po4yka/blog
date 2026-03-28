@@ -1,31 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Save, RotateCcw, AlertTriangle, Plus, X, Check } from "lucide-react";
-import { useAdmin, type SiteSettings } from "../../stores/adminStore";
+import type { SiteSettings } from "../api";
+import {
+  useAdminSettings,
+  useUpdateSettings,
+  useCategories,
+  useAddCategory,
+  useRemoveCategory,
+} from "../hooks/useAdminQueries";
+
+const defaultSettings: SiteSettings = {
+  name: "", handle: "", role: "", bio: "", github: "", email: "", telegram: "", linkedin: "",
+};
 
 export function AdminSettings() {
-  const { settings, updateSettings, categories, addCategory, removeCategory, resetToDefaults } = useAdmin();
-  const [form, setForm] = useState<SiteSettings>({ ...settings });
+  const { data: settings } = useAdminSettings();
+  const { data: categories = [] } = useCategories();
+  const updateSettingsMutation = useUpdateSettings();
+  const addCategoryMutation = useAddCategory();
+  const removeCategoryMutation = useRemoveCategory();
+
+  const [form, setForm] = useState<SiteSettings>(settings ?? defaultSettings);
   const [newCat, setNewCat] = useState("");
   const [saved, setSaved] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+
+  useEffect(() => {
+    if (settings) setForm(settings);
+  }, [settings]);
 
   const updateField = (key: keyof SiteSettings, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
-    updateSettings(form);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    updateSettingsMutation.mutate(form, {
+      onSuccess: () => {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      },
+    });
   };
 
   const handleReset = () => {
     if (confirmReset) {
-      resetToDefaults();
-      setForm({ ...settings });
       setConfirmReset(false);
-      // Reload to get fresh defaults
       window.location.reload();
     } else {
       setConfirmReset(true);
@@ -36,7 +56,7 @@ export function AdminSettings() {
   const handleAddCategory = () => {
     const cat = newCat.trim();
     if (cat && cat !== "All") {
-      addCategory(cat);
+      addCategoryMutation.mutate(cat);
       setNewCat("");
     }
   };
@@ -164,7 +184,7 @@ export function AdminSettings() {
               >
                 {cat}
                 <button
-                  onClick={() => removeCategory(cat)}
+                  onClick={() => removeCategoryMutation.mutate(cat)}
                   className="text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer"
                   style={{ fontSize: "0.75rem", lineHeight: 1 }}
                 >
