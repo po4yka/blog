@@ -4,22 +4,35 @@ Personal portfolio and blog for Nikita Pochaev (@po4yka).
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) 6 + [React](https://react.dev/) 18 (islands architecture)
-- [TypeScript](https://www.typescriptlang.org/) 5.7 (strict)
+- [Astro](https://astro.build/) 6 + [React](https://react.dev/) 19 (islands architecture)
+- [TypeScript](https://www.typescriptlang.org/) 6.0 (strict)
 - [Tailwind CSS](https://tailwindcss.com/) v4
 - [shadcn/ui](https://ui.shadcn.com/) (Radix UI primitives)
+- [MUI](https://mui.com/) (Material UI icons and components)
 - [Motion](https://motion.dev/) for animations
 - [MDX](https://mdxjs.com/) for blog content
 - [Zustand](https://zustand.docs.pmnd.rs/) for client-side state (visitor preferences)
 - [TanStack Query](https://tanstack.com/query) for server state management
+- [Zod](https://zod.dev/) for API input validation
 - [Cloudflare Pages](https://pages.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) for hosting and database
 - [React Router](https://reactrouter.com/) 7 (admin SPA)
+- [Vitest](https://vitest.dev/) for testing
 
 ## Getting Started
 
 ```sh
 npm install
 npm run dev
+```
+
+Other available scripts:
+
+```sh
+npm run build     # Production build
+npm run preview   # Preview production build locally
+npm run lint      # Run ESLint
+npm run test      # Run tests (Vitest)
+npm run test:watch # Run tests in watch mode
 ```
 
 ### Local D1 Database
@@ -41,8 +54,9 @@ After creating the remote database with `wrangler d1 create blog-db`, update `da
 
 ```
 src/
+  __tests__/        # Unit tests (API routes, lib modules)
   components/       # React islands + shared UI components
-    ui/             # shadcn/ui primitives (60+ components)
+    ui/             # shadcn/ui primitives (~48 components)
     blogData.ts     # Static blog post data
     projectsData.ts # Static project data
     experienceData.ts
@@ -58,6 +72,10 @@ src/
   lib/
     db.ts           # D1 data access layer (typed queries)
     auth.ts         # Token-based session auth
+    validation.ts   # Zod schemas for API input
+    motion.ts       # Motion utilities
+  types/
+    index.ts        # Shared TypeScript interfaces
   pages/
     api/            # Astro API routes (SSR)
       auth/login.ts
@@ -65,6 +83,10 @@ src/
       github/repos.ts
     blog/           # Blog pages (static, content collections)
     admin/          # Admin catch-all (SSR, React Router SPA)
+    experience.astro
+    projects.astro
+    settings.astro
+    404.astro
   layouts/          # Astro layouts (MainLayout, BaseHead, ThemeScript)
   content/          # Astro content collections (blog MDX)
   styles/           # Global styles, theme, fonts
@@ -74,6 +96,7 @@ db/
 docs/
   Guidelines.md     # Design system guidelines
   design/           # Design direction documents
+scripts/            # Skill/tooling update scripts
 ```
 
 ## Architecture
