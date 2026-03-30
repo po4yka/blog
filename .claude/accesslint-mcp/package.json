@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/accesslint/mcp-server#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.4"
+    "@modelcontextprotocol/sdk": "^1.28.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
