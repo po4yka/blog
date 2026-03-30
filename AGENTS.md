@@ -128,6 +128,19 @@ Custom skills encoding this project's unique patterns and workflows:
 - `/add-terminal-block` -- create decorative MobileTerminal/Decoration component with MacWindow+motion pattern
 - `/add-blog-post` -- create blog post with dual-source sync (MDX + blogData.ts)
 
+## Custom Sub-Agents
+
+Specialized agents in `.claude/agents/` for isolated, focused tasks:
+
+- `code-reviewer` -- review changes against project conventions, anti-AI-slop rules, and Guidelines.md (haiku, read-only)
+- `test-writer` -- generate Vitest unit tests with D1 mock pattern and Astro APIRoute testing conventions (sonnet)
+- `build-check` -- run lint + build + test verification in background (haiku, background)
+- `design-audit` -- audit visual components for design system compliance and anti-AI-slop violations (sonnet, preloads design skills)
+- `content-sync` -- validate blog post consistency between MDX and blogData.ts (haiku, read-only)
+- `security-check` -- scan API routes for missing auth, prerender guards, SQL injection, and secrets exposure (haiku, read-only)
+
+Invoke via `@"agent-name"` mention or let Claude delegate automatically based on task context.
+
 ## Conventions
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
