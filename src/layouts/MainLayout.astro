@@ -5,6 +5,7 @@ import BaseHead from "./BaseHead.astro";
 import ThemeScript from "./ThemeScript.astro";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import "@/styles/index.css";
 
 interface BlogPostData {
@@ -45,6 +46,7 @@ const { pathname } = Astro.url;
         <slot />
       </main>
       <Footer client:load transition:persist />
+      <KeyboardShortcuts client:load transition:persist />
     </div>
   </body>
 </html>

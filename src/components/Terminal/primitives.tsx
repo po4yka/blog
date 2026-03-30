@@ -232,6 +232,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
         <span className="text-foreground/40">:~$</span>
         <div className="relative flex-1 ml-1">
           <input
+            id="terminal-input"
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
