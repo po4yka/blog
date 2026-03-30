@@ -9,6 +9,7 @@ import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
 import { useSettings } from "@/stores/settingsStore";
+import { AnimatedNumber, animateNumbers } from "./AnimatedNumber";
 
 const TAG_HIGHLIGHT_STYLE = {
   color: "var(--accent)",
@@ -71,7 +72,7 @@ function RoleEntry({
               whileHover={{ color: "var(--foreground)", opacity: 0.65 }}
               transition={{ duration: 0.15 }}
             >
-              {h}
+              {animateNumbers(h)}
             </motion.li>
           ))}
         </ul>
@@ -235,7 +236,7 @@ export function ExperiencePage() {
               </>
             ),
           },
-          { status: "OK", text: `${roles.length} positions indexed` },
+          { status: "OK", text: <><AnimatedNumber value={roles.length} /> positions indexed</> },
           { status: "INFO", text: "Sorted by date, most recent first" },
         ]}
       />
