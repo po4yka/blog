@@ -6,7 +6,7 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import { UptimeStrip, SystemBottomBar, MemoryPanel, DiskBars } from "@/components/Decorations";
+import { UptimeStrip, SystemBottomBar, MemoryGrid } from "@/components/Decorations";
 import {
   AdbDevices,
   GradleBuild,
@@ -51,10 +51,7 @@ import {
     </div>
 
     <!-- Decorative memory + disk panels -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <MemoryPanel client:visible delay={0.05} />
-      <DiskBars client:visible delay={0.1} />
-    </div>
+    <MemoryGrid client:visible delay={0.05} />
 
     <Experience client:visible />
 

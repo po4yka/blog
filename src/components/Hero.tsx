@@ -2,6 +2,7 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import { lazy, Suspense, useCallback } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
@@ -127,8 +128,12 @@ export function Hero() {
               className="hidden lg:flex flex-col gap-4"
               style={{ x: decorX, y: decorY }}
             >
-              <CpuMonitor delay={0.2} />
-              <NetworkGraph delay={0.3} />
+              <ReorderableGroup containerKey="heroSidebar" axis="y" className="flex flex-col gap-4">
+                {{
+                  cpu: <CpuMonitor delay={0.2} />,
+                  net: <NetworkGraph delay={0.3} />,
+                }}
+              </ReorderableGroup>
             </motion.div>
           </Suspense>
         </div>

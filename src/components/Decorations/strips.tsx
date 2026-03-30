@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { ease } from "@/lib/motion";
 import { NetworkGraph, CpuGraph, ProcessTable } from "./graphs";
+import { ReorderableGroup } from "./ReorderableGroup";
 
 // ─── Uptime / Status Strip — live ticking ──────────────────────────
 
@@ -67,10 +68,16 @@ export function SystemBottomBar({ delay = 0 }: { delay?: number }) {
   return (
     <MotionProvider>
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <NetworkGraph delay={delay} />
-        <CpuGraph delay={delay + 0.05} />
-      </div>
+      <ReorderableGroup
+        containerKey="systemBar"
+        axis="x"
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        {{
+          "net-bottom": <NetworkGraph delay={delay} />,
+          "cpu-history": <CpuGraph delay={delay + 0.05} />,
+        }}
+      </ReorderableGroup>
       <ProcessTable delay={delay + 0.1} />
     </div>
     </MotionProvider>
