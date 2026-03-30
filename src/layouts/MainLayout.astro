@@ -7,17 +7,28 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import "@/styles/index.css";
 
+interface BlogPostData {
+  title: string;
+  date: string;
+  summary: string;
+  tags: string[];
+  category: string;
+}
+
 interface Props {
   title?: string;
   description?: string;
+  isHomePage?: boolean;
+  blogPost?: BlogPostData;
+  blogSlug?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, isHomePage, blogPost, blogSlug } = Astro.props;
 const { pathname } = Astro.url;
 ---
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} />
     <ThemeScript />
     <ClientRouter />
   </head>

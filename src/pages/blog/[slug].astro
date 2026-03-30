@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 const { post, prev, next } = Astro.props;
 const { Content } = await render(post);
 ---
-<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary}>
+<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={post.data} blogSlug={post.id}>
   <div transition:name="blog-content" transition:animate={slide({ duration: '0.3s' })}>
     <BlogPostIsland
       client:load

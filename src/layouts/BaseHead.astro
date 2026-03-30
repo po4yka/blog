@@ -1,12 +1,28 @@
 ---
+import JsonLd from "@/components/JsonLd.astro";
+
+interface BlogPostData {
+  title: string;
+  date: string;
+  summary: string;
+  tags: string[];
+  category: string;
+}
+
 interface Props {
   title?: string;
   description?: string;
+  isHomePage?: boolean;
+  blogPost?: BlogPostData;
+  blogSlug?: string;
 }
 
 const {
   title = "Nikita Pochaev — Mobile Developer",
   description = "Mobile Developer — Android, iOS, Kotlin Multiplatform, MobileOps",
+  isHomePage = false,
+  blogPost,
+  blogSlug,
 } = Astro.props;
 ---
 <meta charset="UTF-8" />
@@ -15,6 +31,7 @@ const {
 <meta name="description" content={description} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:type" content="website" />
+<meta property="og:type" content={blogPost ? "article" : "website"} />
 <meta name="generator" content={Astro.generator} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+<JsonLd isHomePage={isHomePage} blogPost={blogPost} slug={blogSlug} />
