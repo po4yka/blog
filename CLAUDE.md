@@ -118,6 +118,16 @@ Key skills:
 - `/accesslint-use-of-color` -- WCAG 1.4.1 color-only information detection
 - `/accesslint-link-purpose` -- WCAG 2.4.4 link text adequacy
 
+## Project-Specific Skills
+
+Custom skills encoding this project's unique patterns and workflows:
+
+- `/add-admin-entity` -- scaffold full CRUD entity across 7+ files (schema, types, db, validation, API, hooks, page)
+- `/add-island` -- add React island to Astro page with correct hydration, SSR guards, and motion
+- `/add-api-route` -- create API route with D1 access, auth, and Zod validation
+- `/add-terminal-block` -- create decorative MobileTerminal/Decoration component with MacWindow+motion pattern
+- `/add-blog-post` -- create blog post with dual-source sync (MDX + blogData.ts)
+
 ## Conventions
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
