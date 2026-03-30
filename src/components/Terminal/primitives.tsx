@@ -1,7 +1,12 @@
 import { motion } from "motion/react";
 import { useInView } from "@/components/useInView";
-import { useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ease, duration, spring, stagger } from "@/lib/motion";
+import { getCommand, getCommandNames } from "./commands/registry";
+import type { CommandContext } from "./commands/types";
+// Side-effect: register all commands
+import "./commands/index";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 /**
  * Table-style rows with hover highlight
@@ -46,46 +51,158 @@ export function InfoTable({
 }
 
 /**
- * Interactive terminal prompt — type commands and get responses
+ * Compute ghost-text suggestion from current input
+ */
+function getSuggestion(input: string): string | null {
+  if (!input) return null;
+
+  const parts = input.split(/\s+/);
+  const first = parts[0];
+  if (!first) return null;
+  const cmdName = first.toLowerCase();
+
+  // No space yet: complete command name
+  if (parts.length === 1) {
+    const match = getCommandNames().find(
+      (n) => n.startsWith(cmdName) && n !== cmdName,
+    );
+    return match ? match.slice(cmdName.length) : null;
+  }
+
+  // Has command + partial arg: ask the command for completions
+  const cmd = getCommand(cmdName);
+  if (!cmd?.completions) return null;
+
+  const partial = parts[parts.length - 1] ?? "";
+  const completions = cmd.completions(partial, parts.slice(1, -1));
+  const match = completions.find((c) => c.startsWith(partial) && c !== partial);
+  return match ? match.slice(partial.length) : null;
+}
+
+/**
+ * Interactive terminal prompt with command registry, history navigation, and tab completion
  */
 export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [input, setInput] = useState("");
-  const [history, setHistory] = useState<{ cmd: string; output: string }[]>([]);
+  const [displayHistory, setDisplayHistory] = useState<{ cmd: string; output: ReactNode }[]>([]);
   const [focused, setFocused] = useState(false);
 
-  const responses: Record<string, string> = {
-    help: "Available: help, whoami, date, uptime, uname, pwd, echo, clear, ls",
-    whoami: "po4yka",
-    date: new Date().toString(),
-    uptime: "47d 6h 23m — load average: 1.47 1.22 0.98",
-    uname: "Darwin po4yka.local 24.2.0 arm64",
-    pwd: "/Users/po4yka/dev/po4yka.dev",
-    ls: "README.md  projects/  posts/  resume.log  links.toml",
-    clear: "__CLEAR__",
-    neofetch: `po4yka@ghostty\n--------------\nOS: macOS 15.2 arm64\nShell: zsh 5.9\nTerminal: Ghostty\nEditor: neovim`,
-    "cat README.md": "Mobile Developer — Android, iOS, KMP, MobileOps",
-    kotlin: "Kotlin 2.1.0 (JVM target 21)",
-    swift: "Swift 6.0 (Xcode 16.2)",
-    gradle: "Gradle 8.7 — Build cache: enabled",
-    "adb devices": "emulator-5554  device  Pixel_8_API_35",
-  };
+  // Arrow-key history state
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [savedInput, setSavedInput] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cmd = input.trim().toLowerCase();
-    if (!cmd) return;
+  // Ghost text
+  const suggestion = useMemo(() => getSuggestion(input), [input]);
 
-    if (cmd === "clear") {
-      setHistory([]);
+  // Theme access
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+
+  const ctx: CommandContext = useMemo(
+    () => ({
+      history: commandHistory,
+      navigate: (path: string) => {
+        window.location.assign(path);
+      },
+      setTheme,
+      getTheme: () => theme,
+    }),
+    [commandHistory, setTheme, theme],
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const raw = input.trim();
+      if (!raw) return;
+
+      const parts = raw.split(/\s+/);
+      const cmdName = (parts[0] ?? "").toLowerCase();
+      const args = parts.slice(1);
+
+      // Update command history for arrow navigation
+      setCommandHistory((h) => [...h, raw]);
+      setHistoryIndex(null);
+      setSavedInput("");
+
+      // Clear command
+      if (cmdName === "clear") {
+        setDisplayHistory([]);
+        setInput("");
+        return;
+      }
+
+      // Look up and execute
+      const cmd = getCommand(cmdName);
+      const output = cmd
+        ? cmd.execute(args, ctx)
+        : <span>zsh: command not found: {cmdName}</span>;
+
+      if (output === "__CLEAR__") {
+        setDisplayHistory([]);
+        setInput("");
+        return;
+      }
+
+      setDisplayHistory((h) => [...h.slice(-19), { cmd: raw, output }]);
       setInput("");
-      return;
-    }
+    },
+    [input, ctx],
+  );
 
-    const output = responses[cmd] || `zsh: command not found: ${cmd}`;
-    setHistory((h) => [...h.slice(-4), { cmd: input.trim(), output }]);
-    setInput("");
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Tab completion
+      if (e.key === "Tab") {
+        e.preventDefault();
+        if (suggestion) {
+          setInput((prev) => prev + suggestion);
+        }
+        return;
+      }
+
+      // Arrow-key history navigation
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (commandHistory.length === 0) return;
+
+        if (historyIndex === null) {
+          setSavedInput(input);
+          const idx = commandHistory.length - 1;
+          setHistoryIndex(idx);
+          setInput(commandHistory[idx] ?? "");
+        } else if (historyIndex > 0) {
+          const idx = historyIndex - 1;
+          setHistoryIndex(idx);
+          setInput(commandHistory[idx] ?? "");
+        }
+        return;
+      }
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (historyIndex === null) return;
+
+        if (historyIndex >= commandHistory.length - 1) {
+          setHistoryIndex(null);
+          setInput(savedInput);
+        } else {
+          const idx = historyIndex + 1;
+          setHistoryIndex(idx);
+          setInput(commandHistory[idx] ?? "");
+        }
+        return;
+      }
+    },
+    [suggestion, commandHistory, historyIndex, input, savedInput],
+  );
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    setHistoryIndex(null);
+  }, []);
 
   return (
     <motion.div
@@ -96,7 +213,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       transition={{ duration: duration.base, delay }}
     >
       {/* Previous commands */}
-      {history.map((h, i) => (
+      {displayHistory.map((h, i) => (
         <div key={i} className="space-y-0.5">
           <div className="flex items-center gap-1 text-muted-foreground/40">
             <span style={{ color: "var(--accent)" }}>po4yka</span>
@@ -104,7 +221,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             <span className="text-foreground/40">:~$</span>
             <span className="ml-1 text-foreground/60">{h.cmd}</span>
           </div>
-          <div className="text-muted-foreground/50 pl-2 whitespace-pre-line">{h.output}</div>
+          <div className="text-muted-foreground/50 pl-2">{h.output}</div>
         </div>
       ))}
 
@@ -113,17 +230,30 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
         <span style={{ color: "var(--accent)" }}>po4yka</span>
         <span className="text-muted-foreground/35">@ghostty</span>
         <span className="text-foreground/40">:~$</span>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className="flex-1 bg-transparent outline-none text-foreground/70 ml-1 placeholder:text-muted-foreground/20 text-mono font-mono"
-          style={{ caretColor: "var(--accent)" }}
-          placeholder={focused ? "" : "type a command…"}
-          autoComplete="off"
-          spellCheck={false}
-        />
+        <div className="relative flex-1 ml-1">
+          <input
+            value={input}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            className="w-full bg-transparent outline-none text-foreground/70 placeholder:text-muted-foreground/20 text-mono font-mono"
+            style={{ caretColor: "var(--accent)" }}
+            placeholder={focused ? "" : "type a command..."}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          {/* Ghost text suggestion */}
+          {suggestion && input && (
+            <span
+              className="pointer-events-none absolute top-0 left-0 text-mono font-mono text-muted-foreground/15 whitespace-pre"
+              aria-hidden="true"
+            >
+              <span className="invisible">{input}</span>
+              {suggestion}
+            </span>
+          )}
+        </div>
         {!focused && !input && (
           <span
             className="inline-block w-2 h-4"

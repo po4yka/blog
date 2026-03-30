@@ -24,7 +24,7 @@ export function Footer() {
           }}
         >
           <div className="text-3xs font-mono text-muted-foreground/20 pb-2">
-            interactive shell — try: help, whoami, date, ls, neofetch, clear
+            interactive shell -- try: help, ls posts/, cat meridian, open blog, neofetch
           </div>
           <TerminalPrompt />
         </div>
