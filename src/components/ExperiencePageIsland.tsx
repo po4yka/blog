@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "./useInView";
 
@@ -8,8 +8,22 @@ const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuG
 import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
+import { useSettings } from "@/stores/settingsStore";
 
-function RoleEntry({ role }: { role: Role }) {
+const TAG_HIGHLIGHT_STYLE = {
+  color: "var(--accent)",
+  backgroundColor: "rgba(139, 124, 246, 0.08)",
+};
+
+function RoleEntry({
+  role,
+  hoveredTag,
+  onTagHover,
+}: {
+  role: Role;
+  hoveredTag: string | null;
+  onTagHover: (tag: string | null) => void;
+}) {
   const { ref, inView } = useInView(0.08);
 
   return (
@@ -66,21 +80,29 @@ function RoleEntry({ role }: { role: Role }) {
       {/* Tags */}
       {role.tags && (
         <div className="mt-2.5 flex flex-wrap gap-1.5">
-          {role.tags.map((tag) => (
-            <motion.span
-              key={tag}
-              className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
-              whileHover={{
-                scale: 1.08,
-                y: -1,
-                color: "var(--accent)",
-                backgroundColor: "rgba(139, 124, 246, 0.08)",
-                transition: spring.snappy,
-              }}
-            >
-              {tag}
-            </motion.span>
-          ))}
+          {role.tags.map((tag) => {
+            const tagKey = tag.toLowerCase();
+            const isHighlighted = hoveredTag === tagKey;
+            return (
+              <motion.span
+                key={tag}
+                data-tag={tagKey}
+                className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default text-xs rounded-[4px] transition-colors duration-150"
+                style={isHighlighted ? TAG_HIGHLIGHT_STYLE : undefined}
+                whileHover={{
+                  scale: 1.08,
+                  y: -1,
+                  color: "var(--accent)",
+                  backgroundColor: "rgba(139, 124, 246, 0.08)",
+                  transition: spring.snappy,
+                }}
+                onMouseEnter={() => onTagHover(tagKey)}
+                onMouseLeave={() => onTagHover(null)}
+              >
+                {tag}
+              </motion.span>
+            );
+          })}
         </div>
       )}
     </motion.div>
@@ -113,8 +135,91 @@ function SkillsSection({ group }: { group: SkillGroup }) {
   );
 }
 
+function computePaths(
+  container: HTMLElement | null,
+  hoveredTag: string | null,
+): { d: string; length: number }[] {
+  if (!hoveredTag || !container) return [];
+
+  const containerRect = container.getBoundingClientRect();
+  const scrollTop = container.scrollTop;
+  const tags = container.querySelectorAll<HTMLElement>(`[data-tag="${hoveredTag}"]`);
+  if (tags.length < 2) return [];
+
+  const rects = Array.from(tags).map((el) => {
+    const r = el.getBoundingClientRect();
+    return {
+      x: r.left + r.width / 2 - containerRect.left,
+      y: r.top + r.height / 2 - containerRect.top + scrollTop,
+    };
+  });
+
+  const source = rects[0]!;
+  return rects.slice(1).map((target) => {
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const cpOffset = Math.min(60, Math.abs(dy) * 0.3);
+    const d = `M ${source.x} ${source.y} C ${source.x + cpOffset} ${(source.y + target.y) / 2}, ${target.x - cpOffset} ${(source.y + target.y) / 2}, ${target.x} ${target.y}`;
+    const length = Math.sqrt(dx * dx + dy * dy) * 1.3;
+    return { d, length };
+  });
+}
+
+function TagConnections({
+  containerRef,
+  hoveredTag,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  hoveredTag: string | null;
+}) {
+  const { reduceMotion } = useSettings();
+  const [paths, setPaths] = useState<{ d: string; length: number }[]>([]);
+
+  useLayoutEffect(() => {
+    setPaths(computePaths(containerRef.current, hoveredTag));
+  }, [hoveredTag, containerRef]);
+
+  if (paths.length === 0) return null;
+
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+      style={{ zIndex: 10 }}
+    >
+      {paths.map((p, i) => (
+        <path
+          key={i}
+          d={p.d}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="1.5"
+          strokeOpacity="0.25"
+          strokeLinecap="round"
+          strokeDasharray={p.length}
+          strokeDashoffset={reduceMotion ? 0 : p.length}
+          style={
+            reduceMotion
+              ? undefined
+              : {
+                  animation: `draw-line 300ms ease forwards`,
+                  animationDelay: `${i * 50}ms`,
+                }
+          }
+        />
+      ))}
+      <style>{`@keyframes draw-line { to { stroke-dashoffset: 0; } }`}</style>
+    </svg>
+  );
+}
+
 export function ExperiencePage() {
   const { ref: skillsRef, inView: skillsInView } = useInView(0.1);
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const rolesContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleTagHover = useCallback((tag: string | null) => {
+    setHoveredTag(tag);
+  }, []);
 
   return (
     <MotionProvider>
@@ -141,9 +246,12 @@ export function ExperiencePage() {
           cat <Accent>resume.log</Accent>
         </Cmd>
         <MacWindow title="resume.log" dimLights delay={0.05}>
-          {roles.map((role) => (
-            <RoleEntry key={role.period} role={role} />
-          ))}
+          <div ref={rolesContainerRef} className="relative">
+            <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
+            {roles.map((role) => (
+              <RoleEntry key={role.period} role={role} hoveredTag={hoveredTag} onTagHover={handleTagHover} />
+            ))}
+          </div>
         </MacWindow>
       </div>
 
