@@ -1,28 +1,44 @@
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useInView } from "@/components/useInView";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { seeded, barColor, PanelShell } from "./_helpers";
+import { useActivityStore } from "@/stores/activityStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 // ─── Network Sparkline with hover crosshair ────────────────────────
 
 export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   const { ref } = useInView(0.1);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const rng = seeded(77);
 
   /* eslint-disable react-hooks/exhaustive-deps */
-  const points = useMemo(() => {
+  const [points, setPoints] = useState(() => {
+    const r = seeded(77);
     const pts: number[] = [];
     let val = 30;
     for (let i = 0; i < 64; i++) {
-      val += (rng() - 0.45) * 18;
+      val += (r() - 0.45) * 18;
       val = Math.max(5, Math.min(95, val));
       pts.push(val);
     }
     return pts;
-  }, []);
+  });
   /* eslint-enable react-hooks/exhaustive-deps */
+
+  // Sliding window driven by scroll velocity
+  useEffect(() => {
+    const id = setInterval(() => {
+      const reduceMotion = useSettingsStore.getState().reduceMotion;
+      if (reduceMotion) return;
+      const { scrollVelocity } = useActivityStore.getState();
+      const newPoint = Math.max(5, Math.min(95,
+        scrollVelocity * 70 + Math.random() * 15 + 5,
+      ));
+      setPoints((prev) => [...prev.slice(1), newPoint]);
+    }, 500);
+    return () => clearInterval(id);
+  }, []);
 
   const w = 400;
   const h = 90;
@@ -104,10 +120,12 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
           className="flex items-center justify-between mt-3 text-muted-foreground/35 text-label"
         >
           <span>
-            <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>&#x25BC;</span> 4.20 MiB/s
+            <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>&#x25BC;</span>{" "}
+            {(((points[points.length - 1] ?? 0) / 100) * 8.5).toFixed(2)} MiB/s
           </span>
           <span>
-            <span style={{ color: "var(--signal-red)", opacity: 0.6 }}>&#x25B2;</span> 1.22 MiB/s
+            <span style={{ color: "var(--signal-red)", opacity: 0.6 }}>&#x25B2;</span>{" "}
+            {(((points[points.length - 1] ?? 0) / 100) * 2.1).toFixed(2)} MiB/s
           </span>
         </div>
       </div>
@@ -118,18 +136,78 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
 
 // ─── Process Table with row hover ──────────────────────────────────
 
+interface Proc {
+  pid: number;
+  name: string;
+  args: string;
+  threads: number;
+  cpu: number;
+  mem: number;
+}
+
+const baseProcs: Proc[] = [
+  { pid: 3997824, name: "gradle-daemon", args: "--build --daemon", threads: 42, cpu: 8.3, mem: 1.1 },
+  { pid: 3904755, name: "kotlin-compile", args: "compileKotlin", threads: 12, cpu: 6.7, mem: 0.8 },
+  { pid: 954079, name: "android-studio", args: "--ide", threads: 81, cpu: 2.7, mem: 3.2 },
+  { pid: 3533263, name: "adb", args: "server fork", threads: 3, cpu: 0.1, mem: 0.4 },
+  { pid: 31968, name: "ghostty", args: "--config=default", threads: 4, cpu: 0.4, mem: 0.3 },
+  { pid: 3904274, name: "node", args: "vite dev", threads: 8, cpu: 1.4, mem: 0.8 },
+];
+
+const sectionProcs: Record<string, { name: string; args: string; threads: number }> = {
+  hero: { name: "hero-render", args: "layout --hydrate", threads: 6 },
+  about: { name: "about-layout", args: "render markdown", threads: 2 },
+  projects: { name: "project-index", args: "compile --list", threads: 4 },
+  experience: { name: "exp-renderer", args: "timeline build", threads: 3 },
+  blog: { name: "blog-preview", args: "mdx --parse", threads: 5 },
+};
+
+/** Deterministic pid from section name */
+function sectionPid(name: string): number {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) % 9000000 + 1000000;
+}
+
 export function ProcessTable({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [hoveredPid, setHoveredPid] = useState<number | null>(null);
+  const [procs, setProcs] = useState<Proc[]>(baseProcs);
 
-  const procs = [
-    { pid: 3997824, name: "gradle-daemon", args: "--build --daemon", threads: 42, cpu: 8.3, mem: 1.1 },
-    { pid: 3904755, name: "kotlin-compile", args: "compileKotlin", threads: 12, cpu: 6.7, mem: 0.8 },
-    { pid: 954079, name: "android-studio", args: "--ide", threads: 81, cpu: 2.7, mem: 3.2 },
-    { pid: 3533263, name: "adb", args: "server fork", threads: 3, cpu: 0.1, mem: 0.4 },
-    { pid: 31968, name: "ghostty", args: "--config=default", threads: 4, cpu: 0.4, mem: 0.3 },
-    { pid: 3904274, name: "node", args: "vite dev", threads: 8, cpu: 1.4, mem: 0.8 },
-  ];
+  // Update process list based on visible sections
+  useEffect(() => {
+    const id = setInterval(() => {
+      const reduceMotion = useSettingsStore.getState().reduceMotion;
+      if (reduceMotion) {
+        setProcs(baseProcs);
+        return;
+      }
+
+      const { visibleSectionNames } = useActivityStore.getState();
+      const sectionRows: Proc[] = visibleSectionNames
+        .filter((name) => name in sectionProcs)
+        .map((name) => {
+          const sp = sectionProcs[name]!;
+          return {
+            pid: sectionPid(name),
+            name: sp.name,
+            args: sp.args,
+            threads: sp.threads,
+            cpu: +(3 + Math.random() * 5).toFixed(1),
+            mem: +(0.2 + Math.random() * 0.6).toFixed(1),
+          };
+        });
+
+      const merged = [...baseProcs, ...sectionRows]
+        .sort((a, b) => b.cpu - a.cpu)
+        .slice(0, 8);
+
+      setProcs(merged);
+    }, 2000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <MotionProvider>
@@ -168,42 +246,46 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
         </div>
         {/* Rows */}
         <div className="px-5 py-2">
-          {procs.map((p, i) => (
-            <motion.div
-              key={p.pid}
-              className="grid py-[5px] -mx-2 px-2 cursor-default text-label rounded-[3px]"
-              style={{
-                gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
-                backgroundColor: hoveredPid === p.pid ? "rgba(139, 124, 246, 0.06)" : "transparent",
-                transition: "background-color 0.15s ease",
-              }}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.1 + i * 0.04 }}
-              onMouseEnter={() => setHoveredPid(p.pid)}
-              onMouseLeave={() => setHoveredPid(null)}
-            >
-              <span className="text-muted-foreground/25">{p.pid}</span>
-              <span
+          <AnimatePresence mode="popLayout">
+            {procs.map((p) => (
+              <motion.div
+                key={p.pid}
+                layout
+                className="grid py-[5px] -mx-2 px-2 cursor-default text-label rounded-[3px]"
                 style={{
-                  color: p.cpu > 5 ? "var(--signal-green)" : "var(--foreground)",
-                  opacity: p.cpu > 5 ? 0.7 : 0.35,
-                  fontWeight: p.cpu > 5 ? 500 : 400,
+                  gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
+                  backgroundColor: hoveredPid === p.pid ? "rgba(139, 124, 246, 0.06)" : "transparent",
+                  transition: "background-color 0.15s ease",
                 }}
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                onMouseEnter={() => setHoveredPid(p.pid)}
+                onMouseLeave={() => setHoveredPid(null)}
               >
-                {p.name}
-              </span>
-              <span className="text-muted-foreground/25 truncate">{p.args}</span>
-              <span className="text-right text-muted-foreground/30">{p.threads}</span>
-              <span
-                className="text-right font-medium"
-                style={{ color: barColor(p.cpu * 10), opacity: 0.6 }}
-              >
-                {p.cpu.toFixed(1)}
-              </span>
-              <span className="text-right text-muted-foreground/35">{p.mem.toFixed(1)}</span>
-            </motion.div>
-          ))}
+                <span className="text-muted-foreground/25">{p.pid}</span>
+                <span
+                  style={{
+                    color: p.cpu > 5 ? "var(--signal-green)" : "var(--foreground)",
+                    opacity: p.cpu > 5 ? 0.7 : 0.35,
+                    fontWeight: p.cpu > 5 ? 500 : 400,
+                  }}
+                >
+                  {p.name}
+                </span>
+                <span className="text-muted-foreground/25 truncate">{p.args}</span>
+                <span className="text-right text-muted-foreground/30">{p.threads}</span>
+                <span
+                  className="text-right font-medium"
+                  style={{ color: barColor(p.cpu * 10), opacity: 0.6 }}
+                >
+                  {p.cpu.toFixed(1)}
+                </span>
+                <span className="text-right text-muted-foreground/35">{p.mem.toFixed(1)}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </PanelShell>
@@ -244,9 +326,17 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
 
   useEffect(() => {
     const id = setInterval(() => {
+      const reduceMotion = useSettingsStore.getState().reduceMotion;
+      const { scrollProgress, scrollVelocity } = reduceMotion
+        ? { scrollProgress: 0, scrollVelocity: 0 }
+        : useActivityStore.getState();
+
+      const amplitude = 0.15 + scrollVelocity * 0.25;
+      const baseShift = scrollProgress * 0.1;
+
       setWaveOffsets(
         Array.from({ length: rows }, () =>
-          Array.from({ length: cols }, () => (Math.random() - 0.5) * 0.15)
+          Array.from({ length: cols }, () => (Math.random() - 0.5) * amplitude + baseShift)
         )
       );
     }, 12_000);

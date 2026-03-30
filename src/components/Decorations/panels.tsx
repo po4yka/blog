@@ -3,6 +3,8 @@ import { useInView } from "@/components/useInView";
 import { useState, useEffect, useMemo } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { seeded, PanelShell, UsageBar } from "./_helpers";
+import { useActivityStore } from "@/stores/activityStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 // ─── CPU Panel with live-updating values ───────────────────────────
 
@@ -24,16 +26,29 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
 
   const [cores, setCores] = useState(initialCores);
 
-  // Slowly fluctuate values
+  // Slowly fluctuate values, biased by scroll activity
+  const [loadAvg, setLoadAvg] = useState([1.47, 1.22, 0.98]);
   useEffect(() => {
     const id = setInterval(() => {
+      const { scrollProgress, scrollVelocity } = useActivityStore.getState();
+      const reduceMotion = useSettingsStore.getState().reduceMotion;
+      const bias = reduceMotion ? 0 : scrollProgress * 25 + scrollVelocity * 15;
+
       setCores((prev) =>
         prev.map((c) => ({
           ...c,
-          pct: Math.max(2, Math.min(95, c.pct + Math.round((Math.random() - 0.5) * 8))),
-          temp: Math.max(30, Math.min(72, c.temp + Math.round((Math.random() - 0.5) * 3))),
+          pct: Math.max(2, Math.min(95, c.pct + Math.round((Math.random() - 0.5) * 8 + bias * 0.3))),
+          temp: Math.max(30, Math.min(72, c.temp + Math.round((Math.random() - 0.5) * 3 + bias * 0.05))),
         }))
       );
+
+      // Interpolate load averages
+      const t = reduceMotion ? 0 : scrollProgress;
+      setLoadAvg([
+        +(1.47 + t * 1.65).toFixed(2),
+        +(1.22 + t * 1.62).toFixed(2),
+        +(0.98 + t * 1.43).toFixed(2),
+      ]);
     }, 3000);
     return () => clearInterval(id);
   }, []);
@@ -61,9 +76,9 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <span>Load Average:</span>
-        <span className="text-foreground/35">1.47</span>
-        <span className="text-foreground/30">1.22</span>
-        <span className="text-foreground/25">0.98</span>
+        <span className="text-foreground/35">{loadAvg[0]}</span>
+        <span className="text-foreground/30">{loadAvg[1]}</span>
+        <span className="text-foreground/25">{loadAvg[2]}</span>
       </div>
     </PanelShell>
     </MotionProvider>
@@ -72,15 +87,48 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
 
 // ─── Memory / Swap / Disk Panel ────────────────────────────────────
 
+const memBase = [
+  { label: "mem", total: 15.2, unit: "GiB", basePct: 37, scrollScale: 20 },
+  { label: "swap", total: 4.0, unit: "GiB", basePct: 24, scrollScale: 6 },
+  { label: "disk", total: 512, unit: "GB", basePct: 28, scrollScale: 0 },
+  { label: "cache", total: 15.2, unit: "GiB", basePct: 67, scrollScale: 20 },
+];
+
+function lerp(current: number, target: number, factor: number) {
+  return current + (target - current) * factor;
+}
+
 export function MemoryPanel({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
 
-  const rows = [
-    { label: "mem", used: "5.65", total: "15.2", unit: "GiB", pct: 37 },
-    { label: "swap", used: "0.94", total: "4.0", unit: "GiB", pct: 24 },
-    { label: "disk", used: "142", total: "512", unit: "GB", pct: 28 },
-    { label: "cache", used: "10.2", total: "15.2", unit: "GiB", pct: 67 },
-  ];
+  const [rows, setRows] = useState(
+    memBase.map((b) => ({
+      label: b.label,
+      used: ((b.total * b.basePct) / 100).toFixed(b.total >= 100 ? 0 : 1),
+      total: String(b.total),
+      unit: b.unit,
+      pct: b.basePct,
+    })),
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const sp = useSettingsStore.getState().reduceMotion
+        ? 0
+        : useActivityStore.getState().scrollProgress;
+
+      setRows((prev) =>
+        prev.map((row, i) => {
+          const base = memBase[i]!;
+          const targetPct = Math.min(95, base.basePct + sp * base.scrollScale);
+          const pct = Math.round(lerp(row.pct, targetPct, 0.15));
+          const used = ((base.total * pct) / 100).toFixed(base.total >= 100 ? 0 : 1);
+          return { ...row, pct, used };
+        }),
+      );
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <MotionProvider>
@@ -110,10 +158,24 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
 export function DiskBars({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
 
-  const disks = [
+  const [disks, setDisks] = useState([
     { label: "root", used: 15, total: 226, unit: "GiB" },
     { label: "media", used: 4.1, total: 7.21, unit: "TiB" },
-  ];
+  ]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const sp = useSettingsStore.getState().reduceMotion
+        ? 0
+        : useActivityStore.getState().scrollProgress;
+      setDisks((prev) =>
+        prev.map((d, i) =>
+          i === 0 ? { ...d, used: +(15 + sp * 2).toFixed(1) } : d,
+        ),
+      );
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <MotionProvider>

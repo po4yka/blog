@@ -5,12 +5,24 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { ease } from "@/lib/motion";
 import { NetworkGraph, CpuGraph, ProcessTable } from "./graphs";
 import { ReorderableGroup } from "./ReorderableGroup";
+import { useActivityStore } from "@/stores/activityStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 // ─── Uptime / Status Strip — live ticking ──────────────────────────
+
+function formatNum(n: number): string {
+  return n >= 1000 ? n.toLocaleString("en-US") : String(n);
+}
 
 export function UptimeStrip({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [uptime, setUptime] = useState({ d: 47, h: 6, m: 23 });
+  const [metrics, setMetrics] = useState([
+    "load 1.47 1.22 0.98",
+    "tasks 406",
+    "thr 1,247",
+    "mem 37%",
+  ]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -23,6 +35,23 @@ export function UptimeStrip({ delay = 0 }: { delay?: number }) {
         return { d, h, m };
       });
     }, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Update metrics based on scroll activity
+  useEffect(() => {
+    const id = setInterval(() => {
+      const reduceMotion = useSettingsStore.getState().reduceMotion;
+      if (reduceMotion) return;
+      const { scrollProgress, visibleSectionCount } = useActivityStore.getState();
+      const sp = scrollProgress;
+      setMetrics([
+        `load ${(1.47 + sp * 1.65).toFixed(2)} ${(1.22 + sp * 1.62).toFixed(2)} ${(0.98 + sp * 1.43).toFixed(2)}`,
+        `tasks ${406 + visibleSectionCount * 12}`,
+        `thr ${formatNum(1247 + visibleSectionCount * 30)}`,
+        `mem ${Math.round(37 + sp * 20)}%`,
+      ]);
+    }, 10_000);
     return () => clearInterval(id);
   }, []);
 
@@ -42,12 +71,7 @@ export function UptimeStrip({ delay = 0 }: { delay?: number }) {
         />
         <span className="text-muted-foreground/40">up {uptime.d}d {uptime.h}h {uptime.m}m</span>
       </span>
-      {[
-        "load 1.47 1.22 0.98",
-        "tasks 406",
-        "thr 1,247",
-        "mem 37%",
-      ].map((item) => (
+      {metrics.map((item) => (
         <motion.span
           key={item}
           className="text-muted-foreground/25 cursor-default"

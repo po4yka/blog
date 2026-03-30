@@ -18,55 +18,77 @@ import {
   KtlintCheck,
 } from "@/components/MobileTerminal";
 ---
-<MainLayout>
+<MainLayout isHomePage>
   <div class="space-y-14">
-    <div class="section-reveal">
+    <div class="section-reveal" data-section-name="hero">
       <Hero client:visible />
     </div>
-    <div class="section-reveal" style="transition-delay:0.1s">
+    <div class="section-reveal" data-section-name="about" style="transition-delay:0.1s">
       <About client:visible />
     </div>
 
     <!-- Mobile dev: connected devices -->
-    <div class="section-reveal" style="transition-delay:0.15s">
+    <div class="section-reveal" data-section-name="adb-devices" style="transition-delay:0.15s">
       <AdbDevices client:visible delay={0.05} />
     </div>
 
-    <div class="section-reveal" style="transition-delay:0.2s">
+    <div class="section-reveal" data-section-name="links" style="transition-delay:0.2s">
       <Links client:visible />
     </div>
 
     <!-- Decorative system metrics strip -->
-    <UptimeStrip client:visible delay={0.05} />
+    <div data-section-name="uptime">
+      <UptimeStrip client:visible delay={0.05} />
+    </div>
 
     <!-- Mobile dev: Gradle build output -->
-    <GradleBuild client:visible delay={0.05} />
+    <div data-section-name="gradle-build">
+      <GradleBuild client:visible delay={0.05} />
+    </div>
 
-    <Projects client:visible />
+    <div data-section-name="projects">
+      <Projects client:visible />
+    </div>
 
     <!-- Mobile dev: iOS simulators + SPM resolve side-by-side on desktop -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-section-name="xcode-spm">
       <XcodeSimulators client:visible delay={0.05} />
       <SwiftPackageResolve client:visible delay={0.1} />
     </div>
 
     <!-- Decorative memory + disk panels -->
-    <MemoryGrid client:visible delay={0.05} />
+    <div data-section-name="memory">
+      <MemoryGrid client:visible delay={0.05} />
+    </div>
 
-    <Experience client:visible />
+    <div data-section-name="experience">
+      <Experience client:visible />
+    </div>
 
     <!-- Mobile dev: git log + lint check -->
-    <GitLog client:visible delay={0.05} />
-    <KtlintCheck client:visible delay={0.05} />
+    <div data-section-name="git-log">
+      <GitLog client:visible delay={0.05} />
+    </div>
+    <div data-section-name="ktlint">
+      <KtlintCheck client:visible delay={0.05} />
+    </div>
 
-    <BlogPreview client:visible />
+    <div data-section-name="blog">
+      <BlogPreview client:visible />
+    </div>
 
     <!-- Mobile dev: logcat + fastlane deploy -->
-    <AdbLogcat client:visible delay={0.05} />
-    <FastlaneDeploy client:visible delay={0.05} />
+    <div data-section-name="logcat">
+      <AdbLogcat client:visible delay={0.05} />
+    </div>
+    <div data-section-name="fastlane">
+      <FastlaneDeploy client:visible delay={0.05} />
+    </div>
 
     <!-- Bottom system bar -->
-    <SystemBottomBar client:visible delay={0.05} />
+    <div data-section-name="system-bar">
+      <SystemBottomBar client:visible delay={0.05} />
+    </div>
   </div>
 
   <style>
@@ -82,6 +104,8 @@ import {
   </style>
 
   <script>
+    import "@/stores/activitySensor";
+
     function initSectionReveal() {
       const observer = new IntersectionObserver(
         (entries) => {
