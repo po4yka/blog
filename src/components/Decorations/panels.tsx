@@ -2,7 +2,8 @@ import { motion } from "motion/react";
 import { useInView } from "@/components/useInView";
 import { useState, useEffect, useMemo } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
-import { seeded, PanelShell, UsageBar } from "./_helpers";
+import { PanelShell, UsageBar } from "./_helpers";
+import { seeded } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 

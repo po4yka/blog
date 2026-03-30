@@ -16,7 +16,7 @@ const ASCII_ART = [
   "   `~'~'  ",
 ];
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function renderInfoRow(label: string, value: string) {
   return (
     <div className="flex gap-1">
       <Accent>{label}:</Accent>
@@ -42,15 +42,15 @@ const neofetch: Command = {
             <span className="text-muted-foreground/30">@ghostty</span>
           </div>
           <div className="text-muted-foreground/20">--------------</div>
-          <InfoRow label="OS" value="macOS 15.2 arm64" />
-          <InfoRow label="Shell" value="zsh 5.9" />
-          <InfoRow label="Terminal" value="Ghostty" />
-          <InfoRow label="Editor" value="neovim" />
-          <InfoRow label="Theme" value={ctx.getTheme()} />
-          <InfoRow label="Projects" value={String(projects.length)} />
-          <InfoRow label="Posts" value={String(blogPosts.length)} />
-          <InfoRow label="Roles" value={String(roles.length)} />
-          <InfoRow label="Languages" value={String(languageCount)} />
+          {renderInfoRow("OS", "macOS 15.2 arm64")}
+          {renderInfoRow("Shell", "zsh 5.9")}
+          {renderInfoRow("Terminal", "Ghostty")}
+          {renderInfoRow("Editor", "neovim")}
+          {renderInfoRow("Theme", ctx.getTheme())}
+          {renderInfoRow("Projects", String(projects.length))}
+          {renderInfoRow("Posts", String(blogPosts.length))}
+          {renderInfoRow("Roles", String(roles.length))}
+          {renderInfoRow("Languages", String(languageCount))}
         </div>
       </div>
     );

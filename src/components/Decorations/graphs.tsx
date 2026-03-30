@@ -1,30 +1,56 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useInView } from "@/components/useInView";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
-import { seeded, barColor, PanelShell } from "./_helpers";
+import { PanelShell } from "./_helpers";
+import { seeded, barColor } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 
 // ─── Network Sparkline with hover crosshair ────────────────────────
 
+const NETWORK_GRAPH_POINT_COUNT = 64;
+const CPU_GRAPH_COLS = 36;
+const CPU_GRAPH_ROWS = 8;
+
+function createNetworkGraphPoints() {
+  const random = seeded(77);
+  const points: number[] = [];
+  let value = 30;
+
+  for (let index = 0; index < NETWORK_GRAPH_POINT_COUNT; index++) {
+    value += (random() - 0.45) * 18;
+    value = Math.max(5, Math.min(95, value));
+    points.push(value);
+  }
+
+  return points;
+}
+
+function createCpuBaseGrid() {
+  const random = seeded(99);
+  const grid: number[][] = [];
+
+  for (let row = 0; row < CPU_GRAPH_ROWS; row++) {
+    const values: number[] = [];
+    let value = random() * 40 + 10;
+
+    for (let column = 0; column < CPU_GRAPH_COLS; column++) {
+      value += (random() - 0.45) * 25;
+      value = Math.max(0, Math.min(100, value));
+      values.push(value);
+    }
+
+    grid.push(values);
+  }
+
+  return grid;
+}
+
 export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   const { ref } = useInView(0.1);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-
-  /* eslint-disable react-hooks/exhaustive-deps */
-  const [points, setPoints] = useState(() => {
-    const r = seeded(77);
-    const pts: number[] = [];
-    let val = 30;
-    for (let i = 0; i < 64; i++) {
-      val += (r() - 0.45) * 18;
-      val = Math.max(5, Math.min(95, val));
-      pts.push(val);
-    }
-    return pts;
-  });
-  /* eslint-enable react-hooks/exhaustive-deps */
+  const [points, setPoints] = useState(createNetworkGraphPoints);
 
   // Sliding window driven by scroll velocity
   useEffect(() => {
@@ -298,30 +324,13 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
 export function CpuGraph({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [hoveredCell, setHoveredCell] = useState<{ r: number; c: number } | null>(null);
-  const rng = seeded(99);
-
-  const cols = 36;
-  const rows = 8;
-  /* eslint-disable react-hooks/exhaustive-deps */
-  const baseGrid = useMemo(() => {
-    const g: number[][] = [];
-    for (let r = 0; r < rows; r++) {
-      const row: number[] = [];
-      let val = rng() * 40 + 10;
-      for (let c = 0; c < cols; c++) {
-        val += (rng() - 0.45) * 25;
-        val = Math.max(0, Math.min(100, val));
-        row.push(val);
-      }
-      g.push(row);
-    }
-    return g;
-  }, []);
-  /* eslint-enable react-hooks/exhaustive-deps */
+  const [baseGrid] = useState(createCpuBaseGrid);
 
   // Periodic wave: slightly shift opacity values every 12s
   const [waveOffsets, setWaveOffsets] = useState<number[][]>(() =>
-    Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0))
+    Array.from({ length: CPU_GRAPH_ROWS }, () =>
+      Array.from({ length: CPU_GRAPH_COLS }, () => 0)
+    )
   );
 
   useEffect(() => {
@@ -335,8 +344,11 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
       const baseShift = scrollProgress * 0.1;
 
       setWaveOffsets(
-        Array.from({ length: rows }, () =>
-          Array.from({ length: cols }, () => (Math.random() - 0.5) * amplitude + baseShift)
+        Array.from({ length: CPU_GRAPH_ROWS }, () =>
+          Array.from(
+            { length: CPU_GRAPH_COLS },
+            () => (Math.random() - 0.5) * amplitude + baseShift
+          )
         )
       );
     }, 12_000);

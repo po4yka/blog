@@ -5,12 +5,12 @@ import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 
+const isAstroDev = process.argv.includes("dev");
+
 export default defineConfig({
   site: "https://po4yka.dev",
   output: "static",
-  adapter: cloudflare({
-    platformProxy: { enabled: true },
-  }),
+  adapter: cloudflare(isAstroDev ? { platformProxy: { enabled: true } } : {}),
   integrations: [react(), mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],

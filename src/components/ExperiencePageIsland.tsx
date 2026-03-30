@@ -9,7 +9,8 @@ import { roles, skills, type Role, type SkillGroup } from "./experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
 import { useSettings } from "@/stores/settingsStore";
-import { AnimatedNumber, animateNumbers } from "./AnimatedNumber";
+import { AnimatedNumber } from "./AnimatedNumber";
+import { animateNumbers } from "./AnimatedNumber.utils";
 
 const TAG_HIGHLIGHT_STYLE = {
   color: "var(--accent)",
