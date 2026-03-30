@@ -132,7 +132,7 @@ export function Cmd({
 }
 
 /**
- * Styled output block
+ * Styled output block with click-to-copy
  */
 export function OutputBlock({
   children,
@@ -144,16 +144,39 @@ export function OutputBlock({
   className?: string;
 }) {
   const { ref, inView } = useInView(0.1);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const text = el.textContent?.trim();
+    if (text) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+      });
+    }
+  }, [ref]);
 
   return (
     <motion.div
       ref={ref}
-      className={`border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 font-mono ${className}`}
+      className={`relative border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 font-mono cursor-pointer group/output ${className}`}
       initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
+      onClick={handleCopy}
+      title="Click to copy"
     >
       {children}
+      <motion.span
+        className="absolute -top-1 right-0 text-accent/60 text-xs font-mono select-none"
+        initial={{ opacity: 0 }}
+        animate={copied ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: duration.fast }}
+      >
+        {copied ? "copied!" : ""}
+      </motion.span>
     </motion.div>
   );
 }
