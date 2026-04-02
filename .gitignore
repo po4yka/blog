@@ -13,3 +13,4 @@ dist/
 .desloppify/
 test-results/
 playwright-report/
+.lighthouseci/

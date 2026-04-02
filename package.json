@@ -13,6 +13,8 @@
     "generate:blog": "tsx scripts/generate-blog-data.ts",
     "validate:blog": "tsx scripts/validate-blog-sync.ts",
     "test:e2e": "playwright test",
+    "test:coverage": "vitest run --coverage",
+    "lighthouse": "lhci autorun",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
@@ -50,11 +52,13 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-query-devtools": "^5.96.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.2",
     "eslint": "^10.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
