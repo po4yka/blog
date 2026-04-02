@@ -1,6 +1,10 @@
 name = "po4yka-blog"
 compatibility_date = "2025-01-01"
 
+routes = [
+  { pattern = "po4yka.dev/*", zone_name = "po4yka.dev" }
+]
+
 [[d1_databases]]
 binding = "DB"
 database_name = "blog-db"
