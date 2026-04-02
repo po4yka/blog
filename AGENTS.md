@@ -4,14 +4,14 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 
 ## Tech Stack
 
-- Astro 6 + React 18 + TypeScript (islands architecture)
+- Astro 6 + React 19 + TypeScript (islands architecture)
 - Tailwind CSS 4 (via `@tailwindcss/vite`)
-- Radix UI primitives + shadcn/ui components
-- Motion (Framer Motion) for animations
+- Radix UI primitives
+- Motion for animations
 - MDX for blog content
 - Zustand for client-side state (visitor preferences)
 - TanStack Query for server state (admin CRUD)
-- Cloudflare Pages + D1 (SQLite) for hosting and database
+- Cloudflare Workers + D1 (SQLite) for hosting and database
 - React Router 7 for admin SPA routing
 
 ## Architecture
@@ -61,7 +61,7 @@ Read `docs/Guidelines.md` before any visual changes. Key rules:
 
 ## Impeccable Design Skills
 
-This project includes [Impeccable](https://impeccable.style) design skills in `.Codex/skills/` and `.codex/skills/`.
+This project includes [Impeccable](https://impeccable.style) design skills in `.claude/skills/` and `.codex/skills/`.
 
 Before design work, ensure `.impeccable.md` exists at the project root. If missing, run `/teach-impeccable` first.
 
@@ -80,7 +80,7 @@ Update skills: `bash scripts/update-impeccable.sh`
 
 ## Taste Design Skills
 
-Additional design engineering skills from [taste-skill](https://github.com/Leonxlnx/taste-skill) in `.Codex/skills/` and `.codex/skills/`.
+Additional design engineering skills from [taste-skill](https://github.com/Leonxlnx/taste-skill) in `.claude/skills/` and `.codex/skills/`.
 
 These supplement Impeccable with anti-AI-slop CSS patterns, output completeness, and parametric design dials.
 
@@ -90,7 +90,7 @@ Key skills:
 - `/output-skill` -- prevents AI truncation and placeholder patterns
 - `/minimalist-skill` -- editorial minimalism (Notion/Linear aesthetic)
 
-These skills ban Inter font and purple accents by default. This project uses both intentionally. See `.Codex/skills/taste-context/SKILL.md` for project overrides that take precedence.
+These skills ban Inter font and purple accents by default. This project uses both intentionally. See `.claude/skills/taste-context/SKILL.md` for project overrides that take precedence.
 
 Update skills: `bash scripts/update-taste-skills.sh`
 
@@ -109,7 +109,7 @@ Update skills: `bash scripts/update-vercel-skills.sh`
 
 ## AccessLint Accessibility Skills
 
-WCAG 2.1 accessibility auditing from [accesslint/Codex-marketplace](https://github.com/accesslint/Codex-marketplace). MCP server in `.Codex/accesslint-mcp/` provides contrast ratio tools.
+WCAG 2.1 accessibility auditing from [accesslint/claude-marketplace](https://github.com/accesslint/claude-marketplace). MCP server in `.claude/accesslint-mcp/` provides contrast ratio tools.
 
 Key skills:
 - `/accesslint-reviewer` -- comprehensive WCAG 2.1 code audit

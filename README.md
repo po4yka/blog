@@ -7,14 +7,14 @@ Personal portfolio and blog for Nikita Pochaev (@po4yka).
 - [Astro](https://astro.build/) 6 + [React](https://react.dev/) 19 (islands architecture)
 - [TypeScript](https://www.typescriptlang.org/) 6.0 (strict)
 - [Tailwind CSS](https://tailwindcss.com/) v4
-- [shadcn/ui](https://ui.shadcn.com/) (Radix UI primitives)
+- [Radix UI](https://www.radix-ui.com/) primitives (dialog, sonner)
 - [MUI](https://mui.com/) (Material UI icons and components)
 - [Motion](https://motion.dev/) for animations
 - [MDX](https://mdxjs.com/) for blog content
 - [Zustand](https://zustand.docs.pmnd.rs/) for client-side state (visitor preferences)
 - [TanStack Query](https://tanstack.com/query) for server state management
 - [Zod](https://zod.dev/) for API input validation
-- [Cloudflare Pages](https://pages.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) for hosting and database
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/) + [D1](https://developers.cloudflare.com/d1/) for hosting and database
 - [React Router](https://reactrouter.com/) 7 (admin SPA)
 - [Vitest](https://vitest.dev/) for testing
 
@@ -35,6 +35,14 @@ npm run test      # Run tests (Vitest)
 npm run test:watch # Run tests in watch mode
 ```
 
+### Environment
+
+Copy the example environment file and fill in values:
+
+```sh
+cp .env.example .env
+```
+
 ### Local D1 Database
 
 The admin panel requires a Cloudflare D1 database. For local development:
@@ -43,12 +51,22 @@ The admin panel requires a Cloudflare D1 database. For local development:
 # Create the local database
 wrangler d1 execute blog-db --local --file=db/schema.sql
 wrangler d1 execute blog-db --local --file=db/seed.sql
-
-# Set admin password as a secret
-wrangler secret put ADMIN_PASSWORD
 ```
 
-After creating the remote database with `wrangler d1 create blog-db`, update `database_id` in `wrangler.toml`.
+### Deployment
+
+The site deploys to Cloudflare Workers via GitHub Actions CI/CD.
+
+On push to `main`, the pipeline runs lint, tests, and build, then deploys using `wrangler deploy` with the Astro-generated `dist/server/wrangler.json`.
+
+Required GitHub secrets:
+
+- `CLOUDFLARE_API_TOKEN` -- Cloudflare API token with Workers Scripts Edit + D1 Edit permissions
+- `CLOUDFLARE_ACCOUNT_ID` -- Cloudflare account ID
+
+Required Cloudflare environment variables (set in Workers dashboard):
+
+- `ADMIN_PASSWORD` -- password for admin panel authentication
 
 ## Project Structure
 
@@ -56,7 +74,7 @@ After creating the remote database with `wrangler d1 create blog-db`, update `da
 src/
   __tests__/        # Unit tests (API routes, lib modules)
   components/       # React islands + shared UI components
-    ui/             # shadcn/ui primitives (~48 components)
+    ui/             # UI primitives (dialog, sonner, utils)
     blogData.ts     # Static blog post data
     projectsData.ts # Static project data
     experienceData.ts
@@ -114,6 +132,13 @@ The admin panel at `/admin/*` is a React SPA served via Cloudflare Workers. It u
 - **Token-based auth** with sessions stored in D1 (24h expiry)
 - **React Router** for client-side navigation
 
+### CI/CD
+
+GitHub Actions (`.github/workflows/ci-cd.yml`):
+
+1. **CI** (all branches): lint, test, build
+2. **Deploy** (main only): build + `wrangler deploy` using Astro-generated worker config
+
 ### State Management
 
 | Store | Library | Persistence | Scope |
@@ -123,7 +148,7 @@ The admin panel at `/admin/*` is a React SPA served via Cloudflare Workers. It u
 
 ### API Routes
 
-All under `/api/`, served as Cloudflare Workers (SSR):
+All under `/api/`, served via Cloudflare Workers:
 
 - `POST /api/auth/login` -- authenticate, receive session token
 - `GET/POST /api/admin/posts` -- list/create blog posts

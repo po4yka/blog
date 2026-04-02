@@ -4,21 +4,21 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 
 ## Tech Stack
 
-- Astro 6 + React 18 + TypeScript (islands architecture)
+- Astro 6 + React 19 + TypeScript (islands architecture)
 - Tailwind CSS 4 (via `@tailwindcss/vite`)
-- Radix UI primitives + shadcn/ui components
-- Motion (Framer Motion) for animations
+- Radix UI primitives
+- Motion for animations
 - MDX for blog content
 - Zustand for client-side state (visitor preferences)
 - TanStack Query for server state (admin CRUD)
-- Cloudflare Pages + D1 (SQLite) for hosting and database
+- Cloudflare Workers + D1 (SQLite) for hosting and database
 - React Router 7 for admin SPA routing
 
 ## Architecture
 
 ### Public Site (Static)
 
-Pages are prerendered at build time. React islands hydrate via `client:load` or `client:visible`. Data comes from static TypeScript files (`blogData.ts`, `projectsData.ts`, `experienceData.ts`) and Astro content collections.
+Pages are prerendered at build time. React islands hydrate via `client:load` or `client:visible`. Data comes from static TypeScript files (`projectsData.ts`, `experienceData.ts`) and Astro content collections. `blogData.ts` is auto-generated from MDX content files via `npm run generate:blog` -- do not edit it manually.
 
 ### Admin Panel (SSR)
 
