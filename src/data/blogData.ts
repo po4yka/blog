@@ -1,4 +1,5 @@
-// Static data for public site build. Admin manages equivalent data in D1.
+// Auto-generated from MDX content files. Do not edit manually.
+// Run "npm run generate:blog" to regenerate.
 import type { BlogPost } from "@/types";
 
 export type { BlogPost };
@@ -169,4 +170,4 @@ The key insight: treat the download manager as infrastructure, not a feature. It
   },
 ];
 
-export const categories = ["All", "Architecture", "DevOps", "Android", "iOS", "Tooling"];
+export const categories = ["All", "Architecture", "DevOps", "Android", "Tooling", "iOS"];

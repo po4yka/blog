@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "generate:blog": "tsx scripts/generate-blog-data.ts",
+    "validate:blog": "tsx scripts/validate-blog-sync.ts",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
@@ -54,9 +56,11 @@
     "eslint": "^10.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gray-matter": "^4.0.3",
     "lint-staged": "^16.4.0",
     "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
     "vite": "^8.0.3",
