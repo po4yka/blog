@@ -96,6 +96,17 @@
   opacity: 0.3;
 }
 
+/* Mobile prose readability */
+@media (max-width: 640px) {
+  .prose-blog p,
+  .prose-blog li {
+    font-size: 0.9375rem;
+  }
+  .prose-blog pre code {
+    font-size: 0.75rem;
+  }
+}
+
 /* Reduce motion preference */
 .reduce-motion *,
 .reduce-motion *::before,

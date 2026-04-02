@@ -185,15 +185,15 @@ export function Nav({ pathname: initialPathname }: NavProps) {
         <div className="md:hidden flex items-center gap-1">
           <motion.button
             onClick={cycleTheme}
-            className="text-muted-foreground/50 p-2 cursor-pointer"
+            className="text-muted-foreground/50 p-2.5 cursor-pointer"
             aria-label={`Switch theme (current: ${theme})`}
             whileTap={{ scale: 0.85, rotate: 180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
-            <ThemeIcon size={16} strokeWidth={1.8} />
+            <ThemeIcon size={18} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="text-muted-foreground/60 p-2 -mr-2 cursor-pointer"
+            className="text-muted-foreground/60 p-2.5 -mr-2 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
             whileTap={{ scale: 0.9 }}

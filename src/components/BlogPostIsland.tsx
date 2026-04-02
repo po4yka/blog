@@ -109,7 +109,7 @@ function ScrollToTop() {
 
   return (
     <motion.button
-      className="fixed bottom-8 right-8 z-50 p-2 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer rounded-lg"
+      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-2.5 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer rounded-lg"
       style={{ boxShadow: "var(--window-shadow-sm)" }}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       initial={{ opacity: 0, y: 10 }}
@@ -119,7 +119,7 @@ function ScrollToTop() {
       whileTap={{ scale: 0.9 }}
       title="Scroll to top"
     >
-      <ChevronUp size={14} />
+      <ChevronUp size={18} />
     </motion.button>
   );
 }

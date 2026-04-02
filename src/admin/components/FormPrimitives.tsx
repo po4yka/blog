@@ -60,8 +60,8 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
           <select
             value={link.type}
             onChange={(e) => updateLink(i, "type", e.target.value)}
-            className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 shrink-0"
-            style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5, width: "130px", cursor: "pointer" }}
+            className="w-full sm:w-[130px] px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 shrink-0"
+            style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5, cursor: "pointer" }}
           >
             <option>GitHub</option>
             <option>Google Play</option>

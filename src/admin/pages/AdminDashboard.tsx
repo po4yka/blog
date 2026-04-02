@@ -46,7 +46,7 @@ export function AdminDashboard() {
 
       {/* Stats */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-8"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.08 }}

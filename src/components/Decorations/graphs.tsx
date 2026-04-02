@@ -89,7 +89,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
         <svg
           viewBox={`0 0 ${w} ${h}`}
           className="w-full cursor-crosshair"
-          style={{ height: 90 }}
+          style={{ height: "clamp(60px, 15vw, 90px)" }}
           preserveAspectRatio="none"
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoverIdx(null)}

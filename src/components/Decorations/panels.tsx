@@ -65,10 +65,10 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
             key={core.label}
             className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
           >
-            <span className="text-muted-foreground/35 w-[48px] shrink-0">{core.label}</span>
+            <span className="text-muted-foreground/35 w-[42px] sm:w-[48px] shrink-0">{core.label}</span>
             <UsageBar pct={core.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
             <span className="text-muted-foreground/45 w-[32px] text-right">{core.pct}%</span>
-            <span className="text-muted-foreground/20 w-[32px] text-right">{core.temp}°C</span>
+            <span className="text-muted-foreground/20 w-[32px] text-right hidden sm:inline">{core.temp}°C</span>
           </motion.div>
         ))}
       </div>
@@ -142,8 +142,8 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
           >
             <span className="text-muted-foreground/35 w-[42px] shrink-0">{row.label}</span>
             <UsageBar pct={row.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
-            <span className="text-muted-foreground/40 w-[90px] text-right">
-              {row.used} / {row.total}
+            <span className="text-muted-foreground/40 w-[70px] sm:w-[90px] text-right">
+              {row.used}<span className="hidden sm:inline"> / {row.total}</span>
             </span>
             <span className="text-muted-foreground/25 w-[28px] text-right">{row.pct}%</span>
           </motion.div>
@@ -189,8 +189,8 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
               key={d.label}
               className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
             >
-              <span className="text-muted-foreground/35 w-[46px] shrink-0">{d.label}</span>
-              <span className="text-muted-foreground/30 w-[54px]">Used: {pct}%</span>
+              <span className="text-muted-foreground/35 w-[40px] sm:w-[46px] shrink-0">{d.label}</span>
+              <span className="text-muted-foreground/30 w-[48px] sm:w-[54px]">Used: {pct}%</span>
               <UsageBar pct={pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
               <span className="text-muted-foreground/30">
                 {d.used} {d.unit}

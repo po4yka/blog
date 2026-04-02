@@ -152,7 +152,7 @@ export function AdminLayout() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 md:p-0 pt-[88px] md:pt-0">
+      <main className="flex-1 min-w-0 md:p-0 pt-[72px] md:pt-0">
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-32">
