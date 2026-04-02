@@ -1,13 +1,13 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useInView } from "@/hooks/useInView";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
 import { createSeededRng, barColor } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
-import { useSettingsStore } from "@/stores/settingsStore";
+import { useAnimationInterval } from "@/hooks/useAnimationInterval";
 
-// ─── Network Sparkline with hover crosshair ────────────────────────
+// --- Network Sparkline with hover crosshair ---
 
 const NETWORK_GRAPH_POINT_COUNT = 64;
 const CPU_GRAPH_COLS = 36;
@@ -53,18 +53,13 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   const [points, setPoints] = useState(createNetworkGraphPoints);
 
   // Sliding window driven by scroll velocity
-  useEffect(() => {
-    const id = setInterval(() => {
-      const reduceMotion = useSettingsStore.getState().reduceMotion;
-      if (reduceMotion) return;
-      const { scrollVelocity } = useActivityStore.getState();
-      const newPoint = Math.max(5, Math.min(95,
-        scrollVelocity * 70 + Math.random() * 15 + 5,
-      ));
-      setPoints((prev) => [...prev.slice(1), newPoint]);
-    }, 500);
-    return () => clearInterval(id);
-  }, []);
+  useAnimationInterval(() => {
+    const { scrollVelocity } = useActivityStore.getState();
+    const newPoint = Math.max(5, Math.min(95,
+      scrollVelocity * 70 + Math.random() * 15 + 5,
+    ));
+    setPoints((prev) => [...prev.slice(1), newPoint]);
+  }, 500);
 
   const w = 400;
   const h = 90;
@@ -160,7 +155,7 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   );
 }
 
-// ─── Process Table with row hover ──────────────────────────────────
+// --- Process Table with row hover ---
 
 interface Proc {
   pid: number;
@@ -203,37 +198,28 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
   const [procs, setProcs] = useState<Proc[]>(baseProcs);
 
   // Update process list based on visible sections
-  useEffect(() => {
-    const id = setInterval(() => {
-      const reduceMotion = useSettingsStore.getState().reduceMotion;
-      if (reduceMotion) {
-        setProcs(baseProcs);
-        return;
-      }
+  useAnimationInterval(() => {
+    const { visibleSectionNames } = useActivityStore.getState();
+    const sectionRows: Proc[] = visibleSectionNames
+      .filter((name) => name in sectionProcs)
+      .map((name) => {
+        const sp = sectionProcs[name]!;
+        return {
+          pid: sectionPid(name),
+          name: sp.name,
+          args: sp.args,
+          threads: sp.threads,
+          cpu: +(3 + Math.random() * 5).toFixed(1),
+          mem: +(0.2 + Math.random() * 0.6).toFixed(1),
+        };
+      });
 
-      const { visibleSectionNames } = useActivityStore.getState();
-      const sectionRows: Proc[] = visibleSectionNames
-        .filter((name) => name in sectionProcs)
-        .map((name) => {
-          const sp = sectionProcs[name]!;
-          return {
-            pid: sectionPid(name),
-            name: sp.name,
-            args: sp.args,
-            threads: sp.threads,
-            cpu: +(3 + Math.random() * 5).toFixed(1),
-            mem: +(0.2 + Math.random() * 0.6).toFixed(1),
-          };
-        });
+    const merged = [...baseProcs, ...sectionRows]
+      .sort((a, b) => b.cpu - a.cpu)
+      .slice(0, 8);
 
-      const merged = [...baseProcs, ...sectionRows]
-        .sort((a, b) => b.cpu - a.cpu)
-        .slice(0, 8);
-
-      setProcs(merged);
-    }, 2000);
-    return () => clearInterval(id);
-  }, []);
+    setProcs(merged);
+  }, 2000);
 
   return (
     <MotionProvider>
@@ -319,7 +305,7 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
   );
 }
 
-// ─── CPU Heat-map Grid with cell hover ─────────────────────────────
+// --- CPU Heat-map Grid with cell hover ---
 
 export function CpuGraph({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
@@ -333,27 +319,21 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
     )
   );
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      const reduceMotion = useSettingsStore.getState().reduceMotion;
-      const { scrollProgress, scrollVelocity } = reduceMotion
-        ? { scrollProgress: 0, scrollVelocity: 0 }
-        : useActivityStore.getState();
+  useAnimationInterval(() => {
+    const { scrollProgress, scrollVelocity } = useActivityStore.getState();
 
-      const amplitude = 0.15 + scrollVelocity * 0.25;
-      const baseShift = scrollProgress * 0.1;
+    const amplitude = 0.15 + scrollVelocity * 0.25;
+    const baseShift = scrollProgress * 0.1;
 
-      setWaveOffsets(
-        Array.from({ length: CPU_GRAPH_ROWS }, () =>
-          Array.from(
-            { length: CPU_GRAPH_COLS },
-            () => (Math.random() - 0.5) * amplitude + baseShift
-          )
+    setWaveOffsets(
+      Array.from({ length: CPU_GRAPH_ROWS }, () =>
+        Array.from(
+          { length: CPU_GRAPH_COLS },
+          () => (Math.random() - 0.5) * amplitude + baseShift
         )
-      );
-    }, 12_000);
-    return () => clearInterval(id);
-  }, []);
+      )
+    );
+  }, 12_000);
 
   return (
     <MotionProvider>

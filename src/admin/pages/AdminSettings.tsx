@@ -96,7 +96,7 @@ export function AdminSettings() {
                   type="text"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
-                  className="settings-input"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent"
                 />
               </Field>
               <Field label="Handle">
@@ -104,7 +104,7 @@ export function AdminSettings() {
                   type="text"
                   value={form.handle}
                   onChange={(e) => updateField("handle", e.target.value)}
-                  className="settings-input font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
                 />
               </Field>
             </div>
@@ -114,7 +114,7 @@ export function AdminSettings() {
                 type="text"
                 value={form.role}
                 onChange={(e) => updateField("role", e.target.value)}
-                className="settings-input"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent"
               />
             </Field>
 
@@ -123,7 +123,7 @@ export function AdminSettings() {
                 value={form.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
                 rows={3}
-                className="settings-input resize-y"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent resize-y"
                 style={{ lineHeight: 1.6 }}
               />
             </Field>
@@ -139,7 +139,7 @@ export function AdminSettings() {
                 value={form.github}
                 onChange={(e) => updateField("github", e.target.value)}
                 placeholder="https://github.com/..."
-                className="settings-input font-mono"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
               />
             </Field>
             <Field label="Email">
@@ -148,7 +148,7 @@ export function AdminSettings() {
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
                 placeholder="hello@example.dev"
-                className="settings-input font-mono"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
               />
             </Field>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -158,7 +158,7 @@ export function AdminSettings() {
                   value={form.telegram}
                   onChange={(e) => updateField("telegram", e.target.value)}
                   placeholder="https://t.me/..."
-                  className="settings-input font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
                 />
               </Field>
               <Field label="LinkedIn">
@@ -167,7 +167,7 @@ export function AdminSettings() {
                   value={form.linkedin}
                   onChange={(e) => updateField("linkedin", e.target.value)}
                   placeholder="https://linkedin.com/in/..."
-                  className="settings-input font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
                 />
               </Field>
             </div>
@@ -201,7 +201,7 @@ export function AdminSettings() {
               onChange={(e) => setNewCat(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCategory(); } }}
               placeholder="New category"
-              className="settings-input flex-1"
+              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent flex-1"
               style={{ maxWidth: "200px" }}
             />
             <button
@@ -251,23 +251,6 @@ export function AdminSettings() {
         </div>
       </motion.div>
 
-      <style>{`
-        .settings-input {
-          width: 100%;
-          padding: 0.5rem 0.75rem;
-          background: var(--card);
-          border: 1px solid var(--border);
-          color: var(--foreground);
-          font-size: 0.8125rem;
-          border-radius: 3px;
-          outline: none;
-          transition: border-color 0.2s;
-          font-weight: 400;
-          line-height: 1.5;
-        }
-        .settings-input::placeholder { color: var(--muted-foreground); opacity: 0.3; }
-        .settings-input:focus { border-color: var(--accent); opacity: 1; }
-      `}</style>
     </div>
   );
 }

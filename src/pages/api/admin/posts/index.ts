@@ -8,8 +8,12 @@ import { blogPostSchema, validationError } from "@/lib/validation";
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  const posts = await getAllPosts(db);
-  return Response.json(posts);
+  try {
+    const posts = await getAllPosts(db);
+    return Response.json(posts);
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

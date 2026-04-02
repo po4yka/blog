@@ -5,6 +5,7 @@ export type { Role, SkillGroup };
 
 export const roles: Role[] = [
   {
+    id: "freelance",
     period: "2023 — Present",
     company: "Freelance / Independent",
     title: "Mobile Engineer & Consultant",
@@ -19,6 +20,7 @@ export const roles: Role[] = [
     location: "Remote",
   },
   {
+    id: "tech-company",
     period: "2021 — 2023",
     company: "Tech Company",
     title: "Senior Android Developer",
@@ -33,6 +35,7 @@ export const roles: Role[] = [
     ],
   },
   {
+    id: "startup",
     period: "2019 — 2021",
     company: "Startup",
     title: "Mobile Developer",
@@ -46,6 +49,7 @@ export const roles: Role[] = [
     ],
   },
   {
+    id: "university",
     period: "2018 — 2019",
     company: "University / Open Source",
     title: "Junior Developer",

@@ -20,6 +20,10 @@ export async function deleteSession(db: D1Database, token: string): Promise<void
   await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(token).run();
 }
 
+/**
+ * Validates the request's Bearer token against active sessions.
+ * @throws {Response} 401 response if unauthorized (Astro convention)
+ */
 export async function requireAuth(request: Request, db: D1Database): Promise<void> {
   const header = request.headers.get("Authorization");
   if (!header?.startsWith("Bearer ")) {

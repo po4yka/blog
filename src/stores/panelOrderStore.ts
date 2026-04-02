@@ -50,7 +50,10 @@ export const usePanelOrderStore = create<PanelOrderState>()(
         systemBar,
       }),
       migrate: (persisted) => {
-        const state = persisted as Partial<Record<ContainerKey, string[]>>;
+        const state =
+          persisted && typeof persisted === "object"
+            ? (persisted as Partial<Record<ContainerKey, string[]>>)
+            : {};
         return {
           heroSidebar: validateOrder(state.heroSidebar ?? [], defaults.heroSidebar),
           memoryGrid: validateOrder(state.memoryGrid ?? [], defaults.memoryGrid),

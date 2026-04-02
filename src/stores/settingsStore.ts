@@ -58,9 +58,8 @@ export const useSettingsStore = create<SettingsStore>()(
         name: "site_preferences",
         partialize: ({ theme, reduceMotion, fontSize }) => ({ theme, reduceMotion, fontSize }),
         migrate: (persisted) => {
-          // Handle raw JSON from the old useSyncExternalStore format
-          // (no wrapper -- just { theme, reduceMotion, fontSize } directly)
-          return { ...defaults, ...(persisted as Partial<SitePreferences>) };
+          const p = persisted && typeof persisted === "object" ? persisted : {};
+          return { ...defaults, ...p };
         },
         version: 1,
       },
@@ -70,9 +69,15 @@ export const useSettingsStore = create<SettingsStore>()(
 
 // Apply DOM side-effects on every state change
 if (typeof window !== "undefined") {
-  // Apply on initial load
-  const { theme, reduceMotion, fontSize } = useSettingsStore.getState();
-  applyToDOM({ theme, reduceMotion, fontSize });
+  // Apply on initial load (wait for persist middleware to rehydrate)
+  if (useSettingsStore.persist.hasHydrated()) {
+    const { theme, reduceMotion, fontSize } = useSettingsStore.getState();
+    applyToDOM({ theme, reduceMotion, fontSize });
+  } else {
+    useSettingsStore.persist.onFinishHydration((state) => {
+      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize });
+    });
+  }
 
   // Subscribe to future changes
   useSettingsStore.subscribe(

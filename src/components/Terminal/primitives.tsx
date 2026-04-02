@@ -4,8 +4,6 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ease, duration, stagger } from "@/lib/motion";
 import { getCommand, getCommandNames } from "./commands/registry";
 import type { CommandContext } from "./commands/types";
-// Side-effect: register all commands
-import "./commands/index";
 import { useSettingsStore } from "@/stores/settingsStore";
 // Re-export shared UI primitives (defined in ui.tsx to avoid import cycles)
 export { Accent, Tag } from "./ui";

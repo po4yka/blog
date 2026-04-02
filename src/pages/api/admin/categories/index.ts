@@ -8,8 +8,12 @@ import { categorySchema, validationError } from "@/lib/validation";
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  const categories = await getCategories(db);
-  return Response.json(categories);
+  try {
+    const categories = await getCategories(db);
+    return Response.json(categories);
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

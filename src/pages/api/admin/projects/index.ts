@@ -8,8 +8,12 @@ import { projectSchema, validationError } from "@/lib/validation";
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  const projects = await getAllProjects(db);
-  return Response.json(projects);
+  try {
+    const projects = await getAllProjects(db);
+    return Response.json(projects);
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

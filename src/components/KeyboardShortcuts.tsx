@@ -133,32 +133,22 @@ export function KeyboardShortcuts() {
         return;
       }
 
-      switch (e.key) {
-        case "?":
-          setOverlayOpen((o) => !o);
-          e.preventDefault();
-          break;
-        case "t":
-          cycleTheme();
-          e.preventDefault();
-          break;
-        case "/":
-          focusTerminal();
-          e.preventDefault();
-          break;
-        case "j":
-          scrollToSection(1);
-          e.preventDefault();
-          break;
-        case "k":
-          scrollToSection(-1);
-          e.preventDefault();
-          break;
-        case "g":
+      const keyHandlers: Record<string, () => void> = {
+        "?": () => setOverlayOpen((o) => !o),
+        "t": () => cycleTheme(),
+        "/": () => focusTerminal(),
+        "j": () => scrollToSection(1),
+        "k": () => scrollToSection(-1),
+        "g": () => {
           setPendingChord("g");
           chordTimeout.current = setTimeout(() => setPendingChord(null), 1000);
-          e.preventDefault();
-          break;
+        },
+      };
+
+      const handler = keyHandlers[e.key];
+      if (handler) {
+        handler();
+        e.preventDefault();
       }
     }
 

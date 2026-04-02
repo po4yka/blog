@@ -8,8 +8,12 @@ import { roleSchema, validationError } from "@/lib/validation";
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  const roles = await getAllRoles(db);
-  return Response.json(roles);
+  try {
+    const roles = await getAllRoles(db);
+    return Response.json(roles);
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

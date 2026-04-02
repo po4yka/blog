@@ -5,6 +5,7 @@ export type { Project };
 
 export const projects: Project[] = [
   {
+    id: "meridian",
     name: "Meridian",
     slug: "meridian",
     description: "Cross-platform habit tracker built with Kotlin Multiplatform. Shared business logic, native UI on both platforms.",
@@ -22,6 +23,7 @@ export const projects: Project[] = [
     status: "Active",
   },
   {
+    id: "deploybot",
     name: "Deploybot",
     slug: "deploybot",
     description: "Internal release automation tool for mobile teams. Manages build variants, signing configs, and distribution channels.",
@@ -34,6 +36,7 @@ export const projects: Project[] = [
     status: "Maintained",
   },
   {
+    id: "compose-metrics",
     name: "Compose Metrics Dashboard",
     slug: "compose-metrics",
     description: "Visualization tool for Jetpack Compose compiler metrics. Tracks recomposition counts, stability, and performance regressions.",
@@ -49,6 +52,7 @@ export const projects: Project[] = [
     status: "Active",
   },
   {
+    id: "castaway",
     name: "Castaway",
     slug: "castaway",
     description: "Podcast player with offline-first architecture. Background downloads, queue management, and playback speed control.",
@@ -64,6 +68,7 @@ export const projects: Project[] = [
     status: "Maintained",
   },
   {
+    id: "kmp-starter",
     name: "KMP Starter",
     slug: "kmp-starter",
     description: "Opinionated project template for Kotlin Multiplatform apps. Pre-configured CI, dependency injection, and modular architecture.",
@@ -76,6 +81,7 @@ export const projects: Project[] = [
     status: "Active",
   },
   {
+    id: "logline",
     name: "Logline",
     slug: "logline",
     description: "Structured logging library for Android with Timber-compatible API. Ships logs to remote collectors with batching and retry.",

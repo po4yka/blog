@@ -8,11 +8,15 @@ import { siteSettingsSchema, validationError } from "@/lib/validation";
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  const settings = await getSettings(db);
-  if (!settings) {
-    return new Response(JSON.stringify({ error: "Settings not found" }), { status: 404 });
+  try {
+    const settings = await getSettings(db);
+    if (!settings) {
+      return new Response(JSON.stringify({ error: "Settings not found" }), { status: 404 });
+    }
+    return Response.json(settings);
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
   }
-  return Response.json(settings);
 };
 
 export const PUT: APIRoute = async ({ request, locals }) => {

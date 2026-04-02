@@ -19,7 +19,7 @@ export interface ProjectLink {
 }
 
 export interface Project {
-  id?: string;
+  id: string;
   name: string;
   slug?: string;
   description: string;
@@ -35,7 +35,7 @@ export interface Project {
 }
 
 export interface Role {
-  id?: string;
+  id: string;
   period: string;
   company: string;
   title: string;

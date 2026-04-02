@@ -10,7 +10,7 @@ import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
 import { useSettings } from "@/stores/settingsStore";
 import { AnimatedNumber } from "./AnimatedNumber";
-import { animateNumbers } from "./AnimatedNumber.utils";
+import { animateNumbers } from "./_animatedNumber.utils";
 
 const TAG_HIGHLIGHT_STYLE = {
   color: "var(--accent)",

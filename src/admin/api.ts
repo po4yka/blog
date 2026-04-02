@@ -7,10 +7,17 @@ export type { BlogPost, Project, Role, SiteSettings };
 
 const TOKEN_KEY = "admin_token";
 
-let token: string | null = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
+let token: string | null | undefined = undefined;
+
+function readToken(): string | null {
+  if (token === undefined) {
+    token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
+  }
+  return token;
+}
 
 export function getToken(): string | null {
-  return token;
+  return readToken();
 }
 
 export function setToken(t: string | null) {
@@ -20,7 +27,7 @@ export function setToken(t: string | null) {
 }
 
 export function isTokenPresent(): boolean {
-  return !!token;
+  return !!readToken();
 }
 
 export class ApiError extends Error {
@@ -34,11 +41,12 @@ export class ApiError extends Error {
 }
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const t = readToken();
   const res = await fetch(`/api/admin/${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(t ? { Authorization: `Bearer ${t}` } : {}),
       ...init?.headers,
     },
   });
@@ -80,11 +88,12 @@ export const updateSettings = (settings: SiteSettings) =>
 
 // --- Auth (different base path) ---
 export async function logout(): Promise<void> {
-  if (!token) return;
+  const t = readToken();
+  if (!t) return;
   try {
     await fetch("/api/auth/logout", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${t}` },
     });
   } catch {
     // Best-effort: clear client state even if the request fails

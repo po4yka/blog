@@ -15,6 +15,36 @@ export const adminKeys = {
   settings: ["admin", "settings"] as const,
 };
 
+// --- Generic delete mutation factory ---
+
+function createDeleteHook<T>(config: {
+  mutationFn: (id: string) => Promise<void>;
+  queryKey: readonly string[];
+  idField: keyof T;
+  entityName: string;
+}) {
+  return function useDeleteEntity() {
+    const qc = useQueryClient();
+    return useMutation({
+      mutationFn: config.mutationFn,
+      onMutate: async (id: string) => {
+        await qc.cancelQueries({ queryKey: config.queryKey });
+        const prev = qc.getQueryData<T[]>(config.queryKey);
+        qc.setQueryData<T[]>(config.queryKey, (old) =>
+          old?.filter((item) => item[config.idField] !== id),
+        );
+        return { prev };
+      },
+      onError: (e: Error, _id: string, ctx: { prev?: T[] } | undefined) => {
+        if (ctx?.prev) qc.setQueryData(config.queryKey, ctx.prev);
+        toast.error(e.message);
+      },
+      onSuccess: () => toast.success(`${config.entityName} deleted`),
+      onSettled: () => qc.invalidateQueries({ queryKey: config.queryKey }),
+    });
+  };
+}
+
 // --- Posts ---
 
 export function usePosts() {
@@ -44,26 +74,12 @@ export function useSavePost() {
   });
 }
 
-export function useDeletePost() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.deletePost,
-    onMutate: async (slug) => {
-      await qc.cancelQueries({ queryKey: adminKeys.posts });
-      const prev = qc.getQueryData<BlogPost[]>(adminKeys.posts);
-      qc.setQueryData<BlogPost[]>(adminKeys.posts, (old) =>
-        old?.filter((p) => p.slug !== slug),
-      );
-      return { prev };
-    },
-    onError: (e, _slug, ctx) => {
-      if (ctx?.prev) qc.setQueryData(adminKeys.posts, ctx.prev);
-      toast.error(e.message);
-    },
-    onSuccess: () => toast.success("Post deleted"),
-    onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.posts }),
-  });
-}
+export const useDeletePost = createDeleteHook<BlogPost>({
+  mutationFn: api.deletePost,
+  queryKey: adminKeys.posts,
+  idField: "slug",
+  entityName: "Post",
+});
 
 // --- Projects ---
 
@@ -86,26 +102,12 @@ export function useSaveProject() {
   });
 }
 
-export function useDeleteProject() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.deleteProject,
-    onMutate: async (id) => {
-      await qc.cancelQueries({ queryKey: adminKeys.projects });
-      const prev = qc.getQueryData<Project[]>(adminKeys.projects);
-      qc.setQueryData<Project[]>(adminKeys.projects, (old) =>
-        old?.filter((p) => p.id !== id),
-      );
-      return { prev };
-    },
-    onError: (e, _id, ctx) => {
-      if (ctx?.prev) qc.setQueryData(adminKeys.projects, ctx.prev);
-      toast.error(e.message);
-    },
-    onSuccess: () => toast.success("Project deleted"),
-    onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.projects }),
-  });
-}
+export const useDeleteProject = createDeleteHook<Project>({
+  mutationFn: api.deleteProject,
+  queryKey: adminKeys.projects,
+  idField: "id",
+  entityName: "Project",
+});
 
 // --- Roles ---
 
@@ -128,26 +130,12 @@ export function useSaveRole() {
   });
 }
 
-export function useDeleteRole() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.deleteRole,
-    onMutate: async (id) => {
-      await qc.cancelQueries({ queryKey: adminKeys.roles });
-      const prev = qc.getQueryData<Role[]>(adminKeys.roles);
-      qc.setQueryData<Role[]>(adminKeys.roles, (old) =>
-        old?.filter((r) => r.id !== id),
-      );
-      return { prev };
-    },
-    onError: (e, _id, ctx) => {
-      if (ctx?.prev) qc.setQueryData(adminKeys.roles, ctx.prev);
-      toast.error(e.message);
-    },
-    onSuccess: () => toast.success("Role deleted"),
-    onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.roles }),
-  });
-}
+export const useDeleteRole = createDeleteHook<Role>({
+  mutationFn: api.deleteRole,
+  queryKey: adminKeys.roles,
+  idField: "id",
+  entityName: "Role",
+});
 
 // --- Categories ---
 
