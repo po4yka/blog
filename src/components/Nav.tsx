@@ -79,6 +79,8 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           ? "var(--nav-glass)"
           : "var(--nav-glass-subtle)",
         borderBottom: "1px solid var(--titlebar-border)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -196,6 +198,8 @@ export function Nav({ pathname: initialPathname }: NavProps) {
             className="text-muted-foreground/60 p-2.5 -mr-2 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
             whileTap={{ scale: 0.9 }}
           >
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -207,6 +211,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            id="mobile-menu"
             className="md:hidden"
             style={{
               background: "var(--mobile-menu-bg)",

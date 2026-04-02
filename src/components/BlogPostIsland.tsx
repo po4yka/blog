@@ -110,7 +110,11 @@ function ScrollToTop() {
   return (
     <motion.button
       className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-2.5 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer rounded-lg"
-      style={{ boxShadow: "var(--window-shadow-sm)" }}
+      style={{
+        boxShadow: "var(--window-shadow-sm)",
+        marginBottom: "env(safe-area-inset-bottom)",
+        marginRight: "env(safe-area-inset-right)",
+      }}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}

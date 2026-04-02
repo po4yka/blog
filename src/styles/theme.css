@@ -345,3 +345,14 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Remove default tap highlight on mobile, use custom active states */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent scroll chaining on overlays and mobile menu */
+[data-slot="dialog-overlay"],
+[data-slot="dialog-content"] {
+  overscroll-behavior: contain;
+}

@@ -111,6 +111,21 @@ import {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Skip rendering for off-screen sections until scrolled into view */
+    [data-section-name="gradle-build"],
+    [data-section-name="xcode-spm"],
+    [data-section-name="memory"],
+    [data-section-name="experience"],
+    [data-section-name="git-log"],
+    [data-section-name="ktlint"],
+    [data-section-name="blog"],
+    [data-section-name="logcat"],
+    [data-section-name="fastlane"],
+    [data-section-name="system-bar"] {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 300px;
+    }
   </style>
 
   <script>
