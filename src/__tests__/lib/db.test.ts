@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { createWriteMockDb } from "../helpers";
 
 // parseJson and rowToPost are not exported, so we test them indirectly
 // through the public API. We also re-implement parseJson locally for
@@ -132,21 +133,6 @@ describe("getAllProjects (row mapping)", () => {
     });
   });
 });
-
-// ---------------------------------------------------------------------------
-// Helper: create a mock D1Database for write operations
-// ---------------------------------------------------------------------------
-function createWriteMockDb() {
-  const run = vi.fn().mockResolvedValue({ success: true });
-  const bind = vi.fn();
-  // bind returns an object with run; chain bind().run()
-  bind.mockReturnValue({ run });
-  const prepare = vi.fn().mockReturnValue({ bind });
-  return { prepare, _run: run, _bind: bind } as unknown as D1Database & {
-    _run: ReturnType<typeof vi.fn>;
-    _bind: ReturnType<typeof vi.fn>;
-  };
-}
 
 // ---------------------------------------------------------------------------
 // upsertPost

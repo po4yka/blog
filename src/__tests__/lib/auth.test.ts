@@ -1,20 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { createSession, requireAuth } from "@/lib/auth";
-
-// --- D1 mock helpers ---
-
-function createMockDb() {
-  const run = vi.fn().mockResolvedValue({ success: true });
-  const first = vi.fn();
-  const bind = vi.fn().mockReturnValue({ run, first });
-  const prepare = vi.fn().mockReturnValue({ run, bind });
-
-  return { prepare, bind, run, first } as unknown as D1Database & {
-    bind: ReturnType<typeof vi.fn>;
-    run: ReturnType<typeof vi.fn>;
-    first: ReturnType<typeof vi.fn>;
-  };
-}
+import { createMockDb } from "../helpers";
 
 describe("createSession", () => {
   let db: ReturnType<typeof createMockDb>;

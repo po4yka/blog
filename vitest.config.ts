@@ -12,7 +12,7 @@ export default defineConfig({
     environment: "node",
     coverage: {
       provider: "v8",
-      include: ["src/lib/**"],
+      include: ["src/lib/**", "src/pages/api/**"],
     },
   },
 });
