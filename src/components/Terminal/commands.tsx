@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { ease, duration } from "@/lib/motion";
 import { useSettingsStore } from "@/stores/settingsStore";

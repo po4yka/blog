@@ -1,6 +1,6 @@
 import { registerCommand } from "./registry";
-import { projects } from "@/components/projectsData";
-import { blogPosts } from "@/components/blogData";
+import { projects } from "@/data/projectsData";
+import { blogPosts } from "@/data/blogData";
 import type { Command } from "./types";
 
 const ls: Command = {

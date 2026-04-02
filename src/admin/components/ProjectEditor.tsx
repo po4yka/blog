@@ -43,7 +43,8 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
                 value={editing.name}
                 onChange={(e) => onChange({ ...editing, name: e.target.value })}
                 placeholder="Project name"
-                className="admin-input"
+                className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30"
+                style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
             <FieldBlock label="Platforms">
@@ -61,8 +62,8 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
               onChange={(e) => onChange({ ...editing, description: e.target.value })}
               placeholder="Short project description"
               rows={2}
-              className="admin-input resize-y"
-              style={{ lineHeight: 1.6 }}
+              className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 resize-y"
+              style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
             />
           </FieldBlock>
 

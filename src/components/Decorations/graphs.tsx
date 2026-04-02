@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { useState, useEffect, useCallback } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
-import { seeded, barColor } from "./_utils";
+import { createSeededRng, barColor } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 
@@ -14,7 +14,7 @@ const CPU_GRAPH_COLS = 36;
 const CPU_GRAPH_ROWS = 8;
 
 function createNetworkGraphPoints() {
-  const random = seeded(77);
+  const random = createSeededRng(77);
   const points: number[] = [];
   let value = 30;
 
@@ -28,7 +28,7 @@ function createNetworkGraphPoints() {
 }
 
 function createCpuBaseGrid() {
-  const random = seeded(99);
+  const random = createSeededRng(99);
   const grid: number[][] = [];
 
   for (let row = 0; row < CPU_GRAPH_ROWS; row++) {

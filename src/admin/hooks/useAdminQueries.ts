@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import * as api from "@/admin/api";
 import type { Project, Role } from "@/admin/api";
-import type { BlogPost } from "@/components/blogData";
+import type { BlogPost } from "@/types";
 
 // --- Query Keys ---
 
@@ -173,7 +173,7 @@ export function useAddCategory() {
 export function useRemoveCategory() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: api.removeCategory,
+    mutationFn: api.deleteCategory,
     onMutate: async (name) => {
       await qc.cancelQueries({ queryKey: adminKeys.categories });
       const prev = qc.getQueryData<string[]>(adminKeys.categories);

@@ -1,7 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getDb } from "@/lib/db";
 import { createSession } from "@/lib/auth";
 import { loginSchema, validationError } from "@/lib/validation";
 
@@ -18,7 +17,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
-  const db = getDb(env);
+  const db = env.DB;
   const token = await createSession(db);
 
   return Response.json({ token });

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { useState } from "react";
 import { Cmd, Accent, MacWindow } from "@/components/Terminal";
 import { MotionProvider } from "@/components/MotionProvider";

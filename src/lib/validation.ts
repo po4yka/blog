@@ -1,5 +1,10 @@
 // Zod validation schemas for admin API request bodies.
-// Mirrors the types in src/types/index.ts and the fields the DB layer expects.
+//
+// These schemas validate API *input*. The canonical domain types live in
+// src/types/index.ts and include DB-generated fields (e.g. computed readingTime,
+// generated id) that are absent or optional in the input schemas. Use the
+// inferred Input types below for request parsing; use the domain types from
+// src/types/ for internal logic and responses.
 
 import { z } from "astro/zod";
 
@@ -27,17 +32,12 @@ export const blogPostSchema = z.object({
 export const projectSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
-  slug: z.string().optional(),
   description: z.string(),
-  longDescription: z.string().optional(),
   platforms: z.array(z.string()),
   tags: z.array(z.string()),
   links: z.array(projectLinkSchema),
   featured: z.boolean().optional(),
   sortOrder: z.number().optional(),
-  previewLabel: z.string().optional(),
-  year: z.string().optional(),
-  status: z.string().optional(),
 });
 
 export const roleSchema = z.object({
@@ -48,8 +48,6 @@ export const roleSchema = z.object({
   description: z.string(),
   tags: z.array(z.string()).optional(),
   sortOrder: z.number().optional(),
-  highlights: z.array(z.string()).optional(),
-  location: z.string().optional(),
 });
 
 export const categorySchema = z.object({
@@ -66,6 +64,16 @@ export const siteSettingsSchema = z.object({
   telegram: z.string(),
   linkedin: z.string(),
 });
+
+// Inferred input types derived from Zod schemas.
+// These match the shape of validated API request bodies. For the full domain
+// types (which may include additional DB-generated fields), see src/types/.
+export type BlogPostInput = z.infer<typeof blogPostSchema>;
+export type ProjectInput = z.infer<typeof projectSchema>;
+export type ProjectLinkInput = z.infer<typeof projectLinkSchema>;
+export type RoleInput = z.infer<typeof roleSchema>;
+export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
+export type CategoryInput = z.infer<typeof categorySchema>;
 
 /** Return a 400 Response from a ZodError. */
 export function validationError(error: z.ZodError): Response {

@@ -1,9 +1,9 @@
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { useState, useEffect, useMemo } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell, UsageBar } from "./_helpers";
-import { seeded } from "./_utils";
+import { createSeededRng } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 
@@ -11,7 +11,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 
 export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
-  const rng = seeded(42);
+  const rng = createSeededRng(42);
 
   /* eslint-disable react-hooks/exhaustive-deps */
   const initialCores = useMemo(

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, Star, ChevronDown, ChevronUp } from "lucide-react";
 import type { Project } from "@/admin/api";
 import { useProjects, useSaveProject, useDeleteProject } from "@/admin/hooks/useAdminQueries";
+import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 import { ProjectEditor } from "@/admin/components/ProjectEditor";
 
 function newProject(): Project {
@@ -23,7 +24,7 @@ export function AdminProjects() {
   const saveProjectMutation = useSaveProject();
   const deleteProjectMutation = useDeleteProject();
   const [editing, setEditing] = useState<Project | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const { confirmingId, requestDelete } = useConfirmDelete();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const handleSave = () => {
@@ -32,14 +33,10 @@ export function AdminProjects() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirmDelete === id) {
+    requestDelete(id, () => {
       deleteProjectMutation.mutate(id);
-      setConfirmDelete(null);
       if (editing?.id === id) setEditing(null);
-    } else {
-      setConfirmDelete(id);
-      setTimeout(() => setConfirmDelete(null), 3000);
-    }
+    });
   };
 
   return (
@@ -136,7 +133,7 @@ export function AdminProjects() {
               <button
                 onClick={() => handleDelete(project.id!)}
                 className={`shrink-0 p-1 transition-colors cursor-pointer ${
-                  confirmDelete === project.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
+                  confirmingId === project.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
                 }`}
               >
                 <Trash2 size={13} />
@@ -177,24 +174,6 @@ export function AdminProjects() {
         ))}
       </motion.div>
 
-      {/* Inline styles for admin inputs */}
-      <style>{`
-        .admin-input {
-          width: 100%;
-          padding: 0.5rem 0.75rem;
-          background: var(--card);
-          border: 1px solid var(--border);
-          color: var(--foreground);
-          font-size: 0.8125rem;
-          border-radius: 3px;
-          outline: none;
-          transition: border-color 0.2s;
-          font-weight: 400;
-          line-height: 1.5;
-        }
-        .admin-input::placeholder { color: var(--muted-foreground); opacity: 0.3; }
-        .admin-input:focus { border-color: var(--accent); opacity: 0.4; }
-      `}</style>
     </div>
   );
 }

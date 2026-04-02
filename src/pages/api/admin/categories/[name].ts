@@ -1,12 +1,16 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getDb, removeCategory } from "@/lib/db";
+import { removeCategory } from "@/lib/db";
 import { requireAuth } from "@/lib/auth";
 
 export const DELETE: APIRoute = async ({ params, request, locals }) => {
-  const db = getDb(locals.runtime.env);
+  const db = locals.runtime.env.DB;
   await requireAuth(request, db);
-  await removeCategory(db, decodeURIComponent(params.name!));
-  return Response.json({ ok: true });
+  try {
+    await removeCategory(db, decodeURIComponent(params.name!));
+    return Response.json({ ok: true });
+  } catch {
+    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+  }
 };

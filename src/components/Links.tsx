@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "./useInView";
+import { useInView } from "@/hooks/useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { GITHUB_USERNAME } from "@/lib/constants";

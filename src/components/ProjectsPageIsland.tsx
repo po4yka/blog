@@ -10,11 +10,11 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 }
 import { lazy, Suspense } from "react";
 import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
-import { useInView } from "./useInView";
+import { useInView } from "@/hooks/useInView";
 
 const ProcessTable = lazy(() => import("./Decorations").then(m => ({ default: m.ProcessTable })));
 const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
-import { projects, type Project } from "./projectsData";
+import { projects, type Project } from "@/data/projectsData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
 

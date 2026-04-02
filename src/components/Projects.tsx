@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
-import { useInView } from "./useInView";
-import { projects } from "./projectsData";
+import { useInView } from "@/hooks/useInView";
+import { projects } from "@/data/projectsData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 

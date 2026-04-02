@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
-import { blogPosts } from "@/components/blogData";
-import { projects } from "@/components/projectsData";
-import { roles, skills } from "@/components/experienceData";
+import { blogPosts } from "@/data/blogData";
+import { projects } from "@/data/projectsData";
+import { roles, skills } from "@/data/experienceData";
 
 export const prerender = true;
 

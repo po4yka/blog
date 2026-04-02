@@ -19,8 +19,8 @@ export function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(password);
-    if (success) {
+    const result = await login(password);
+    if (result.success) {
       navigate("/admin");
     } else {
       setError(true);

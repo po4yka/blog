@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
-import type { BlogPost } from "@/components/blogData";
+import type { BlogPost } from "@/types";
 import { usePosts, useSavePost, useCategories, useAddCategory } from "@/admin/hooks/useAdminQueries";
-import { FieldBlock } from "@/admin/components/FormPrimitives";
+import { FieldBlock, TagsInput } from "@/admin/components/FormPrimitives";
 import { BlogPreviewPane } from "@/admin/components/BlogPreviewPane";
 
 function generateSlug(title: string): string {
@@ -43,7 +43,6 @@ export function AdminBlogEdit() {
     featured: false,
   });
 
-  const [tagInput, setTagInput] = useState("");
   const [preview, setPreview] = useState(false);
 
   // Sync form when existing post loads from server (external data source)
@@ -62,18 +61,6 @@ export function AdminBlogEdit() {
       }
       return updated;
     });
-  };
-
-  const addTag = () => {
-    const tag = tagInput.trim();
-    if (tag && !form.tags.includes(tag)) {
-      updateField("tags", [...form.tags, tag]);
-    }
-    setTagInput("");
-  };
-
-  const removeTag = (tag: string) => {
-    updateField("tags", form.tags.filter((t) => t !== tag));
   };
 
   const handleSave = () => {
@@ -229,38 +216,11 @@ export function AdminBlogEdit() {
             </FieldBlock>
 
             <FieldBlock label="Tags">
-              <div className="flex flex-wrap items-center gap-2 p-2.5 bg-card border border-border/50 min-h-[42px]" style={{ borderRadius: "3px" }}>
-                {form.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 font-mono px-2 py-0.5 bg-secondary/80 text-foreground/60 border border-border/40"
-                    style={{ fontSize: "0.6875rem", borderRadius: "2px" }}
-                  >
-                    {tag}
-                    <button
-                      onClick={() => removeTag(tag)}
-                      className="text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer ml-0.5"
-                      style={{ fontSize: "0.75rem", lineHeight: 1 }}
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === ",") {
-                      e.preventDefault();
-                      addTag();
-                    }
-                  }}
-                  placeholder={form.tags.length === 0 ? "Add tags (Enter to add)" : ""}
-                  className="flex-1 min-w-[100px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/20 font-mono"
-                  style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
-                />
-              </div>
+              <TagsInput
+                tags={form.tags}
+                onChange={(tags) => updateField("tags", tags)}
+                placeholder="Add tags (Enter to add)"
+              />
             </FieldBlock>
 
             <FieldBlock label="Content">

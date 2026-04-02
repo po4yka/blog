@@ -105,20 +105,28 @@ if (typeof window !== "undefined") {
     });
   }
 
-  // Respect reduceMotion
-  const initialReduceMotion = useSettingsStore.getState().reduceMotion;
-  if (!initialReduceMotion) {
-    attach();
+  // Respect reduceMotion -- defer initial read until Zustand persist has
+  // rehydrated from localStorage so we don't read the default value.
+  function applyReduceMotion(reduceMotion: boolean) {
+    if (reduceMotion) {
+      detach();
+    } else {
+      attach();
+    }
+  }
+
+  if (useSettingsStore.persist.hasHydrated()) {
+    applyReduceMotion(useSettingsStore.getState().reduceMotion);
+  } else {
+    useSettingsStore.persist.onFinishHydration((state) => {
+      applyReduceMotion(state.reduceMotion);
+    });
   }
 
   useSettingsStore.subscribe(
     (s) => s.reduceMotion,
     (reduceMotion) => {
-      if (reduceMotion) {
-        detach();
-      } else {
-        attach();
-      }
+      applyReduceMotion(reduceMotion);
     },
   );
 

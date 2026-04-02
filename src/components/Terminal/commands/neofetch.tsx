@@ -1,8 +1,8 @@
 import { registerCommand } from "./registry";
-import { projects } from "@/components/projectsData";
-import { blogPosts } from "@/components/blogData";
-import { roles, skills } from "@/components/experienceData";
-import { Accent } from "../primitives";
+import { projects } from "@/data/projectsData";
+import { blogPosts } from "@/data/blogData";
+import { roles, skills } from "@/data/experienceData";
+import { Accent } from "../ui";
 import type { Command } from "./types";
 
 const ASCII_ART = [

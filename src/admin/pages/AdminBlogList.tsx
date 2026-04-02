@@ -2,15 +2,16 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Plus, Trash2, Star, StarOff, Search, FileText } from "lucide-react";
-import { usePosts, useSavePost, useDeletePost } from "@/admin/hooks/useAdminQueries";
+import { usePosts, useDeletePost, useSavePost } from "@/admin/hooks/useAdminQueries";
+import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 
 export function AdminBlogList() {
   const { data: blogPosts = [] } = usePosts();
-  const savePostMutation = useSavePost();
   const deletePostMutation = useDeletePost();
+  const savePostMutation = useSavePost();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const { confirmingId: confirmDelete, requestDelete } = useConfirmDelete();
 
   const filtered = search
     ? blogPosts.filter(
@@ -24,23 +25,13 @@ export function AdminBlogList() {
   const handleToggleFeatured = (slug: string) => {
     const post = blogPosts.find((p) => p.slug === slug);
     if (!post) return;
-    // Un-feature all others, toggle this one
-    blogPosts.forEach((p) => {
-      if (p.slug !== slug && p.featured) {
-        savePostMutation.mutate({ ...p, featured: false });
-      }
-    });
     savePostMutation.mutate({ ...post, featured: !post.featured });
   };
 
   const handleDelete = (slug: string) => {
-    if (confirmDelete === slug) {
+    requestDelete(slug, () => {
       deletePostMutation.mutate(slug);
-      setConfirmDelete(null);
-    } else {
-      setConfirmDelete(slug);
-      setTimeout(() => setConfirmDelete(null), 3000);
-    }
+    });
   };
 
   return (

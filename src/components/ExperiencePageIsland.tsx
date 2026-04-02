@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
 import { lazy, Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
-import { useInView } from "./useInView";
+import { useInView } from "@/hooks/useInView";
 
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
-import { roles, skills, type Role, type SkillGroup } from "./experienceData";
+import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
 import { useSettings } from "@/stores/settingsStore";

@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/components/blogData";
+import type { BlogPost } from "@/types";
 
 interface BlogPreviewPaneProps {
   form: BlogPost;

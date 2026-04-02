@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { ease } from "@/lib/motion";
 import { barColor } from "./_utils";
 

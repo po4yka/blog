@@ -1,7 +1,7 @@
 import { registerCommand } from "./registry";
-import { projects } from "@/components/projectsData";
-import { blogPosts } from "@/components/blogData";
-import { Accent, Tag } from "../primitives";
+import { projects } from "@/data/projectsData";
+import { blogPosts } from "@/data/blogData";
+import { Accent, Tag } from "../ui";
 import type { Command } from "./types";
 
 const allSlugs: string[] = [

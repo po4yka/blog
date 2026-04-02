@@ -1,5 +1,5 @@
 import type { APIRoute, GetStaticPaths } from "astro";
-import { blogPosts } from "@/components/blogData";
+import { blogPosts } from "@/data/blogData";
 
 export const prerender = true;
 

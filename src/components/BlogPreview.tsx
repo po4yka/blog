@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
-import { useInView } from "./useInView";
-import { blogPosts } from "./blogData";
+import { useInView } from "@/hooks/useInView";
+import { blogPosts } from "@/data/blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 

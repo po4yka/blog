@@ -1,19 +1,17 @@
 // Typed data access layer for Cloudflare D1
 // JSON array fields are stored as TEXT in SQLite and parsed here.
 
-import type { BlogPost, Project, Role, SiteSettings } from "@/types";
+import type { BlogPost, Project, ProjectLink, Role, SiteSettings } from "@/types";
 
 export type { BlogPost, Project, Role, SiteSettings };
-
-export function getDb(env: CloudflareEnv): D1Database {
-  return env.DB;
-}
 
 // --- Row → Domain mappers ---
 
 function parseJson<T>(raw: string | null, fallback: T): T {
   if (!raw) return fallback;
   try {
+    // Safe cast: the JSON was serialized by this same application via JSON.stringify
+    // in the upsert functions below, so it always matches the expected shape.
     return JSON.parse(raw) as T;
   } catch {
     return fallback;
@@ -64,7 +62,7 @@ function rowToProject(row: ProjectRow): Project {
     description: row.description,
     platforms: parseJson<string[]>(row.platforms, []),
     tags: parseJson<string[]>(row.tags, []),
-    links: parseJson<{ type: string; href: string }[]>(row.links, []),
+    links: parseJson<ProjectLink[]>(row.links, []),
     featured: row.featured === 1,
     sortOrder: row.sort_order,
   };

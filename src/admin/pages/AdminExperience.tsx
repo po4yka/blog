@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
 import type { Role } from "@/admin/api";
 import { useRoles, useSaveRole, useDeleteRole } from "@/admin/hooks/useAdminQueries";
+import { FieldBlock as Field, TagsInput } from "@/admin/components/FormPrimitives";
+import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 
 function newRole(): Role {
   return {
@@ -21,7 +23,7 @@ export function AdminExperience() {
   const saveRoleMutation = useSaveRole();
   const deleteRoleMutation = useDeleteRole();
   const [editing, setEditing] = useState<Role | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const { confirmingId: confirmDelete, requestDelete } = useConfirmDelete();
 
   const handleSave = () => {
     if (!editing || !editing.title.trim()) return;
@@ -29,14 +31,10 @@ export function AdminExperience() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirmDelete === id) {
+    requestDelete(id, () => {
       deleteRoleMutation.mutate(id);
-      setConfirmDelete(null);
       if (editing?.id === id) setEditing(null);
-    } else {
-      setConfirmDelete(id);
-      setTimeout(() => setConfirmDelete(null), 3000);
-    }
+    });
   };
 
   return (
@@ -241,46 +239,3 @@ export function AdminExperience() {
   );
 }
 
-// --- Sub-components ---
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="block font-mono text-muted-foreground/60 mb-1.5" style={{ fontSize: "0.6875rem", letterSpacing: "0.02em", fontWeight: 400, lineHeight: 1.5 }}>
-        {label}{required && <span className="text-accent ml-0.5">*</span>}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function TagsInput({ tags, onChange, placeholder }: { tags: string[]; onChange: (tags: string[]) => void; placeholder: string }) {
-  const [input, setInput] = useState("");
-  const add = () => {
-    const val = input.trim();
-    if (val && !tags.includes(val)) onChange([...tags, val]);
-    setInput("");
-  };
-
-  return (
-    <div className="flex flex-wrap items-center gap-1.5 p-2 bg-card border border-border/50 min-h-[38px]" style={{ borderRadius: "3px" }}>
-      {tags.map((tag) => (
-        <span key={tag} className="inline-flex items-center gap-1 font-mono px-2 py-0.5 bg-secondary/80 text-foreground/60 border border-border/40" style={{ fontSize: "0.625rem", borderRadius: "2px" }}>
-          {tag}
-          <button onClick={() => onChange(tags.filter((t) => t !== tag))} className="text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer ml-0.5" style={{ fontSize: "0.6875rem", lineHeight: 1 }}>
-            &times;
-          </button>
-        </span>
-      ))}
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(); } }}
-        placeholder={tags.length === 0 ? placeholder : ""}
-        className="flex-1 min-w-[80px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/20 font-mono"
-        style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
-      />
-    </div>
-  );
-}

@@ -1,5 +1,5 @@
 import { registerCommand } from "./registry";
-import { Accent } from "../primitives";
+import { Accent } from "../ui";
 import type { Command } from "./types";
 
 const validThemes = ["dark", "light", "system"] as const;

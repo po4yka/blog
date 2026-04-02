@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { type ReactNode } from "react";
 import { ease, duration, stagger } from "@/lib/motion";
 import { TrafficLights } from "./TrafficLights";

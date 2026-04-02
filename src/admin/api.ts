@@ -23,7 +23,7 @@ export function isTokenPresent(): boolean {
   return !!token;
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
@@ -33,7 +33,7 @@ class ApiError extends Error {
   }
 }
 
-async function api<T>(path: string, init?: RequestInit): Promise<T> {
+async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api/admin/${path}`, {
     ...init,
     headers: {
@@ -50,35 +50,33 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 // --- Posts ---
-export const getPosts = () => api<BlogPost[]>("posts");
-export const getPost = (slug: string) => api<BlogPost>(`posts/${slug}`);
-export const savePost = (post: BlogPost) => api<{ ok: true }>("posts", { method: "POST", body: JSON.stringify(post) });
-export const updatePost = (post: BlogPost) =>
-  api<{ ok: true }>(`posts/${post.slug}`, { method: "PUT", body: JSON.stringify(post) });
-export const deletePost = (slug: string) => api<{ ok: true }>(`posts/${slug}`, { method: "DELETE" });
+export const getPosts = () => adminFetch<BlogPost[]>("posts");
+export const getPost = (slug: string) => adminFetch<BlogPost>(`posts/${slug}`);
+export const savePost = (post: BlogPost) => adminFetch<{ ok: true }>("posts", { method: "POST", body: JSON.stringify(post) });
+export const deletePost = (slug: string) => adminFetch<{ ok: true }>(`posts/${slug}`, { method: "DELETE" });
 
 // --- Projects ---
-export const getProjects = () => api<Project[]>("projects");
+export const getProjects = () => adminFetch<Project[]>("projects");
 export const saveProject = (project: Project) =>
-  api<{ ok: true }>("projects", { method: "POST", body: JSON.stringify(project) });
-export const deleteProject = (id: string) => api<{ ok: true }>(`projects/${id}`, { method: "DELETE" });
+  adminFetch<{ ok: true }>("projects", { method: "POST", body: JSON.stringify(project) });
+export const deleteProject = (id: string) => adminFetch<{ ok: true }>(`projects/${id}`, { method: "DELETE" });
 
 // --- Roles ---
-export const getRoles = () => api<Role[]>("roles");
-export const saveRole = (role: Role) => api<{ ok: true }>("roles", { method: "POST", body: JSON.stringify(role) });
-export const deleteRole = (id: string) => api<{ ok: true }>(`roles/${id}`, { method: "DELETE" });
+export const getRoles = () => adminFetch<Role[]>("roles");
+export const saveRole = (role: Role) => adminFetch<{ ok: true }>("roles", { method: "POST", body: JSON.stringify(role) });
+export const deleteRole = (id: string) => adminFetch<{ ok: true }>(`roles/${id}`, { method: "DELETE" });
 
 // --- Categories ---
-export const getCategories = () => api<string[]>("categories");
+export const getCategories = () => adminFetch<string[]>("categories");
 export const addCategory = (name: string) =>
-  api<{ ok: true }>("categories", { method: "POST", body: JSON.stringify({ name }) });
-export const removeCategory = (name: string) =>
-  api<{ ok: true }>(`categories/${encodeURIComponent(name)}`, { method: "DELETE" });
+  adminFetch<{ ok: true }>("categories", { method: "POST", body: JSON.stringify({ name }) });
+export const deleteCategory = (name: string) =>
+  adminFetch<{ ok: true }>(`categories/${encodeURIComponent(name)}`, { method: "DELETE" });
 
 // --- Settings ---
-export const getSettings = () => api<SiteSettings>("settings");
+export const getSettings = () => adminFetch<SiteSettings>("settings");
 export const updateSettings = (settings: SiteSettings) =>
-  api<{ ok: true }>("settings", { method: "PUT", body: JSON.stringify(settings) });
+  adminFetch<{ ok: true }>("settings", { method: "PUT", body: JSON.stringify(settings) });
 
 // --- Auth (different base path) ---
 export async function logout(): Promise<void> {

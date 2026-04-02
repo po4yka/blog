@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Menu, X, Sun, Moon, Monitor } from "lucide-react";
-import { useThrottledCallback } from "./useThrottle";
+import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings } from "@/stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
 
@@ -63,7 +63,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const cycleTheme = () => {
     const order = ["dark", "light", "system"] as const;
     const idx = order.indexOf(theme);
-    setTheme(order[(idx + 1) % order.length] ?? "dark");
+    setTheme(order[(idx + 1) % order.length]);
   };
 
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;

@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
-import { useInView } from "./useInView";
+import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "./MotionProvider";
 
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));

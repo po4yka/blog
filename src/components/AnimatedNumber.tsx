@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "./useInView";
+import { useInView } from "@/hooks/useInView";
 import { useSettings } from "@/stores/settingsStore";
 
 function easeOutCubic(t: number): number {
