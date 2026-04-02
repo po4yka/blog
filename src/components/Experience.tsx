@@ -30,6 +30,7 @@ export function Experience() {
                 x: 2,
                 transition: { type: "spring", stiffness: 300, damping: 25 },
               }}
+              whileTap={{ scale: 0.995 }}
             >
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div className="flex items-baseline gap-3">
@@ -88,6 +89,7 @@ export function Experience() {
           href="/experience"
           className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
+          whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
           $ git log --author=po4yka — full history →

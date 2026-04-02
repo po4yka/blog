@@ -225,7 +225,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                   <motion.a
                     key={link.label}
                     href={link.href}
-                    className={`py-2 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
+                    className={`py-3 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
                       active
                         ? "text-foreground"
                         : "text-muted-foreground/50 hover:text-foreground/70"

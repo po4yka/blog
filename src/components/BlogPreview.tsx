@@ -76,6 +76,7 @@ export function BlogPreview() {
           href="/blog"
           className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
+          whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
           $ find ./posts/ -name "*.md" — view all →

@@ -51,14 +51,18 @@ import {
     </div>
 
     <!-- Mobile dev: iOS simulators + SPM resolve side-by-side on desktop -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-section-name="xcode-spm">
-      <XcodeSimulators client:visible delay={0.05} />
-      <SwiftPackageResolve client:visible delay={0.1} />
+    <div class="hidden sm:block">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-section-name="xcode-spm">
+        <XcodeSimulators client:visible delay={0.05} />
+        <SwiftPackageResolve client:visible delay={0.1} />
+      </div>
     </div>
 
     <!-- Decorative memory + disk panels -->
-    <div data-section-name="memory">
-      <MemoryGrid client:visible delay={0.05} />
+    <div class="hidden sm:block">
+      <div data-section-name="memory">
+        <MemoryGrid client:visible delay={0.05} />
+      </div>
     </div>
 
     <div data-section-name="experience">
@@ -69,8 +73,10 @@ import {
     <div data-section-name="git-log">
       <GitLog client:visible delay={0.05} />
     </div>
-    <div data-section-name="ktlint">
-      <KtlintCheck client:visible delay={0.05} />
+    <div class="hidden sm:block">
+      <div data-section-name="ktlint">
+        <KtlintCheck client:visible delay={0.05} />
+      </div>
     </div>
 
     <div data-section-name="blog">
@@ -78,16 +84,20 @@ import {
     </div>
 
     <!-- Mobile dev: logcat + fastlane deploy -->
-    <div data-section-name="logcat">
-      <AdbLogcat client:visible delay={0.05} />
+    <div class="hidden sm:block">
+      <div data-section-name="logcat">
+        <AdbLogcat client:visible delay={0.05} />
+      </div>
     </div>
     <div data-section-name="fastlane">
       <FastlaneDeploy client:visible delay={0.05} />
     </div>
 
     <!-- Bottom system bar -->
-    <div data-section-name="system-bar">
-      <SystemBottomBar client:visible delay={0.05} />
+    <div class="hidden sm:block">
+      <div data-section-name="system-bar">
+        <SystemBottomBar client:visible delay={0.05} />
+      </div>
     </div>
   </div>
 

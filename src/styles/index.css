@@ -57,12 +57,26 @@
 }
 
 .prose-blog pre {
+  position: relative;
   margin-bottom: 1.25rem;
   padding: 1rem;
   overflow-x: auto;
   background: var(--secondary);
   border-radius: 8px;
   border: 1px solid var(--border);
+}
+
+.prose-blog pre::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  background: linear-gradient(to right, transparent, var(--secondary));
+  pointer-events: none;
+  opacity: 0.8;
+  border-radius: 0 8px 8px 0;
 }
 
 .prose-blog pre code {
@@ -94,6 +108,15 @@
   margin: 2rem 0;
   border-color: var(--border);
   opacity: 0.3;
+}
+
+/* Mobile font size floor -- prevent tiny text on small screens */
+@media (max-width: 640px) {
+  .text-2xs { font-size: 0.5625rem; }     /* 8px -> 9px */
+  .text-3xs { font-size: 0.625rem; }      /* 9px -> 10px */
+  .text-xs { font-size: 0.6875rem; }      /* 10px -> 11px */
+  .text-label { font-size: 0.75rem; }     /* 11px -> 12px */
+  .text-mono-sm { font-size: 0.8125rem; } /* 12px -> 13px */
 }
 
 /* Mobile prose readability */
