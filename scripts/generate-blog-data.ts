@@ -48,13 +48,17 @@ function escapeForDoubleQuotedString(str: string): string {
   return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
+const HTML_ENTITY_MAP: Record<string, string> = {
+  "&lt;": "<",
+  "&gt;": ">",
+  "&amp;": "&",
+  "&quot;": '"',
+  "&#39;": "'",
+};
+const HTML_ENTITY_RE = /&(?:lt|gt|amp|quot|#39);/g;
+
 function decodeHtmlEntities(str: string): string {
-  return str
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+  return str.replace(HTML_ENTITY_RE, (match) => HTML_ENTITY_MAP[match] ?? match);
 }
 
 interface BlogEntry {
