@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { getPostBySlug, upsertPost, deletePost } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, validateOrigin } from "@/lib/auth";
 import { blogPostSchema, validationError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ params, request, locals }) => {
@@ -20,6 +20,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
 };
 
 export const PUT: APIRoute = async ({ request, locals }) => {
+  validateOrigin(request);
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
   let body;
@@ -39,6 +40,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
 };
 
 export const DELETE: APIRoute = async ({ params, request, locals }) => {
+  validateOrigin(request);
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
   try {

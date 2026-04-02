@@ -149,7 +149,9 @@ describe("POST /api/admin/projects", () => {
   it("returns 500 on DB error", async () => {
     const { POST } = await import("@/pages/api/admin/projects/index");
 
-    const run = vi.fn().mockRejectedValue(new Error("D1 write failure"));
+    const run = vi.fn()
+      .mockResolvedValueOnce({ success: true })
+      .mockRejectedValue(new Error("D1 write failure"));
     const first = vi.fn().mockResolvedValueOnce({ token: "valid-test-token" });
     const all = vi.fn().mockResolvedValue({ results: [] });
     const bind = vi.fn().mockReturnValue({ run, first, all });

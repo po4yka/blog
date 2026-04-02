@@ -19,18 +19,21 @@ describe("createSession", () => {
   it("cleans expired sessions then inserts a new one", async () => {
     await createSession(db);
 
-    // First prepare call: DELETE expired sessions
+    // Batch cleans expired sessions and old login attempts
     expect(db.prepare).toHaveBeenCalledWith(
       expect.stringContaining("DELETE FROM admin_sessions"),
     );
+    expect(db.prepare).toHaveBeenCalledWith(
+      expect.stringContaining("DELETE FROM login_attempts"),
+    );
 
-    // Second prepare call: INSERT new session
+    // INSERT new session
     expect(db.prepare).toHaveBeenCalledWith(
       expect.stringContaining("INSERT INTO admin_sessions"),
     );
 
-    // Two prepare calls total
-    expect(db.prepare).toHaveBeenCalledTimes(2);
+    // Three prepare calls total (2 batch deletes + 1 insert)
+    expect(db.prepare).toHaveBeenCalledTimes(3);
   });
 });
 

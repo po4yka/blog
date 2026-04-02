@@ -2,9 +2,10 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { removeCategory } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, validateOrigin } from "@/lib/auth";
 
 export const DELETE: APIRoute = async ({ params, request, locals }) => {
+  validateOrigin(request);
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
   try {

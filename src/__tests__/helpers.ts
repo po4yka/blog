@@ -10,10 +10,13 @@ export function createMockDb() {
   const bind = vi.fn().mockReturnValue({ run, first });
   const prepare = vi.fn().mockReturnValue({ run, bind });
 
-  return { prepare, bind, run, first } as unknown as D1Database & {
+  const batch = vi.fn().mockResolvedValue([]);
+
+  return { prepare, bind, run, first, batch } as unknown as D1Database & {
     bind: ReturnType<typeof vi.fn>;
     run: ReturnType<typeof vi.fn>;
     first: ReturnType<typeof vi.fn>;
+    batch: ReturnType<typeof vi.fn>;
   };
 }
 

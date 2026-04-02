@@ -63,5 +63,13 @@ CREATE TABLE IF NOT EXISTS site_settings (
 CREATE TABLE IF NOT EXISTS admin_sessions (
   token      TEXT PRIMARY KEY,
   created_at TEXT DEFAULT (datetime('now')),
-  expires_at TEXT NOT NULL
+  expires_at TEXT NOT NULL,
+  last_used  TEXT DEFAULT (datetime('now'))
 );
+
+-- Login attempt tracking for rate limiting
+CREATE TABLE IF NOT EXISTS login_attempts (
+  ip_address   TEXT NOT NULL,
+  attempted_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip_address, attempted_at);

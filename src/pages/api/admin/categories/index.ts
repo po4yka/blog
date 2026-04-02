@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { getCategories, addCategory } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, validateOrigin } from "@/lib/auth";
 import { categorySchema, validationError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ request, locals }) => {
@@ -17,6 +17,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  validateOrigin(request);
   const db = locals.runtime.env.DB;
   await requireAuth(request, db);
   let body;

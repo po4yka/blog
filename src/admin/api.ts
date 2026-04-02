@@ -50,6 +50,11 @@ async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
       ...init?.headers,
     },
   });
+  const newToken = res.headers.get("X-New-Token");
+  if (newToken) {
+    setToken(newToken);
+  }
+
   if (!res.ok) {
     const text = await res.text();
     throw new ApiError(res.status, text);
