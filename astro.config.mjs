@@ -10,6 +10,10 @@ const isAstroDev = process.argv.includes("dev");
 export default defineConfig({
   site: "https://po4yka.dev",
   output: "static",
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: "viewport",
+  },
   adapter: cloudflare(isAstroDev ? { platformProxy: { enabled: true } } : {}),
   integrations: [react(), mdx(), sitemap()],
   vite: {

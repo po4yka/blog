@@ -40,7 +40,7 @@ const { pathname } = Astro.url;
     </a>
     <div
       class="min-h-screen bg-background text-foreground transition-colors duration-300"
-      style="font-family: 'JetBrains Mono', monospace;"
+      style="font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Monaco', 'Courier New', monospace;"
     >
       <Nav client:load pathname={pathname} transition:persist />
       <main
@@ -50,9 +50,9 @@ const { pathname } = Astro.url;
       >
         <slot />
       </main>
-      <Footer client:load transition:persist />
-      <KeyboardShortcuts client:load transition:persist />
-      <CursorGlow client:load transition:persist />
+      <Footer client:idle transition:persist />
+      <KeyboardShortcuts client:idle transition:persist />
+      <CursorGlow client:idle transition:persist />
     </div>
   </body>
 </html>
