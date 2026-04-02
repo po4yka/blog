@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "generate:blog": "tsx scripts/generate-blog-data.ts",
     "validate:blog": "tsx scripts/validate-blog-sync.ts",
+    "test:e2e": "playwright test",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
@@ -49,6 +50,7 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-query-devtools": "^5.96.1",
     "@types/react": "^19.2.14",

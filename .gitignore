@@ -11,3 +11,5 @@ dist/
 .claude/worktrees/
 .omc/
 .desloppify/
+test-results/
+playwright-report/
