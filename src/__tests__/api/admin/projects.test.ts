@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createApiContext, createAuthenticatedContext } from "../../helpers";
+import { setMockEnv } from "../../mocks/cloudflare-workers";
 
 // Build a db mock that supports .all() (list queries), .bind().first()
 // (single-row lookups), and .bind().run() (writes).
@@ -133,11 +134,8 @@ describe("POST /api/admin/projects", () => {
       body: "{ not valid json",
     });
 
-    const ctx = {
-      request,
-      params: {},
-      locals: { runtime: { env: { DB: db, ADMIN_PASSWORD: "test-password" } } },
-    } as unknown as import("astro").APIContext;
+    setMockEnv({ DB: db, ADMIN_PASSWORD: "test-password" });
+    const ctx = { request, params: {} } as unknown as import("astro").APIContext;
 
     const response = await POST(ctx);
     expect(response.status).toBe(400);

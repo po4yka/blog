@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import {
   createSession,
   validateOrigin,
@@ -11,13 +12,12 @@ import {
 } from "@/lib/auth";
 import { loginSchema, validationError } from "@/lib/validation";
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   validateOrigin(request);
 
   const parsed = loginSchema.safeParse(await request.json());
   if (!parsed.success) return validationError(parsed.error);
   const { password } = parsed.data;
-  const env = locals.runtime.env;
   const db = env.DB;
 
   const ip =

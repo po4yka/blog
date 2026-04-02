@@ -1,12 +1,13 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { removeCategory } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
 
-export const DELETE: APIRoute = async ({ params, request, locals }) => {
+export const DELETE: APIRoute = async ({ params, request }) => {
   validateOrigin(request);
-  const db = locals.runtime.env.DB;
+  const db = env.DB;
   await requireAuth(request, db);
   try {
     await removeCategory(db, decodeURIComponent(params.name!));

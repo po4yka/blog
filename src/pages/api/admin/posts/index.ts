@@ -1,12 +1,13 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { getAllPosts, upsertPost } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
 import { blogPostSchema, validationError } from "@/lib/validation";
 
-export const GET: APIRoute = async ({ request, locals }) => {
-  const db = locals.runtime.env.DB;
+export const GET: APIRoute = async ({ request }) => {
+  const db = env.DB;
   await requireAuth(request, db);
   try {
     const posts = await getAllPosts(db);
@@ -16,9 +17,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   validateOrigin(request);
-  const db = locals.runtime.env.DB;
+  const db = env.DB;
   await requireAuth(request, db);
   let body;
   try {

@@ -1,12 +1,13 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { getPostBySlug, upsertPost, deletePost } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
 import { blogPostSchema, validationError } from "@/lib/validation";
 
-export const GET: APIRoute = async ({ params, request, locals }) => {
-  const db = locals.runtime.env.DB;
+export const GET: APIRoute = async ({ params, request }) => {
+  const db = env.DB;
   await requireAuth(request, db);
   try {
     const post = await getPostBySlug(db, params.slug!);
@@ -19,9 +20,9 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
   }
 };
 
-export const PUT: APIRoute = async ({ request, locals }) => {
+export const PUT: APIRoute = async ({ request }) => {
   validateOrigin(request);
-  const db = locals.runtime.env.DB;
+  const db = env.DB;
   await requireAuth(request, db);
   let body;
   try {
@@ -39,9 +40,9 @@ export const PUT: APIRoute = async ({ request, locals }) => {
   }
 };
 
-export const DELETE: APIRoute = async ({ params, request, locals }) => {
+export const DELETE: APIRoute = async ({ params, request }) => {
   validateOrigin(request);
-  const db = locals.runtime.env.DB;
+  const db = env.DB;
   await requireAuth(request, db);
   try {
     await deletePost(db, params.slug!);

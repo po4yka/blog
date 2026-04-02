@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { setMockEnv } from "./mocks/cloudflare-workers";
 
 /**
  * D1 mock for read operations (uses .first() for single results).
@@ -55,6 +56,11 @@ export function createApiContext(options: {
     adminPassword = "test-password",
   } = options;
 
+  const mockDb = db ?? createMockDb();
+
+  // Set the cloudflare:workers mock env
+  setMockEnv({ DB: mockDb, ADMIN_PASSWORD: adminPassword });
+
   const requestInit: RequestInit = { method, headers };
   if (body) {
     requestInit.body = JSON.stringify(body);
@@ -66,14 +72,6 @@ export function createApiContext(options: {
   return {
     request,
     params,
-    locals: {
-      runtime: {
-        env: {
-          DB: db ?? createMockDb(),
-          ADMIN_PASSWORD: adminPassword,
-        },
-      },
-    },
   } as unknown as import("astro").APIContext;
 }
 

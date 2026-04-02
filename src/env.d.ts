@@ -7,10 +7,6 @@ interface CloudflareEnv {
   ADMIN_PASSWORD: string;
 }
 
-declare namespace App {
-  interface Locals {
-    runtime: {
-      env: CloudflareEnv;
-    };
-  }
+declare module "cloudflare:workers" {
+  const env: CloudflareEnv;
 }
