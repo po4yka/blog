@@ -46,7 +46,8 @@
     "zustand": "^5.0.12"
   },
   "overrides": {
-    "vite": "$vite"
+    "vite": "$vite",
+    "tmp": ">=0.2.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
