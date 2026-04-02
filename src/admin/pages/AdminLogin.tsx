@@ -73,16 +73,19 @@ export function AdminLogin() {
             transition={{ duration: 0.4 }}
           >
             <label
+              htmlFor="password-input"
               className="block font-mono text-muted-foreground/60 mb-2"
               style={{ fontSize: "0.6875rem", letterSpacing: "0.02em" }}
             >
               Password
             </label>
             <input
+              id="password-input"
               type="password"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(false); }}
               placeholder="Enter admin password"
+              aria-describedby={error ? "login-error" : undefined}
               className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 outline-none ${
                 error ? "border-destructive/50" : "border-border/60 focus:border-accent/40"
               }`}
@@ -93,6 +96,8 @@ export function AdminLogin() {
 
           {error && (
             <motion.div
+              id="login-error"
+              aria-live="polite"
               className="mt-2.5 flex items-center gap-1.5 text-destructive/70"
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}

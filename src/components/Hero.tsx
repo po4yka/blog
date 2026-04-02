@@ -32,10 +32,12 @@ export function Hero() {
   return (
     <MotionProvider>
     <section
+      aria-labelledby="hero-heading"
       className="space-y-8 pt-8"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
+      <h1 id="hero-heading" className="sr-only">Nikita Pochaev -- Mobile Developer</h1>
       {/* Boot messages */}
       <BootBlock
         lines={[

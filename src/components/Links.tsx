@@ -37,6 +37,7 @@ export function Links() {
             href={link.href}
             target={link.href.startsWith("http") ? "_blank" : undefined}
             rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            aria-label={link.href.startsWith("http") ? `${link.label} (opens in new window)` : link.label}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 hover:text-accent hover:bg-accent/5 transition-all duration-250 font-mono text-mono rounded-[6px]"
             style={{
               border: "1px solid var(--border)",

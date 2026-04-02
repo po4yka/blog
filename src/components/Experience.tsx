@@ -11,7 +11,8 @@ export function Experience() {
 
   return (
     <MotionProvider>
-    <section id="experience" className="space-y-5">
+    <section id="experience" aria-labelledby="experience-heading" className="space-y-5">
+      <h2 id="experience-heading" className="sr-only">Experience</h2>
       <Cmd>
         git log <Accent>--author=po4yka</Accent> --format=career | head -3
       </Cmd>

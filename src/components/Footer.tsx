@@ -8,7 +8,7 @@ import { MotionProvider } from "./MotionProvider";
 export function Footer() {
   return (
     <MotionProvider>
-    <footer className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
+    <footer aria-label="Site footer" className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
       <div className="space-y-6">
         <Suspense fallback={null}>
           <UptimeStrip delay={0} />

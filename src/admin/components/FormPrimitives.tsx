@@ -12,7 +12,7 @@ export function FieldBlock({ label, required, children }: { label: string; requi
   );
 }
 
-export function TagsInput({ tags, onChange, placeholder }: { tags: string[]; onChange: (tags: string[]) => void; placeholder: string }) {
+export function TagsInput({ tags, onChange, placeholder, label = "Add tag" }: { tags: string[]; onChange: (tags: string[]) => void; placeholder: string; label?: string }) {
   const [input, setInput] = useState("");
 
   const add = () => {
@@ -37,6 +37,7 @@ export function TagsInput({ tags, onChange, placeholder }: { tags: string[]; onC
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(); } }}
         placeholder={tags.length === 0 ? placeholder : ""}
+        aria-label={label}
         className="flex-1 min-w-[80px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/20 font-mono"
         style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
       />

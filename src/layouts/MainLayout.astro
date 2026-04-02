@@ -35,12 +35,16 @@ const { pathname } = Astro.url;
     <ClientRouter />
   </head>
   <body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-accent-foreground focus:rounded-md focus:outline-none">
+      Skip to main content
+    </a>
     <div
       class="min-h-screen bg-background text-foreground transition-colors duration-300"
       style="font-family: 'JetBrains Mono', monospace;"
     >
       <Nav client:load pathname={pathname} transition:persist />
       <main
+        id="main-content"
         class="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
         transition:animate={fade({ duration: '0.2s' })}
       >

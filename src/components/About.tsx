@@ -8,7 +8,8 @@ export function About() {
 
   return (
     <MotionProvider>
-    <section id="about" className="space-y-5">
+    <section id="about" aria-labelledby="about-heading" className="space-y-5">
+      <h2 id="about-heading" className="sr-only">About</h2>
       <Cmd>
         cat <Accent>README.md</Accent> | head -20
       </Cmd>

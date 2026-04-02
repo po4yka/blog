@@ -12,7 +12,8 @@ export function BlogPreview() {
 
   return (
     <MotionProvider>
-    <section id="blog-preview" className="space-y-5">
+    <section id="blog-preview" aria-labelledby="blog-heading" className="space-y-5">
+      <h2 id="blog-heading" className="sr-only">Latest Posts</h2>
       <Cmd>
         find <Accent>./posts/</Accent> -name "*.md" -mtime -30 | head -3
       </Cmd>
@@ -74,6 +75,7 @@ export function BlogPreview() {
       >
         <motion.a
           href="/blog"
+          aria-label="View all blog posts"
           className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}

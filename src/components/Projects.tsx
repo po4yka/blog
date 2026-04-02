@@ -12,7 +12,8 @@ export function Projects() {
 
   return (
     <MotionProvider>
-    <section id="projects" className="space-y-5">
+    <section id="projects" aria-labelledby="projects-heading" className="space-y-5">
+      <h2 id="projects-heading" className="sr-only">Selected Projects</h2>
       <Cmd>
         ./gradlew <Accent>:projects:list</Accent> --format=compact | head -4
       </Cmd>
@@ -85,6 +86,7 @@ export function Projects() {
       >
         <motion.a
           href="/projects"
+          aria-label="View all projects"
           className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
