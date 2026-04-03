@@ -7,7 +7,7 @@ test.describe("public pages", () => {
     // Nav is visible
     await expect(page.locator("nav")).toBeVisible();
     // Hero content
-    await expect(page.getByText("Nikita Pochaev", { exact: true })).toBeVisible();
+    await expect(page.getByText("Nikita Pochaev", { exact: true }).first()).toBeVisible();
     // Key homepage sections exist (rendered via React islands)
     await expect(page.locator('[data-section-name="hero"]')).toBeVisible();
     await expect(page.locator('[data-section-name="projects"]')).toBeAttached();
