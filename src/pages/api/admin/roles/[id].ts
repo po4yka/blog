@@ -1,12 +1,5 @@
 export const prerender = false;
 
-import { deleteRole } from "@/lib/db";
-import { withAdmin } from "@/lib/admin-handler";
+import { roles } from "@/lib/collections";
 
-export const DELETE = withAdmin(
-  { capability: "write:roles" },
-  async ({ db, params }) => {
-    await deleteRole(db, params.id!);
-    return Response.json({ ok: true });
-  },
-);
+export const DELETE = roles.routes.delete;

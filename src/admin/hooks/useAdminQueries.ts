@@ -15,18 +15,36 @@ export const adminKeys = {
   settings: ["admin", "settings"] as const,
 };
 
-// --- Generic delete mutation factory ---
+// --- Generic collection hook factories ---
 
-function createDeleteHook<T>(config: {
-  mutationFn: (id: string) => Promise<unknown>;
+function createCollectionHooks<T>(config: {
   queryKey: readonly string[];
+  getAll: () => Promise<T[]>;
+  save: (item: T) => Promise<unknown>;
+  remove: (id: string) => Promise<unknown>;
   idField: keyof T;
   entityName: string;
 }) {
-  return function useDeleteEntity() {
+  function useList() {
+    return useQuery({ queryKey: config.queryKey, queryFn: config.getAll });
+  }
+
+  function useSave() {
     const qc = useQueryClient();
     return useMutation({
-      mutationFn: config.mutationFn,
+      mutationFn: config.save,
+      onSuccess: () => {
+        qc.invalidateQueries({ queryKey: config.queryKey });
+        toast.success(`${config.entityName} saved`);
+      },
+      onError: (e: Error) => toast.error(e.message),
+    });
+  }
+
+  function useDelete() {
+    const qc = useQueryClient();
+    return useMutation({
+      mutationFn: config.remove,
       onMutate: async (id: string) => {
         await qc.cancelQueries({ queryKey: config.queryKey });
         const prev = qc.getQueryData<T[]>(config.queryKey);
@@ -42,17 +60,25 @@ function createDeleteHook<T>(config: {
       onSuccess: () => toast.success(`${config.entityName} deleted`),
       onSettled: () => qc.invalidateQueries({ queryKey: config.queryKey }),
     });
-  };
+  }
+
+  return { useList, useSave, useDelete };
 }
 
 // --- Posts ---
 
-export function usePosts() {
-  return useQuery({
-    queryKey: adminKeys.posts,
-    queryFn: api.getPosts,
-  });
-}
+const postHooks = createCollectionHooks<BlogPost>({
+  queryKey: adminKeys.posts,
+  getAll: api.getPosts,
+  save: api.savePost,
+  remove: api.deletePost,
+  idField: "slug",
+  entityName: "Post",
+});
+
+export const usePosts = postHooks.useList;
+export const useSavePost = postHooks.useSave;
+export const useDeletePost = postHooks.useDelete;
 
 export function usePost(slug: string) {
   return useQuery({
@@ -62,82 +88,37 @@ export function usePost(slug: string) {
   });
 }
 
-export function useSavePost() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.savePost,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: adminKeys.posts });
-      toast.success("Post saved");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-}
-
-export const useDeletePost = createDeleteHook<BlogPost>({
-  mutationFn: api.deletePost,
-  queryKey: adminKeys.posts,
-  idField: "slug",
-  entityName: "Post",
-});
-
 // --- Projects ---
 
-export function useProjects() {
-  return useQuery({
-    queryKey: adminKeys.projects,
-    queryFn: api.getProjects,
-  });
-}
-
-export function useSaveProject() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.saveProject,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: adminKeys.projects });
-      toast.success("Project saved");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-}
-
-export const useDeleteProject = createDeleteHook<Project>({
-  mutationFn: api.deleteProject,
+const projectHooks = createCollectionHooks<Project>({
   queryKey: adminKeys.projects,
+  getAll: api.getProjects,
+  save: api.saveProject,
+  remove: api.deleteProject,
   idField: "id",
   entityName: "Project",
 });
 
+export const useProjects = projectHooks.useList;
+export const useSaveProject = projectHooks.useSave;
+export const useDeleteProject = projectHooks.useDelete;
+
 // --- Roles ---
 
-export function useRoles() {
-  return useQuery({
-    queryKey: adminKeys.roles,
-    queryFn: api.getRoles,
-  });
-}
-
-export function useSaveRole() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.saveRole,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: adminKeys.roles });
-      toast.success("Role saved");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-}
-
-export const useDeleteRole = createDeleteHook<Role>({
-  mutationFn: api.deleteRole,
+const roleHooks = createCollectionHooks<Role>({
   queryKey: adminKeys.roles,
+  getAll: api.getRoles,
+  save: api.saveRole,
+  remove: api.deleteRole,
   idField: "id",
   entityName: "Role",
 });
 
-// --- Categories ---
+export const useRoles = roleHooks.useList;
+export const useSaveRole = roleHooks.useSave;
+export const useDeleteRole = roleHooks.useDelete;
+
+// --- Categories (non-standard, stays hand-written) ---
 
 export function useCategories() {
   return useQuery({
@@ -154,7 +135,7 @@ export function useAddCategory() {
       qc.invalidateQueries({ queryKey: adminKeys.categories });
       toast.success("Category added");
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e: Error) => toast.error(e.message),
   });
 }
 
@@ -179,7 +160,7 @@ export function useRemoveCategory() {
   });
 }
 
-// --- Settings ---
+// --- Settings (single-row, stays hand-written) ---
 
 export function useAdminSettings() {
   return useQuery({
@@ -196,6 +177,6 @@ export function useUpdateSettings() {
       qc.invalidateQueries({ queryKey: adminKeys.settings });
       toast.success("Settings saved");
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e: Error) => toast.error(e.message),
   });
 }
