@@ -82,3 +82,11 @@ export function validationError(error: z.ZodError): Response {
     { status: 400, headers: { "Content-Type": "application/json" } },
   );
 }
+
+/** Return a JSON error Response with proper Content-Type. */
+export function jsonError(message: string, status: number): Response {
+  return new Response(
+    JSON.stringify({ error: message }),
+    { status, headers: { "Content-Type": "application/json" } },
+  );
+}

@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { getAllProjects, upsertProject } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
-import { projectSchema, validationError } from "@/lib/validation";
+import { projectSchema, validationError, jsonError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ request }) => {
   const db = env.DB;
@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
     const projects = await getAllProjects(db);
     return Response.json(projects);
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };
 
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+    return jsonError("Invalid JSON", 400);
   }
   const parsed = projectSchema.safeParse(body);
   if (!parsed.success) return validationError(parsed.error);
@@ -33,6 +33,6 @@ export const POST: APIRoute = async ({ request }) => {
     await upsertProject(db, { ...parsed.data, id: parsed.data.id ?? crypto.randomUUID() });
     return Response.json({ ok: true });
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };

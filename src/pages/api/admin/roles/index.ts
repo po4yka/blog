@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { getAllRoles, upsertRole } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
-import { roleSchema, validationError } from "@/lib/validation";
+import { roleSchema, validationError, jsonError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ request }) => {
   const db = env.DB;
@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
     const roles = await getAllRoles(db);
     return Response.json(roles);
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };
 
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+    return jsonError("Invalid JSON", 400);
   }
   const parsed = roleSchema.safeParse(body);
   if (!parsed.success) return validationError(parsed.error);
@@ -33,6 +33,6 @@ export const POST: APIRoute = async ({ request }) => {
     await upsertRole(db, { ...parsed.data, id: parsed.data.id ?? crypto.randomUUID() });
     return Response.json({ ok: true });
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };

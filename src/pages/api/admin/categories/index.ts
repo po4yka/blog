@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { getCategories, addCategory } from "@/lib/db";
 import { requireAuth, validateOrigin } from "@/lib/auth";
-import { categorySchema, validationError } from "@/lib/validation";
+import { categorySchema, validationError, jsonError } from "@/lib/validation";
 
 export const GET: APIRoute = async ({ request }) => {
   const db = env.DB;
@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
     const categories = await getCategories(db);
     return Response.json(categories);
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };
 
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+    return jsonError("Invalid JSON", 400);
   }
   const parsed = categorySchema.safeParse(body);
   if (!parsed.success) return validationError(parsed.error);
@@ -33,6 +33,6 @@ export const POST: APIRoute = async ({ request }) => {
     await addCategory(db, parsed.data.name);
     return Response.json({ ok: true });
   } catch {
-    return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    return jsonError("Database error", 500);
   }
 };
