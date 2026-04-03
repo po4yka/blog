@@ -14,13 +14,13 @@ export const loginSchema = z.object({
 
 export const projectLinkSchema = z.object({
   type: z.string(),
-  href: z.string(),
+  href: z.string().url(),
 });
 
 export const blogPostSchema = z.object({
   slug: z.string().min(1),
   title: z.string().min(1),
-  date: z.string().min(1),
+  date: z.string().min(1).regex(/^\w{3,9}\s+\d{4}$/, "Expected format: 'Mon YYYY' (e.g. 'Jan 2025')"),
   summary: z.string(),
   tags: z.array(z.string()),
   category: z.string(),
@@ -59,10 +59,10 @@ export const siteSettingsSchema = z.object({
   handle: z.string().min(1),
   role: z.string(),
   bio: z.string(),
-  github: z.string(),
-  email: z.string(),
-  telegram: z.string(),
-  linkedin: z.string(),
+  github: z.string().url().or(z.literal("")),
+  email: z.string().email().or(z.literal("")),
+  telegram: z.string().url().or(z.literal("")),
+  linkedin: z.string().url().or(z.literal("")),
 });
 
 // Inferred input types derived from Zod schemas.
