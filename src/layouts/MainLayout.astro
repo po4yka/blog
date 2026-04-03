@@ -62,7 +62,8 @@ const { pathname } = Astro.url;
       function initCursorGlow() {
         const el = document.getElementById('cursor-glow');
         if (!el) return;
-        const prefs = (() => { try { return JSON.parse(localStorage.getItem('site_preferences') || '{}'); } catch { return {}; } })();
+        const stored = (() => { try { return JSON.parse(localStorage.getItem('site_preferences') || '{}'); } catch { return {}; } })();
+        const prefs = stored.state || stored;
         if (prefs.reduceMotion) { el.style.display = 'none'; return; }
         document.addEventListener('mousemove', (e) => {
           el.style.setProperty('--cursor-x', e.clientX + 'px');

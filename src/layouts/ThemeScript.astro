@@ -6,7 +6,8 @@
 (function() {
   try {
     var raw = localStorage.getItem('site_preferences');
-    var prefs = raw ? JSON.parse(raw) : {};
+    var stored = raw ? JSON.parse(raw) : {};
+    var prefs = stored.state || stored;
     var theme = prefs.theme || 'dark';
     var resolved = theme === 'system'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
@@ -30,7 +31,8 @@
     try {
       const raw = localStorage.getItem("site_preferences");
       if (!raw) return;
-      const prefs = JSON.parse(raw);
+      const stored = JSON.parse(raw);
+      const prefs = stored.state || stored;
       const theme = prefs.theme || "dark";
       const resolved = theme === "system"
         ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
