@@ -37,7 +37,7 @@ export function BlogPreview() {
             >
               {/* Date */}
               <span
-                className="text-muted-foreground/30 shrink-0 pt-0.5 text-label"
+                className="text-muted-foreground/45 shrink-0 pt-0.5 text-label"
                 style={{ minWidth: "65px" }}
               >
                 {post.date}
@@ -76,7 +76,7 @@ export function BlogPreview() {
         <motion.a
           href="/blog"
           aria-label="View all blog posts"
-          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground/55 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}

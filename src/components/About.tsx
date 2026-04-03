@@ -46,7 +46,7 @@ export function About() {
             well-structured. I like teams that deploy often and debug rarely.
           </motion.p>
           <motion.p
-            className="text-foreground/45"
+            className="text-foreground/55"
             initial={{ opacity: 0, y: 6 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.4, delay: 0.19 }}

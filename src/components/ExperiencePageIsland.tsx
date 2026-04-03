@@ -50,10 +50,10 @@ function RoleEntry({
             {role.title}
           </h3>
         </div>
-        <span className="text-muted-foreground/35 text-mono-sm">
+        <span className="text-muted-foreground/50 text-mono-sm">
           {role.company}
           {role.location && (
-            <span className="text-muted-foreground/25 ml-2">{role.location}</span>
+            <span className="text-muted-foreground/50 ml-2">{role.location}</span>
           )}
         </span>
       </div>
@@ -68,7 +68,7 @@ function RoleEntry({
           {role.highlights.map((h, i) => (
             <motion.li
               key={i}
-              className="text-foreground/40 list-disc marker:text-accent/25 text-mono-sm"
+              className="text-foreground/55 list-disc marker:text-accent/25 text-mono-sm"
               style={{ lineHeight: 1.7 }}
               whileHover={{ color: "var(--foreground)", opacity: 0.65 }}
               transition={{ duration: 0.15 }}
@@ -89,7 +89,7 @@ function RoleEntry({
               <motion.span
                 key={tag}
                 data-tag={tagKey}
-                className="px-2 py-0.5 text-muted-foreground/35 bg-muted-foreground/5 cursor-default text-xs rounded-[4px] transition-colors duration-150"
+                className="px-2 py-0.5 text-muted-foreground/50 bg-muted-foreground/5 cursor-default text-xs rounded-[4px] transition-colors duration-150"
                 style={isHighlighted ? TAG_HIGHLIGHT_STYLE : undefined}
                 whileHover={{
                   scale: 1.08,
@@ -116,7 +116,7 @@ function SkillsSection({ group }: { group: SkillGroup }) {
     <motion.div
       className="flex gap-4 py-1 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 font-mono text-mono-sm rounded-[4px]"
     >
-      <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: "100px" }}>
+      <span className="text-muted-foreground/50 shrink-0" style={{ minWidth: "100px" }}>
         {group.label}
       </span>
       <span className="text-foreground/55">

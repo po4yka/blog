@@ -135,7 +135,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                 className={`relative px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
                   active
                     ? "text-foreground"
-                    : "text-muted-foreground/50 hover:text-foreground/70"
+                    : "text-muted-foreground/60 hover:text-foreground/80"
                 }`}
                 style={{
                   backgroundColor: active ? "rgba(139, 124, 246, 0.08)" : "transparent",
@@ -160,7 +160,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           {/* Theme toggle */}
           <motion.button
             onClick={cycleTheme}
-            className="flex items-center gap-1.5 px-2 py-1 text-3xs rounded-[5px] text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer"
+            className="flex items-center gap-1.5 px-2 py-1 text-3xs rounded-[5px] text-muted-foreground/55 hover:text-accent transition-colors duration-200 cursor-pointer"
             title={`Theme: ${theme}`}
             aria-label={`Switch theme (current: ${theme})`}
             whileHover={{ scale: 1.08 }}
@@ -177,7 +177,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               className="w-[5px] h-[5px] rounded-full"
               style={{ backgroundColor: "var(--signal-green)", animation: "pulse-scale 3s ease-in-out infinite" }}
             />
-            <span className="text-3xs text-muted-foreground/25">
+            <span className="text-3xs text-muted-foreground/40">
               online
             </span>
           </span>
@@ -233,7 +233,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                     className={`py-3 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
                       active
                         ? "text-foreground"
-                        : "text-muted-foreground/50 hover:text-foreground/70"
+                        : "text-muted-foreground/60 hover:text-foreground/80"
                     }`}
                     style={{
                       backgroundColor: active ? "rgba(139, 124, 246, 0.08)" : "transparent",

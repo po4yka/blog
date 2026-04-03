@@ -57,7 +57,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
         <div className="space-y-5">
           {SHORTCUT_GROUPS.map((group) => (
             <div key={group.label}>
-              <div className="text-xs text-muted-foreground/40 uppercase tracking-wider mb-2">
+              <div className="text-xs text-muted-foreground/55 uppercase tracking-wider mb-2">
                 {group.label}
               </div>
               <div className="space-y-1.5">
@@ -75,7 +75,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
             </div>
           ))}
         </div>
-        <div className="text-center text-xs text-muted-foreground/25 pt-2">
+        <div className="text-center text-xs text-muted-foreground/40 pt-2">
           Press <Kbd>?</Kbd> to close
         </div>
       </DialogContent>

@@ -29,7 +29,7 @@ export function Footer() {
             border: "1px solid var(--border)",
           }}
         >
-          <div className="text-3xs font-mono text-muted-foreground/20 pb-2">
+          <div className="text-3xs font-mono text-muted-foreground/40 pb-2">
             interactive shell -- try: help, ls posts/, cat meridian, open blog, neofetch
           </div>
           <TerminalPrompt />
@@ -40,7 +40,7 @@ export function Footer() {
           style={{ borderTop: "1px solid var(--titlebar-border)" }}
         >
           <motion.p
-            className="text-center font-mono text-label text-muted-foreground/20"
+            className="text-center font-mono text-label text-muted-foreground/40"
             whileHover={{ color: "var(--muted-foreground)", opacity: 0.4 }}
             transition={{ duration: 0.3 }}
           >

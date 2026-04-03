@@ -118,7 +118,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   >
                     {/* Marker */}
                     <span
-                      className="text-muted-foreground/20 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
+                      className="text-muted-foreground/40 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
                     >
                       ›
                     </span>
@@ -131,7 +131,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                         {post.title}
                       </span>
                       <p
-                        className="mt-0.5 text-muted-foreground/40 group-hover:text-muted-foreground/55 transition-colors duration-200 truncate text-mono-sm"
+                        className="mt-0.5 text-muted-foreground/50 group-hover:text-muted-foreground/65 transition-colors duration-200 truncate text-mono-sm"
                       >
                         {post.summary}
                       </p>
@@ -151,7 +151,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                 ))}
                 {filtered.length === 0 && (
                   <p
-                    className="py-8 text-center text-muted-foreground/30 font-mono text-mono"
+                    className="py-8 text-center text-muted-foreground/50 font-mono text-mono"
                   >
                     no posts found
                   </p>

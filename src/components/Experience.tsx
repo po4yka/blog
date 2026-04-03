@@ -41,7 +41,7 @@ export function Experience() {
                     {role.title}
                   </span>
                   <span
-                    className="text-muted-foreground/40 text-mono-sm"
+                    className="text-muted-foreground/50 text-mono-sm"
                   >
                     {role.company}
                   </span>
@@ -63,7 +63,7 @@ export function Experience() {
                   {role.tags.map((tag) => (
                     <motion.span
                       key={tag}
-                      className="text-muted-foreground/35 bg-muted-foreground/5 px-1.5 py-0.5 cursor-default text-label rounded-[4px]"
+                      className="text-muted-foreground/50 bg-muted-foreground/5 px-1.5 py-0.5 cursor-default text-label rounded-[4px]"
                       whileHover={{
                         scale: 1.08,
                         color: "var(--accent)",
@@ -88,7 +88,7 @@ export function Experience() {
       >
         <motion.a
           href="/experience"
-          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground/55 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
