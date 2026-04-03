@@ -174,7 +174,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               className="w-[5px] h-[5px] rounded-full"
               style={{ backgroundColor: "var(--signal-green)", animation: "pulse-scale 3s ease-in-out infinite" }}
             />
-            <span className="text-3xs text-foreground/50">
+            <span className="text-3xs text-foreground/60">
               online
             </span>
           </span>
