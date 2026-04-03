@@ -3,6 +3,10 @@
     "accesslint": {
       "command": "node",
       "args": [".claude/accesslint-mcp/dist/index.js"]
+    },
+    "cms": {
+      "command": "node",
+      "args": [".claude/cms-mcp/dist/index.js"]
     }
   }
 }
