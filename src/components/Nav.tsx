@@ -46,7 +46,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
 
   const onScroll = useThrottledCallback(
     () => setScrolled(window.scrollY > 20),
-    0
+    100
   );
 
   useEffect(() => {

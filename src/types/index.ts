@@ -13,6 +13,15 @@ export interface BlogPost {
   readingTime?: number;
 }
 
+/** Subset of BlogPost used for SEO meta tags and JSON-LD. */
+export interface BlogPostData {
+  title: string;
+  date: string;
+  summary: string;
+  tags: string[];
+  category: string;
+}
+
 export interface ProjectLink {
   type: string;
   href: string;

@@ -93,6 +93,14 @@ import {
       transform: translateY(0);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      .section-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="gradle-build"],
     [data-section-name="xcode-spm"],

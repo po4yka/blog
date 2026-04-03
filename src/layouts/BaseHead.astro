@@ -1,13 +1,6 @@
 ---
 import JsonLd from "@/components/JsonLd.astro";
-
-interface BlogPostData {
-  title: string;
-  date: string;
-  summary: string;
-  tags: string[];
-  category: string;
-}
+import type { BlogPostData } from "@/types";
 
 interface Props {
   title?: string;
