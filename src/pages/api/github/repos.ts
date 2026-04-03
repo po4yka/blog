@@ -15,7 +15,17 @@ interface GitHubRepo {
   archived: boolean;
 }
 
+// In-memory cache with 10-minute TTL
+let cache: { data: GitHubRepoSummary[]; expiresAt: number } | null = null;
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
 export const GET: APIRoute = async () => {
+  if (cache && Date.now() < cache.expiresAt) {
+    return Response.json(cache.data, {
+      headers: { "Cache-Control": "public, max-age=600", "X-Cache": "HIT" },
+    });
+  }
+
   const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`, {
     headers: {
       Accept: "application/vnd.github+json",
@@ -24,6 +34,12 @@ export const GET: APIRoute = async () => {
   });
 
   if (!res.ok) {
+    // Serve stale cache on upstream error
+    if (cache) {
+      return Response.json(cache.data, {
+        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
+      });
+    }
     return new Response(JSON.stringify({ error: "GitHub API error" }), {
       status: res.status,
       headers: { "Content-Type": "application/json" },
@@ -43,5 +59,9 @@ export const GET: APIRoute = async () => {
       topics: r.topics,
     }));
 
-  return Response.json(summary);
+  cache = { data: summary, expiresAt: Date.now() + CACHE_TTL_MS };
+
+  return Response.json(summary, {
+    headers: { "Cache-Control": "public, max-age=600", "X-Cache": "MISS" },
+  });
 };
