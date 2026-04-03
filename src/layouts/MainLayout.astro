@@ -6,7 +6,6 @@ import ThemeScript from "./ThemeScript.astro";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
-import { CursorGlow } from "@/components/CursorGlow";
 import "@/styles/index.css";
 
 interface BlogPostData {
@@ -52,7 +51,28 @@ const { pathname } = Astro.url;
       </main>
       <Footer client:idle transition:persist />
       <KeyboardShortcuts client:idle transition:persist />
-      <CursorGlow client:idle transition:persist />
+      <div
+        id="cursor-glow"
+        class="fixed inset-0 pointer-events-none"
+        style="z-index:40;opacity:0;transition:opacity 0.3s ease;background:radial-gradient(300px circle at var(--cursor-x,-999px) var(--cursor-y,-999px),rgba(139,124,246,0.06) 0%,transparent 100%)"
+        transition:persist
+      ></div>
     </div>
+    <script>
+      function initCursorGlow() {
+        const el = document.getElementById('cursor-glow');
+        if (!el) return;
+        const prefs = (() => { try { return JSON.parse(localStorage.getItem('site_preferences') || '{}'); } catch { return {}; } })();
+        if (prefs.reduceMotion) { el.style.display = 'none'; return; }
+        document.addEventListener('mousemove', (e) => {
+          el.style.setProperty('--cursor-x', e.clientX + 'px');
+          el.style.setProperty('--cursor-y', e.clientY + 'px');
+          el.style.opacity = '1';
+        }, { passive: true });
+        document.addEventListener('mouseleave', () => { el.style.opacity = '0'; });
+      }
+      initCursorGlow();
+      document.addEventListener('astro:page-load', initCursorGlow);
+    </script>
   </body>
 </html>

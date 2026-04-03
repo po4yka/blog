@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "@/stores/settingsStore";
+
+const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
 
 type ThemeMode = "dark" | "light" | "system";
 const themeOrder: ThemeMode[] = ["dark", "light", "system"];
@@ -12,35 +13,6 @@ const NAV_ROUTES: Record<string, string> = {
   b: "/blog",
   s: "/settings",
 };
-
-const SHORTCUT_GROUPS = [
-  {
-    label: "Navigation",
-    shortcuts: [
-      { keys: "g h", desc: "Go to home" },
-      { keys: "g p", desc: "Go to projects" },
-      { keys: "g e", desc: "Go to experience" },
-      { keys: "g b", desc: "Go to blog" },
-      { keys: "g s", desc: "Go to settings" },
-    ],
-  },
-  {
-    label: "Sections",
-    shortcuts: [
-      { keys: "j", desc: "Next section" },
-      { keys: "k", desc: "Previous section" },
-    ],
-  },
-  {
-    label: "Utilities",
-    shortcuts: [
-      { keys: "t", desc: "Cycle theme" },
-      { keys: "/", desc: "Focus terminal" },
-      { keys: "?", desc: "Toggle this help" },
-      { keys: "Esc", desc: "Close / blur" },
-    ],
-  },
-];
 
 function isInputTarget(target: EventTarget | null): boolean {
   if (!target || !(target instanceof HTMLElement)) return false;
@@ -82,14 +54,6 @@ function focusTerminal() {
     input.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(() => input.focus(), 400);
   }
-}
-
-function Kbd({ children }: { children: string }) {
-  return (
-    <kbd className="inline-block px-1.5 py-0.5 rounded-[4px] text-xs font-mono text-foreground/70 bg-muted-foreground/10 border border-border min-w-[24px] text-center">
-      {children}
-    </kbd>
-  );
 }
 
 export function KeyboardShortcuts() {
@@ -156,42 +120,11 @@ export function KeyboardShortcuts() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [pendingChord, overlayOpen, cycleTheme]);
 
+  if (!overlayOpen) return null;
+
   return (
-    <Dialog open={overlayOpen} onOpenChange={setOverlayOpen}>
-      <DialogContent
-        className="font-mono max-w-md"
-        style={{ background: "var(--card)", border: "1px solid var(--border)" }}
-      >
-        <DialogHeader>
-          <DialogTitle className="text-sm text-muted-foreground/60 uppercase tracking-widest font-medium">
-            Keyboard Shortcuts
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-5">
-          {SHORTCUT_GROUPS.map((group) => (
-            <div key={group.label}>
-              <div className="text-xs text-muted-foreground/40 uppercase tracking-wider mb-2">
-                {group.label}
-              </div>
-              <div className="space-y-1.5">
-                {group.shortcuts.map((s) => (
-                  <div key={s.keys} className="flex items-center justify-between gap-4">
-                    <span className="text-sm text-foreground/60">{s.desc}</span>
-                    <span className="flex gap-1">
-                      {s.keys.split(" ").map((k, i) => (
-                        <Kbd key={i}>{k}</Kbd>
-                      ))}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="text-center text-xs text-muted-foreground/25 pt-2">
-          Press <Kbd>?</Kbd> to close
-        </div>
-      </DialogContent>
-    </Dialog>
+    <Suspense fallback={null}>
+      <ShortcutsDialog open={overlayOpen} onOpenChange={setOverlayOpen} />
+    </Suspense>
   );
 }
