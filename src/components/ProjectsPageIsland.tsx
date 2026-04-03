@@ -10,6 +10,7 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 }
 import { lazy, Suspense } from "react";
 import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
 
 const ProcessTable = lazy(() => import("./Decorations").then(m => ({ default: m.ProcessTable })));
@@ -121,6 +122,7 @@ function ProjectEntry({ project }: { project: Project }) {
 
 export function ProjectsPage() {
   return (
+    <ErrorBoundary>
     <MotionProvider>
     <div className="space-y-8">
       {/* Boot */}
@@ -158,5 +160,6 @@ export function ProjectsPage() {
       </Suspense>
     </div>
     </MotionProvider>
+    </ErrorBoundary>
   );
 }

@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { lazy, Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
 
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
@@ -224,6 +225,7 @@ export function ExperiencePage() {
   }, []);
 
   return (
+    <ErrorBoundary>
     <MotionProvider>
     <div className="space-y-8">
       {/* Boot */}
@@ -297,5 +299,6 @@ export function ExperiencePage() {
       </Suspense>
     </div>
     </MotionProvider>
+    </ErrorBoundary>
   );
 }

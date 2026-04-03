@@ -2,6 +2,7 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import { lazy, Suspense, useCallback } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useClientValue } from "@/hooks/useClientValue";
@@ -49,6 +50,7 @@ export function Hero() {
   }, [mouseX, mouseY]);
 
   return (
+    <ErrorBoundary>
     <MotionProvider>
     <section
       aria-labelledby="hero-heading"
@@ -180,5 +182,6 @@ export function Hero() {
       </div>
     </section>
     </MotionProvider>
+    </ErrorBoundary>
   );
 }

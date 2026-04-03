@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "./MotionProvider";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { ease, duration, stagger, spring } from "@/lib/motion";
@@ -35,6 +36,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
   const featured = posts.find((p) => p.featured);
 
   return (
+    <ErrorBoundary>
     <MotionProvider>
     <div className="space-y-8">
       {/* Boot block */}
@@ -168,5 +170,6 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
       </Suspense>
     </div>
     </MotionProvider>
+    </ErrorBoundary>
   );
 }
