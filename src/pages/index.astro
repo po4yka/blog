@@ -6,16 +6,14 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import { UptimeStrip, SystemBottomBar, MemoryGrid } from "@/components/Decorations";
+import { UptimeStrip, SystemBottomBar } from "@/components/Decorations";
 import {
   AdbDevices,
   GradleBuild,
   XcodeSimulators,
   FastlaneDeploy,
   GitLog,
-  AdbLogcat,
   SwiftPackageResolve,
-  KtlintCheck,
 } from "@/components/MobileTerminal";
 ---
 <MainLayout isHomePage>
@@ -58,37 +56,20 @@ import {
       </div>
     </div>
 
-    <!-- Decorative memory + disk panels -->
-    <div class="hidden sm:block">
-      <div data-section-name="memory">
-        <MemoryGrid client:visible delay={0.05} />
-      </div>
-    </div>
-
     <div data-section-name="experience">
       <Experience client:visible />
     </div>
 
-    <!-- Mobile dev: git log + lint check -->
+    <!-- Mobile dev: git log -->
     <div data-section-name="git-log">
       <GitLog client:visible delay={0.05} />
-    </div>
-    <div class="hidden sm:block">
-      <div data-section-name="ktlint">
-        <KtlintCheck client:visible delay={0.05} />
-      </div>
     </div>
 
     <div data-section-name="blog">
       <BlogPreview client:visible />
     </div>
 
-    <!-- Mobile dev: logcat + fastlane deploy -->
-    <div class="hidden sm:block">
-      <div data-section-name="logcat">
-        <AdbLogcat client:visible delay={0.05} />
-      </div>
-    </div>
+    <!-- Mobile dev: fastlane deploy -->
     <div data-section-name="fastlane">
       <FastlaneDeploy client:visible delay={0.05} />
     </div>
@@ -115,12 +96,9 @@ import {
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="gradle-build"],
     [data-section-name="xcode-spm"],
-    [data-section-name="memory"],
     [data-section-name="experience"],
     [data-section-name="git-log"],
-    [data-section-name="ktlint"],
     [data-section-name="blog"],
-    [data-section-name="logcat"],
     [data-section-name="fastlane"],
     [data-section-name="system-bar"] {
       content-visibility: auto;

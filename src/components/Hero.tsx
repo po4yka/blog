@@ -3,6 +3,7 @@ import { lazy, Suspense, useCallback, useSyncExternalStore } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
+import { GITHUB_USERNAME } from "@/lib/constants";
 
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
@@ -49,6 +50,11 @@ export function Hero() {
       onMouseLeave={handleMouseLeave}
     >
       <h1 id="hero-heading" className="sr-only">Nikita Pochaev -- Mobile Developer</h1>
+      {/* Visible identity heading */}
+      <div className="space-y-1">
+        <p className="text-lg font-medium text-foreground/90">Nikita Pochaev</p>
+        <p className="text-mono-sm text-muted-foreground/60">Mobile Developer -- Android, iOS, Kotlin Multiplatform</p>
+      </div>
       {/* Boot messages */}
       <BootBlock
         lines={[
@@ -78,57 +84,76 @@ export function Hero() {
         </Cmd>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 items-start">
-          {/* Main info */}
-          <MacWindow title="whois — po4yka" dimLights delay={0.1}>
-            <InfoTable
-              rows={[
-                {
-                  label: "name",
-                  value: (
-                    <motion.span
-                      className="text-foreground"
-                      style={{ fontWeight: 500 }}
-                      whileHover={{ color: "var(--accent)" }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      Nikita Pochaev
-                    </motion.span>
-                  ),
-                },
-                {
-                  label: "role",
-                  value: (
-                    <span className="text-foreground/80" style={{ fontWeight: 500 }}>
-                      Mobile Developer
-                    </span>
-                  ),
-                },
-                {
-                  label: "handle",
-                  value: <Accent>@po4yka</Accent>,
-                },
-                {
-                  label: "focus",
-                  value: (
-                    <span className="text-foreground/70">
-                      Android, iOS, Kotlin Multiplatform,
-                      <br />
-                      MobileOps, CI/CD, Release Automation
-                    </span>
-                  ),
-                },
-                {
-                  label: "status",
-                  value: (
-                    <span className="text-foreground/60">
-                      open to collaboration · building tools & apps
-                    </span>
-                  ),
-                },
-              ]}
-              delay={0.15}
-            />
-          </MacWindow>
+          {/* Main info + CTAs */}
+          <div className="flex flex-col gap-4">
+            <MacWindow title="whois — po4yka" dimLights delay={0.1}>
+              <InfoTable
+                rows={[
+                  {
+                    label: "name",
+                    value: (
+                      <motion.span
+                        className="text-foreground"
+                        style={{ fontWeight: 500 }}
+                        whileHover={{ color: "var(--accent)" }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        Nikita Pochaev
+                      </motion.span>
+                    ),
+                  },
+                  {
+                    label: "role",
+                    value: (
+                      <span className="text-foreground/80" style={{ fontWeight: 500 }}>
+                        Mobile Developer
+                      </span>
+                    ),
+                  },
+                  {
+                    label: "handle",
+                    value: <Accent>@po4yka</Accent>,
+                  },
+                  {
+                    label: "focus",
+                    value: (
+                      <span className="text-foreground/70">
+                        Android, iOS, Kotlin Multiplatform,
+                        <br />
+                        MobileOps, CI/CD, Release Automation
+                      </span>
+                    ),
+                  },
+                  {
+                    label: "status",
+                    value: (
+                      <span className="text-foreground/60">
+                        open to collaboration · building tools & apps
+                      </span>
+                    ),
+                  },
+                ]}
+                delay={0.15}
+              />
+            </MacWindow>
+
+            {/* Above-fold CTA links */}
+            <div className="flex flex-wrap gap-3 pt-2">
+              {[
+                { label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
+                { label: "blog", href: "/blog" },
+                { label: "projects", href: "/projects" },
+              ].map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-mono-sm text-foreground/60 hover:text-accent transition-colors duration-200"
+                >
+                  <span className="text-muted-foreground/40">$</span> open --{link.label}
+                </a>
+              ))}
+            </div>
+          </div>
 
           {/* Decorative system widgets — desktop only, with parallax */}
           <Suspense fallback={null}>
