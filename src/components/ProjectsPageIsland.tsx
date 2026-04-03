@@ -50,13 +50,13 @@ function ProjectEntry({ project }: { project: Project }) {
           </h3>
           {project.featured && <Tag variant="highlight">featured</Tag>}
           {project.status && (
-            <span className="text-muted-foreground/35 text-label">
+            <span className="text-muted-foreground/50 text-label">
               {project.status}
             </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground/30 text-label">
+          <span className="text-muted-foreground/50 text-label">
             {project.platforms.join(" / ")}
           </span>
           {project.year && (
@@ -74,7 +74,7 @@ function ProjectEntry({ project }: { project: Project }) {
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/35 pl-6 text-mono-sm" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-foreground/55 pl-6 text-mono-sm" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}

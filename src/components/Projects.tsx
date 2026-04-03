@@ -56,7 +56,7 @@ export function Projects() {
                   <div className="flex items-center gap-2 shrink-0">
                     {project.featured && <Tag variant="highlight">featured</Tag>}
                     <span
-                      className="text-muted-foreground/35 text-mono-sm"
+                      className="text-muted-foreground/50 text-mono-sm"
                     >
                       {project.platforms.join(" / ")}
                     </span>
