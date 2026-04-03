@@ -1,59 +1,8 @@
+-- Auto-generated from source files. Do not edit manually.
+-- Run "npm run generate:all" to regenerate.
+
 -- Blog posts
 INSERT INTO blog_posts (slug, title, date, summary, tags, category, content, featured) VALUES
-('kmp-shared-logic-without-shared-ui', 'KMP: Shared Logic Without Shared UI', 'Feb 2026',
- 'How we structured a Kotlin Multiplatform project to share networking, caching, and domain logic while keeping native Compose and SwiftUI views on each platform.',
- '["KMP","Architecture"]', 'Architecture',
- 'When we started our Kotlin Multiplatform project, the temptation was to share everything — including UI. We resisted that urge, and it turned out to be the right call.
-
-## The approach
-
-Our shared module handles three things: networking (Ktor), local caching (SQLDelight), and domain logic. Everything above that layer is platform-native.
-
-On Android, we use Jetpack Compose. On iOS, SwiftUI. The shared Kotlin code compiles to a framework that iOS consumes directly.
-
-## Why not share UI?
-
-Compose Multiplatform is impressive, but our iOS users expect iOS-native behavior. Swipe-back navigation, platform haptics, accessibility patterns — these are hard to replicate in a cross-platform UI layer.
-
-## Results
-
-- 60% code sharing by line count
-- Native feel on both platforms
-- One team maintaining shared logic
-- Platform teams focus on UI polish
-
-The key insight: share the boring parts (networking, caching, business rules) and let each platform shine where it matters most.', 1),
-
-('mobile-ci-that-actually-works', 'Mobile CI That Actually Works', 'Jan 2026',
- 'A practical walkthrough of setting up CI/CD for a mobile project — Gradle caching, signing, distribution, and the mistakes I made along the way.',
- '["MobileOps","CI/CD"]', 'DevOps',
- 'Mobile CI is harder than web CI. You''re dealing with signing certificates, provisioning profiles, Gradle daemons, Xcode build caches, and app distribution — all before your tests even run.
-
-## The stack
-
-- GitHub Actions for orchestration
-- Gradle remote cache (self-hosted)
-- Fastlane for iOS signing and distribution
-- Custom Gradle plugin for Android variant management
-
-## Key lessons
-
-**Cache everything.** Gradle remote caching cut our Android build times from 12 minutes to 4. On iOS, derived data caching saves about 5 minutes per build.
-
-**Separate signing from building.** Don''t bake certificates into your CI config. Use a dedicated signing step that pulls credentials from a vault.
-
-**Fail fast.** Run lint and unit tests before the expensive build step. No point compiling a release APK if your code doesn''t pass ktlint.
-
-## The pipeline
-
-1. Lint + static analysis (2 min)
-2. Unit tests (3 min)
-3. Build debug variants (4 min)
-4. Build release + sign (6 min)
-5. Distribute to testers (1 min)
-
-Total: ~16 minutes from push to testable build. Not perfect, but reliable.', 0),
-
 ('compose-stability-deep-dive', 'A Deep Dive into Compose Stability', 'Dec 2025',
  'Understanding the Compose compiler''s stability inference, why your composables recompose too often, and how to fix it without @Stable annotations everywhere.',
  '["Android","Compose"]', 'Android',
@@ -68,7 +17,7 @@ A type is stable if:
 
 ## The problem
 
-Data classes from your domain layer often aren''t stable — they might contain List<T>, Map<K,V>, or other types the compiler can''t verify as stable.
+Data classes from your domain layer often aren''t stable — they might contain List&lt;T&gt;, Map&lt;K,V&gt;, or other types the compiler can''t verify as stable.
 
 ## Solutions (ranked by preference)
 
@@ -134,51 +83,105 @@ We built a DownloadManager that wraps URLSession and provides:
 - Queue management (max 3 concurrent downloads)
 - Persistent download state in CoreData
 
-The key insight: treat the download manager as infrastructure, not a feature. It should be boring and reliable.', 0);
+The key insight: treat the download manager as infrastructure, not a feature. It should be boring and reliable.', 0),
+
+('kmp-shared-logic-without-shared-ui', 'KMP: Shared Logic Without Shared UI', 'Feb 2026',
+ 'How we structured a Kotlin Multiplatform project to share networking, caching, and domain logic while keeping native Compose and SwiftUI views on each platform.',
+ '["KMP","Architecture"]', 'Architecture',
+ 'When we started our Kotlin Multiplatform project, the temptation was to share everything — including UI. We resisted that urge, and it turned out to be the right call.
+
+## The approach
+
+Our shared module handles three things: networking (Ktor), local caching (SQLDelight), and domain logic. Everything above that layer is platform-native.
+
+On Android, we use Jetpack Compose. On iOS, SwiftUI. The shared Kotlin code compiles to a framework that iOS consumes directly.
+
+## Why not share UI?
+
+Compose Multiplatform is impressive, but our iOS users expect iOS-native behavior. Swipe-back navigation, platform haptics, accessibility patterns — these are hard to replicate in a cross-platform UI layer.
+
+## Results
+
+- 60% code sharing by line count
+- Native feel on both platforms
+- One team maintaining shared logic
+- Platform teams focus on UI polish
+
+The key insight: share the boring parts (networking, caching, business rules) and let each platform shine where it matters most.', 1),
+
+('mobile-ci-that-actually-works', 'Mobile CI That Actually Works', 'Jan 2026',
+ 'A practical walkthrough of setting up CI/CD for a mobile project — Gradle caching, signing, distribution, and the mistakes I made along the way.',
+ '["MobileOps","CI/CD"]', 'DevOps',
+ 'Mobile CI is harder than web CI. You''re dealing with signing certificates, provisioning profiles, Gradle daemons, Xcode build caches, and app distribution — all before your tests even run.
+
+## The stack
+
+- GitHub Actions for orchestration
+- Gradle remote cache (self-hosted)
+- Fastlane for iOS signing and distribution
+- Custom Gradle plugin for Android variant management
+
+## Key lessons
+
+**Cache everything.** Gradle remote caching cut our Android build times from 12 minutes to 4. On iOS, derived data caching saves about 5 minutes per build.
+
+**Separate signing from building.** Don''t bake certificates into your CI config. Use a dedicated signing step that pulls credentials from a vault.
+
+**Fail fast.** Run lint and unit tests before the expensive build step. No point compiling a release APK if your code doesn''t pass ktlint.
+
+## The pipeline
+
+1. Lint + static analysis (2 min)
+2. Unit tests (3 min)
+3. Build debug variants (4 min)
+4. Build release + sign (6 min)
+5. Distribute to testers (1 min)
+
+Total: ~16 minutes from push to testable build. Not perfect, but reliable.', 0);
 
 -- Categories
 INSERT INTO categories (name) VALUES
-('All'), ('Architecture'), ('DevOps'), ('Android'), ('iOS'), ('Tooling');
+('All'), ('Android'), ('Tooling'), ('iOS'), ('Architecture'), ('DevOps');
 
 -- Projects
 INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
-('proj-1', 'Meridian',
+('meridian', 'Meridian',
  'Cross-platform habit tracker built with Kotlin Multiplatform. Shared business logic, native UI on both platforms.',
  '["Android","iOS"]', '["KMP","Compose","SwiftUI","SQLDelight","Ktor"]',
  '[{"type":"GitHub","href":"#"},{"type":"Google Play","href":"#"},{"type":"App Store","href":"#"}]', 1, 0),
-('proj-2', 'Deploybot',
+('deploybot', 'Deploybot',
  'Internal release automation tool for mobile teams. Manages build variants, signing configs, and distribution channels.',
  '["Android"]', '["MobileOps","Gradle Plugin","Internal Tooling","CLI","Fastlane"]',
  '[{"type":"GitHub","href":"#"}]', 0, 1),
-('proj-3', 'Compose Metrics Dashboard',
+('compose-metrics', 'Compose Metrics Dashboard',
  'Visualization tool for Jetpack Compose compiler metrics. Tracks recomposition counts, stability, and performance regressions.',
  '["Android"]', '["Compose","Performance","Tooling","Compiler Metrics"]',
  '[{"type":"GitHub","href":"#"},{"type":"Google Play","href":"#"}]', 0, 2),
-('proj-4', 'Castaway',
+('castaway', 'Castaway',
  'Podcast player with offline-first architecture. Background downloads, queue management, and playback speed control.',
  '["iOS"]', '["Swift","AVFoundation","CoreData","Offline-first"]',
  '[{"type":"GitHub","href":"#"},{"type":"App Store","href":"#"}]', 0, 3),
-('proj-5', 'KMP Starter',
+('kmp-starter', 'KMP Starter',
  'Opinionated project template for Kotlin Multiplatform apps. Pre-configured CI, dependency injection, and modular architecture.',
  '["Android","iOS"]', '["KMP","Template","Architecture","CI/CD"]',
  '[{"type":"GitHub","href":"#"}]', 0, 4),
-('proj-6', 'Logline',
+('logline', 'Logline',
  'Structured logging library for Android with Timber-compatible API. Ships logs to remote collectors with batching and retry.',
  '["Android"]', '["Kotlin","Logging","Library","Timber"]',
  '[{"type":"GitHub","href":"#"}]', 0, 5);
 
 -- Roles
 INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
-('role-1', '2023 — Present', 'Freelance / Independent', 'Mobile Engineer & Consultant',
+('freelance', '2023 — Present', 'Freelance / Independent', 'Mobile Engineer & Consultant',
  'Building apps and tooling for clients. Focus on KMP architecture, release automation, and CI/CD pipelines for mobile teams.',
  '["KMP","MobileOps","Architecture"]', 0),
-('role-2', '2021 — 2023', 'Tech Company', 'Senior Android Developer',
+('tech-company', '2021 — 2023', 'Tech Company', 'Senior Android Developer',
  'Led the Android platform team. Migrated from XML to Compose, built modularization strategy, reduced build times by 40%.',
  '["Android","Compose","Gradle"]', 1),
-('role-3', '2019 — 2021', 'Startup', 'Mobile Developer',
+('startup', '2019 — 2021', 'Startup', 'Mobile Developer',
  'Full-cycle mobile development for a product-stage startup. Built features across Android and iOS, set up CI/CD from scratch.',
  '["Android","iOS","CI/CD"]', 2),
-('role-4', '2018 — 2019', 'University / Open Source', 'Junior Developer',
+('university', '2018 — 2019', 'University / Open Source', 'Junior Developer',
  'Started contributing to open source Android libraries. Built first production app. Learned Kotlin, RxJava, and clean architecture.',
  '["Kotlin","Open Source"]', 3);
 

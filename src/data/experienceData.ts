@@ -1,4 +1,5 @@
-// Static data for public site build. Admin manages equivalent data in D1.
+// Auto-generated from src/content/experience.json. Do not edit manually.
+// Run "npm run generate:all" to regenerate.
 import type { Role, SkillGroup } from "@/types";
 
 export type { Role, SkillGroup };
