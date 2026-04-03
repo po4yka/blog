@@ -18,7 +18,7 @@ export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
   if (viewA.length !== viewB.length) return false;
   let result = 0;
   for (let i = 0; i < viewA.length; i++) {
-    result |= viewA[i] ^ viewB[i];
+    result |= (viewA[i] as number) ^ (viewB[i] as number);
   }
   return result === 0;
 }

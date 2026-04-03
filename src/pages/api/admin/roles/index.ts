@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
   const parsed = roleSchema.safeParse(body);
   if (!parsed.success) return validationError(parsed.error);
   try {
-    await upsertRole(db, parsed.data);
+    await upsertRole(db, { ...parsed.data, id: parsed.data.id ?? crypto.randomUUID() });
     return Response.json({ ok: true });
   } catch {
     return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });

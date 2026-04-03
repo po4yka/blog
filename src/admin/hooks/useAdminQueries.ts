@@ -18,7 +18,7 @@ export const adminKeys = {
 // --- Generic delete mutation factory ---
 
 function createDeleteHook<T>(config: {
-  mutationFn: (id: string) => Promise<void>;
+  mutationFn: (id: string) => Promise<unknown>;
   queryKey: readonly string[];
   idField: keyof T;
   entityName: string;
