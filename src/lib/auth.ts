@@ -86,10 +86,11 @@ export async function createSession(db: D1Database): Promise<string> {
   const token = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-  // Clean up expired sessions and old login attempts
+  // Clean up expired sessions, old login attempts, and stale WebAuthn challenges
   await db.batch([
     db.prepare("DELETE FROM admin_sessions WHERE expires_at < datetime('now')"),
     db.prepare("DELETE FROM login_attempts WHERE attempted_at < datetime('now', '-1 hour')"),
+    db.prepare("DELETE FROM auth_challenges WHERE created_at < datetime('now', '-5 minutes')"),
   ]);
 
   await db

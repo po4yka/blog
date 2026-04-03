@@ -40,7 +40,7 @@ export class ApiError extends Error {
   }
 }
 
-async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const t = readToken();
   const res = await fetch(`/api/admin/${path}`, {
     ...init,
@@ -114,9 +114,59 @@ export async function login(password: string): Promise<string> {
     body: JSON.stringify({ password }),
   });
   if (!res.ok) {
-    throw new ApiError(res.status, "Invalid password");
+    const text = await res.text();
+    throw new ApiError(res.status, text || "Invalid password");
   }
   const { token: t } = (await res.json()) as { token: string };
   setToken(t);
   return t;
+}
+
+// --- Passkey ---
+
+export async function getPasskeyStatus(): Promise<{ hasPasskey: boolean; allowPassword: boolean }> {
+  const res = await fetch("/api/auth/passkey/status");
+  if (!res.ok) throw new ApiError(res.status, "Failed to get passkey status");
+  return res.json();
+}
+
+export async function getPasskeyAuthOptions(): Promise<unknown> {
+  const res = await fetch("/api/auth/passkey/auth-options");
+  if (!res.ok) throw new ApiError(res.status, "Failed to get auth options");
+  return res.json();
+}
+
+export async function verifyPasskeyAuth(assertion: unknown): Promise<string> {
+  const res = await fetch("/api/auth/passkey/auth-verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(assertion),
+  });
+  if (!res.ok) throw new ApiError(res.status, "Passkey verification failed");
+  const { token: t } = (await res.json()) as { token: string };
+  setToken(t);
+  return t;
+}
+
+export async function getPasskeyRegisterOptions(setupToken: string): Promise<unknown> {
+  const res = await fetch("/api/auth/passkey/register-options", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Requested-With": "AdminPanel" },
+    body: JSON.stringify({ setupToken }),
+  });
+  if (!res.ok) throw new ApiError(res.status, "Failed to get registration options");
+  return res.json();
+}
+
+export async function verifyPasskeyRegister(
+  setupToken: string,
+  credential: unknown,
+): Promise<{ ok: boolean; credentialID: string }> {
+  const res = await fetch("/api/auth/passkey/register-verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Requested-With": "AdminPanel" },
+    body: JSON.stringify({ setupToken, credential }),
+  });
+  if (!res.ok) throw new ApiError(res.status, "Registration failed");
+  return res.json();
 }

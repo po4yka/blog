@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { Lock, ArrowRight, AlertCircle, Fingerprint } from "lucide-react";
 import { useAuthContext } from "@/admin/contexts/AuthContext";
+import { getPasskeyStatus } from "@/admin/api";
 
 export function AdminLogin() {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
-  const { login, isAuthenticated } = useAuthContext();
+  const [showPassword, setShowPassword] = useState(false);
+  const [hasPasskey, setHasPasskey] = useState(false);
+  const [allowPassword, setAllowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { login, loginWithPasskey, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,17 +22,46 @@ export function AdminLogin() {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = await login(password);
+  useEffect(() => {
+    getPasskeyStatus()
+      .then((status) => {
+        setHasPasskey(status.hasPasskey);
+        setAllowPassword(status.allowPassword);
+        if (!status.hasPasskey) setShowPassword(true);
+      })
+      .catch(() => {
+        setShowPassword(true);
+        setAllowPassword(true);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handlePasskeyLogin = async () => {
+    setError(null);
+    const result = await loginWithPasskey();
     if (result.success) {
       navigate("/admin");
     } else {
-      setError(true);
+      setError(result.error ?? "Passkey authentication failed");
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
   };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const result = await login(password);
+    if (result.success) {
+      navigate("/admin");
+    } else {
+      setError("Invalid password");
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
+  };
+
+  if (loading) return null;
 
   return (
     <div
@@ -66,67 +100,104 @@ export function AdminLogin() {
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <motion.div
-            animate={shake ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
-            transition={{ duration: 0.4 }}
-          >
-            <label
-              htmlFor="password-input"
-              className="block font-mono text-muted-foreground/60 mb-2"
-              style={{ fontSize: "0.6875rem", letterSpacing: "0.02em" }}
+        <motion.div
+          animate={shake ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Passkey button (primary when available) */}
+          {hasPasskey && (
+            <button
+              type="button"
+              onClick={handlePasskeyLogin}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-background hover:bg-accent/90 transition-colors duration-200 cursor-pointer"
+              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
             >
-              Password
-            </label>
-            <input
-              id="password-input"
-              type="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(false); }}
-              placeholder="Enter admin password"
-              aria-describedby={error ? "login-error" : undefined}
-              className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 outline-none ${
-                error ? "border-destructive/50" : "border-border/60 focus:border-accent/40"
-              }`}
-              style={{ fontSize: "0.875rem", borderRadius: "8px", fontWeight: 400, lineHeight: 1.5 }}
-              autoFocus
-            />
-          </motion.div>
-
-          {error && (
-            <motion.div
-              id="login-error"
-              aria-live="polite"
-              className="mt-2.5 flex items-center gap-1.5 text-destructive/70"
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <AlertCircle size={12} />
-              <span className="font-mono" style={{ fontSize: "0.6875rem" }}>
-                Invalid password
-              </span>
-            </motion.div>
+              <Fingerprint size={16} />
+              Sign in with passkey
+            </button>
           )}
 
-          <button
-            type="submit"
-            className="w-full mt-5 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-background hover:bg-accent/90 transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
-          >
-            Sign in
-            <ArrowRight size={14} />
-          </button>
-        </form>
+          {/* Password form */}
+          {showPassword && allowPassword && (
+            <form onSubmit={handlePasswordSubmit} className={hasPasskey ? "mt-4" : ""}>
+              {hasPasskey && (
+                <div className="flex items-center gap-3 my-4">
+                  <div className="flex-1 h-px bg-border/40" />
+                  <span className="font-mono text-muted-foreground/30" style={{ fontSize: "0.625rem" }}>or</span>
+                  <div className="flex-1 h-px bg-border/40" />
+                </div>
+              )}
+              <label
+                htmlFor="password-input"
+                className="block font-mono text-muted-foreground/60 mb-2"
+                style={{ fontSize: "0.6875rem", letterSpacing: "0.02em" }}
+              >
+                Password
+              </label>
+              <input
+                id="password-input"
+                type="password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(null); }}
+                placeholder="Enter admin password"
+                aria-describedby={error ? "login-error" : undefined}
+                className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 outline-none ${
+                  error ? "border-destructive/50" : "border-border/60 focus:border-accent/40"
+                }`}
+                style={{ fontSize: "0.875rem", borderRadius: "8px", fontWeight: 400, lineHeight: 1.5 }}
+                autoFocus={!hasPasskey}
+              />
+              <button
+                type="submit"
+                className={`w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 transition-colors duration-200 cursor-pointer ${
+                  hasPasskey
+                    ? "border border-border/60 text-foreground/70 hover:bg-card"
+                    : "bg-accent text-background hover:bg-accent/90"
+                }`}
+                style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
+              >
+                Sign in with password
+                <ArrowRight size={14} />
+              </button>
+            </form>
+          )}
 
-        {/* Hint */}
-        <p
-          className="mt-8 font-mono text-muted-foreground/25 text-center"
-          style={{ fontSize: "0.5625rem", letterSpacing: "0.05em" }}
-        >
-          Default: po4yka2026
-        </p>
+          {/* Toggle password form */}
+          {hasPasskey && allowPassword && !showPassword && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(true)}
+              className="w-full mt-3 font-mono text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
+              style={{ fontSize: "0.625rem" }}
+            >
+              Use password instead
+            </button>
+          )}
+
+          {/* No passkey registered message */}
+          {!hasPasskey && !allowPassword && (
+            <p className="font-mono text-muted-foreground/50 text-center" style={{ fontSize: "0.6875rem" }}>
+              No passkey registered. Run <code className="text-foreground/60">npm run setup:passkey</code> to get started.
+            </p>
+          )}
+        </motion.div>
+
+        {/* Error display */}
+        {error && (
+          <motion.div
+            id="login-error"
+            aria-live="polite"
+            className="mt-3 flex items-center gap-1.5 text-destructive/70"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <AlertCircle size={12} />
+            <span className="font-mono" style={{ fontSize: "0.6875rem" }}>
+              {error}
+            </span>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );

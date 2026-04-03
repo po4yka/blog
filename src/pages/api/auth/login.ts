@@ -10,9 +10,15 @@ import {
   recordLoginAttempt,
   clearLoginAttempts,
 } from "@/lib/auth";
-import { loginSchema, validationError } from "@/lib/validation";
+import { loginSchema, validationError, jsonError } from "@/lib/validation";
 
 export const POST: APIRoute = async ({ request }) => {
+  // Password login is disabled by default when passkeys are available.
+  // Set ALLOW_PASSWORD_LOGIN=true in Cloudflare secrets to re-enable.
+  if (env.ALLOW_PASSWORD_LOGIN !== "true") {
+    return jsonError("Password login disabled. Use passkey.", 403);
+  }
+
   validateOrigin(request);
 
   const parsed = loginSchema.safeParse(await request.json());

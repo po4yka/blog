@@ -73,3 +73,19 @@ CREATE TABLE IF NOT EXISTS login_attempts (
   attempted_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip_address, attempted_at);
+
+-- Passkey credentials
+CREATE TABLE IF NOT EXISTS admin_credentials (
+  credential_id TEXT PRIMARY KEY,
+  public_key    TEXT NOT NULL,
+  counter       INTEGER NOT NULL DEFAULT 0,
+  transports    TEXT,
+  created_at    TEXT DEFAULT (datetime('now'))
+);
+
+-- Ephemeral WebAuthn challenges
+CREATE TABLE IF NOT EXISTS auth_challenges (
+  challenge   TEXT PRIMARY KEY,
+  type        TEXT NOT NULL,
+  created_at  TEXT DEFAULT (datetime('now'))
+);

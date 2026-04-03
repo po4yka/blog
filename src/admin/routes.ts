@@ -10,6 +10,9 @@ const AdminLayout = lazy(() =>
 const AdminLogin = lazy(() =>
   import("./pages/AdminLogin").then((m) => ({ default: m.AdminLogin }))
 );
+const AdminSetup = lazy(() =>
+  import("./pages/AdminSetup").then((m) => ({ default: m.AdminSetup }))
+);
 const AdminDashboard = lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
 );
@@ -35,6 +38,7 @@ export const router = createBrowserRouter([
     Component: AdminRoot,
     children: [
       { path: "login", Component: AdminLogin },
+      { path: "setup", Component: AdminSetup },
       {
         Component: AdminLayout,
         children: [
