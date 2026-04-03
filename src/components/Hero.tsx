@@ -1,9 +1,10 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { lazy, Suspense, useCallback, useSyncExternalStore } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import { useClientValue } from "@/hooks/useClientValue";
 
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
@@ -18,18 +19,16 @@ const TOOLCHAIN = {
   androidHome: "/opt/android-sdk",
 } as const;
 
-const emptySubscribe = () => () => {};
-const getClientDate = () =>
+const formatLoginDate = () =>
   new Date().toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
     year: "numeric",
   });
-const getServerDate = () => "";
 
 export function Hero() {
-  const loginDate = useSyncExternalStore(emptySubscribe, getClientDate, getServerDate);
+  const loginDate = useClientValue(formatLoginDate, "");
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const decorX = useTransform(mouseX, [-1, 1], [-PARALLAX_PX, PARALLAX_PX]);

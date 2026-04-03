@@ -1,16 +1,15 @@
-import { lazy, Suspense, useSyncExternalStore } from "react";
+import { lazy, Suspense } from "react";
 import { TerminalPrompt } from "./Terminal";
 import { motion } from "motion/react";
 
 const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
 import { MotionProvider } from "./MotionProvider";
+import { useClientValue } from "@/hooks/useClientValue";
 
-const emptySubscribe = () => () => {};
-const getClientYear = () => String(new Date().getFullYear());
-const getServerYear = () => "";
+const getYear = () => String(new Date().getFullYear());
 
 export function Footer() {
-  const year = useSyncExternalStore(emptySubscribe, getClientYear, getServerYear);
+  const year = useClientValue(getYear, "");
 
   return (
     <MotionProvider>
