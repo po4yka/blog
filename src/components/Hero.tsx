@@ -8,7 +8,15 @@ import { GITHUB_USERNAME } from "@/lib/constants";
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
 
-const PARALLAX_PX = 4;
+const PARALLAX_PX = 10;
+
+const TOOLCHAIN = {
+  androidSdk: "35",
+  xcode: "16.2",
+  kotlin: "2.1.0",
+  gradle: "8.12",
+  androidHome: "/opt/android-sdk",
+} as const;
 
 const emptySubscribe = () => () => {};
 const getClientDate = () =>
@@ -66,10 +74,10 @@ export function Hero() {
               </>
             ),
           },
-          { status: "OK", text: "Android SDK 35 detected" },
-          { status: "OK", text: "Xcode 16.2 toolchain ready" },
-          { status: "OK", text: "Kotlin 2.1.0 / Gradle 8.7 initialized" },
-          { status: "INFO", text: "ANDROID_HOME=/opt/android-sdk" },
+          { status: "OK", text: `Android SDK ${TOOLCHAIN.androidSdk} detected` },
+          { status: "OK", text: `Xcode ${TOOLCHAIN.xcode} toolchain ready` },
+          { status: "OK", text: `Kotlin ${TOOLCHAIN.kotlin} / Gradle ${TOOLCHAIN.gradle} initialized` },
+          { status: "INFO", text: `ANDROID_HOME=${TOOLCHAIN.androidHome}` },
           {
             status: "INFO",
             text: loginDate ? `Last login: ${loginDate}` : "Last login: ...",
