@@ -46,6 +46,7 @@ async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      "X-Requested-With": "AdminPanel",
       ...(t ? { Authorization: `Bearer ${t}` } : {}),
       ...init?.headers,
     },

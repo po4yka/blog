@@ -46,7 +46,19 @@ export function validateOrigin(request: Request): void {
   if (method === "GET" || method === "HEAD") return;
 
   const origin = request.headers.get("Origin");
-  if (!origin) return;
+
+  // If no Origin header, require X-Requested-With as CSRF defense-in-depth.
+  // Simple HTML forms cannot set custom headers, so this blocks CSRF from
+  // non-browser clients that omit Origin.
+  if (!origin) {
+    if (!request.headers.get("X-Requested-With")) {
+      throw new Response(JSON.stringify({ error: "Missing origin or X-Requested-With header" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return;
+  }
 
   if (!ALLOWED_ORIGINS.includes(origin)) {
     throw new Response(JSON.stringify({ error: "Forbidden origin" }), {
