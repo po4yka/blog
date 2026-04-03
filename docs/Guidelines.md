@@ -42,8 +42,9 @@ The site should not feel corporate, over-marketed, gimmicky, or visually overdes
 - Keep the structure modular and reusable.
 - Keep code and layout clean and easy to extend.
 - Use a small number of reusable components with consistent spacing and behavior.
-- Avoid adding sections just to “fill” the page.
-- Avoid fake product UI, fake metrics, fake dashboards, fake testimonials, or meaningless visual fillers.
+- Avoid adding sections just to “fill” the page. Decorative terminal blocks serve as rhythm dividers, not standalone content.
+- **Decorative section budget:** Maximum 6-8 decorative terminal blocks on the homepage. Each must relate to mobile engineering tools. Quality over quantity.
+- Avoid fake product UI, fake metrics presented as real data, fake testimonials, or meaningless visual fillers. (Atmospheric terminal widgets are permitted -- see Anti-AI-slop rules.)
 - Do not generate generic startup copy or vague marketing language.
 - Prefer fewer, better-designed elements over many average ones.
 - Keep visual noise low.
@@ -58,18 +59,29 @@ The website must **not** look like a generic AI-generated portfolio.
 ## Never do this
 
 - no generic centered hero with a gradient blob
-- no cliché “building digital experiences” copy
-- no meaningless KPI cards
+- no cliche “building digital experiences” copy
+- no meaningless KPI cards presented as real data
 - no generic SaaS landing page sections
 - no overuse of glassmorphism
 - no excessive glow or neon styling
 - no giant soft pill radii everywhere
-- no fake dashboard visuals
 - no random floating chips and decorative tags
 - no repeated equal-sized cards for every section
 - no empty “premium” look without substance
 - no overcomplicated visuals that distract from content
 - no exaggerated visual trends unless they support the concept
+- no generic hacker/Matrix theme -- terminal aesthetic must feel like a real developer's environment
+
+## Atmospheric terminal widgets
+
+Decorative system widgets (CPU monitor, network graph, build output, process tables) are permitted when:
+
+- They serve the terminal workstation metaphor and are clearly atmospheric, not presented as real metrics
+- They relate to mobile engineering tools (adb, gradle, xcode, fastlane, git)
+- They remain secondary to actual content (smaller, dimmer, sidebar placement)
+- They do not exceed the decorative section budget (see Layout guidelines)
+
+This is distinct from “fake dashboard visuals” which are dishonest KPI cards or metrics designed to impress. Atmospheric widgets are ambient decoration like wallpaper in a terminal emulator.
 
 ## Always prefer this instead
 
@@ -113,21 +125,24 @@ Copy should feel as if it was written by a real mobile engineer.
 
 # Visual direction
 
-Use a **minimal editorial developer aesthetic**.
+Use a **terminal-native developer workstation aesthetic**.
+
+The visual language is built on the metaphor of a developer's actual terminal session -- the site should feel like opening a well-configured Ghostty or Kitty terminal, not like browsing a startup landing page.
 
 The visual language should combine:
 
-- editorial minimalism
-- modern portfolio design
-- subtle technical / engineering cues
-- premium restraint
-- calm whitespace
-- refined hierarchy
+- terminal authenticity (real CLI patterns, not decorative approximations)
+- monospace-first typography with opacity-driven hierarchy
+- Catppuccin Mocha palette as the primary dark theme
+- calm whitespace between terminal blocks
+- refined micro-interactions within terminal chrome
+- atmospheric system widgets that reinforce the workstation feel
 
-Optional nuance:
-Use very subtle **precision instrument / engineering notebook / technical interface** cues if helpful, but keep them refined and minimal.
+The terminal metaphor must stay grounded and credible:
 
-Do not turn the website into a retro gimmick or sci-fi concept.
+- Do not turn the website into a retro gimmick, sci-fi concept, or generic hacker/Matrix theme.
+- Terminal output should resemble real developer tools (adb, gradle, xcode, fastlane, git) -- not fictional commands.
+- The aesthetic should feel like a real mobile engineer's environment.
 
 ---
 
@@ -153,13 +168,21 @@ Do not turn the website into a retro gimmick or sci-fi concept.
 - timeline-style resume blocks
 - structured blog lists with strong metadata
 
+## Decorative blocks as layout rhythm
+
+- Decorative terminal blocks (MobileTerminal components) function as section dividers and breathing space between content sections.
+- Alternate content and decorative sections for rhythm -- never stack two decorative blocks back-to-back.
+- Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable on small screens.
+- Each decorative block should relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint).
+
 ## Avoid
 
 - overusing identical cards
 - too much center alignment
 - excessive symmetry
 - template-looking feature grids
-- decorative sections without clear information value
+- more than 6-8 decorative sections on a single page
+- stacking decorative blocks without content sections between them
 
 ---
 
@@ -167,26 +190,31 @@ Do not turn the website into a retro gimmick or sci-fi concept.
 
 Typography should carry the design.
 
-- Use a strong primary sans-serif for main UI and headings.
-- Use a mono font only as a support font for:
-  - metadata
-  - labels
-  - dates
-  - platform tags
-  - small technical notes
-- Create a clear and elegant type hierarchy.
-- Headings should feel deliberate and confident.
-- Body text must remain highly readable.
-- Avoid type systems that feel overly corporate or generic.
+- **JetBrains Mono** is the primary font for all UI: headings, body text, labels, navigation, and terminal output.
+- **Inter** (`--font-sans`) is available as an optional contrast font for long-form blog prose where extended reading comfort matters.
+- Create a clear type hierarchy using **opacity, weight, and size** -- not font switching.
+- Headings should feel deliberate and confident within the monospace system.
+- Body text must remain highly readable despite being monospace -- use generous line-height (1.6-1.8) and comfortable font sizes.
 - Avoid too many font sizes and weights.
 - Use consistent line-height and spacing rhythm.
 
+## Custom font size scale
+
+The project uses a compact font size scale designed for monospace:
+
+- `text-2xs` (8px), `text-3xs` (9px) -- decorative labels only
+- `text-xs` (10px), `text-label` (11px) -- metadata, small tags
+- `text-mono-sm` (12px), `text-mono` (13px) -- standard body and UI
+- `text-mono-lg` (15px) -- emphasized text
+- Standard Tailwind sizes for headings (h1: 1.5rem, h2: 1.125rem)
+
 ## Typography tone
 
-- editorial
-- crisp
+- terminal
+- precise
+- technical
 - intelligent
-- minimal
+- warm despite being monospace
 - not cold
 - not decorative for decoration’s sake
 
@@ -198,10 +226,28 @@ Use a restrained color system.
 
 ## Preferred palette structure
 
-- light or softly tinted background
-- charcoal / graphite primary text
-- muted secondary text
-- one controlled accent color only
+- **Dark mode (primary):** Catppuccin Mocha-inspired palette with deep background, layered surface colors
+- **Light mode:** softly tinted background with charcoal/graphite text
+- muted secondary text via opacity layering
+- one controlled accent color only (purple/indigo family)
+
+## Opacity hierarchy
+
+The design uses opacity layering for information depth:
+
+- **Primary text:** `/80` to `/100` -- names, roles, headings, active nav links
+- **Secondary text:** `/60` to `/70` -- body prose, focus areas, inactive nav links
+- **Tertiary text:** `/45` to `/55` -- supporting details, third-priority paragraphs
+- **Decorative text:** `/20` to `/35` -- window titles, ambient labels, hints
+
+### WCAG contrast requirements
+
+**Hard rule:** Any text that conveys information (labels, nav links, metadata, section headers, button text) must meet WCAG AA contrast ratios:
+
+- Normal text (< 18px / < 14px bold): 4.5:1 minimum
+- Large text (>= 18px / >= 14px bold): 3:1 minimum
+
+Decorative-only text (window chrome titles, ambient status indicators) may fall below these thresholds but should remain perceptible.
 
 ## Accent color rules
 
@@ -298,37 +344,50 @@ Cards may be used, but do not rely on them for every layout.
 - Use cards only when they improve grouping and readability
 - Do not make the whole website a grid of identical rectangles
 
+## Terminal components
+
+The project uses a terminal component kit as its primary design system:
+
+- **MacWindow** -- titled window chrome with traffic light dots; used to frame content sections
+- **BootBlock** -- system initialization status lines ([ OK ] / [ INFO ] prefixes)
+- **Cmd** -- `$ command` prompt display, introduces content sections
+- **OutputBlock** -- indented output wrapper with fade-in animation
+- **PanelShell** -- compact bordered panel for system widgets (CPU, memory, network)
+- **InfoTable** -- key-value table for structured data display (whois, project metadata)
+
+These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment, and background colors.
+
 ---
 
 # Section guidelines
 
 ## Hero / Intro
 
-This section should immediately explain who the site belongs to.
+This section should immediately explain who the site belongs to, using the terminal boot/whois pattern.
 
-Must include:
+### Hero structure
 
-- name: **Nikita Pochaev**
+1. **Boot block** -- system initialization messages (SDK detection, toolchain status, last login timestamp). Keep to 4-6 lines maximum.
+2. **`$ whois` command** -- introduces identity via an InfoTable inside a MacWindow.
+3. **Decorative sidebar** (desktop only) -- atmospheric system widgets (CPU monitor, network graph). Must remain secondary to the identity content.
+
+### Must include
+
+- name: **Nikita Pochaev** -- must have visual prominence, not just buried in a data table row
 - handle: **@po4yka**
-- role statement:
-  - Mobile Developer — Android, iOS, Kotlin Multiplatform, MobileOps
-- a short authored introduction
-- main actions:
-  - View Projects
-  - Read Blog
-  - GitHub
-- optional secondary links:
-  - Google Play
-  - App Store
-  - Email / Telegram / LinkedIn placeholders
+- role statement: Mobile Developer -- Android, iOS, Kotlin Multiplatform, MobileOps
+- status or availability line
+- **A visible heading** (name + role) must exist beyond sr-only -- can be styled within terminal chrome but must have clear visual weight
+- **Above-fold CTAs or navigation** -- either inline action links (terminal-styled is fine) or a clear path to the Links section
 
 ### Hero rules
 
 - Keep it precise
 - Avoid generic marketing copy
-- Avoid fake status widgets or fake command-center UI
+- Decorative system widgets may appear in hero sidebar on desktop; keep them secondary to identity content
 - Use one strong compositional idea
 - The hero should feel instantly credible
+- Boot block versions should be periodically updated or pulled from config
 
 ## About / Profile
 
@@ -455,12 +514,19 @@ Motion should add:
 - staggered text entrances
 - underline or line-draw hover interactions
 - smooth project hover transitions
-- soft parallax only when restrained
+- soft parallax only when restrained (>= 8px range to be perceptible)
 - animated dividers or separators
 - elegant section transitions
 - subtle scroll-linked movement
 - refined blog list hover behavior
 - gentle motion on hero artifact or visual support
+
+## Terminal-specific motion
+
+- Staggered line reveals for terminal output (0.03-0.05s between lines)
+- Interval-based widget updates: CPU/memory panels update on 3-10s cycles, not every frame
+- Scroll-velocity-linked activity simulation is permitted but should be subtle
+- Terminal cursor blink animation for interactive elements
 
 ## Motion rules
 
@@ -538,6 +604,7 @@ Before considering any design solution complete, check that it meets all of thes
 - It feels like a real developer’s website
 - It does not feel like a generic AI portfolio
 - It does not look like a startup landing page
+- It does not feel like a generic hacker/Matrix theme
 - It communicates real expertise clearly
 - The typography feels intentional
 - The composition feels designed
@@ -546,12 +613,16 @@ Before considering any design solution complete, check that it meets all of thes
 - The layout remains readable and calm
 - The result is minimal but not empty
 - The result is distinctive but not noisy
+- **Text contrast meets WCAG AA on all functional content**
+- The terminal metaphor serves the content, not the other way around
 
 If a design looks trendy but weak in identity, simplify it.
 
 If a layout looks polished but generic, make it more authored.
 
 If a section feels decorative but not useful, remove or rethink it.
+
+If a terminal block exists only for visual filler, cut it.
 
 ---
 
