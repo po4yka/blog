@@ -1,11 +1,17 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useSyncExternalStore } from "react";
 import { TerminalPrompt } from "./Terminal";
 import { motion } from "motion/react";
 
 const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
 import { MotionProvider } from "./MotionProvider";
 
+const emptySubscribe = () => () => {};
+const getClientYear = () => String(new Date().getFullYear());
+const getServerYear = () => "";
+
 export function Footer() {
+  const year = useSyncExternalStore(emptySubscribe, getClientYear, getServerYear);
+
   return (
     <MotionProvider>
     <footer aria-label="Site footer" className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
@@ -38,7 +44,7 @@ export function Footer() {
             whileHover={{ color: "var(--muted-foreground)", opacity: 0.4 }}
             transition={{ duration: 0.3 }}
           >
-            © {new Date().getFullYear()} Nikita Pochaev · built with ghostty vibes
+            {year ? `© ${year}` : "©"} Nikita Pochaev · built with ghostty vibes
           </motion.p>
         </div>
       </div>

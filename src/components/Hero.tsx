@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { lazy, Suspense, useCallback } from "react";
+import { lazy, Suspense, useCallback, useSyncExternalStore } from "react";
 import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
@@ -9,7 +9,18 @@ const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.
 
 const PARALLAX_PX = 4;
 
+const emptySubscribe = () => () => {};
+const getClientDate = () =>
+  new Date().toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+const getServerDate = () => "";
+
 export function Hero() {
+  const loginDate = useSyncExternalStore(emptySubscribe, getClientDate, getServerDate);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const decorX = useTransform(mouseX, [-1, 1], [-PARALLAX_PX, PARALLAX_PX]);
@@ -55,12 +66,7 @@ export function Hero() {
           { status: "INFO", text: "ANDROID_HOME=/opt/android-sdk" },
           {
             status: "INFO",
-            text: `Last login: ${new Date().toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}`,
+            text: loginDate ? `Last login: ${loginDate}` : "Last login: ...",
           },
         ]}
       />
