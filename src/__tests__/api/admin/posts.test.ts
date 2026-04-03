@@ -21,7 +21,7 @@ function createListMockDb(rows: unknown[] = []) {
 const VALID_POST = {
   slug: "test-post",
   title: "Test Post",
-  date: "2024-01-01",
+  date: "Jan 2024",
   summary: "A summary",
   tags: ["tag1"],
   category: "engineering",
@@ -134,11 +134,12 @@ describe("POST /api/admin/posts", () => {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer valid-test-token",
+        Origin: "http://localhost:4321",
       },
       body: "{ not valid json",
     });
 
-    setMockEnv({ DB: db, ADMIN_PASSWORD: "test-password" });
+    setMockEnv({ DB: db, ADMIN_PASSWORD: "test-password", ALLOW_PASSWORD_LOGIN: "true" });
     const ctx = { request, params: {} } as unknown as import("astro").APIContext;
 
     const response = await POST(ctx);

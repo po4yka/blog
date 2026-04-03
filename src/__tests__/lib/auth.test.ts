@@ -19,12 +19,15 @@ describe("createSession", () => {
   it("cleans expired sessions then inserts a new one", async () => {
     await createSession(db);
 
-    // Batch cleans expired sessions and old login attempts
+    // Batch cleans expired sessions, old login attempts, and stale WebAuthn challenges
     expect(db.prepare).toHaveBeenCalledWith(
       expect.stringContaining("DELETE FROM admin_sessions"),
     );
     expect(db.prepare).toHaveBeenCalledWith(
       expect.stringContaining("DELETE FROM login_attempts"),
+    );
+    expect(db.prepare).toHaveBeenCalledWith(
+      expect.stringContaining("DELETE FROM auth_challenges"),
     );
 
     // INSERT new session
@@ -32,8 +35,8 @@ describe("createSession", () => {
       expect.stringContaining("INSERT INTO admin_sessions"),
     );
 
-    // Three prepare calls total (2 batch deletes + 1 insert)
-    expect(db.prepare).toHaveBeenCalledTimes(3);
+    // Four prepare calls total (3 batch deletes + 1 insert)
+    expect(db.prepare).toHaveBeenCalledTimes(4);
   });
 });
 

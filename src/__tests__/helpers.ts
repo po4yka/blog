@@ -59,12 +59,18 @@ export function createApiContext(options: {
   const mockDb = db ?? createMockDb();
 
   // Set the cloudflare:workers mock env
-  setMockEnv({ DB: mockDb, ADMIN_PASSWORD: adminPassword });
+  setMockEnv({ DB: mockDb, ADMIN_PASSWORD: adminPassword, ALLOW_PASSWORD_LOGIN: "true" });
 
-  const requestInit: RequestInit = { method, headers };
+  // Mutations require Origin or X-Requested-With for CSRF protection
+  const mutationHeaders =
+    method !== "GET" && method !== "HEAD" && !headers["Origin"]
+      ? { Origin: "http://localhost:4321" }
+      : {};
+
+  const requestInit: RequestInit = { method, headers: { ...mutationHeaders, ...headers } };
   if (body) {
     requestInit.body = JSON.stringify(body);
-    requestInit.headers = { ...headers, "Content-Type": "application/json" };
+    requestInit.headers = { ...mutationHeaders, ...headers, "Content-Type": "application/json" };
   }
 
   const request = new Request("http://localhost/api/test", requestInit);

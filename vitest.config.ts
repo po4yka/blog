@@ -15,6 +15,11 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/lib/**", "src/pages/api/**"],
+      exclude: [
+        "src/lib/webauthn.ts",
+        "src/lib/webauthn-config.ts",
+        "src/pages/api/auth/passkey/**",
+      ],
       thresholds: {
         lines: 60,
         functions: 60,

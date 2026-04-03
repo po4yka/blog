@@ -48,9 +48,12 @@ describe("projectLinkSchema", () => {
     expect(() => projectLinkSchema.parse({})).toThrow();
   });
 
-  it("accepts empty strings (no min constraint on these fields)", () => {
-    // type and href have no min(1) in the schema — empty strings are valid
-    expect(() => projectLinkSchema.parse({ type: "", href: "" })).not.toThrow();
+  it("rejects empty href (URL validation required)", () => {
+    expect(() => projectLinkSchema.parse({ type: "github", href: "" })).toThrow();
+  });
+
+  it("accepts empty type string", () => {
+    expect(() => projectLinkSchema.parse({ type: "", href: "https://example.com" })).not.toThrow();
   });
 });
 
@@ -61,7 +64,7 @@ describe("blogPostSchema", () => {
   const validPost = {
     slug: "my-first-post",
     title: "My First Post",
-    date: "2025-01-01",
+    date: "Jan 2025",
     summary: "A short summary",
     tags: ["typescript", "vitest"],
     category: "Engineering",
@@ -277,7 +280,7 @@ describe("siteSettingsSchema", () => {
     bio: "Building mobile apps",
     github: "https://github.com/po4yka",
     email: "nikita@example.com",
-    telegram: "@po4yka",
+    telegram: "https://t.me/po4yka",
     linkedin: "https://linkedin.com/in/po4yka",
   };
 

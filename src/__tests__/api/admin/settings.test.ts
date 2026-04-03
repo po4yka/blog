@@ -8,7 +8,7 @@ const validSettings = {
   bio: "Android, iOS, KMP",
   github: "https://github.com/po4yka",
   email: "nikita@example.com",
-  telegram: "@po4yka",
+  telegram: "https://t.me/po4yka",
   linkedin: "https://linkedin.com/in/po4yka",
 };
 
