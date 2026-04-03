@@ -38,7 +38,7 @@ export function InfoTable({
           transition={{ duration: 0.3, delay: delay + stagger.fast + i * stagger.fast }}
         >
           <span
-            className="text-muted-foreground/50 shrink-0"
+            className="text-foreground/60 shrink-0"
             style={{ minWidth: "80px" }}
           >
             {row.label}

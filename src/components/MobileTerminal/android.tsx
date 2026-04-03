@@ -39,7 +39,7 @@ export function AdbDevices({ delay = 0 }: { delay?: number }) {
               className="flex items-baseline gap-4 py-1 -mx-2 px-2 cursor-pointer text-mono rounded-[4px]"
               style={{
                 lineHeight: 1.7,
-                backgroundColor: hoveredSerial === d.serial ? "rgba(139, 124, 246, 0.05)" : "transparent",
+                backgroundColor: hoveredSerial === d.serial ? "rgba(145, 132, 247, 0.05)" : "transparent",
                 transition: "background-color 0.15s ease",
               }}
               initial={{ opacity: 0, x: -4 }}

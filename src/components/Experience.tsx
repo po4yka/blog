@@ -27,7 +27,7 @@ export function Experience() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
               whileHover={{
-                backgroundColor: "rgba(139, 124, 246, 0.03)",
+                backgroundColor: "rgba(145, 132, 247, 0.03)",
                 x: 2,
                 transition: { type: "spring", stiffness: 300, damping: 25 },
               }}
@@ -67,7 +67,7 @@ export function Experience() {
                       whileHover={{
                         scale: 1.08,
                         color: "var(--accent)",
-                        backgroundColor: "rgba(139, 124, 246, 0.08)",
+                        backgroundColor: "rgba(145, 132, 247, 0.08)",
                         transition: { type: "spring", stiffness: 400, damping: 15 },
                       }}
                     >

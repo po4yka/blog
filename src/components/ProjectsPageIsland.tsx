@@ -30,7 +30,7 @@ function ProjectEntry({ project }: { project: Project }) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
       whileHover={{
-        backgroundColor: "rgba(139, 124, 246, 0.03)",
+        backgroundColor: "rgba(145, 132, 247, 0.03)",
         x: 2,
         transition: { type: "spring", stiffness: 300, damping: 25 },
       }}
@@ -90,7 +90,7 @@ function ProjectEntry({ project }: { project: Project }) {
                 scale: 1.08,
                 y: -1,
                 color: "var(--accent)",
-                backgroundColor: "rgba(139, 124, 246, 0.08)",
+                backgroundColor: "rgba(145, 132, 247, 0.08)",
                 transition: spring.snappy,
               }}
             >

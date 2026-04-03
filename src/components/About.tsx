@@ -37,7 +37,7 @@ export function About() {
             Most of my work is in Kotlin and Swift, with growing investment in{" "}
             <motion.span
               style={{ color: "var(--accent)", cursor: "default" }}
-              whileHover={{ textShadow: "0 0 12px rgba(139, 124, 246, 0.4)" }}
+              whileHover={{ textShadow: "0 0 12px rgba(145, 132, 247, 0.4)" }}
             >
               Kotlin Multiplatform
             </motion.span>{" "}

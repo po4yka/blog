@@ -62,7 +62,7 @@ export function Hero() {
       {/* Visible identity heading */}
       <div className="space-y-1">
         <p className="text-lg font-medium text-foreground/90">Nikita Pochaev</p>
-        <p className="text-mono-sm text-muted-foreground/60">Mobile Developer -- Android, iOS, Kotlin Multiplatform</p>
+        <p className="text-mono-sm text-foreground/70">Mobile Developer -- Android, iOS, Kotlin Multiplatform</p>
       </div>
       {/* Boot messages */}
       <BootBlock

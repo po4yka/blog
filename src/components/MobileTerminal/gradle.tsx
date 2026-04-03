@@ -43,7 +43,7 @@ export function GradleBuild({ delay = 0 }: { delay?: number }) {
               className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
               style={{
                 lineHeight: 1.7,
-                backgroundColor: hoveredTask === task.name ? "rgba(139, 124, 246, 0.04)" : "transparent",
+                backgroundColor: hoveredTask === task.name ? "rgba(145, 132, 247, 0.04)" : "transparent",
                 transition: "background-color 0.15s ease",
               }}
               initial={{ opacity: 0, x: -4 }}

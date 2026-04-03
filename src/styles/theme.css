@@ -25,7 +25,7 @@
   --secondary-foreground: #cdd6f4;
   --muted: #232637;
   --muted-foreground: #6c7086;
-  --accent: #8b7cf6;
+  --accent: #9184f7;
   --accent-foreground: #191a21;
   --destructive: #f38ba8;
   --destructive-foreground: #191a21;
@@ -42,20 +42,20 @@
   --signal-amber-dim: rgba(249, 226, 175, 0.10);
   --info: #89b4fa;
   --ok: #a6e3a1;
-  --ring: rgba(139, 124, 246, 0.25);
-  --chart-1: #8b7cf6;
+  --ring: rgba(145, 132, 247, 0.25);
+  --chart-1: #9184f7;
   --chart-2: #a6e3a1;
   --chart-3: #89b4fa;
   --chart-4: #f9e2af;
   --chart-5: #f38ba8;
   --sidebar: #1e2030;
   --sidebar-foreground: #cdd6f4;
-  --sidebar-primary: #8b7cf6;
+  --sidebar-primary: #9184f7;
   --sidebar-primary-foreground: #191a21;
   --sidebar-accent: #232637;
   --sidebar-accent-foreground: #cdd6f4;
   --sidebar-border: rgba(205, 214, 244, 0.07);
-  --sidebar-ring: rgba(139, 124, 246, 0.25);
+  --sidebar-ring: rgba(145, 132, 247, 0.25);
   --titlebar: #2a2d3d;
   --titlebar-border: rgba(205, 214, 244, 0.05);
   --window-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -245,7 +245,7 @@ body, .bg-background, .bg-card, [class*="bg-"] {
 
 /* macOS-style selection */
 ::selection {
-  background: rgba(139, 124, 246, 0.25);
+  background: rgba(145, 132, 247, 0.25);
   color: #e8eaf6;
 }
 

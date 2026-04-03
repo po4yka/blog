@@ -51,7 +51,7 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
                   className="flex items-baseline gap-3 py-[3px] pl-4 -mx-2 px-2 cursor-default text-mono rounded-[4px]"
                   style={{
                     lineHeight: 1.7,
-                    backgroundColor: hoveredDevice === dev.udid ? "rgba(139, 124, 246, 0.04)" : "transparent",
+                    backgroundColor: hoveredDevice === dev.udid ? "rgba(145, 132, 247, 0.04)" : "transparent",
                     transition: "background-color 0.15s ease",
                   }}
                   initial={{ opacity: 0, x: -4 }}
