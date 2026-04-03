@@ -141,6 +141,64 @@ Specialized agents in `.claude/agents/` for isolated, focused tasks:
 
 Invoke via `@"agent-name"` mention or let Claude delegate automatically based on task context.
 
+## UI/UX Debugging Workflow
+
+Local visual debugging uses three MCP integrations: Chrome DevTools, Figma, and AccessLint.
+
+### Chrome DevTools MCP
+
+Primary tool for visual inspection, performance auditing, and responsive testing. Available tools:
+
+- `take_screenshot` -- capture current viewport for visual analysis
+- `lighthouse_audit` -- run Performance, Accessibility, SEO, Best Practices audits
+- `list_console_messages` -- catch JS errors, hydration mismatches, warnings
+- `list_network_requests` / `get_network_request` -- find slow requests, failed fetches
+- `emulate` -- simulate mobile/tablet viewports (iPhone, iPad, custom sizes)
+- `evaluate_script` -- run JS in page context (check localStorage, DOM state)
+- `performance_start_trace` / `performance_stop_trace` -- capture detailed perf traces
+- `click`, `fill`, `hover`, `type_text` -- automate user interactions
+- `navigate_page` -- visit URLs in the controlled browser
+- `take_snapshot` -- capture DOM snapshot for structural analysis
+
+**Workflow:** Start dev server (`npm run dev`) -> open Chrome to localhost -> use MCP tools to screenshot, audit, and iterate.
+
+**Responsive testing:** Use `emulate` to switch viewports (sm: 640px, md: 768px, lg: 1024px, xl: 1280px), then `take_screenshot` at each breakpoint.
+
+**Performance targets:** Lighthouse Performance 80+, Accessibility 90+, SEO 90+.
+
+### Figma MCP
+
+Design-to-code workflow via `claude.ai Figma` integration:
+
+- `get_design_context` -- extract design from Figma URL (returns code + screenshot + tokens)
+- `get_screenshot` -- capture Figma frame for visual comparison
+- `get_metadata` -- read component properties, constraints, auto-layout
+- `search_design_system` -- find components in design system
+- `get_code_connect_map` -- map Figma components to codebase components
+
+**Workflow:** Share Figma URL -> extract design context -> adapt to project's Tailwind theme and terminal component kit -> screenshot to verify match.
+
+### AccessLint MCP
+
+WCAG 2.1 accessibility auditing via local MCP server (`.claude/accesslint-mcp/`):
+
+- Contrast ratio calculation tools
+- Color-only information detection (WCAG 1.4.1)
+- Link text adequacy checks (WCAG 2.4.4)
+
+Pairs with `/accesslint-reviewer` and `/accesslint-contrast-checker` skills for comprehensive audits.
+
+### Debugging Checklist
+
+Before declaring a visual change complete:
+
+- Screenshot: current state matches intent
+- Mobile: tested on 2-3 breakpoints via `emulate`
+- Lighthouse: meets performance and accessibility targets
+- Console: no JavaScript errors
+- Contrast: all functional text meets WCAG AA (4.5:1 normal, 3:1 large)
+- Motion: works with `prefers-reduced-motion`
+
 ## Conventions
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
