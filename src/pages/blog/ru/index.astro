@@ -6,8 +6,8 @@ import { parsePostId } from "@/lib/i18n";
 
 const allPosts = await getCollection("blog");
 
-// Filter to English posts only
-const posts = allPosts.filter((p) => parsePostId(p.id).lang === "en");
+// Filter to Russian posts only
+const posts = allPosts.filter((p) => parsePostId(p.id).lang === "ru");
 
 // Sort by date descending (newest first)
 posts.sort((a, b) => {
@@ -26,7 +26,7 @@ const categories = [
   ...new Set(posts.map((p) => p.data.category)),
 ];
 ---
-<MainLayout title="Blog — Nikita Pochaev">
+<MainLayout title="Blog — Nikita Pochaev" lang="ru">
   <div transition:name="blog-content" class="island-loader">
     <div class="skeleton-window island-skeleton">
       <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 16px;"></div>
@@ -39,6 +39,6 @@ const categories = [
         <div class="skeleton" style="height: 48px;"></div>
       </div>
     </div>
-    <BlogListIsland client:idle posts={serializedPosts} categories={categories} />
+    <BlogListIsland client:idle posts={serializedPosts} categories={categories} lang="ru" />
   </div>
 </MainLayout>

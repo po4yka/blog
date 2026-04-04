@@ -7,6 +7,7 @@ export type { BlogPost };
 export const blogPosts: BlogPost[] = [
   {
     slug: "kmp-shared-logic-without-shared-ui",
+    lang: "en",
     title: "KMP: Shared Logic Without Shared UI",
     date: "Feb 2026",
     summary:
@@ -36,7 +37,39 @@ Compose Multiplatform is impressive, but our iOS users expect iOS-native behavio
 The key insight: share the boring parts (networking, caching, business rules) and let each platform shine where it matters most.`,
   },
   {
+    slug: "kmp-shared-logic-without-shared-ui",
+    lang: "ru",
+    title: "KMP: общая логика без общего UI",
+    date: "Feb 2026",
+    summary:
+      "Как мы структурировали проект на Kotlin Multiplatform, чтобы разделить сетевой слой, кэширование и доменную логику, сохраняя нативные Compose и SwiftUI на каждой платформе.",
+    tags: ["KMP", "Architecture"],
+    category: "Architecture",
+    featured: true,
+    content: `Когда мы начинали наш проект на Kotlin Multiplatform, был соблазн разделить все -- включая UI. Мы устояли, и это оказалось правильным решением.
+
+## Подход
+
+Наш общий модуль отвечает за три вещи: сетевой слой (Ktor), локальное кэширование (SQLDelight) и доменную логику. Все, что выше этого слоя -- нативное для каждой платформы.
+
+На Android мы используем Jetpack Compose. На iOS -- SwiftUI. Общий код на Kotlin компилируется во фреймворк, который iOS использует напрямую.
+
+## Почему не общий UI?
+
+Compose Multiplatform впечатляет, но наши пользователи iOS ожидают нативное поведение. Навигация свайпом назад, платформенная тактильная отдача, паттерны доступности -- все это сложно воспроизвести в кросс-платформенном UI-слое.
+
+## Результаты
+
+- 60% общего кода по количеству строк
+- Нативное ощущение на обеих платформах
+- Одна команда поддерживает общую логику
+- Платформенные команды фокусируются на полировке UI
+
+Ключевой вывод: делитесь скучными частями (сетевой слой, кэширование, бизнес-правила) и позвольте каждой платформе блистать там, где это важнее всего.`,
+  },
+  {
     slug: "mobile-ci-that-actually-works",
+    lang: "en",
     title: "Mobile CI That Actually Works",
     date: "Jan 2026",
     summary:
@@ -72,6 +105,7 @@ Total: ~16 minutes from push to testable build. Not perfect, but reliable.`,
   },
   {
     slug: "compose-stability-deep-dive",
+    lang: "en",
     title: "A Deep Dive into Compose Stability",
     date: "Dec 2025",
     summary:
@@ -106,6 +140,7 @@ The metrics report will show you exactly which composables are skippable and whi
   },
   {
     slug: "gradle-build-time-optimization",
+    lang: "en",
     title: "Cutting Gradle Build Times in Half",
     date: "Nov 2025",
     summary:
@@ -139,6 +174,7 @@ The investment was about two weeks of focused work. The payoff is every single d
   },
   {
     slug: "ios-background-downloads-done-right",
+    lang: "en",
     title: "iOS Background Downloads Done Right",
     date: "Oct 2025",
     summary:

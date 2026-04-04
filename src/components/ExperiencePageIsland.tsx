@@ -9,7 +9,7 @@ const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuG
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
-import { useSettings } from "@/stores/settingsStore";
+import { useSettings, useLocale } from "@/stores/settingsStore";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { animateNumbers } from "./_animatedNumber.utils";
 
@@ -219,6 +219,7 @@ export function ExperiencePage() {
   const { ref: skillsRef, inView: skillsInView } = useInView(0.1);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const rolesContainerRef = useRef<HTMLDivElement>(null);
+  const { t } = useLocale();
 
   const handleTagHover = useCallback((tag: string | null) => {
     setHoveredTag(tag);
@@ -239,8 +240,8 @@ export function ExperiencePage() {
               </>
             ),
           },
-          { status: "OK", text: <><AnimatedNumber value={roles.length} /> positions indexed</> },
-          { status: "INFO", text: "Sorted by date, most recent first" },
+          { status: "OK", text: <><AnimatedNumber value={roles.length} /> {t("experiencePage.positionsIndexed")}</> },
+          { status: "INFO", text: t("experiencePage.sortedByDate") },
         ]}
       />
 
@@ -286,7 +287,7 @@ export function ExperiencePage() {
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
       >
         <span className="text-muted-foreground/30 cursor-default">
-          $ wget po4yka.dev/cv.pdf — <span className="text-muted-foreground/20">coming soon</span>
+          $ wget po4yka.dev/cv.pdf — <span className="text-muted-foreground/20">{t("experiencePage.comingSoon")}</span>
         </span>
       </motion.div>
 

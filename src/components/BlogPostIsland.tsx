@@ -4,6 +4,9 @@ import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { duration, spring } from "@/lib/motion";
+import { useLocale } from "@/stores/settingsStore";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { blogUrl, type Locale } from "@/lib/i18n";
 
 interface PostMeta {
   title: string;
@@ -25,6 +28,8 @@ interface BlogPostIslandProps {
   prev: AdjacentPost | null;
   next: AdjacentPost | null;
   children?: ReactNode;
+  lang?: Locale;
+  translationSlug?: string;
 }
 
 function estimateReadingTime(el: HTMLElement): number {
@@ -67,6 +72,7 @@ function ReadingProgress() {
 
 function CopyLinkButton() {
   const [copied, setCopied] = useState(false);
+  const { t } = useLocale();
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -79,11 +85,11 @@ function CopyLinkButton() {
     <motion.button
       onClick={handleCopy}
       className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer font-mono text-label"
-      title="Copy link"
+      title={t("blogPost.copyLink")}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
-      {copied ? <><Check size={11} /> Copied</> : <><Link2 size={11} /> Copy link</>}
+      {copied ? <><Check size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
     </motion.button>
   );
 }
@@ -93,6 +99,7 @@ function CopyLinkButton() {
 function ScrollToTop() {
   const [visible, setVisible] = useState(false);
   const lastCheck = useRef(0);
+  const { t } = useLocale();
 
   useEffect(() => {
     const onScroll = () => {
@@ -121,7 +128,7 @@ function ScrollToTop() {
       exit={{ opacity: 0, y: 10 }}
       whileHover={{ scale: 1.1, y: -2 }}
       whileTap={{ scale: 0.9 }}
-      title="Scroll to top"
+      title={t("blogPost.scrollToTop")}
     >
       <ChevronUp size={18} />
     </motion.button>
@@ -130,9 +137,14 @@ function ScrollToTop() {
 
 // --- Main Component ---
 
-export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIslandProps) {
+export function BlogPostIsland({ post, slug, prev, next, children, lang: langProp, translationSlug }: BlogPostIslandProps) {
+  const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
   const [readingTime, setReadingTime] = useState(post.readingTime ?? 0);
+
+  const lang = langProp ?? "en";
+  const otherLang = lang === "en" ? "ru" : "en";
+  const translationUrl = translationSlug ? blogUrl(otherLang , translationSlug) : undefined;
 
   useEffect(() => {
     if (!post.readingTime && contentRef.current) {
@@ -147,18 +159,21 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
 
       <div className="space-y-8">
         {/* Back */}
-        <motion.a
-          href="/blog"
-          className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: duration.base }}
-          whileHover={{ x: -4 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <ArrowLeft size={12} />
-          All posts
-        </motion.a>
+        <div className="flex items-center justify-between">
+          <motion.a
+            href={blogUrl(lang)}
+            className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: duration.base }}
+            whileHover={{ x: -4 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <ArrowLeft size={12} />
+            {t("blogPost.allPosts")}
+          </motion.a>
+          <LanguageSwitcher translationUrl={translationUrl} />
+        </div>
 
         {/* Command */}
         <Cmd>
@@ -168,7 +183,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
         {/* File viewer */}
         <LessViewer
           filename={`posts/${slug}.txt`}
-          meta={`${readingTime} min`}
+          meta={`${readingTime} ${t("blogPost.min")}`}
           delay={0.1}
         >
           {/* Article header */}
@@ -186,13 +201,13 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
               className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/50 font-mono text-mono-sm"
             >
               <span>
-                author <span className="text-accent/70">Nikita Pochaev</span>
+                {t("blogPost.author")} <span className="text-accent/70">Nikita Pochaev</span>
               </span>
               <span>
-                date <span className="text-foreground/60">{post.date}</span>
+                {t("blogPost.date")} <span className="text-foreground/60">{post.date}</span>
               </span>
               <span>
-                category <span className="text-foreground/60">{post.category}</span>
+                {t("blogPost.category")} <span className="text-foreground/60">{post.category}</span>
               </span>
             </div>
           </div>
@@ -225,7 +240,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
         <div className="flex items-center justify-between pt-4 font-mono text-mono-sm">
           {prev ? (
             <motion.a
-              href={`/blog/${prev.slug}`}
+              href={blogUrl(lang , prev.slug)}
               className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 no-underline"
               whileHover={{ x: -4 }}
               whileTap={{ scale: 0.97 }}
@@ -236,7 +251,7 @@ export function BlogPostIsland({ post, slug, prev, next, children }: BlogPostIsl
           ) : <span />}
           {next ? (
             <motion.a
-              href={`/blog/${next.slug}`}
+              href={blogUrl(lang , next.slug)}
               className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 no-underline"
               whileHover={{ x: 4 }}
               whileTap={{ scale: 0.97 }}

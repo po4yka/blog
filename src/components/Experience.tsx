@@ -3,16 +3,18 @@ import { useInView } from "@/hooks/useInView";
 import { roles } from "@/data/experienceData";
 import { Cmd, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { useLocale } from "@/stores/settingsStore";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function Experience() {
   const { ref, inView } = useInView(0.05);
+  const { t } = useLocale();
 
   return (
     <MotionProvider>
     <section id="experience" aria-labelledby="experience-heading" className="space-y-5">
-      <h2 id="experience-heading" className="sr-only">Experience</h2>
+      <h2 id="experience-heading" className="sr-only">{t("experience.heading")}</h2>
       <Cmd>
         git log <Accent>--author=po4yka</Accent> --format=career | head -3
       </Cmd>
@@ -93,7 +95,7 @@ export function Experience() {
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
-          $ git log --author=po4yka — full history →
+          {t("experience.viewAll")}
         </motion.a>
       </motion.div>
     </section>

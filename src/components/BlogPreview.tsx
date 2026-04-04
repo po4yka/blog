@@ -3,17 +3,19 @@ import { useInView } from "@/hooks/useInView";
 import { blogPosts } from "@/data/blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { useLocale } from "@/stores/settingsStore";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function BlogPreview() {
   const { ref, inView } = useInView(0.1);
+  const { t } = useLocale();
   const previewPosts = blogPosts.slice(0, 3);
 
   return (
     <MotionProvider>
     <section id="blog-preview" aria-labelledby="blog-heading" className="space-y-5">
-      <h2 id="blog-heading" className="sr-only">Latest Posts</h2>
+      <h2 id="blog-heading" className="sr-only">{t("blogPreview.heading")}</h2>
       <Cmd>
         find <Accent>./posts/</Accent> -name "*.md" -mtime -30 | head -3
       </Cmd>
@@ -46,7 +48,7 @@ export function BlogPreview() {
               {/* Featured tag */}
               {post.featured && (
                 <span className="shrink-0">
-                  <Tag variant="highlight">new</Tag>
+                  <Tag variant="highlight">{t("blogPreview.new")}</Tag>
                 </span>
               )}
 
@@ -75,13 +77,13 @@ export function BlogPreview() {
       >
         <motion.a
           href="/blog"
-          aria-label="View all blog posts"
+          aria-label={t("blogPreview.viewAllLabel")}
           className="text-muted-foreground/55 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
-          $ find ./posts/ -name "*.md" — view all →
+          {t("blogPreview.viewAll")}
         </motion.a>
       </motion.div>
     </section>

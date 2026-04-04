@@ -8,6 +8,8 @@ interface Props {
   isHomePage?: boolean;
   blogPost?: BlogPostData;
   blogSlug?: string;
+  lang?: string;
+  hasTranslation?: boolean;
 }
 
 const {
@@ -16,6 +18,8 @@ const {
   isHomePage = false,
   blogPost,
   blogSlug,
+  lang = "en",
+  hasTranslation = false,
 } = Astro.props;
 ---
 <meta charset="UTF-8" />
@@ -38,4 +42,16 @@ const {
 <meta name="twitter:image" content="https://po4yka.dev/og-default.png" />
 <meta name="generator" content={Astro.generator} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+{blogSlug && hasTranslation && lang === "en" && (
+  <>
+    <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
+    <link rel="alternate" hreflang="ru" href={`https://po4yka.dev/blog/ru/${blogSlug}`} />
+  </>
+)}
+{blogSlug && hasTranslation && lang === "ru" && (
+  <>
+    <link rel="alternate" hreflang="ru" href={`https://po4yka.dev/blog/ru/${blogSlug}`} />
+    <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
+  </>
+)}
 <JsonLd isHomePage={isHomePage} blogPost={blogPost} slug={blogSlug} />

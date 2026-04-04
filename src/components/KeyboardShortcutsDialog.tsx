@@ -1,30 +1,32 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { useLocale } from "@/stores/settingsStore";
+import type { TranslationKey } from "@/lib/i18n";
 
-const SHORTCUT_GROUPS = [
+const SHORTCUT_GROUPS: { labelKey: TranslationKey; shortcuts: { keys: string; descKey: TranslationKey }[] }[] = [
   {
-    label: "Navigation",
+    labelKey: "shortcuts.navigation",
     shortcuts: [
-      { keys: "g h", desc: "Go to home" },
-      { keys: "g p", desc: "Go to projects" },
-      { keys: "g e", desc: "Go to experience" },
-      { keys: "g b", desc: "Go to blog" },
-      { keys: "g s", desc: "Go to settings" },
+      { keys: "g h", descKey: "shortcuts.goHome" },
+      { keys: "g p", descKey: "shortcuts.goProjects" },
+      { keys: "g e", descKey: "shortcuts.goExperience" },
+      { keys: "g b", descKey: "shortcuts.goBlog" },
+      { keys: "g s", descKey: "shortcuts.goSettings" },
     ],
   },
   {
-    label: "Sections",
+    labelKey: "shortcuts.sections",
     shortcuts: [
-      { keys: "j", desc: "Next section" },
-      { keys: "k", desc: "Previous section" },
+      { keys: "j", descKey: "shortcuts.nextSection" },
+      { keys: "k", descKey: "shortcuts.prevSection" },
     ],
   },
   {
-    label: "Utilities",
+    labelKey: "shortcuts.utilities",
     shortcuts: [
-      { keys: "t", desc: "Cycle theme" },
-      { keys: "/", desc: "Focus terminal" },
-      { keys: "?", desc: "Toggle this help" },
-      { keys: "Esc", desc: "Close / blur" },
+      { keys: "t", descKey: "shortcuts.cycleTheme" },
+      { keys: "/", descKey: "shortcuts.focusTerminal" },
+      { keys: "?", descKey: "shortcuts.toggleHelp" },
+      { keys: "Esc", descKey: "shortcuts.closeBlur" },
     ],
   },
 ];
@@ -43,6 +45,8 @@ interface Props {
 }
 
 export default function ShortcutsDialog({ open, onOpenChange }: Props) {
+  const { t } = useLocale();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -51,19 +55,19 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
       >
         <DialogHeader>
           <DialogTitle className="text-sm text-muted-foreground/60 uppercase tracking-widest font-medium">
-            Keyboard Shortcuts
+            {t("shortcuts.title")}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-5">
           {SHORTCUT_GROUPS.map((group) => (
-            <div key={group.label}>
+            <div key={group.labelKey}>
               <div className="text-xs text-muted-foreground/55 uppercase tracking-wider mb-2">
-                {group.label}
+                {t(group.labelKey)}
               </div>
               <div className="space-y-1.5">
                 {group.shortcuts.map((s) => (
                   <div key={s.keys} className="flex items-center justify-between gap-4">
-                    <span className="text-sm text-foreground/60">{s.desc}</span>
+                    <span className="text-sm text-foreground/60">{t(s.descKey)}</span>
                     <span className="flex gap-1">
                       {s.keys.split(" ").map((k, i) => (
                         <Kbd key={i}>{k}</Kbd>
@@ -76,7 +80,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
           ))}
         </div>
         <div className="text-center text-xs text-muted-foreground/40 pt-2">
-          Press <Kbd>?</Kbd> to close
+          {t("shortcuts.pressToClose")}
         </div>
       </DialogContent>
     </Dialog>

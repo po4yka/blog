@@ -3,17 +3,19 @@ import { useInView } from "@/hooks/useInView";
 import { projects } from "@/data/projectsData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { useLocale } from "@/stores/settingsStore";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function Projects() {
   const { ref, inView } = useInView(0.05);
+  const { t } = useLocale();
   const homeProjects = projects.slice(0, 4);
 
   return (
     <MotionProvider>
     <section id="projects" aria-labelledby="projects-heading" className="space-y-5">
-      <h2 id="projects-heading" className="sr-only">Selected Projects</h2>
+      <h2 id="projects-heading" className="sr-only">{t("projects.heading")}</h2>
       <Cmd>
         ./gradlew <Accent>:projects:list</Accent> --format=compact | head -4
       </Cmd>
@@ -54,7 +56,7 @@ export function Projects() {
                     {project.name}
                   </span>
                   <div className="flex items-center gap-2 shrink-0">
-                    {project.featured && <Tag variant="highlight">featured</Tag>}
+                    {project.featured && <Tag variant="highlight">{t("projects.featured")}</Tag>}
                     <span
                       className="text-muted-foreground/50 text-mono-sm"
                     >
@@ -86,13 +88,13 @@ export function Projects() {
       >
         <motion.a
           href="/projects"
-          aria-label="View all projects"
+          aria-label={t("projects.viewAllLabel")}
           className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
         >
-          $ ls ./projects/ — view all →
+          {t("projects.viewAll")}
         </motion.a>
       </motion.div>
     </section>

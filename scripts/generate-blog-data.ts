@@ -63,28 +63,42 @@ function decodeHtmlEntities(str: string): string {
 
 interface BlogEntry {
   slug: string;
+  lang: string;
   frontmatter: FrontMatter;
   content: string;
 }
 
 function readBlogPosts(): BlogEntry[] {
-  const files = fs
-    .readdirSync(BLOG_DIR)
-    .filter((f) => f.endsWith(".mdx"))
-    .sort();
-
   const entries: BlogEntry[] = [];
 
-  for (const file of files) {
+  // Read from lang subdirectories (en/, ru/) or root
+  const topItems = fs.readdirSync(BLOG_DIR);
+  const langDirs = topItems.filter((d) =>
+    fs.statSync(path.join(BLOG_DIR, d)).isDirectory() && (d === "en" || d === "ru"),
+  );
+  // Also handle any root-level MDX files (backward compat)
+  const rootFiles = topItems.filter((f) => f.endsWith(".mdx"));
+
+  for (const file of rootFiles) {
     const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf-8");
     const { data, content } = matter(raw);
     const fm = data as FrontMatter;
     const slug = file.replace(/\.mdx$/, "");
-
-    // Trim leading/trailing whitespace from content body
     const body = decodeHtmlEntities(content.trim());
+    entries.push({ slug, lang: "en", frontmatter: fm, content: body });
+  }
 
-    entries.push({ slug, frontmatter: fm, content: body });
+  for (const lang of langDirs) {
+    const langPath = path.join(BLOG_DIR, lang);
+    const files = fs.readdirSync(langPath).filter((f) => f.endsWith(".mdx")).sort();
+    for (const file of files) {
+      const raw = fs.readFileSync(path.join(langPath, file), "utf-8");
+      const { data, content } = matter(raw);
+      const fm = data as FrontMatter;
+      const slug = file.replace(/\.mdx$/, "");
+      const body = decodeHtmlEntities(content.trim());
+      entries.push({ slug, lang, frontmatter: fm, content: body });
+    }
   }
 
   // Sort by date descending
@@ -96,16 +110,17 @@ function readBlogPosts(): BlogEntry[] {
 function deriveCategories(entries: BlogEntry[]): string[] {
   const cats = new Set<string>();
   for (const e of entries) {
-    cats.add(e.frontmatter.category);
+    if (e.lang === "en") cats.add(e.frontmatter.category);
   }
   return ["All", ...Array.from(cats)];
 }
 
 function generateBlogPostEntry(entry: BlogEntry): string {
-  const { slug, frontmatter: fm, content } = entry;
+  const { slug, lang, frontmatter: fm, content } = entry;
   const lines: string[] = [];
   lines.push("  {");
   lines.push(`    slug: "${escapeForDoubleQuotedString(slug)}",`);
+  lines.push(`    lang: "${escapeForDoubleQuotedString(lang)}",`);
   lines.push(`    title: "${escapeForDoubleQuotedString(fm.title)}",`);
   lines.push(`    date: "${escapeForDoubleQuotedString(fm.date)}",`);
   lines.push("    summary:");

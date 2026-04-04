@@ -5,11 +5,13 @@ import { motion } from "motion/react";
 const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
 import { MotionProvider } from "./MotionProvider";
 import { useClientValue } from "@/hooks/useClientValue";
+import { useLocale } from "@/stores/settingsStore";
 
 const getYear = () => String(new Date().getFullYear());
 
 export function Footer() {
   const year = useClientValue(getYear, "");
+  const { t } = useLocale();
 
   return (
     <MotionProvider>
@@ -29,7 +31,7 @@ export function Footer() {
           }}
         >
           <div className="text-3xs font-mono text-foreground/60 pb-2">
-            interactive shell -- try: help, ls posts/, cat meridian, open blog, neofetch
+            {t("footer.shellHelp")}
           </div>
           <TerminalPrompt />
         </div>
@@ -43,7 +45,7 @@ export function Footer() {
             whileHover={{ color: "var(--foreground)", opacity: 0.7 }}
             transition={{ duration: 0.3 }}
           >
-            {year ? `© ${year}` : "©"} Nikita Pochaev · built with ghostty vibes
+            {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </motion.p>
         </div>
       </div>

@@ -15,14 +15,16 @@ interface Props {
   isHomePage?: boolean;
   blogPost?: BlogPostData;
   blogSlug?: string;
+  lang?: string;
+  hasTranslation?: boolean;
 }
 
-const { title, description, isHomePage, blogPost, blogSlug } = Astro.props;
+const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false } = Astro.props;
 const { pathname } = Astro.url;
 ---
-<html lang="en">
+<html lang={lang}
   <head>
-    <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} />
+    <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} lang={lang} hasTranslation={hasTranslation} />
     <ThemeScript />
     <ClientRouter />
   </head>
@@ -51,6 +53,23 @@ const { pathname } = Astro.url;
         transition:persist
       ></div>
     </div>
+    <script>
+      // Sync <html lang> with stored locale preference (for non-blog pages)
+      function syncLang() {
+        try {
+          const stored = JSON.parse(localStorage.getItem('site_preferences') || '{}');
+          const prefs = stored.state || stored;
+          if (prefs.locale && prefs.locale !== document.documentElement.lang) {
+            // Only override for non-blog-ru pages (blog/ru pages set lang="ru" server-side)
+            if (!window.location.pathname.startsWith('/blog/ru')) {
+              document.documentElement.lang = prefs.locale;
+            }
+          }
+        } catch { /* ignore */ }
+      }
+      syncLang();
+      document.addEventListener('astro:after-swap', syncLang);
+    </script>
     <script>
       function initCursorGlow() {
         const el = document.getElementById('cursor-glow');

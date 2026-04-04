@@ -6,6 +6,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useClientValue } from "@/hooks/useClientValue";
+import { useLocale } from "@/stores/settingsStore";
 
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
 const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
@@ -29,6 +30,7 @@ const formatLoginDate = () =>
   });
 
 export function Hero() {
+  const { t } = useLocale();
   const loginDate = useClientValue(formatLoginDate, "");
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -58,11 +60,11 @@ export function Hero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <h1 id="hero-heading" className="sr-only">Nikita Pochaev -- Mobile Developer</h1>
+      <h1 id="hero-heading" className="sr-only">{t("hero.heading")}</h1>
       {/* Visible identity heading */}
       <div className="space-y-1">
-        <p className="text-lg font-medium text-foreground/90">Nikita Pochaev</p>
-        <p className="text-mono-sm text-foreground/70">Mobile Developer -- Android, iOS, Kotlin Multiplatform</p>
+        <p className="text-lg font-medium text-foreground/90">{t("hero.name")}</p>
+        <p className="text-mono-sm text-foreground/70">{t("hero.subtitle")}</p>
       </div>
       {/* Boot messages */}
       <BootBlock
@@ -71,17 +73,17 @@ export function Hero() {
             status: "OK",
             text: (
               <>
-                Starting session — <Accent>po4yka.dev</Accent>
+                {t("hero.startingSession")} — <Accent>po4yka.dev</Accent>
               </>
             ),
           },
-          { status: "OK", text: `Android SDK ${TOOLCHAIN.androidSdk} detected` },
-          { status: "OK", text: `Xcode ${TOOLCHAIN.xcode} toolchain ready` },
-          { status: "OK", text: `Kotlin ${TOOLCHAIN.kotlin} / Gradle ${TOOLCHAIN.gradle} initialized` },
+          { status: "OK", text: `Android SDK ${TOOLCHAIN.androidSdk} ${t("hero.detected")}` },
+          { status: "OK", text: `Xcode ${TOOLCHAIN.xcode} ${t("hero.toolchainReady")}` },
+          { status: "OK", text: `Kotlin ${TOOLCHAIN.kotlin} / Gradle ${TOOLCHAIN.gradle} ${t("hero.initialized")}` },
           { status: "INFO", text: `ANDROID_HOME=${TOOLCHAIN.androidHome}` },
           {
             status: "INFO",
-            text: loginDate ? `Last login: ${loginDate}` : "Last login: ...",
+            text: loginDate ? `${t("hero.lastLogin")}: ${loginDate}` : `${t("hero.lastLogin")}: ...`,
           },
         ]}
       />
@@ -99,7 +101,7 @@ export function Hero() {
               <InfoTable
                 rows={[
                   {
-                    label: "name",
+                    label: t("hero.infoName"),
                     value: (
                       <motion.span
                         className="text-foreground"
@@ -107,37 +109,33 @@ export function Hero() {
                         whileHover={{ color: "var(--accent)" }}
                         transition={{ duration: 0.2 }}
                       >
-                        Nikita Pochaev
+                        {t("hero.name")}
                       </motion.span>
                     ),
                   },
                   {
-                    label: "role",
+                    label: t("hero.infoRole"),
                     value: (
                       <span className="text-foreground/80" style={{ fontWeight: 500 }}>
-                        Mobile Developer
+                        {t("hero.roleMobileDev")}
                       </span>
                     ),
                   },
                   {
-                    label: "handle",
+                    label: t("hero.infoHandle"),
                     value: <Accent>@po4yka</Accent>,
                   },
                   {
-                    label: "focus",
+                    label: t("hero.infoFocus"),
                     value: (
-                      <span className="text-foreground/70">
-                        Android, iOS, Kotlin Multiplatform,
-                        <br />
-                        MobileOps, CI/CD, Release Automation
-                      </span>
+                      <span className="text-foreground/70">{t("hero.focusValue").split("\n").map((line, i) => (<span key={i}>{i > 0 && <br />}{line}</span>))}</span>
                     ),
                   },
                   {
-                    label: "status",
+                    label: t("hero.infoStatus"),
                     value: (
                       <span className="text-foreground/60">
-                        open to collaboration · building tools & apps
+                        {t("hero.statusValue")}
                       </span>
                     ),
                   },

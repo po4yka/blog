@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
-import { useSettings } from "@/stores/settingsStore";
+import { useSettings, useLocale } from "@/stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import type { TranslationKey } from "@/lib/i18n";
 
-const navLinks = [
-  { label: "home", href: "/", exact: true },
-  { label: "projects", href: "/projects" },
-  { label: "experience", href: "/experience" },
-  { label: "blog", href: "/blog" },
-  { label: "settings", href: "/settings" },
+const navLinks: { labelKey: TranslationKey; href: string; exact?: boolean }[] = [
+  { labelKey: "nav.home", href: "/", exact: true },
+  { labelKey: "nav.projects", href: "/projects" },
+  { labelKey: "nav.experience", href: "/experience" },
+  { labelKey: "nav.blog", href: "/blog" },
+  { labelKey: "nav.settings", href: "/settings" },
 ];
 
 interface NavProps {
@@ -23,6 +25,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const [mounted, setMounted] = useState(false);
   const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
   const { theme, setTheme } = useSettings();
+  const { t } = useLocale();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -56,6 +59,9 @@ export function Nav({ pathname: initialPathname }: NavProps) {
     if (link.exact) return currentPathname === link.href;
     return currentPathname.startsWith(link.href);
   };
+
+  const switchThemeLabel = `${t("nav.switchTheme")} (${theme})`;
+  const themeLabel = theme;
 
   const cycleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -125,7 +131,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
             const active = isActive(link);
             return (
               <a
-                key={link.label}
+                key={link.labelKey}
                 href={link.href}
                 className={`relative px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
                   active
@@ -136,7 +142,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                   backgroundColor: active ? "rgba(145, 132, 247, 0.08)" : "transparent",
                 }}
               >
-                {link.label}
+                {t(link.labelKey)}
                 {/* Animated underline */}
                 <span
                   className="absolute bottom-0.5 left-3 right-3 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
@@ -150,20 +156,22 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           })}
         </div>
 
-        {/* Desktop right: theme toggle + status */}
+        {/* Desktop right: lang switch + theme toggle + status */}
         <div className="hidden md:flex items-center gap-3">
+          <LanguageSwitcher />
+
           {/* Theme toggle */}
           <motion.button
             onClick={cycleTheme}
             className="flex items-center gap-1.5 px-2 py-1 text-3xs rounded-[5px] text-foreground/60 hover:text-accent transition-colors duration-200 cursor-pointer"
-            title={`Theme: ${theme}`}
-            aria-label={`Switch theme (current: ${theme})`}
+            title={switchThemeLabel}
+            aria-label={switchThemeLabel}
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92, rotate: theme === "dark" ? 180 : -180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             <ThemeIcon size={13} strokeWidth={1.8} />
-            <span className="hidden lg:inline">{theme}</span>
+            <span className="hidden lg:inline">{themeLabel}</span>
           </motion.button>
 
           {/* Online dot */}
@@ -173,7 +181,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               style={{ backgroundColor: "var(--signal-green)", animation: "pulse-scale 3s ease-in-out infinite" }}
             />
             <span className="text-3xs text-foreground/60">
-              online
+              {t("nav.online")}
             </span>
           </span>
         </div>
@@ -183,7 +191,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           <motion.button
             onClick={cycleTheme}
             className="text-foreground/60 p-2.5 cursor-pointer"
-            aria-label={`Switch theme (current: ${theme})`}
+            aria-label={switchThemeLabel}
             whileTap={{ scale: 0.85, rotate: 180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
@@ -192,7 +200,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           <motion.button
             className="text-muted-foreground/60 p-2.5 -mr-2 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
+            aria-label={t("nav.toggleMenu")}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             whileTap={{ scale: 0.9 }}
@@ -223,7 +231,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                 const active = isActive(link);
                 return (
                   <motion.a
-                    key={link.label}
+                    key={link.labelKey}
                     href={link.href}
                     className={`py-3 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
                       active
@@ -239,10 +247,13 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                     transition={{ duration: 0.2, delay: i * 0.03 }}
                     whileTap={{ scale: 0.97, x: 4 }}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </motion.a>
                 );
               })}
+              <div className="py-3 px-3">
+                <LanguageSwitcher />
+              </div>
             </div>
           </motion.div>
         )}

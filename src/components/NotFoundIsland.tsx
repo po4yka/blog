@@ -1,10 +1,12 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { MotionProvider } from "./MotionProvider";
+import { useLocale } from "@/stores/settingsStore";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export function NotFound() {
+  const { t } = useLocale();
   const [glitchTransform, setGlitchTransform] = useState("none");
 
   // Periodic glitch effect on the 404 number
@@ -52,13 +54,13 @@ export function NotFound() {
               whileHover={{ scale: 1.2, opacity: 1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => { window.location.href = "/"; }}
-              title="Go home"
+              title={t("notFound.goHome")}
             />
             <span className="w-[11px] h-[11px] rounded-full" style={{ backgroundColor: "var(--dot-dim)" }} />
             <span className="w-[11px] h-[11px] rounded-full" style={{ backgroundColor: "var(--dot-dim)" }} />
           </div>
           <span className="flex-1 text-center text-muted-foreground/40 select-none text-label">
-            error — 404
+            {t("notFound.windowTitle")}
           </span>
           <span style={{ width: 54 }} />
         </div>
@@ -73,7 +75,7 @@ export function NotFound() {
           >
             <span className="text-destructive">[ ERROR ]</span>{" "}
             <span className="text-foreground/70">
-              Route not found — no matching endpoint for this path
+              {t("notFound.error")}
             </span>
           </motion.div>
           <motion.div
@@ -85,7 +87,7 @@ export function NotFound() {
           >
             <span style={{ color: "var(--info)" }}>[ INFO ]</span>{" "}
             <span className="text-foreground/50">
-              Try navigating to a known route or return home
+              {t("notFound.info")}
             </span>
           </motion.div>
 
@@ -107,7 +109,7 @@ export function NotFound() {
               404
             </span>
             <span className="text-muted-foreground/30 mx-3" style={{ fontSize: "1.5rem" }}>—</span>
-            <span className="text-foreground/50" style={{ fontSize: "1rem" }}>Page not found</span>
+            <span className="text-foreground/50" style={{ fontSize: "1rem" }}>{t("notFound.pageNotFound")}</span>
           </motion.div>
 
           <motion.button
@@ -119,7 +121,7 @@ export function NotFound() {
             whileHover={{ x: -4 }}
             whileTap={{ scale: 0.97 }}
           >
-            ← cd ~
+            {t("notFound.goBack")}
           </motion.button>
         </div>
       </motion.div>

@@ -4,6 +4,7 @@ import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { useLocale } from "@/stores/settingsStore";
 
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { ease, duration, stagger, spring } from "@/lib/motion";
@@ -22,9 +23,11 @@ export interface BlogPostMeta {
 interface BlogListIslandProps {
   posts: BlogPostMeta[];
   categories: string[];
+  lang?: string;
 }
 
 export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
+  const { t } = useLocale();
   const [activeCategory, setActiveCategory] = useState("All");
   const { ref } = useInView(0.05);
 
@@ -52,16 +55,16 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
           },
           {
             status: "OK",
-            text: `${posts.length} published posts — more queued`,
+            text: `${posts.length} ${t("blog.publishedPosts")}`,
           },
           {
             status: "INFO",
             text: featured ? (
               <>
-                Reading: <Accent>posts/{featured.slug}.txt</Accent>
+                {t("blog.reading")}: <Accent>posts/{featured.slug}.txt</Accent>
               </>
             ) : (
-              "Browse all posts below"
+              t("blog.browseAll")
             ),
           },
         ]}
@@ -87,13 +90,13 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
               whileHover={{ scale: 1.08, y: -1, transition: spring.snappy }}
               whileTap={{ scale: 0.95 }}
             >
-              {cat}
+              {cat === "All" ? t("blog.all") : cat}
             </motion.button>
           ))}
         </div>
 
         {/* Posts */}
-        <MacWindow title={`posts — ${activeCategory.toLowerCase()}`} dimLights delay={0.05}>
+        <MacWindow title={`${t("blog.postsTitle")} — ${activeCategory === "All" ? t("blog.all").toLowerCase() : activeCategory.toLowerCase()}`} dimLights delay={0.05}>
           <div ref={ref}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -155,7 +158,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   <p
                     className="py-8 text-center text-muted-foreground/50 font-mono text-mono"
                   >
-                    no posts found
+                    {t("blog.noPosts")}
                   </p>
                 )}
               </motion.div>

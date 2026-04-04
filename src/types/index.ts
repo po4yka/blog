@@ -11,6 +11,7 @@ export interface BlogPost {
   content: string;
   featured?: boolean;
   readingTime?: number;
+  lang?: string;
 }
 
 /** Subset of BlogPost used for SEO meta tags and JSON-LD. */

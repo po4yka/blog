@@ -18,9 +18,11 @@ const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.U
 import { projects, type Project } from "@/data/projectsData";
 import { MotionProvider } from "./MotionProvider";
 import { ease, spring } from "@/lib/motion";
+import { useLocale } from "@/stores/settingsStore";
 
 function ProjectEntry({ project }: { project: Project }) {
   const { ref, inView } = useInView(0.08);
+  const { t } = useLocale();
 
   return (
     <motion.div
@@ -48,7 +50,7 @@ function ProjectEntry({ project }: { project: Project }) {
           >
             {project.name}
           </h3>
-          {project.featured && <Tag variant="highlight">featured</Tag>}
+          {project.featured && <Tag variant="highlight">{t("projects.featured")}</Tag>}
           {project.status && (
             <span className="text-muted-foreground/50 text-label">
               {project.status}
@@ -121,6 +123,7 @@ function ProjectEntry({ project }: { project: Project }) {
 }
 
 export function ProjectsPage() {
+  const { t } = useLocale();
   return (
     <ErrorBoundary>
     <MotionProvider>
@@ -136,8 +139,8 @@ export function ProjectsPage() {
               </>
             ),
           },
-          { status: "OK", text: `Mounted projects index — ${projects.length} entries found` },
-          { status: "INFO", text: "Click any entry to expand details & links" },
+          { status: "OK", text: `Mounted projects index — ${projects.length} ${t("projectsPage.entriesFound")}` },
+          { status: "INFO", text: t("projectsPage.clickToExpand") },
         ]}
       />
 
@@ -147,7 +150,7 @@ export function ProjectsPage() {
       </Cmd>
 
       {/* Project entries in macOS window */}
-      <MacWindow title={`projects — ${projects.length} entries`} dimLights delay={0.05}>
+      <MacWindow title={`projects — ${projects.length} ${t("projectsPage.entries")}`} dimLights delay={0.05}>
         {projects.map((project) => (
           <ProjectEntry key={project.slug} project={project} />
         ))}

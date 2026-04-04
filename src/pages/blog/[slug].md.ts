@@ -4,10 +4,12 @@ import { blogPosts } from "@/data/blogData";
 export const prerender = true;
 
 export const getStaticPaths: GetStaticPaths = () => {
-  return blogPosts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  return blogPosts
+    .filter((post) => !post.lang || post.lang === "en")
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
 };
 
 export const GET: APIRoute = ({ props }) => {

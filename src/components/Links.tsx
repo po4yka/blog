@@ -3,6 +3,7 @@ import { useInView } from "@/hooks/useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import { useLocale } from "@/stores/settingsStore";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -16,6 +17,7 @@ const links = [
 
 export function Links() {
   const { ref, inView } = useInView(0.1);
+  const { t } = useLocale();
 
   return (
     <MotionProvider>
@@ -39,7 +41,7 @@ export function Links() {
               style={{
                 border: "1px solid var(--border)",
               }}
-              aria-label={`${link.label} (coming soon)`}
+              aria-label={`${link.label} (${t("links.comingSoon")})`}
             >
               <span className="text-muted-foreground/50 text-mono-sm">
                 {link.icon}
@@ -52,7 +54,7 @@ export function Links() {
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              aria-label={link.href.startsWith("http") ? `${link.label} (opens in new window)` : link.label}
+              aria-label={link.href.startsWith("http") ? `${link.label} (${t("links.opensNewWindow")})` : link.label}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 hover:text-accent hover:bg-accent/5 transition-all duration-250 font-mono text-mono rounded-[6px]"
               style={{
                 border: "1px solid var(--border)",
