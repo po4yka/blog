@@ -13,12 +13,15 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 - TanStack Query for server state (admin CRUD)
 - Cloudflare Workers + D1 (SQLite) for hosting and database
 - React Router 7 for admin SPA routing
+- SimpleWebAuthn for passkey/WebAuthn authentication
 
 ## Architecture
 
 ### Public Site (Static)
 
-Pages are prerendered at build time. React islands hydrate via `client:load` or `client:visible`. Data comes from static TypeScript files (`projectsData.ts`, `experienceData.ts`) and Astro content collections. `blogData.ts` is auto-generated from MDX content files via `npm run generate:blog` -- do not edit it manually.
+Pages are prerendered at build time. React islands hydrate via `client:load` or `client:visible`. Data comes from auto-generated TypeScript files and Astro content collections.
+
+**Content pipeline (single-source):** Canonical sources are MDX files (`src/content/blog/`) and JSON files (`src/content/projects.json`, `src/content/experience.json`). Build-time generators produce static TypeScript data files (`blogData.ts`, `projectsData.ts`, `experienceData.ts`) and `db/seed.sql`. Run `npm run generate:all` to regenerate all, or `npm run generate:blog` for blog only. Never edit generated data files manually.
 
 ### Admin Panel (SSR)
 
@@ -27,7 +30,7 @@ Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate 
 - Entry: `src/admin/App.tsx` (QueryClientProvider + AuthProvider + RouterProvider)
 - API client: `src/admin/api.ts` (typed fetch wrapper with auth token)
 - Query hooks: `src/admin/hooks/useAdminQueries.ts` (centralized query keys and hooks)
-- Auth: `src/admin/hooks/useAuth.ts` + `src/admin/contexts/AuthContext.tsx`
+- Auth: `src/admin/hooks/useAuth.ts` + `src/admin/contexts/AuthContext.tsx` (passkey-first, password fallback)
 
 ### State Management
 
@@ -38,17 +41,21 @@ Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate 
 
 Server-rendered Astro endpoints under `src/pages/api/`. Each exports `prerender = false`.
 
-- `src/lib/db.ts` -- typed D1 data access layer (all queries, JSON field serialization)
+- `src/lib/admin-handler.ts` -- `withAdmin()` capability-scoped route wrapper (auth, CSRF, Zod validation, error handling)
+- `src/lib/collections/define.ts` -- `defineCollection()` derives CRUD operations, Zod schemas, and route handlers from field definitions
+- `src/lib/collections/{posts,projects,roles}.ts` -- entity definitions (~25 lines each)
+- `src/lib/db.ts` -- data access layer; delegates posts/projects/roles to collections, keeps categories/settings hand-written
 - `src/lib/auth.ts` -- token-based session auth (D1 `admin_sessions` table)
-- Auth via `ADMIN_PASSWORD` env var (Cloudflare secret)
+- `src/lib/webauthn.ts` + `src/lib/webauthn-config.ts` -- WebAuthn/passkey credential storage and challenge management
+- Auth: passkey-first via WebAuthn (`@simplewebauthn/*`), password fallback via `ADMIN_PASSWORD` + `ALLOW_PASSWORD_LOGIN` env vars
 
 ### Database
 
-Cloudflare D1 (SQLite). Schema in `db/schema.sql`, seed data in `db/seed.sql`.
+Cloudflare D1 (SQLite). Schema in `db/schema.sql`, seed data in `db/seed.sql`, migrations in `db/migrations/`.
 
-Tables: `blog_posts`, `projects`, `roles`, `categories`, `site_settings`, `admin_sessions`.
+Tables: `blog_posts`, `projects`, `roles`, `categories`, `site_settings`, `admin_sessions`, `login_attempts`, `admin_credentials`, `auth_challenges`.
 
-JSON arrays (tags, platforms, links) stored as TEXT, parsed in the data access layer.
+JSON arrays (tags, platforms, links) stored as TEXT, parsed in the data access layer (via `defineCollection` field type `"json"` or manual `parseJson`).
 
 ## Design
 
@@ -122,11 +129,11 @@ Key skills:
 
 Custom skills encoding this project's unique patterns and workflows:
 
-- `/add-admin-entity` -- scaffold full CRUD entity across 7+ files (schema, types, db, validation, API, hooks, page)
+- `/add-admin-entity` -- scaffold CRUD entity using `defineCollection()` + `withAdmin()` (schema, types, collection def, routes, hooks, page)
 - `/add-island` -- add React island to Astro page with correct hydration, SSR guards, and motion
-- `/add-api-route` -- create API route with D1 access, auth, and Zod validation
+- `/add-api-route` -- create API route with `withAdmin()` wrapper, capability scoping, and Zod validation
 - `/add-terminal-block` -- create decorative MobileTerminal/Decoration component with MacWindow+motion pattern
-- `/add-blog-post` -- create blog post with dual-source sync (MDX + blogData.ts)
+- `/add-blog-post` -- create blog post (MDX source of truth, auto-generated data files)
 
 ## Custom Sub-Agents
 
@@ -203,8 +210,11 @@ Before declaring a visual change complete:
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
 - Admin SPA in `src/admin/` (pages, hooks, contexts, api client)
-- Server-side code in `src/lib/` (db, auth)
-- API routes in `src/pages/api/`
+- Server-side code in `src/lib/` (db, auth, admin-handler, collections)
+- Entity definitions in `src/lib/collections/` (use `defineCollection()` for standard CRUD)
+- Canonical content sources in `src/content/` (MDX blog posts, JSON for projects/experience)
+- Build-time generators in `scripts/` (generate data files from content sources)
+- API routes in `src/pages/api/` (admin routes use `withAdmin()` wrapper)
 - Stores in `src/stores/` (Zustand for client-side only)
 - Styles: Tailwind utility classes preferred; global styles in `src/styles/`
 - Path alias: `@` maps to `src/`

@@ -1,13 +1,15 @@
 ---
 name: add-admin-entity
-description: "Scaffold a new CRUD entity across the admin panel, API, database, and data access layer. Use when adding a new data type to the admin (e.g., certifications, talks, testimonials, skills). Generates all 7+ files following established project patterns."
+description: "Scaffold a new CRUD entity using defineCollection() and withAdmin(). Use when adding a new data type to the admin (e.g., certifications, talks, testimonials). Generates collection definition, routes, hooks, and page following established patterns."
 user-invocable: true
 argument-hint: "<entity-name>"
 ---
 
 # Add Admin Entity
 
-Scaffold a complete CRUD entity across the full stack. Follow the steps below in order -- each step depends on the previous one compiling.
+Scaffold a complete CRUD entity using the `defineCollection()` library. This derives DB operations, Zod schemas, and API route handlers from a single field-level definition.
+
+**When to use `defineCollection()`:** 3+ entities sharing the same CRUD shape (getAll, getByPk, upsert, delete). Entities with non-standard operations (categories: INSERT OR IGNORE, settings: single-row) should stay hand-written.
 
 ## Step 1: Database Schema
 
@@ -45,156 +47,100 @@ export interface <Entity> {
 ```
 
 Conventions:
-- `id` is optional (generated on create)
+- `id` is optional (generated on create via `idGeneration: "uuid"`)
 - `sortOrder` maps to `sort_order` in DB
 - JSON array fields are typed as their parsed form (`string[]`, not `string`)
 - Boolean fields are real `boolean`, not `number`
 
-## Step 3: Data Access Layer
+## Step 3: Collection Definition
 
-Add to `src/lib/db.ts`:
-
-1. Import the new type at the top
-2. Add a `Row` interface mapping to DB column types
-3. Add a `rowTo<Entity>()` mapper function
-4. Add CRUD functions
+Create `src/lib/collections/<entity_plural>.ts`:
 
 ```typescript
-// --- Row interface ---
-interface <Entity>Row {
-  id: string;
-  // DB column types: string for TEXT, number for INTEGER
-  tags: string | null;    // JSON TEXT columns are string | null
-  sort_order: number;
-}
+import { z } from "astro/zod";
+import { defineCollection } from "./define";
+import type { <Entity> } from "@/types";
 
-// --- Mapper ---
-function rowTo<Entity>(row: <Entity>Row): <Entity> {
-  return {
-    id: row.id,
-    // map fields, converting snake_case to camelCase
-    tags: parseJson<string[]>(row.tags, []),
-    sortOrder: row.sort_order,
-  };
-}
-
-// --- CRUD ---
-export async function getAll<Entities>(db: D1Database): Promise<<Entity>[]> {
-  const { results } = await db
-    .prepare("SELECT * FROM <entity_plural> ORDER BY sort_order ASC")
-    .all<<Entity>Row>();
-  return results.map(rowTo<Entity>);
-}
-
-export async function upsert<Entity>(db: D1Database, item: <Entity>): Promise<void> {
-  await db
-    .prepare(
-      `INSERT INTO <entity_plural> (id, ..., tags, sort_order, updated_at)
-       VALUES (?, ..., ?, ?, datetime('now'))
-       ON CONFLICT(id) DO UPDATE SET
-         ... = excluded....,
-         tags = excluded.tags, sort_order = excluded.sort_order,
-         updated_at = datetime('now')`
-    )
-    .bind(item.id, ..., JSON.stringify(item.tags), item.sortOrder)
-    .run();
-}
-
-export async function delete<Entity>(db: D1Database, id: string): Promise<void> {
-  await db.prepare("DELETE FROM <entity_plural> WHERE id = ?").bind(id).run();
-}
-```
-
-Key patterns:
-- Use `parseJson<T>(raw, fallback)` for JSON TEXT columns (already exists in db.ts)
-- Boolean conversion: `row.featured === 1` (DB to domain), `item.featured ? 1 : 0` (domain to DB)
-- JSON serialization: `JSON.stringify(item.tags)` in bind params
-- UPSERT uses `ON CONFLICT(id) DO UPDATE SET` with `excluded.*`
-- Timestamps: `datetime('now')` for `updated_at`
-
-## Step 4: Validation Schema
-
-Add a Zod schema to `src/lib/validation.ts`:
-
-```typescript
-export const <entity>Schema = z.object({
-  id: z.string().optional(),
-  // domain fields with validation
-  tags: z.array(z.string()).optional(),
-  sortOrder: z.number().optional(),
+export const <entity_plural> = defineCollection<Entity>({
+  name: "<entity_plural>",
+  table: "<entity_plural>",
+  primaryKey: "id",
+  orderBy: "sort_order ASC",
+  idGeneration: "uuid",
+  capabilities: { read: "read:<entity_plural>", write: "write:<entity_plural>" },
+  fields: {
+    id:        { column: "id",         type: "text",    zod: z.string().optional() },
+    // domain fields
+    tags:      { column: "tags",       type: "json",    zod: z.array(z.string()).optional(), default: [] },
+    sortOrder: { column: "sort_order", type: "integer", zod: z.number().optional() },
+  },
 });
 ```
 
-Import `z` from `astro/zod` (already imported). Match field names to the TypeScript interface (camelCase).
+Field type system:
+- `"text"` -- passthrough string
+- `"integer"` -- passthrough number (use `optional: true` for nullable)
+- `"boolean"` -- converts between `true/false` and `1/0`
+- `"json"` -- `JSON.stringify`/`parseJson` with `default` value
 
-## Step 5: API Routes
+Each field has explicit `column` mapping (no magic snake_case convention).
 
-Create two files:
+## Step 4: Register Collection
 
-**`src/pages/api/admin/<entity_plural>/index.ts`** (collection: GET list + POST create/update):
+Add to `src/lib/collections/index.ts`:
+
+```typescript
+export { <entity_plural> } from "./<entity_plural>";
+```
+
+Add capability types to `src/lib/admin-handler.ts` if needed:
+
+```typescript
+export type Capability =
+  | // ... existing
+  | "read:<entity_plural>"
+  | "write:<entity_plural>";
+```
+
+Add the new capabilities to the `ALL_CAPABILITIES` set as well.
+
+## Step 5: Backward-Compat Re-exports (optional)
+
+If other code imports from `src/lib/db.ts`, add re-exports:
+
+```typescript
+export const getAll<Entities> = (db: D1Database) => <entity_plural>.getAll(db);
+export const upsert<Entity> = (db: D1Database, item: <Entity>) =>
+  <entity_plural>.upsert(db, item as unknown as Record<string, unknown>);
+export const delete<Entity> = (db: D1Database, id: string) => <entity_plural>.remove(db, id);
+```
+
+## Step 6: API Routes
+
+Create two files (5-7 lines each, re-exporting from collection):
+
+**`src/pages/api/admin/<entity_plural>/index.ts`:**
 
 ```typescript
 export const prerender = false;
 
-import type { APIRoute } from "astro";
-import { getDb, getAll<Entities>, upsert<Entity> } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
-import { <entity>Schema, validationError } from "@/lib/validation";
+import { <entity_plural> } from "@/lib/collections";
 
-export const GET: APIRoute = async ({ request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  const items = await getAll<Entities>(db);
-  return Response.json(items);
-};
-
-export const POST: APIRoute = async ({ request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  const parsed = <entity>Schema.safeParse(await request.json());
-  if (!parsed.success) return validationError(parsed.error);
-  await upsert<Entity>(db, parsed.data);
-  return Response.json({ ok: true });
-};
+export const GET = <entity_plural>.routes.list;
+export const POST = <entity_plural>.routes.create;
 ```
 
-**`src/pages/api/admin/<entity_plural>/[id].ts`** (single item: DELETE):
+**`src/pages/api/admin/<entity_plural>/[id].ts`:**
 
 ```typescript
 export const prerender = false;
 
-import type { APIRoute } from "astro";
-import { getDb, delete<Entity> } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { <entity_plural> } from "@/lib/collections";
 
-export const DELETE: APIRoute = async ({ params, request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  await delete<Entity>(db, params.id!);
-  return Response.json({ ok: true });
-};
+export const DELETE = <entity_plural>.routes.delete;
 ```
 
-Critical rules:
-- `export const prerender = false` is MANDATORY (without it, Astro evaluates at build time)
-- `requireAuth` throws a `Response`, not an `Error` -- always `await` it before any data access
-- Access D1 via `locals.runtime.env` (Cloudflare adapter specific)
-- Use `validationError(parsed.error)` for Zod failures (returns 400 Response)
-
-## Step 6: Admin API Client
-
-Add typed fetch functions to `src/admin/api.ts`:
-
-```typescript
-// --- <Entities> ---
-export const get<Entities> = () => api<<Entity>[]>("<entity_plural>");
-export const save<Entity> = (item: <Entity>) =>
-  api<{ ok: true }>("<entity_plural>", { method: "POST", body: JSON.stringify(item) });
-export const delete<Entity> = (id: string) =>
-  api<{ ok: true }>(`<entity_plural>/${id}`, { method: "DELETE" });
-```
-
-Import the type: `import type { ..., <Entity> } from "@/types";` and re-export it.
+The collection's route factories use `withAdmin()` internally with the collection's capabilities and schema.
 
 ## Step 7: Query Hooks
 
@@ -202,75 +148,60 @@ Add to `src/admin/hooks/useAdminQueries.ts`:
 
 1. Add query key to `adminKeys`:
 ```typescript
-export const adminKeys = {
-  // ... existing keys
-  <entity_plural>: ["admin", "<entity_plural>"] as const,
-};
+<entity_plural>: ["admin", "<entity_plural>"] as const,
 ```
 
-2. Add hooks:
+2. Use the `createCollectionHooks` factory:
 ```typescript
-export function use<Entities>() {
-  return useQuery({
-    queryKey: adminKeys.<entity_plural>,
-    queryFn: api.get<Entities>,
-  });
-}
+const <entity>Hooks = createCollectionHooks<<Entity>>({
+  queryKey: adminKeys.<entity_plural>,
+  getAll: api.get<Entities>,
+  save: api.save<Entity>,
+  remove: api.delete<Entity>,
+  idField: "id",
+  entityName: "<Entity>",
+});
 
-export function useSave<Entity>() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.save<Entity>,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: adminKeys.<entity_plural> });
-      toast.success("<Entity> saved");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-}
-
-export function useDelete<Entity>() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: api.delete<Entity>,
-    onMutate: async (id) => {
-      await qc.cancelQueries({ queryKey: adminKeys.<entity_plural> });
-      const prev = qc.getQueryData<<Entity>[]>(adminKeys.<entity_plural>);
-      qc.setQueryData<<Entity>[]>(adminKeys.<entity_plural>, (old) =>
-        old?.filter((item) => item.id !== id),
-      );
-      return { prev };
-    },
-    onError: (e, _id, ctx) => {
-      if (ctx?.prev) qc.setQueryData(adminKeys.<entity_plural>, ctx.prev);
-      toast.error(e.message);
-    },
-    onSuccess: () => toast.success("<Entity> deleted"),
-    onSettled: () => qc.invalidateQueries({ queryKey: adminKeys.<entity_plural> }),
-  });
-}
+export const use<Entities> = <entity>Hooks.useList;
+export const useSave<Entity> = <entity>Hooks.useSave;
+export const useDelete<Entity> = <entity>Hooks.useDelete;
 ```
 
-The delete hook uses optimistic updates with rollback -- this is the established pattern.
+The factory provides list, save, and optimistic delete with rollback.
 
-## Step 8: Admin Page
+## Step 8: Admin API Client
+
+Add typed fetch functions to `src/admin/api.ts`:
+
+```typescript
+export const get<Entities> = () => adminFetch<<Entity>[]>("<entity_plural>");
+export const save<Entity> = (item: <Entity>) =>
+  adminFetch<{ ok: true }>("<entity_plural>", { method: "POST", body: JSON.stringify(item) });
+export const delete<Entity> = (id: string) =>
+  adminFetch<{ ok: true }>(`<entity_plural>/${id}`, { method: "DELETE" });
+```
+
+Import the type and re-export it.
+
+## Step 9: Admin Page
 
 Create `src/admin/pages/Admin<Entities>.tsx`. Use existing pages as reference:
 - `AdminExperience.tsx` for simple list + inline editor pattern
 - `AdminProjects.tsx` for modal editor pattern
 
-## Checklist
+Add route to admin router in `src/admin/routes.ts`.
 
-Before marking complete, verify:
+## Checklist
 
 - [ ] Schema added to `db/schema.sql`
 - [ ] Type added to `src/types/index.ts`
-- [ ] Row interface, mapper, and CRUD in `src/lib/db.ts`
-- [ ] Zod schema in `src/lib/validation.ts`
-- [ ] API routes: `index.ts` (GET/POST) + `[id].ts` (DELETE)
+- [ ] Collection definition in `src/lib/collections/<entity_plural>.ts`
+- [ ] Registered in `src/lib/collections/index.ts`
+- [ ] Capabilities added to `src/lib/admin-handler.ts`
+- [ ] API routes: `index.ts` (GET/POST) + `[id].ts` (DELETE) -- re-export from collection
 - [ ] All API routes have `prerender = false`
 - [ ] Client functions in `src/admin/api.ts`
-- [ ] Query key + hooks in `src/admin/hooks/useAdminQueries.ts`
+- [ ] Query key + hooks in `src/admin/hooks/useAdminQueries.ts` (use `createCollectionHooks`)
 - [ ] Admin page in `src/admin/pages/`
-- [ ] Route added to admin router (check `src/admin/App.tsx`)
-- [ ] TypeScript compiles: `npx astro check`
+- [ ] Route added to admin router
+- [ ] TypeScript compiles: `npx tsc --noEmit`

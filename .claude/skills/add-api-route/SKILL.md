@@ -1,6 +1,6 @@
 ---
 name: add-api-route
-description: "Create a new Astro API route with Cloudflare D1 database access, authentication, and Zod validation. Use when adding any server endpoint under /api/. Follows the project's established patterns for auth, error handling, and Cloudflare runtime access."
+description: "Create a new Astro API route with withAdmin() wrapper, capability scoping, and Zod validation. Use when adding any server endpoint under /api/. For standard CRUD entities, prefer /add-admin-entity instead."
 user-invocable: true
 argument-hint: "<route-path>"
 ---
@@ -21,57 +21,118 @@ src/pages/api/
       [id].ts          # Item: GET (single), PUT (update), DELETE
     settings.ts        # Singleton resource (no [id])
   auth/
-    login.ts           # Public (no requireAuth)
+    login.ts           # Public (no auth required)
     logout.ts
+    passkey/            # WebAuthn endpoints
 ```
 
 URL mapping: `src/pages/api/admin/posts/[slug].ts` -> `GET /api/admin/posts/my-post-slug`
 
-## Collection Endpoint Template
+## Preferred: withAdmin() Wrapper
 
-`src/pages/api/admin/<entity>/index.ts`:
+For admin routes, use the `withAdmin()` capability-scoped wrapper. It handles auth, CSRF origin validation, JSON parsing, Zod validation, and error wrapping in one call.
+
+### With Zod Schema (POST/PUT)
 
 ```typescript
 export const prerender = false;
 
-import type { APIRoute } from "astro";
-import { getDb, getAll<Entities>, upsert<Entity> } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
-import { <entity>Schema, validationError } from "@/lib/validation";
+import { withAdmin } from "@/lib/admin-handler";
+import { mySchema } from "@/lib/validation";
+import { doSomething } from "@/lib/db";
 
-export const GET: APIRoute = async ({ request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  const items = await getAll<Entities>(db);
-  return Response.json(items);
-};
-
-export const POST: APIRoute = async ({ request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  const parsed = <entity>Schema.safeParse(await request.json());
-  if (!parsed.success) return validationError(parsed.error);
-  await upsert<Entity>(db, parsed.data);
-  return Response.json({ ok: true });
-};
+export const POST = withAdmin(
+  { capability: "write:entity", schema: mySchema },
+  async ({ db, data }) => {
+    // data is typed from mySchema
+    await doSomething(db, data);
+    return Response.json({ ok: true });
+  },
+);
 ```
 
-## Item Endpoint Template
+### Without Schema (GET/DELETE)
 
-`src/pages/api/admin/<entity>/[id].ts`:
+```typescript
+export const prerender = false;
+
+import { withAdmin } from "@/lib/admin-handler";
+import { getAllItems } from "@/lib/db";
+
+export const GET = withAdmin(
+  { capability: "read:entity" },
+  async ({ db }) => {
+    const items = await getAllItems(db);
+    return Response.json(items);
+  },
+);
+
+export const DELETE = withAdmin(
+  { capability: "write:entity" },
+  async ({ db, params }) => {
+    await deleteItem(db, params.id!);
+    return Response.json({ ok: true });
+  },
+);
+```
+
+### withAdmin Context
+
+The handler receives `AdminContext`:
+
+```typescript
+interface AdminContext<T = undefined> {
+  request: Request;
+  params: Record<string, string | undefined>;
+  db: D1Database;
+  data: T;  // typed from schema, or undefined if no schema
+}
+```
+
+### Available Capabilities
+
+```typescript
+type Capability =
+  | "read:posts" | "write:posts"
+  | "read:projects" | "write:projects"
+  | "read:roles" | "write:roles"
+  | "read:categories" | "write:categories"
+  | "read:settings" | "write:settings";
+```
+
+Add new capabilities to `src/lib/admin-handler.ts` when creating new entity types.
+
+## Collection Routes (Standard CRUD)
+
+For entities using `defineCollection()`, routes are just re-exports:
+
+```typescript
+export const prerender = false;
+
+import { posts } from "@/lib/collections";
+
+export const GET = posts.routes.list;
+export const POST = posts.routes.create;
+```
+
+See `/add-admin-entity` for the full collection pattern.
+
+## Public Routes (No Auth)
+
+For public endpoints (login, health), write handlers directly without `withAdmin()`:
 
 ```typescript
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getDb, delete<Entity> } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { env } from "cloudflare:workers";
+import { loginSchema, validationError } from "@/lib/validation";
 
-export const DELETE: APIRoute = async ({ params, request, locals }) => {
-  const db = getDb(locals.runtime.env);
-  await requireAuth(request, db);
-  await delete<Entity>(db, params.id!);
-  return Response.json({ ok: true });
+export const POST: APIRoute = async ({ request }) => {
+  const parsed = loginSchema.safeParse(await request.json());
+  if (!parsed.success) return validationError(parsed.error);
+  // ... handle request
+  return Response.json({ token });
 };
 ```
 
@@ -79,47 +140,30 @@ export const DELETE: APIRoute = async ({ params, request, locals }) => {
 
 ### `prerender = false` is mandatory
 
-Without this export, Astro treats the file as a static route and evaluates it at build time. This causes build failures because `locals.runtime.env` (Cloudflare D1) is not available during static builds.
+Without this export, Astro treats the file as a static route and evaluates it at build time. This causes build failures because D1 is not available during static builds.
 
 ```typescript
 // FIRST LINE of every API route file
 export const prerender = false;
 ```
 
-### `requireAuth` throws a Response
+### withAdmin() handles auth automatically
 
-`requireAuth(request, db)` from `src/lib/auth.ts` validates the Bearer token. On failure, it **throws a `Response` object** (not an `Error`). Astro catches thrown Responses and sends them directly to the client.
+Do NOT manually call `requireAuth()` in routes that use `withAdmin()`. The wrapper handles:
+1. CSRF origin validation (`validateOrigin`)
+2. Bearer token auth (`requireAuth`)
+3. Capability check
+4. JSON body parsing + Zod validation (if schema provided)
+5. Error wrapping (returns JSON errors with correct status codes)
 
-```typescript
-// Correct: always await before any data access
-const db = getDb(locals.runtime.env);
-await requireAuth(request, db);  // throws Response(401) on invalid token
-const data = await getAll(db);   // only reached if auth passes
-```
+### D1 access
 
-For public endpoints (login, health checks), omit `requireAuth`.
-
-### D1 access via Cloudflare adapter
-
-```typescript
-const db = getDb(locals.runtime.env);
-```
-
-`locals.runtime.env` is injected by the `@astrojs/cloudflare` adapter. The `getDb()` helper (from `src/lib/db.ts`) extracts `env.DB` (the D1 binding).
+With `withAdmin()`: `db` is provided in the handler context.
+Without wrapper: use `import { env } from "cloudflare:workers"` then `env.DB`.
 
 ### Validation with Zod
 
-1. Define schema in `src/lib/validation.ts` using `z` from `astro/zod`
-2. Use `safeParse` (not `parse`) to avoid throwing
-3. Return `validationError(parsed.error)` on failure (400 Response with issue details)
-
-```typescript
-import { <entity>Schema, validationError } from "@/lib/validation";
-
-const parsed = <entity>Schema.safeParse(await request.json());
-if (!parsed.success) return validationError(parsed.error);
-// parsed.data is now typed
-```
+Define schemas in `src/lib/validation.ts` using `z` from `astro/zod`. For collection entities, schemas are auto-generated from field definitions in `defineCollection()`.
 
 ### Response conventions
 
@@ -128,43 +172,16 @@ if (!parsed.success) return validationError(parsed.error);
 return Response.json({ ok: true });
 return Response.json(data);
 
-// Client error
-return new Response(
-  JSON.stringify({ error: "Not found" }),
-  { status: 404, headers: { "Content-Type": "application/json" } }
-);
-```
-
-## HTTP Method Exports
-
-Export named constants matching HTTP methods:
-
-```typescript
-export const GET: APIRoute = async ({ ... }) => { ... };
-export const POST: APIRoute = async ({ ... }) => { ... };
-export const PUT: APIRoute = async ({ ... }) => { ... };
-export const DELETE: APIRoute = async ({ ... }) => { ... };
-```
-
-Only export the methods your route handles. Astro returns 405 for unhandled methods.
-
-## Dynamic Route Parameters
-
-File `[id].ts` makes `id` available via `params.id`. Use `!` assertion since the param is guaranteed by the route:
-
-```typescript
-export const DELETE: APIRoute = async ({ params, request, locals }) => {
-  const id = params.id!;
-  // ...
-};
+// Error (use jsonError helper)
+import { jsonError } from "@/lib/validation";
+return jsonError("Not found", 404);
 ```
 
 ## Checklist
 
 - [ ] `export const prerender = false` is the first line
-- [ ] `requireAuth` called before any data access (unless public endpoint)
-- [ ] D1 accessed via `getDb(locals.runtime.env)`
-- [ ] Request body validated with Zod `safeParse` + `validationError`
-- [ ] Response uses `Response.json()` for success
-- [ ] Corresponding DB functions exist in `src/lib/db.ts`
-- [ ] TypeScript compiles: `npx astro check`
+- [ ] Admin routes use `withAdmin()` with appropriate capability
+- [ ] Public routes omit auth (login, health)
+- [ ] Request body validated with Zod schema (passed to `withAdmin` or manual `safeParse`)
+- [ ] Response uses `Response.json()` for success, `jsonError()` for errors
+- [ ] TypeScript compiles: `npx tsc --noEmit`

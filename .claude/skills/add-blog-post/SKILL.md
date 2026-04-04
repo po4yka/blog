@@ -1,6 +1,6 @@
 ---
 name: add-blog-post
-description: "Create a new blog post with correct MDX frontmatter, static data entry, and content collection registration. Use when writing or adding any blog content. Ensures the post appears correctly on both the static site and in the admin panel's data source."
+description: "Create a new blog post with correct MDX frontmatter and auto-generated data files. Use when writing or adding any blog content. MDX is the source of truth; data files are generated automatically."
 user-invocable: true
 argument-hint: "<post-title>"
 ---
@@ -135,8 +135,8 @@ Good: "Our mobile CI was slow and flaky. Here is how we cut build times from 45 
 - [ ] Date format is `"Mon YYYY"`
 - [ ] Category matches an existing category (or new one added to seed)
 - [ ] Tags reuse existing tags where possible
-- [ ] Run `npm run generate:blog` to regenerate `src/data/blogData.ts`
-- [ ] Run `npm run validate:blog` to confirm sync
+- [ ] Run `npm run generate:blog` (or `npm run generate:all`) to regenerate `src/data/blogData.ts`
+- [ ] Run `npm run validate:blog` (or `npm run validate:all`) to confirm sync
 - [ ] Copy passes anti-AI-slop check (no generic phrases)
 - [ ] Summary is 1-2 concrete sentences
 - [ ] Title is specific and human-sounding
