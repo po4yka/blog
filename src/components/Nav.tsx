@@ -21,9 +21,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [currentPathname, setCurrentPathname] = useState(
-    initialPathname ?? (typeof window !== "undefined" ? window.location.pathname : "/")
-  );
+  const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
   const { theme, setTheme } = useSettings();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect

@@ -1,5 +1,5 @@
 import { Reorder, useDragControls } from "motion/react";
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { usePanelOrderStore, type ContainerKey } from "@/stores/panelOrderStore";
 import { useSettings } from "@/stores/settingsStore";
 
@@ -63,16 +63,16 @@ export function ReorderableGroup({
   const resetOrder = usePanelOrderStore((s) => s.resetOrder);
   const { reduceMotion } = useSettings();
 
-  // Desktop-only gate
-  const [isDesktop, setIsDesktop] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches,
+  // Desktop-only gate via useSyncExternalStore (SSR-safe, no setState in effect)
+  const isDesktop = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(min-width: 1024px)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(min-width: 1024px)").matches,
+    () => false,
   );
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   // Alt-key cursor hint
   const [altHeld, setAltHeld] = useState(false);
