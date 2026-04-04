@@ -19,8 +19,10 @@ describe("POST /api/auth/login", () => {
     expect(response.status).toBe(200);
 
     const body = await response.json();
-    expect(body.token).toBeDefined();
-    expect(typeof body.token).toBe("string");
+    expect(body.ok).toBe(true);
+    // Token is now in HttpOnly Set-Cookie header, not response body
+    const cookie = response.headers.get("Set-Cookie");
+    expect(cookie).toMatch(/__session=.+; HttpOnly/);
   });
 
   it("returns 401 when password is wrong", async () => {

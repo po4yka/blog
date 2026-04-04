@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import {
   createSession,
+  makeSessionCookie,
   validateOrigin,
   checkRateLimit,
   timingSafeEqual,
@@ -53,6 +54,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   await clearLoginAttempts(db, ip);
   const token = await createSession(db);
+  const isSecure = new URL(request.url).protocol === "https:";
 
-  return Response.json({ token });
+  return new Response(JSON.stringify({ ok: true }), {
+    headers: {
+      "Content-Type": "application/json",
+      "Set-Cookie": makeSessionCookie(token, isSecure),
+    },
+  });
 };

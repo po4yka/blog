@@ -10,7 +10,7 @@ import {
   getCredentialById,
   updateCredentialCounter,
 } from "@/lib/webauthn";
-import { createSession } from "@/lib/auth";
+import { createSession, makeSessionCookie } from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
@@ -67,7 +67,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Create session (same as password login)
     const token = await createSession(db);
-    return Response.json({ token });
+    const isSecure = new URL(request.url).protocol === "https:";
+
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": makeSessionCookie(token, isSecure),
+      },
+    });
   } catch {
     return jsonError("Authentication failed", 401);
   }

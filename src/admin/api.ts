@@ -1,33 +1,20 @@
 // Thin fetch wrapper for admin API routes.
-// Attaches auth token from sessionStorage.
+// Auth is via HttpOnly session cookie (set by server on login).
+// Client tracks auth state via a lightweight sessionStorage flag.
 
 import type { BlogPost, Project, Role, SiteSettings } from "@/types";
 
 export type { BlogPost, Project, Role, SiteSettings };
 
-const TOKEN_KEY = "admin_token";
+const AUTH_FLAG = "admin_authenticated";
 
-let token: string | null | undefined = undefined;
-
-function readToken(): string | null {
-  if (token === undefined) {
-    token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  }
-  return token;
+export function setAuthFlag(authenticated: boolean) {
+  if (authenticated) sessionStorage.setItem(AUTH_FLAG, "1");
+  else sessionStorage.removeItem(AUTH_FLAG);
 }
 
-export function getToken(): string | null {
-  return readToken();
-}
-
-export function setToken(t: string | null) {
-  token = t;
-  if (t) sessionStorage.setItem(TOKEN_KEY, t);
-  else sessionStorage.removeItem(TOKEN_KEY);
-}
-
-export function isTokenPresent(): boolean {
-  return !!readToken();
+export function isAuthenticated(): boolean {
+  return typeof window !== "undefined" && sessionStorage.getItem(AUTH_FLAG) === "1";
 }
 
 export class ApiError extends Error {
@@ -41,19 +28,18 @@ export class ApiError extends Error {
 }
 
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const t = readToken();
   const res = await fetch(`/api/admin/${path}`, {
     ...init,
+    credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
       "X-Requested-With": "AdminPanel",
-      ...(t ? { Authorization: `Bearer ${t}` } : {}),
       ...init?.headers,
     },
   });
-  const newToken = res.headers.get("X-New-Token");
-  if (newToken) {
-    setToken(newToken);
+
+  if (res.status === 401) {
+    setAuthFlag(false);
   }
 
   if (!res.ok) {
@@ -94,22 +80,22 @@ export const updateSettings = (settings: SiteSettings) =>
 
 // --- Auth (different base path) ---
 export async function logout(): Promise<void> {
-  const t = readToken();
-  if (!t) return;
   try {
     await fetch("/api/auth/logout", {
       method: "POST",
-      headers: { Authorization: `Bearer ${t}` },
+      credentials: "same-origin",
+      headers: { "X-Requested-With": "AdminPanel" },
     });
   } catch {
     // Best-effort: clear client state even if the request fails
   }
-  setToken(null);
+  setAuthFlag(false);
 }
 
-export async function login(password: string): Promise<string> {
+export async function login(password: string): Promise<void> {
   const res = await fetch("/api/auth/login", {
     method: "POST",
+    credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password }),
   });
@@ -117,9 +103,7 @@ export async function login(password: string): Promise<string> {
     const text = await res.text();
     throw new ApiError(res.status, text || "Invalid password");
   }
-  const { token: t } = (await res.json()) as { token: string };
-  setToken(t);
-  return t;
+  setAuthFlag(true);
 }
 
 // --- Passkey ---
@@ -136,16 +120,15 @@ export async function getPasskeyAuthOptions(): Promise<unknown> {
   return res.json();
 }
 
-export async function verifyPasskeyAuth(assertion: unknown): Promise<string> {
+export async function verifyPasskeyAuth(assertion: unknown): Promise<void> {
   const res = await fetch("/api/auth/passkey/auth-verify", {
     method: "POST",
+    credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(assertion),
   });
   if (!res.ok) throw new ApiError(res.status, "Passkey verification failed");
-  const { token: t } = (await res.json()) as { token: string };
-  setToken(t);
-  return t;
+  setAuthFlag(true);
 }
 
 export async function getPasskeyRegisterOptions(setupToken: string): Promise<unknown> {

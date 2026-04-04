@@ -105,21 +105,53 @@ export async function deleteSession(db: D1Database, token: string): Promise<void
   await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(token).run();
 }
 
+// --- Session cookie helpers ---
+
+const COOKIE_NAME = "__session";
+const COOKIE_MAX_AGE = 86400; // 24h, matches session expiry
+
+export function makeSessionCookie(token: string, isSecure: boolean): string {
+  const parts = [
+    `${COOKIE_NAME}=${token}`,
+    "HttpOnly",
+    "SameSite=Lax",
+    "Path=/api",
+    `Max-Age=${COOKIE_MAX_AGE}`,
+  ];
+  if (isSecure) parts.push("Secure");
+  return parts.join("; ");
+}
+
+export function makeClearCookie(): string {
+  return `${COOKIE_NAME}=; HttpOnly; SameSite=Lax; Path=/api; Max-Age=0`;
+}
+
+function extractSessionToken(request: Request): string | null {
+  // Prefer HttpOnly cookie, fall back to Bearer header for backward compat
+  const cookies = request.headers.get("Cookie") ?? "";
+  const match = cookies.match(/__session=([^;]+)/);
+  if (match?.[1]) return match[1];
+
+  const header = request.headers.get("Authorization");
+  if (header?.startsWith("Bearer ")) return header.slice(7);
+
+  return null;
+}
+
 /**
- * Validates the request's Bearer token against active sessions.
+ * Validates the request's session token (cookie or Bearer header).
  * Updates last_used timestamp on success.
  * @throws {Response} 401 response if unauthorized (Astro convention)
  */
 export async function requireAuth(request: Request, db: D1Database): Promise<void> {
-  const header = request.headers.get("Authorization");
-  if (!header?.startsWith("Bearer ")) {
+  const token = extractSessionToken(request);
+  if (!token) {
     throw new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const token = header.slice(7);
   const session = await db
     .prepare("SELECT token FROM admin_sessions WHERE token = ? AND expires_at > datetime('now')")
     .bind(token)

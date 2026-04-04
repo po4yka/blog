@@ -5,19 +5,25 @@
 
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { writeFileSync, unlinkSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 
 const token = randomUUID();
 const dbName = "blog-db";
 
-// Insert setup token into auth_challenges table
-const sql = `INSERT INTO auth_challenges (challenge, type) VALUES ('${token}', 'setup')`;
+// Write SQL to a temp file to avoid shell interpolation vulnerabilities
+const sqlFile = join(tmpdir(), `setup-passkey-${Date.now()}.sql`);
+writeFileSync(sqlFile, `INSERT INTO auth_challenges (challenge, type) VALUES ('${token}', 'setup');\n`);
 
 try {
-  execSync(`npx wrangler d1 execute ${dbName} --local --command "${sql}"`, {
+  execSync(`npx wrangler d1 execute ${dbName} --local --file "${sqlFile}"`, {
     encoding: "utf-8",
     stdio: "pipe",
   });
+  unlinkSync(sqlFile);
 } catch (err) {
+  try { unlinkSync(sqlFile); } catch { /* cleanup best-effort */ }
   console.error("Failed to insert setup token. Make sure wrangler is configured and D1 tables exist.");
   console.error("Run: npx wrangler d1 execute blog-db --local --file db/migrations/001_passkey_tables.sql");
   if (err instanceof Error) console.error(err.message);

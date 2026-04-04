@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import {
   login as apiLogin,
   logout as apiLogout,
-  isTokenPresent,
+  isAuthenticated as checkAuth,
   ApiError,
   getPasskeyAuthOptions,
   verifyPasskeyAuth,
@@ -11,7 +11,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import type { PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
 
 export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(isTokenPresent);
+  const [isAuthenticated, setIsAuthenticated] = useState(checkAuth);
 
   const login = useCallback(async (password: string): Promise<{ success: boolean; error?: string }> => {
     try {
