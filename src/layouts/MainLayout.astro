@@ -22,7 +22,7 @@ interface Props {
 const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false } = Astro.props;
 const { pathname } = Astro.url;
 ---
-<html lang={lang}
+<html lang={lang}>
   <head>
     <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} lang={lang} hasTranslation={hasTranslation} />
     <ThemeScript />
