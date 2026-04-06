@@ -134,9 +134,9 @@ export function Hero() {
                   {
                     label: t("hero.infoStatus"),
                     value: (
-                      <span className="text-foreground/60">
-                        {t("hero.statusValue")}
-                      </span>
+                      <span className="text-foreground/75">
+                      {t("hero.statusValue")}
+                    </span>
                     ),
                   },
                 ]}
@@ -154,9 +154,9 @@ export function Hero() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-mono-sm text-foreground/60 hover:text-accent transition-colors duration-200"
+                  className="text-mono-sm text-foreground/75 hover:text-accent transition-colors duration-200 min-h-[44px] flex items-center"
                 >
-                  <span className="text-muted-foreground/40">$</span> open --{link.label}
+                  <span className="text-muted-foreground/60">$</span> open --{link.label}
                 </a>
               ))}
             </div>

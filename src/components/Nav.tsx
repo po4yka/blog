@@ -139,7 +139,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                     : "text-foreground/70 hover:text-foreground/80"
                 }`}
                 style={{
-                  backgroundColor: active ? "rgba(145, 132, 247, 0.08)" : "transparent",
+                  backgroundColor: active ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "transparent",
                 }}
               >
                 {t(link.labelKey)}
@@ -163,7 +163,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
           {/* Theme toggle */}
           <motion.button
             onClick={cycleTheme}
-            className="flex items-center gap-1.5 px-2 py-1 text-3xs rounded-[5px] text-foreground/60 hover:text-accent transition-colors duration-200 cursor-pointer"
+            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs rounded-[5px] text-foreground/60 hover:text-accent transition-colors duration-200 cursor-pointer"
             title={switchThemeLabel}
             aria-label={switchThemeLabel}
             whileHover={{ scale: 1.08 }}
@@ -190,7 +190,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
         <div className="md:hidden flex items-center gap-1">
           <motion.button
             onClick={cycleTheme}
-            className="text-foreground/60 p-2.5 cursor-pointer"
+            className="flex items-center justify-center text-foreground/60 min-h-[44px] min-w-[44px] cursor-pointer"
             aria-label={switchThemeLabel}
             whileTap={{ scale: 0.85, rotate: 180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -198,7 +198,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
             <ThemeIcon size={18} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="text-muted-foreground/60 p-2.5 -mr-2 cursor-pointer"
+            className="flex items-center justify-center text-muted-foreground/60 min-h-[44px] min-w-[44px] cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={t("nav.toggleMenu")}
             aria-expanded={menuOpen}
@@ -239,7 +239,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                         : "text-foreground/70 hover:text-foreground/80"
                     }`}
                     style={{
-                      backgroundColor: active ? "rgba(145, 132, 247, 0.08)" : "transparent",
+                      backgroundColor: active ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "transparent",
                     }}
                     onClick={() => setMenuOpen(false)}
                     initial={{ opacity: 0, x: -8 }}
