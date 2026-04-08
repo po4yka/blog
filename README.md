@@ -1,166 +1,104 @@
-# Blog
+# po4yka.dev
 
-Personal portfolio and blog for Nikita Pochaev (@po4yka).
+Personal site, blog, and apps portfolio. Astro 6 with React islands for the public side, a full React SPA behind passkey auth for the admin, all running on Cloudflare Workers + D1.
 
-## Tech Stack
+## Architecture
 
-- [Astro](https://astro.build/) 6 + [React](https://react.dev/) 19 (islands architecture)
-- [TypeScript](https://www.typescriptlang.org/) 6.0 (strict)
-- [Tailwind CSS](https://tailwindcss.com/) v4
-- [Radix UI](https://www.radix-ui.com/) primitives (dialog, sonner)
-- [MUI](https://mui.com/) (Material UI icons and components)
-- [Motion](https://motion.dev/) for animations
-- [MDX](https://mdxjs.com/) for blog content
-- [Zustand](https://zustand.docs.pmnd.rs/) for client-side state (visitor preferences)
-- [TanStack Query](https://tanstack.com/query) for server state management
-- [Zod](https://zod.dev/) for API input validation
-- [Cloudflare Workers](https://developers.cloudflare.com/workers/) + [D1](https://developers.cloudflare.com/d1/) for hosting and database
-- [React Router](https://reactrouter.com/) 7 (admin SPA)
-- [Vitest](https://vitest.dev/) for testing
+Public pages are prerendered at build time. React only hydrates where interactivity is needed via `client:load` or `client:visible` directives -- the bundle stays small and the public site has no runtime server.
 
-## Getting Started
+Content lives in two canonical forms: MDX files for blog posts, JSON for projects and experience. A build step runs `scripts/generate-all-data.ts` before every Astro build, which produces static TypeScript modules for the frontend and `db/seed.sql` for D1. Editing content means editing source files, not generated output.
+
+The admin panel at `/admin/*` is an SSR catch-all that mounts a React Router + TanStack Query SPA. All mutations go through `withAdmin()`, a route wrapper that handles auth, CSRF, and Zod validation in one place. Auth is passkey-first via WebAuthn, with a password fallback controlled by an env flag.
+
+### Content pipeline
+
+```mermaid
+flowchart LR
+    subgraph Sources
+        MDX["MDX posts\nsrc/content/blog/"]
+        JSON["JSON files\nprojects.json\nexperience.json"]
+    end
+
+    GEN["generate-all-data.ts"]
+
+    subgraph Outputs
+        TS["Static TS modules\nblogData.ts\nprojectsData.ts\nexperienceData.ts"]
+        SQL["db/seed.sql"]
+    end
+
+    MDX --> GEN
+    JSON --> GEN
+    GEN --> TS
+    GEN --> SQL
+    TS -->|import at build time| ASTRO["Astro pages"]
+    SQL -->|wrangler d1 execute| D1["Cloudflare D1"]
+```
+
+### Request flow
+
+```mermaid
+flowchart TB
+    REQ["Request"]
+
+    REQ -->|"/, /blog/*, /projects/*"| STATIC["Prerendered HTML\n+ React islands"]
+    REQ -->|"/admin/*"| SSR["SSR catch-all"]
+    REQ -->|"/api/*"| API["Astro API endpoints"]
+
+    SSR --> SPA["React SPA\nreact-router + TanStack Query"]
+    SPA -->|fetch| API
+
+    API --> GUARD{"withAdmin()\nauth + validation"}
+    GUARD -->|authenticated| D1["Cloudflare D1"]
+    GUARD -->|rejected| ERR["401 / 403"]
+
+    subgraph Auth
+        PASSKEY["Passkey / WebAuthn"] -->|primary| SESSION["Session cookie\nD1 admin_sessions"]
+        PASSWORD["Password"] -->|fallback| SESSION
+    end
+
+    GUARD -.->|requireAuth| SESSION
+```
+
+### CI/CD
+
+```mermaid
+flowchart LR
+    PUSH["git push"] --> CI
+
+    subgraph CI["GitHub Actions"]
+        L["lint"] --> T["test + coverage"]
+        T --> B["build"]
+        B --> E["Playwright e2e"]
+        E --> LH["Lighthouse CI"]
+    end
+
+    LH -->|"main only"| DEPLOY["wrangler deploy\nCloudflare Workers"]
+```
+
+## Development
 
 ```sh
+cp .env.example .env
 npm install
 npm run dev
 ```
 
-Other available scripts:
+The dev server proxies Cloudflare bindings via `platformProxy`. For the admin panel you also need a local D1 database:
 
 ```sh
-npm run build     # Production build
-npm run preview   # Preview production build locally
-npm run lint      # Run ESLint
-npm run test      # Run tests (Vitest)
-npm run test:watch # Run tests in watch mode
-```
-
-### Environment
-
-Copy the example environment file and fill in values:
-
-```sh
-cp .env.example .env
-```
-
-### Local D1 Database
-
-The admin panel requires a Cloudflare D1 database. For local development:
-
-```sh
-# Create the local database
 wrangler d1 execute blog-db --local --file=db/schema.sql
 wrangler d1 execute blog-db --local --file=db/seed.sql
 ```
 
-### Deployment
+If you add or edit content files, regenerate the data pipeline outputs before building:
 
-The site deploys to Cloudflare Workers via GitHub Actions CI/CD.
-
-On push to `main`, the pipeline runs lint, tests, and build, then deploys using `wrangler deploy` with the Astro-generated `dist/server/wrangler.json`.
-
-Required GitHub secrets:
-
-- `CLOUDFLARE_API_TOKEN` -- Cloudflare API token with Workers Scripts Edit + D1 Edit permissions
-- `CLOUDFLARE_ACCOUNT_ID` -- Cloudflare account ID
-
-Required Cloudflare environment variables (set in Workers dashboard):
-
-- `ADMIN_PASSWORD` -- password for admin panel authentication
-
-## Project Structure
-
-```
-src/
-  __tests__/        # Unit tests (API routes, lib modules)
-  components/       # React islands + shared UI components
-    ui/             # UI primitives (dialog, sonner, utils)
-    blogData.ts     # Static blog post data
-    projectsData.ts # Static project data
-    experienceData.ts
-  admin/            # Admin SPA (React Router)
-    api.ts          # Typed API client with auth
-    contexts/       # AuthContext provider
-    hooks/          # TanStack Query hooks (useAdminQueries, useAuth, useGitHubRepos)
-    components/     # AdminLayout, AdminRoot
-    pages/          # Dashboard, BlogEdit, Projects, Experience, Settings
-    routes.ts       # React Router configuration
-  stores/
-    settingsStore.ts # Zustand store for visitor preferences (theme, motion, fontSize)
-  lib/
-    db.ts           # D1 data access layer (typed queries)
-    auth.ts         # Token-based session auth
-    validation.ts   # Zod schemas for API input
-    motion.ts       # Motion utilities
-  types/
-    index.ts        # Shared TypeScript interfaces
-  pages/
-    api/            # Astro API routes (SSR)
-      auth/login.ts
-      admin/        # CRUD endpoints: posts, projects, roles, categories, settings
-      github/repos.ts
-    blog/           # Blog pages (static, content collections)
-    admin/          # Admin catch-all (SSR, React Router SPA)
-    experience.astro
-    projects.astro
-    settings.astro
-    404.astro
-  layouts/          # Astro layouts (MainLayout, BaseHead, ThemeScript)
-  content/          # Astro content collections (blog MDX)
-  styles/           # Global styles, theme, fonts
-db/
-  schema.sql        # D1 database schema (6 tables)
-  seed.sql          # Seed data from hardcoded defaults
-docs/
-  Guidelines.md     # Design system guidelines
-  design/           # Design direction documents
-scripts/            # Skill/tooling update scripts
+```sh
+npm run generate:all
 ```
 
-## Architecture
+## Deployment
 
-### Public Pages (Static)
-
-All visitor-facing pages are prerendered at build time. React islands hydrate with `client:load` or `client:visible` for interactivity (animations, theme toggle, blog filtering).
-
-### Admin Panel (SSR)
-
-The admin panel at `/admin/*` is a React SPA served via Cloudflare Workers. It uses:
-
-- **TanStack Query** for data fetching and mutations against the API
-- **Cloudflare D1** (SQLite) for persistent storage
-- **Token-based auth** with sessions stored in D1 (24h expiry)
-- **React Router** for client-side navigation
-
-### CI/CD
-
-GitHub Actions (`.github/workflows/ci-cd.yml`):
-
-1. **CI** (all branches): lint, test, build
-2. **Deploy** (main only): build + `wrangler deploy` using Astro-generated worker config
-
-### State Management
-
-| Store | Library | Persistence | Scope |
-|-------|---------|-------------|-------|
-| Visitor preferences | Zustand | localStorage | Theme, motion, font size |
-| Admin data | TanStack Query | Cloudflare D1 | Blog posts, projects, roles, settings |
-
-### API Routes
-
-All under `/api/`, served via Cloudflare Workers:
-
-- `POST /api/auth/login` -- authenticate, receive session token
-- `GET/POST /api/admin/posts` -- list/create blog posts
-- `GET/PUT/DELETE /api/admin/posts/:slug` -- single post operations
-- `GET/POST /api/admin/projects` -- list/create projects
-- `DELETE /api/admin/projects/:id` -- delete project
-- `GET/POST /api/admin/roles` -- list/create roles
-- `DELETE /api/admin/roles/:id` -- delete role
-- `GET/POST /api/admin/categories` -- list/add categories
-- `DELETE /api/admin/categories/:name` -- remove category
-- `GET/PUT /api/admin/settings` -- site settings
-- `GET /api/github/repos` -- proxy to GitHub API for project imports
+Pushes to `main` trigger CI (lint, tests, build, e2e, Lighthouse) and then deploy via `wrangler deploy` using the Astro-generated `dist/server/wrangler.json`. Required GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. The `ADMIN_PASSWORD` env var is set in the Cloudflare Workers dashboard.
 
 ## License
 
