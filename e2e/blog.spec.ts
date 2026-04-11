@@ -38,6 +38,26 @@ const ALL_POSTS = [
   },
 ];
 
+/**
+ * Select a category filter and wait for the filter state to propagate.
+ *
+ * The BlogListIsland hydrates with `client:idle`, so the click may fire
+ * against the pre-hydration SSR markup. Retry click + state-check with
+ * toPass() until React picks it up and re-renders the MacWindow title.
+ */
+async function selectCategory(
+  page: import("@playwright/test").Page,
+  category: string,
+) {
+  const expectedTitle = `posts — ${category.toLowerCase()}`;
+  await expect(async () => {
+    await page
+      .getByRole("button", { name: category, exact: true })
+      .click({ force: true });
+    await expect(page.getByText(expectedTitle)).toBeVisible({ timeout: 1500 });
+  }).toPass({ timeout: 15000 });
+}
+
 test.describe("Blog list page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/blog");
@@ -52,8 +72,7 @@ test.describe("Blog list page", () => {
   });
 
   test("category filter narrows the list", async ({ page }) => {
-    // Click "Android" category
-    await page.getByRole("button", { name: "Android" }).click();
+    await selectCategory(page, "Android");
 
     // Only posts with category "Android" should be visible
     const androidPosts = ALL_POSTS.filter((p) => p.category === "Android");
@@ -70,13 +89,13 @@ test.describe("Blog list page", () => {
 
   test("clicking 'All' restores the full list", async ({ page }) => {
     // Filter first
-    await page.getByRole("button", { name: "iOS" }).click();
+    await selectCategory(page, "iOS");
     // Only 1 post visible
     await expect(page.getByText("iOS Background Downloads Done Right")).toBeVisible();
     await expect(page.getByText("Mobile CI That Actually Works")).not.toBeVisible();
 
     // Click "All" to restore
-    await page.getByRole("button", { name: "All" }).click();
+    await selectCategory(page, "All");
 
     for (const post of ALL_POSTS) {
       await expect(page.getByText(post.title)).toBeVisible();

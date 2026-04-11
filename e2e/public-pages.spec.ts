@@ -46,9 +46,13 @@ test.describe("public pages", () => {
     await page.goto("/projects");
     await expect(page).toHaveTitle(/Projects — Nikita Pochaev/);
     await expect(page.locator("nav")).toBeVisible();
-    // First project from projectsData.ts
-    await expect(page.getByRole("heading", { name: "Meridian" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Deploybot" })).toBeVisible();
+    // Projects from projectsData.ts
+    await expect(
+      page.getByRole("heading", { name: "Copilot AI Platform" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "AGENTS.md Framework" })
+    ).toBeVisible();
   });
 
   test("experience page renders", async ({ page }) => {
@@ -56,11 +60,9 @@ test.describe("public pages", () => {
     await expect(page).toHaveTitle(/Experience — Nikita Pochaev/);
     await expect(page.locator("nav")).toBeVisible();
     // Roles from experienceData.ts
+    await expect(page.getByText("AI Engineer").first()).toBeVisible();
     await expect(
-      page.getByText("Mobile Engineer & Consultant")
-    ).toBeVisible();
-    await expect(
-      page.getByText("Senior Android Developer")
+      page.getByText("Senior Android Developer").first()
     ).toBeVisible();
   });
 
