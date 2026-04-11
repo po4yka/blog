@@ -22,7 +22,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   validateOrigin(request);
 
-  const parsed = loginSchema.safeParse(await request.json());
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonError("Invalid JSON", 400);
+  }
+
+  const parsed = loginSchema.safeParse(body);
   if (!parsed.success) return validationError(parsed.error);
   const { password } = parsed.data;
   const db = env.DB;
