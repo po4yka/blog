@@ -8,6 +8,7 @@
     "build": "tsx scripts/generate-all-data.ts && astro build",
     "preview": "astro preview",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "generate:blog": "tsx scripts/generate-blog-data.ts",
