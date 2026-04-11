@@ -165,7 +165,7 @@ describe("POST /api/admin/projects", () => {
     expect(response.status).toBe(500);
 
     const body = await response.json();
-    expect(body.error).toBe("Database error");
+    expect(body.error).toBe("Internal server error");
   });
 });
 

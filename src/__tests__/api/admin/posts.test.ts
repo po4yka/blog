@@ -169,7 +169,7 @@ describe("POST /api/admin/posts", () => {
     expect(response.status).toBe(500);
 
     const body = await response.json();
-    expect(body.error).toBe("Database error");
+    expect(body.error).toBe("Internal server error");
   });
 });
 

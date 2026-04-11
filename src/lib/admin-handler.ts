@@ -94,8 +94,14 @@ export function withAdmin<S extends z.ZodType>(
 
       return await handler({ request, params, db, data });
     } catch (err) {
+      // Re-throw Response errors (401 from requireAuth, 403 from
+      // validateOrigin) so Astro can return them directly.
       if (err instanceof Response) throw err;
-      return jsonError("Database error", 500);
+      // Anything else is a real bug -- log it so Wrangler tail surfaces
+      // the stack. The client still gets an opaque 500 so we don't leak
+      // internals.
+      console.error("[withAdmin] unhandled error:", err);
+      return jsonError("Internal server error", 500);
     }
   };
 }
