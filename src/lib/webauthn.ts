@@ -42,6 +42,26 @@ export async function consumeChallenge(
   return true;
 }
 
+/**
+ * Validate a challenge without consuming it. Used for multi-step flows
+ * (e.g. register-options -> register-verify) where the token must survive
+ * the intermediate step but still be single-use at the final step.
+ */
+export async function validateChallenge(
+  db: D1Database,
+  challenge: string,
+  type: string,
+): Promise<boolean> {
+  const row = await db
+    .prepare(
+      "SELECT challenge FROM auth_challenges WHERE challenge = ? AND type = ? AND created_at > datetime('now', '-5 minutes')",
+    )
+    .bind(challenge, type)
+    .first();
+
+  return row !== null;
+}
+
 // --- Credentials ---
 
 export async function storeCredential(
