@@ -10,9 +10,9 @@ const ease = [0.25, 0.46, 0.45, 0.94] as const;
 const links = [
   { icon: "✉", label: "email", href: "mailto:hello@po4yka.dev" },
   { icon: "⊞", label: "google play", href: undefined },
-  { icon: "◉", label: "linkedin", href: undefined },
+  { icon: "◉", label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
   { icon: "⌘", label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
-  { icon: "✈", label: "telegram", href: undefined },
+  { icon: "✈", label: "telegram", href: "https://t.me/po4yka" },
 ];
 
 export function Links() {
