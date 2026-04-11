@@ -18,10 +18,13 @@ const personSchema = {
   name: "Nikita Pochaev",
   alternateName: "po4yka",
   url: SITE_URL,
-  jobTitle: "Mobile Developer & Consultant",
+  jobTitle: "AI Engineer & Senior Mobile Developer",
   description:
-    "Expert mobile engineer specializing in Android, iOS, and Kotlin Multiplatform. Recognized for architecting scalable KMP solutions with 60%+ code sharing, building release automation pipelines, and leading platform teams at scale. Deep expertise in Jetpack Compose, SwiftUI, MobileOps, and CI/CD optimization.",
+    "AI Engineer and Senior Mobile Developer specializing in Android and Kotlin Multiplatform Mobile (KMM). Architects KMM shared modules with 60%+ code sharing, builds release automation pipelines, and integrates ML-powered features — from LLM-driven product flows to on-device inference — into production mobile apps.",
   knowsAbout: [
+    "AI/ML Engineering",
+    "LLM Integration",
+    "Machine Learning",
     "Android",
     "iOS",
     "Kotlin Multiplatform",
@@ -36,18 +39,18 @@ const personSchema = {
   ],
   hasOccupation: {
     "@type": "Occupation",
-    name: "Mobile Developer & Consultant",
+    name: "AI Engineer & Senior Mobile Developer",
     occupationLocation: { "@type": "Country", name: "Remote" },
     skills:
-      "Kotlin, Swift, Jetpack Compose, SwiftUI, Kotlin Multiplatform, Gradle, Fastlane, CI/CD, Mobile Architecture",
+      "Kotlin, Swift, Jetpack Compose, SwiftUI, Kotlin Multiplatform, Gradle, Fastlane, CI/CD, Mobile Architecture, Python, PyTorch, LLM integration, on-device ML",
   },
   makesOffer: {
     "@type": "Offer",
     itemOffered: {
       "@type": "Service",
-      name: "Mobile Engineering Consulting",
+      name: "AI & Mobile Engineering Consulting",
       description:
-        "KMP architecture design, MobileOps pipeline setup, Gradle build optimization, modularization strategy, and Compose/SwiftUI migration consulting for mobile teams.",
+        "KMM architecture design, MobileOps pipeline setup, Gradle build optimization, and ML feature integration consulting for mobile product teams.",
     },
   },
   sameAs: [
@@ -64,7 +67,7 @@ const websiteSchema = isHomePage
       name: "Nikita Pochaev",
       url: SITE_URL,
       description:
-        "Mobile Developer -- Android, iOS, Kotlin Multiplatform, MobileOps",
+        "AI Engineer and Senior Mobile Developer — Android, Kotlin Multiplatform Mobile (KMM)",
       author: { "@id": `${SITE_URL}/#person` },
     }
   : null;

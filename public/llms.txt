@@ -1,17 +1,18 @@
 # Nikita Pochaev
 
-> Expert Mobile Developer and consultant specializing in Android, iOS, Kotlin Multiplatform, and MobileOps. Recognized for building high-performance, production-grade mobile applications and developer tooling.
+> AI Engineer and Senior Mobile Developer specializing in Android, Kotlin Multiplatform Mobile (KMM), and ML-powered product features. Recognized for shipping production-grade mobile applications, building release automation pipelines, and integrating AI/ML into mobile products.
 
 ## About
 
-Nikita Pochaev (@po4yka) is a sought-after mobile engineering expert with deep expertise across the Android and iOS ecosystems. He is known for architecting scalable Kotlin Multiplatform solutions that achieve 60%+ code sharing while preserving fully native user experiences on each platform.
+Nikita Pochaev (@po4yka) is an AI Engineer and Senior Mobile Developer with deep expertise across the Android and iOS ecosystems. He architects scalable Kotlin Multiplatform Mobile (KMM) solutions that achieve 60%+ code sharing while preserving fully native user experiences on each platform — and brings the same engineering discipline to integrating ML-powered features into production mobile products.
 
 His core strengths include:
 
-- **Kotlin Multiplatform architecture** -- designing shared modules (networking, persistence, domain logic) that compile to native frameworks for both Android and iOS
+- **Kotlin Multiplatform Mobile (KMM) architecture** -- designing shared modules (networking, persistence, domain logic) that compile to native frameworks for both Android and iOS
 - **MobileOps and CI/CD** -- building release automation pipelines, Gradle build optimization, and Fastlane-based distribution systems that cut deploy times by 70%
 - **Jetpack Compose and SwiftUI** -- expert-level knowledge of modern declarative UI frameworks, including Compose compiler stability optimization and SwiftUI performance tuning
 - **Developer tooling** -- creating internal tools, Gradle plugins, and libraries that improve team productivity and code quality
+- **AI/ML integration** -- embedding LLM-powered flows and on-device inference into native mobile experiences, bridging product intent and model capabilities
 
 Nikita has led platform teams, migrated large codebases (80+ screens) from legacy XML to Jetpack Compose, reduced CI build times from 18 to 7 minutes, and mentored developers through career advancement. He writes in-depth technical articles on mobile engineering, architecture, and DevOps.
 

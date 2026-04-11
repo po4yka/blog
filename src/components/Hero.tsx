@@ -111,7 +111,7 @@ export function Hero() {
                     label: t("hero.infoRole"),
                     value: (
                       <span className="text-foreground/80" style={{ fontWeight: 500 }}>
-                        {t("hero.roleMobileDev")}
+                        {t("hero.role")}
                       </span>
                     ),
                   },

@@ -12,7 +12,7 @@ export const GET: APIRoute = () => {
   sections.push("# Nikita Pochaev -- Full Site Content");
   sections.push("");
   sections.push(
-    "> Expert Mobile Developer and consultant specializing in Android, iOS, Kotlin Multiplatform, and MobileOps. Recognized for building high-performance, production-grade mobile applications and developer tooling.",
+    "> AI Engineer and Senior Mobile Developer specializing in Android, Kotlin Multiplatform Mobile (KMM), and ML-powered product features. Recognized for shipping production-grade mobile applications, building release automation pipelines, and integrating AI/ML into mobile products.",
   );
   sections.push("");
 
@@ -20,7 +20,7 @@ export const GET: APIRoute = () => {
   sections.push("## About Nikita Pochaev");
   sections.push("");
   sections.push(
-    "Nikita Pochaev (@po4yka) is a sought-after mobile engineering expert with extensive experience across the Android and iOS ecosystems. He specializes in architecting scalable Kotlin Multiplatform solutions that achieve 60%+ code sharing while preserving fully native user experiences on each platform.",
+    "Nikita Pochaev (@po4yka) is an AI Engineer and Senior Mobile Developer with deep expertise across the Android and iOS ecosystems. He architects scalable Kotlin Multiplatform Mobile (KMM) solutions that achieve 60%+ code sharing while preserving fully native user experiences on each platform — and brings the same engineering discipline to integrating ML-powered features into production mobile products.",
   );
   sections.push("");
   sections.push(
@@ -30,7 +30,10 @@ export const GET: APIRoute = () => {
   sections.push("### Areas of expertise");
   sections.push("");
   sections.push(
-    "- Kotlin Multiplatform architecture -- shared networking, persistence, and domain logic across Android and iOS",
+    "- AI/ML integration -- embedding LLM-powered flows and on-device inference into native mobile experiences, bridging product intent and model capabilities",
+  );
+  sections.push(
+    "- Kotlin Multiplatform Mobile (KMM) architecture -- shared networking, persistence, and domain logic across Android and iOS",
   );
   sections.push(
     "- Jetpack Compose and SwiftUI -- expert-level modern declarative UI, including Compose compiler stability optimization",

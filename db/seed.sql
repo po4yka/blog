@@ -68,6 +68,6 @@ INSERT INTO roles (id, period, company, title, description, tags, sort_order) VA
 -- Site settings
 INSERT INTO site_settings (id, name, handle, role, bio, github, email, telegram, linkedin) VALUES
 (1, 'Nikita Pochaev', '@po4yka',
- 'Mobile Developer — Android, iOS, Kotlin Multiplatform, MobileOps',
- 'Mobile engineer focused on Android, iOS, and Kotlin Multiplatform. I care about clean architecture, reliable release pipelines, and tools that help teams ship better software.',
+ 'AI Engineer & Senior Mobile Developer — Android, Kotlin Multiplatform Mobile (KMM)',
+ 'AI Engineer and Senior Mobile Developer. I ship native Android apps, architect Kotlin Multiplatform Mobile (KMM) shared modules, and integrate ML-powered features into production products. I care about clean architecture, reliable release pipelines, and tools that help teams ship better software.',
  'https://github.com/po4yka', 'hello@po4yka.dev', 'https://t.me/po4yka', 'https://linkedin.com/in/po4yka');

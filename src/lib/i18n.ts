@@ -36,9 +36,9 @@ const en = {
   "nav.themeLabel": "Theme",
 
   // hero
-  "hero.heading": "Nikita Pochaev -- Mobile Developer",
+  "hero.heading": "Nikita Pochaev -- AI Engineer & Senior Mobile Developer",
   "hero.name": "Nikita Pochaev",
-  "hero.subtitle": "Mobile Developer -- Android, iOS, Kotlin Multiplatform",
+  "hero.subtitle": "AI Engineer | Senior Mobile Developer — Android, Kotlin Multiplatform Mobile (KMM)",
   "hero.startingSession": "Starting session",
   "hero.detected": "detected",
   "hero.toolchainReady": "toolchain ready",
@@ -46,10 +46,10 @@ const en = {
   "hero.lastLogin": "Last login",
   "hero.infoName": "name",
   "hero.infoRole": "role",
-  "hero.roleMobileDev": "Mobile Developer",
+  "hero.role": "AI Engineer & Senior Mobile Developer",
   "hero.infoHandle": "handle",
   "hero.infoFocus": "focus",
-  "hero.focusValue": "Android, iOS, Kotlin Multiplatform,\nMobileOps, CI/CD, Release Automation",
+  "hero.focusValue": "AI/ML integration, Android, Kotlin Multiplatform Mobile,\nMobileOps, CI/CD, Release Automation",
   "hero.infoStatus": "status",
   "hero.statusValue": "open to collaboration \u00b7 building tools & apps",
 
@@ -166,8 +166,8 @@ const en = {
   "lang.viewOriginal": "View original",
 
   // meta
-  "meta.title": "Nikita Pochaev \u2014 Mobile Developer",
-  "meta.description": "Mobile Developer \u2014 Android, iOS, Kotlin Multiplatform, MobileOps",
+  "meta.title": "Nikita Pochaev \u2014 AI Engineer & Senior Mobile Developer",
+  "meta.description": "AI Engineer and Senior Mobile Developer \u2014 Android, Kotlin Multiplatform Mobile (KMM). Shipping native mobile apps and integrating ML-powered features into production products.",
 
   // layout
   "layout.skipToContent": "Skip to main content",
@@ -188,9 +188,9 @@ const ru: TranslationKeys = {
   "nav.themeLabel": "\u0422\u0435\u043c\u0430",
 
   // hero
-  "hero.heading": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432 -- \u041c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a",
+  "hero.heading": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432 -- AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 \u0438 Senior Mobile Developer",
   "hero.name": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432",
-  "hero.subtitle": "\u041c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a -- Android, iOS, Kotlin Multiplatform",
+  "hero.subtitle": "AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 | Senior Mobile Developer \u2014 Android, Kotlin Multiplatform Mobile (KMM)",
   "hero.startingSession": "\u0417\u0430\u043f\u0443\u0441\u043a \u0441\u0435\u0441\u0441\u0438\u0438",
   "hero.detected": "\u043e\u0431\u043d\u0430\u0440\u0443\u0436\u0435\u043d",
   "hero.toolchainReady": "\u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b \u0433\u043e\u0442\u043e\u0432\u044b",
@@ -198,10 +198,10 @@ const ru: TranslationKeys = {
   "hero.lastLogin": "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u0432\u0445\u043e\u0434",
   "hero.infoName": "\u0438\u043c\u044f",
   "hero.infoRole": "\u0440\u043e\u043b\u044c",
-  "hero.roleMobileDev": "\u041c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a",
+  "hero.role": "AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 \u0438 Senior Mobile Developer",
   "hero.infoHandle": "\u043d\u0438\u043a",
   "hero.infoFocus": "\u0444\u043e\u043a\u0443\u0441",
-  "hero.focusValue": "Android, iOS, Kotlin Multiplatform,\nMobileOps, CI/CD, Release Automation",
+  "hero.focusValue": "AI/ML-\u0438\u043d\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438, Android, Kotlin Multiplatform Mobile,\nMobileOps, CI/CD, Release Automation",
   "hero.infoStatus": "\u0441\u0442\u0430\u0442\u0443\u0441",
   "hero.statusValue": "\u043e\u0442\u043a\u0440\u044b\u0442 \u043a \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u0447\u0435\u0441\u0442\u0432\u0443 \u00b7 \u0441\u043e\u0437\u0434\u0430\u044e \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b \u0438 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
 
@@ -318,8 +318,8 @@ const ru: TranslationKeys = {
   "lang.viewOriginal": "\u0427\u0438\u0442\u0430\u0442\u044c \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b",
 
   // meta
-  "meta.title": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432 \u2014 \u041c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a",
-  "meta.description": "\u041c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a \u2014 Android, iOS, Kotlin Multiplatform, MobileOps",
+  "meta.title": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432 \u2014 AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 \u0438 Senior Mobile Developer",
+  "meta.description": "AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 \u0438 Senior Mobile Developer \u2014 Android, Kotlin Multiplatform Mobile (KMM). \u041d\u0430\u0442\u0438\u0432\u043d\u044b\u0435 \u043c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f \u0438 ML-\u0438\u043d\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 \u0432 \u043f\u0440\u043e\u0434\u0443\u043a\u0442\u0430\u0445.",
 
   // layout
   "layout.skipToContent": "\u041f\u0435\u0440\u0435\u0439\u0442\u0438 \u043a \u043e\u0441\u043d\u043e\u0432\u043d\u043e\u043c\u0443 \u0441\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u043c\u0443",
