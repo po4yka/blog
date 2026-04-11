@@ -6,14 +6,7 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import {
-  AdbDevices,
-  GradleBuild,
-  XcodeSimulators,
-  FastlaneDeploy,
-  GitLog,
-  SwiftPackageResolve,
-} from "@/components/MobileTerminal";
+import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
 ---
 <MainLayout isHomePage>
   <div class="space-y-8 md:space-y-14">
@@ -24,30 +17,12 @@ import {
       <About client:visible />
     </div>
 
-    <!-- Mobile dev: connected devices -->
-    <div class="section-reveal" data-section-name="adb-devices" style="transition-delay:0.15s">
-      <AdbDevices client:visible delay={0.05} />
-    </div>
-
     <div class="section-reveal" data-section-name="links" style="transition-delay:0.2s">
       <Links client:visible />
     </div>
 
-    <!-- Mobile dev: Gradle build output -->
-    <div data-section-name="gradle-build">
-      <GradleBuild client:visible delay={0.05} />
-    </div>
-
     <div data-section-name="projects">
       <Projects client:visible />
-    </div>
-
-    <!-- Mobile dev: iOS simulators + SPM resolve side-by-side on desktop -->
-    <div class="hidden sm:block">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-section-name="xcode-spm">
-        <XcodeSimulators client:visible delay={0.05} />
-        <SwiftPackageResolve client:visible delay={0.1} />
-      </div>
     </div>
 
     <div data-section-name="experience">
@@ -98,8 +73,6 @@ import {
     }
 
     /* Skip rendering for off-screen sections until scrolled into view */
-    [data-section-name="gradle-build"],
-    [data-section-name="xcode-spm"],
     [data-section-name="experience"],
     [data-section-name="git-log"],
     [data-section-name="blog"],

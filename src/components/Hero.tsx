@@ -5,7 +5,6 @@ import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
-import { useClientValue } from "@/hooks/useClientValue";
 import { useLocale } from "@/stores/settingsStore";
 
 const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
@@ -16,22 +15,10 @@ const PARALLAX_PX = 10;
 const TOOLCHAIN = {
   androidSdk: "35",
   xcode: "16.2",
-  kotlin: "2.1.0",
-  gradle: "8.12",
-  androidHome: "/opt/android-sdk",
 } as const;
-
-const formatLoginDate = () =>
-  new Date().toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 
 export function Hero() {
   const { t } = useLocale();
-  const loginDate = useClientValue(formatLoginDate, "");
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const decorX = useTransform(mouseX, [-1, 1], [-PARALLAX_PX, PARALLAX_PX]);
@@ -83,12 +70,6 @@ export function Hero() {
           },
           { status: "OK", text: `Android SDK ${TOOLCHAIN.androidSdk} ${t("hero.detected")}` },
           { status: "OK", text: `Xcode ${TOOLCHAIN.xcode} ${t("hero.toolchainReady")}` },
-          { status: "OK", text: `Kotlin ${TOOLCHAIN.kotlin} / Gradle ${TOOLCHAIN.gradle} ${t("hero.initialized")}` },
-          { status: "INFO", text: `ANDROID_HOME=${TOOLCHAIN.androidHome}` },
-          {
-            status: "INFO",
-            text: loginDate ? `${t("hero.lastLogin")}: ${loginDate}` : `${t("hero.lastLogin")}: ...`,
-          },
         ]}
       />
 
