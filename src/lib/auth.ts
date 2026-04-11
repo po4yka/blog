@@ -82,9 +82,18 @@ export async function rotateSession(db: D1Database, oldToken: string): Promise<s
   return newToken;
 }
 
-export async function createSession(db: D1Database): Promise<string> {
+/**
+ * Create a new admin session.
+ * @param capabilities  Optional capability allowlist for scoped tokens.
+ *                      Omit (or pass undefined) for a full-admin session.
+ */
+export async function createSession(
+  db: D1Database,
+  capabilities?: readonly string[],
+): Promise<string> {
   const token = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const capsJson = capabilities ? JSON.stringify(capabilities) : null;
 
   // Clean up expired sessions, old login attempts, and stale WebAuthn challenges
   await db.batch([
@@ -94,8 +103,8 @@ export async function createSession(db: D1Database): Promise<string> {
   ]);
 
   await db
-    .prepare("INSERT INTO admin_sessions (token, expires_at) VALUES (?, ?)")
-    .bind(token, expiresAt)
+    .prepare("INSERT INTO admin_sessions (token, expires_at, capabilities) VALUES (?, ?, ?)")
+    .bind(token, expiresAt, capsJson)
     .run();
 
   return token;
@@ -139,11 +148,21 @@ function extractSessionToken(request: Request): string | null {
 }
 
 /**
- * Validates the request's session token (cookie or Bearer header).
+ * A resolved session returned by requireAuth().
+ * capabilities is null for full-admin tokens; otherwise it is the parsed
+ * capability allowlist stored with the session row.
+ */
+export interface Session {
+  capabilities: readonly string[] | null;
+}
+
+/**
+ * Validates the request's session token (cookie or Bearer header) and
+ * returns the session record (including per-token capabilities).
  * Updates last_used timestamp on success.
  * @throws {Response} 401 response if unauthorized (Astro convention)
  */
-export async function requireAuth(request: Request, db: D1Database): Promise<void> {
+export async function requireAuth(request: Request, db: D1Database): Promise<Session> {
   const token = extractSessionToken(request);
   if (!token) {
     throw new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -152,12 +171,14 @@ export async function requireAuth(request: Request, db: D1Database): Promise<voi
     });
   }
 
-  const session = await db
-    .prepare("SELECT token FROM admin_sessions WHERE token = ? AND expires_at > datetime('now')")
+  const row = await db
+    .prepare(
+      "SELECT token, capabilities FROM admin_sessions WHERE token = ? AND expires_at > datetime('now')",
+    )
     .bind(token)
-    .first();
+    .first<{ token: string; capabilities: string | null }>();
 
-  if (!session) {
+  if (!row) {
     throw new Response(JSON.stringify({ error: "Session expired" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -168,4 +189,19 @@ export async function requireAuth(request: Request, db: D1Database): Promise<voi
     .prepare("UPDATE admin_sessions SET last_used = datetime('now') WHERE token = ?")
     .bind(token)
     .run();
+
+  let capabilities: readonly string[] | null = null;
+  if (row.capabilities) {
+    try {
+      const parsed = JSON.parse(row.capabilities) as unknown;
+      if (Array.isArray(parsed) && parsed.every((c): c is string => typeof c === "string")) {
+        capabilities = parsed;
+      }
+    } catch {
+      // Corrupt capabilities JSON: fail closed with an empty allowlist.
+      capabilities = [];
+    }
+  }
+
+  return { capabilities };
 }

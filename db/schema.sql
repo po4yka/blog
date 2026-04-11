@@ -59,12 +59,16 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
--- Admin sessions
+-- Admin sessions.
+-- capabilities is NULL for full-admin tokens (default); when set, it holds
+-- a JSON array of capability strings (e.g. '["read:posts"]') that withAdmin()
+-- checks against the per-route capability parameter.
 CREATE TABLE IF NOT EXISTS admin_sessions (
-  token      TEXT PRIMARY KEY,
-  created_at TEXT DEFAULT (datetime('now')),
-  expires_at TEXT NOT NULL,
-  last_used  TEXT DEFAULT (datetime('now'))
+  token        TEXT PRIMARY KEY,
+  created_at   TEXT DEFAULT (datetime('now')),
+  expires_at   TEXT NOT NULL,
+  last_used    TEXT DEFAULT (datetime('now')),
+  capabilities TEXT
 );
 
 -- Login attempt tracking for rate limiting
