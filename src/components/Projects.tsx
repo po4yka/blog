@@ -22,11 +22,15 @@ export function Projects() {
 
       <MacWindow title="projects" dimLights delay={0.05}>
         <div ref={ref} className="space-y-0">
-          {homeProjects.map((project, i) => (
+          {homeProjects.map((project, i) => {
+            const isLast = i === homeProjects.length - 1;
+            const branch = isLast ? "└──" : "├──";
+            const cont = isLast ? "   " : "│  ";
+            return (
             <motion.a
               key={project.slug}
               href="/projects"
-              className="group flex items-start gap-3 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono rounded-[6px]"
+              className="group flex items-start gap-2 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono rounded-[6px]"
               initial={{ opacity: 0, y: 8 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
@@ -37,46 +41,49 @@ export function Projects() {
               }}
               whileTap={{ scale: 0.995 }}
             >
-              {/* Arrow marker — slides in on hover */}
-              <motion.span
-                className="text-muted-foreground/20 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
-                initial={false}
-                animate={{ x: 0 }}
-                whileHover={{ x: 2 }}
+              {/* Tree branch prefix */}
+              <span
+                className="shrink-0 text-muted-foreground/25 group-hover:text-accent/40 transition-colors duration-200 text-mono-sm pt-0.5 select-none"
+                aria-hidden="true"
               >
-                ›
-              </motion.span>
+                {branch}
+              </span>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline justify-between gap-4">
-                  <span
-                    className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm"
-                  >
+                {/* First line: platform · name · year */}
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className="text-muted-foreground/40 text-mono-sm shrink-0 letter-wide" aria-hidden="true">
+                    [{project.platforms[0]?.toLowerCase() ?? ""}]
+                  </span>
+                  <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm">
                     {project.name}
                   </span>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {project.featured && <Tag variant="highlight">{t("projects.featured")}</Tag>}
-                    <span
-                      className="text-muted-foreground/50 text-mono-sm"
-                    >
-                      {project.platforms.join(" / ")}
-                    </span>
-                    <span
-                      className="text-accent/50 text-mono-sm"
-                    >
-                      {project.year}
-                    </span>
-                  </div>
+                  <span className="text-muted-foreground/30 text-mono-sm" aria-hidden="true">·</span>
+                  <span className="text-accent/50 text-mono-sm shrink-0">{project.year}</span>
+                  {project.featured && (
+                    <>
+                      <span className="text-muted-foreground/30 text-mono-sm" aria-hidden="true">·</span>
+                      <Tag variant="highlight">{t("projects.featured")}</Tag>
+                    </>
+                  )}
                 </div>
-                <p
-                  className="mt-0.5 text-muted-foreground/50 group-hover:text-muted-foreground/65 transition-colors duration-200 truncate text-mono-sm"
-                >
-                  {project.description}
-                </p>
+                {/* Second line: continuation + description */}
+                <div className="flex items-start gap-1.5 mt-0.5">
+                  <span
+                    className="shrink-0 text-muted-foreground/20 text-mono-sm select-none"
+                    aria-hidden="true"
+                  >
+                    {cont} └─
+                  </span>
+                  <p className="text-muted-foreground/45 group-hover:text-muted-foreground/60 transition-colors duration-200 truncate text-mono-sm">
+                    {project.description}
+                  </p>
+                </div>
               </div>
             </motion.a>
-          ))}
+            );
+          })}
         </div>
       </MacWindow>
 

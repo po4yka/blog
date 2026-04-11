@@ -15,4 +15,17 @@
   --text-mono-sm: 0.75rem;  /* 12px */
   --text-mono: 0.8125rem;   /* 13px */
   --text-mono-lg: 0.9375rem; /* 15px */
+
+  /* Semantic opacity tiers — exposed as opacity-dim, opacity-muted, etc. */
+  --opacity-dim: 0.25;
+  --opacity-muted: 0.50;
+  --opacity-body: 0.80;
+  --opacity-bright: 1.00;
+}
+
+/* Corporate-monolith section label typography (Moebius influence).
+   Apply to <h2> section labels and short metadata chips only — max 4–6 uses per page. */
+@utility letter-wide {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }

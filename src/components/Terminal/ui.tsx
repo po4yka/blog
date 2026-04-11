@@ -3,10 +3,21 @@ import { spring } from "@/lib/motion";
 import type { ReactNode } from "react";
 
 /**
- * Accent-colored text helper
+ * Accent-colored text helper.
+ * Applies phosphor glow by default to add ambient purple presence at rest.
+ * Pass glow={false} for cases where the glow would fail contrast checks.
  */
-export function Accent({ children }: { children: ReactNode }) {
-  return <span style={{ color: "var(--accent)" }}>{children}</span>;
+export function Accent({ children, glow = true }: { children: ReactNode; glow?: boolean }) {
+  return (
+    <span
+      style={{
+        color: "var(--accent)",
+        textShadow: glow ? "var(--phosphor-glow)" : undefined,
+      }}
+    >
+      {children}
+    </span>
+  );
 }
 
 /**

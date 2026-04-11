@@ -144,6 +144,39 @@ The terminal metaphor must stay grounded and credible:
 - Terminal output should resemble real developer tools (adb, gradle, xcode, fastlane, git) -- not fictional commands.
 - The aesthetic should feel like a real mobile engineer's environment.
 
+## Terminal density and atmospheric layer
+
+The site should feel like a **well-used terminal**, not a freshly opened one. Density, wear, and information packing are authentic to the aesthetic. The following patterns are explicitly permitted:
+
+**Atmospheric texture (subtle, non-distracting):**
+- Scanlines via CSS pseudo-element at ≤ 4% opacity (2px repeating gradient)
+- Phosphor noise grain at ≤ 2% opacity (SVG noise data-URI)
+- Radial vignette darkening corners by ≤ 8% (CRT depth suggestion, no actual curvature)
+- Phosphor text-shadow glow on accent text only: `0 0 8–10px rgba(accent, 0.25–0.35)` — creates ambient purple presence without neon intensity
+
+**Information density inside MacWindow:**
+- IBM 3270-style field codes: `[01] FIELD ......: value` format in InfoTable (fieldCodes mode)
+- Vim/less-style line number gutter on the left of MacWindow content (lineNumbers prop)
+- Vim-style status bar at bottom of MacWindow: `-- NORMAL -- title | rows:col | branch` (statusLine prop)
+- Secondary metadata in MacWindow titlebar: `title | ~/path | branch` (titleExt prop)
+
+**List and content formatting:**
+- Tree-branch unicode (`├──` `└──` `│`) as list decoration in project and content lists
+- Ranked index prefixes: `001 │ date │ [tag] │ title` for blog list items
+- Column dividers `│` in timeline/experience layouts
+- Status markers `●` (current) / `○` (past) in timeline rows
+- `[ OK ]` / `[ INFO ]` / `[ WARN ]` prefixes beyond just BootBlock — any status output
+
+**Still forbidden (these remain Matrix/gimmick territory):**
+- Neon glow at alpha > 0.40 on any element
+- Green-on-black color scheme (the accent stays purple, not CRT green)
+- CRT screen curvature, bezels, or screen-frame graphics
+- Retro power-on / boot-up intro animations
+- ASCII art illustrations (box-drawn frames and labels are fine; robot/character ASCII is not)
+- Matrix code-rain effects or green code waterfalls
+- Scanlines thick enough to be visually distracting (> 4% opacity)
+- Color palettes other than Catppuccin Mocha dark / lavender-editorial light
+
 ---
 
 # Layout guidelines

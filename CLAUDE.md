@@ -220,4 +220,5 @@ Before declaring a visual change complete:
 - Path alias: `@` maps to `src/`
 - No emoji in code or documentation
 
+@DESIGN.md
 @docs/Guidelines.md

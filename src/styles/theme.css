@@ -9,10 +9,22 @@
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --radius: 10px;
+
+  /* Semantic opacity tiers — use these instead of bare /NN modifiers
+     text-dim   (0.25) decorative chrome: line numbers, tree branches, corner marks
+     text-muted (0.50) secondary metadata, labels
+     text-body  (0.80) primary prose and UI
+     text-bright (1.00) active / current item only — use sparingly */
+  --opacity-dim: 0.25;
+  --opacity-muted: 0.50;
+  --opacity-body: 0.80;
+  --opacity-bright: 1.00;
 }
 
 /* Dark is the default — applied via .dark on <html> or as base */
 .dark, :root:not(.light) {
+  --texture-opacity: 0.03;
+  --phosphor-glow: 0 0 8px rgba(145, 132, 247, 0.25);
   --background: #191a21;
   --foreground: #cdd6f4;
   --card: #24273a;
@@ -77,6 +89,8 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 .light {
+  --texture-opacity: 0.015;
+  --phosphor-glow: 0 0 6px rgba(124, 108, 245, 0.18);
   --background: #f6f5f8;
   --foreground: #1c1b22;
   --card: #ffffff;

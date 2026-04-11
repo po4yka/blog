@@ -5,7 +5,13 @@ import { ease, duration, stagger } from "@/lib/motion";
 import { TrafficLights } from "./TrafficLights";
 
 /**
- * macOS window wrapper — hover elevation, traffic lights, title bar
+ * macOS window wrapper — hover elevation, traffic lights, title bar.
+ *
+ * Density props (all opt-in, existing usages unchanged):
+ *   lineNumbers  — number of line-number gutter rows to show, or true for decorative (10 rows)
+ *   statusLine   — vim-style bottom status bar; true = default text, string/ReactNode = custom
+ *   titleExt     — secondary metadata appended to title in titlebar (e.g. "~/po4yka | main")
+ *   processDots  — render ●●○○ process indicator at titlebar right side
  */
 export function MacWindow({
   title,
@@ -14,6 +20,10 @@ export function MacWindow({
   delay = 0,
   className = "",
   dimLights = false,
+  lineNumbers,
+  statusLine,
+  titleExt,
+  processDots = false,
 }: {
   title?: string;
   subtitle?: string;
@@ -21,8 +31,21 @@ export function MacWindow({
   delay?: number;
   className?: string;
   dimLights?: boolean;
+  lineNumbers?: boolean | number;
+  statusLine?: boolean | string | ReactNode;
+  titleExt?: string;
+  processDots?: boolean;
 }) {
   const { ref, inView } = useInView(0.1);
+  const lineCount = typeof lineNumbers === "number" ? lineNumbers : lineNumbers ? 10 : 0;
+
+  const defaultStatus = title
+    ? `-- NORMAL --  ${title}  |  ${lineCount || 1}:1  |  main`
+    : "-- NORMAL --  1:1  |  main";
+  const statusContent =
+    statusLine === true
+      ? defaultStatus
+      : statusLine || null;
 
   return (
     <motion.div
@@ -51,26 +74,67 @@ export function MacWindow({
         }}
       >
         <TrafficLights dim={dimLights} />
-        {title && (
+        <span className="flex-1 text-center font-mono text-label select-none">
+          {title && (
+            <span className="text-muted-foreground/50 letter-wide">{title}</span>
+          )}
+          {title && titleExt && (
+            <span className="text-muted-foreground/30"> | {titleExt}</span>
+          )}
+        </span>
+        {processDots && (
           <span
-            className="flex-1 text-center text-muted-foreground/50 select-none font-mono text-label"
+            className="text-muted-foreground/30 select-none font-mono text-xs tracking-widest"
+            aria-hidden="true"
           >
-            {title}
+            ●●○○
           </span>
         )}
-        {!title && <span className="flex-1" />}
-        {subtitle && (
-          <span
-            className="text-muted-foreground/25 select-none font-mono text-3xs"
-          >
+        {!processDots && subtitle && (
+          <span className="text-muted-foreground/25 select-none font-mono text-3xs">
             {subtitle}
           </span>
         )}
       </div>
-      {/* Content */}
-      <div className="p-5 md:p-6 font-mono">
-        {children}
+      {/* Content — with optional line-number gutter */}
+      <div className={`flex font-mono ${lineCount > 0 ? "gap-0" : ""}`}>
+        {lineCount > 0 && (
+          <div
+            className="flex-none select-none py-5 pl-3 pr-2 text-right font-mono text-mono-sm"
+            style={{
+              color: "var(--muted-foreground)",
+              opacity: 0.25,
+              borderRight: "1px solid var(--border)",
+              minWidth: "2.5rem",
+              lineHeight: 1.75,
+            }}
+            aria-hidden="true"
+          >
+            {Array.from({ length: lineCount }, (_, i) => (
+              <div key={i + 1}>{i + 1}</div>
+            ))}
+          </div>
+        )}
+        <div className={`flex-1 min-w-0 p-5 md:p-6`}>
+          {children}
+        </div>
       </div>
+      {/* Optional vim-style status line */}
+      {statusContent && (
+        <div
+          className="px-3 py-[3px] font-mono text-xs select-none truncate"
+          style={{
+            background: "color-mix(in srgb, var(--titlebar) 60%, transparent)",
+            borderTop: "1px solid var(--border)",
+            color: "var(--muted-foreground)",
+            opacity: 0.45,
+            letterSpacing: "0.02em",
+          }}
+          aria-hidden="true"
+        >
+          {statusContent}
+        </div>
+      )}
     </motion.div>
   );
 }

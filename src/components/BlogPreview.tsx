@@ -26,7 +26,7 @@ export function BlogPreview() {
             <motion.a
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group flex items-start gap-3 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono rounded-[6px]"
+              className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono rounded-[6px]"
               initial={{ opacity: 0, y: 8 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.06, ease }}
@@ -37,33 +37,35 @@ export function BlogPreview() {
               }}
               whileTap={{ scale: 0.995 }}
             >
-              {/* Date */}
-              <span
-                className="text-muted-foreground/45 shrink-0 pt-0.5 text-label"
-                style={{ minWidth: "65px" }}
-              >
-                {post.date}
-              </span>
-
-              {/* Featured tag */}
-              {post.featured && (
-                <span className="shrink-0">
-                  <Tag variant="highlight">{t("blogPreview.new")}</Tag>
-                </span>
-              )}
-
-              {/* Title — underline draw on hover */}
-              <div className="flex-1 min-w-0 relative">
-                <span
-                  className="text-foreground/70 group-hover:text-foreground transition-colors duration-200 text-mono"
-                >
-                  {post.title}
-                </span>
-                {/* Animated underline */}
-                <span
-                  className="absolute bottom-0 left-0 right-0 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
-                  style={{ backgroundColor: "var(--accent)", opacity: 0.3 }}
-                />
+              <div className="flex-1 min-w-0">
+                {/* Rank line: 001 │ date │ [tag] │ title */}
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span
+                    className="text-muted-foreground/35 shrink-0 text-mono-sm tabular-nums select-none"
+                    aria-hidden="true"
+                  >
+                    {String(i + 1).padStart(3, "0")}
+                  </span>
+                  <span className="text-muted-foreground/25 shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
+                  <span className="text-muted-foreground/40 shrink-0 text-label">{post.date}</span>
+                  {post.featured && (
+                    <>
+                      <span className="text-muted-foreground/25 shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
+                      <Tag variant="highlight">{t("blogPreview.new")}</Tag>
+                    </>
+                  )}
+                  <span className="text-muted-foreground/25 shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
+                  {/* Title — underline draw on hover */}
+                  <div className="relative min-w-0">
+                    <span className="text-foreground/70 group-hover:text-foreground transition-colors duration-200 text-mono">
+                      {post.title}
+                    </span>
+                    <span
+                      className="absolute bottom-0 left-0 right-0 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
+                      style={{ backgroundColor: "var(--accent)", opacity: 0.3 }}
+                    />
+                  </div>
+                </div>
               </div>
             </motion.a>
           ))}

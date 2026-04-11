@@ -76,14 +76,23 @@ export function Hero() {
       {/* whois + system monitor side-by-side on desktop */}
       <div className="space-y-4">
         <Cmd>
-          whois <Accent>po4yka</Accent>
+          cd ~/po4yka &amp;&amp; cat <Accent>identity.md</Accent>
         </Cmd>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 items-start">
           {/* Main info + CTAs */}
           <div className="flex flex-col gap-4">
-            <MacWindow title="whois — po4yka" dimLights delay={0.1}>
+            <MacWindow
+              title="whois — po4yka"
+              titleExt="~/po4yka | main"
+              dimLights
+              delay={0.1}
+              lineNumbers={5}
+              statusLine
+              processDots
+            >
               <InfoTable
+                fieldCodes
                 rows={[
                   {
                     label: t("hero.infoName"),

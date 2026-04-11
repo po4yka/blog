@@ -36,7 +36,23 @@ export function Experience() {
               whileTap={{ scale: 0.995 }}
             >
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
-                <div className="flex items-baseline gap-3">
+                <div className="flex items-baseline gap-2">
+                  {/* Status marker: ● current, ○ past */}
+                  <span
+                    className="shrink-0 text-mono-sm select-none"
+                    style={{ color: "var(--accent)", opacity: i === 0 ? 0.70 : 0.30 }}
+                    aria-hidden="true"
+                    title={i === 0 ? "current" : "past"}
+                  >
+                    {i === 0 ? "●" : "○"}
+                  </span>
+                  {/* Column divider */}
+                  <span
+                    className="shrink-0 text-muted-foreground/15 text-mono-sm select-none"
+                    aria-hidden="true"
+                  >
+                    │
+                  </span>
                   <span
                     className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-sm font-medium"
                   >
@@ -49,7 +65,7 @@ export function Experience() {
                   </span>
                 </div>
                 <span
-                  className="text-accent/50 text-mono-sm"
+                  className="text-accent/50 text-mono-sm tabular-nums"
                 >
                   {role.period}
                 </span>

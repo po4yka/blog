@@ -9,16 +9,23 @@ import { useSettingsStore } from "@/stores/settingsStore";
 export { Accent, Tag } from "./ui";
 
 /**
- * Table-style rows with hover highlight
+ * Table-style rows with hover highlight.
+ *
+ * fieldCodes — renders IBM 3270-style field labels: [01] KEY......: value
  */
 export function InfoTable({
   rows,
   delay = 0,
+  fieldCodes = false,
 }: {
   rows: { label: string; value: ReactNode }[];
   delay?: number;
+  fieldCodes?: boolean;
 }) {
   const { ref, inView } = useInView(0.1);
+  const maxLabelLen = fieldCodes
+    ? Math.max(...rows.map((r) => r.label.length))
+    : 0;
 
   return (
     <motion.div
@@ -31,19 +38,41 @@ export function InfoTable({
       {rows.map((row, i) => (
         <motion.div
           key={row.label}
-          className="flex gap-6 py-1.5 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-sm rounded-[4px]"
-          style={{ lineHeight: 1.6 }}
+          className="flex items-baseline py-1.5 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 rounded-[4px]"
+          style={{ lineHeight: 1.6, gap: fieldCodes ? "0.5rem" : "1.5rem" }}
           initial={{ opacity: 0, x: -4 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.3, delay: delay + stagger.fast + i * stagger.fast }}
         >
-          <span
-            className="text-foreground/60 shrink-0"
-            style={{ minWidth: "80px" }}
-          >
-            {row.label}
-          </span>
-          <span className="text-foreground/80">{row.value}</span>
+          {fieldCodes ? (
+            <>
+              <span
+                className="shrink-0 select-none text-mono-sm"
+                style={{ color: "var(--muted-foreground)", opacity: 0.30 }}
+                aria-hidden="true"
+              >
+                [{String(i + 1).padStart(2, "0")}]
+              </span>
+              <span
+                className="shrink-0 text-mono-sm"
+                style={{ color: "var(--foreground)", opacity: 0.50 }}
+              >
+                {row.label.toUpperCase()}
+                <span aria-hidden="true" style={{ opacity: 0.35 }}>
+                  {"".padEnd(maxLabelLen - row.label.length + 3, ".")}
+                </span>
+                {":"}
+              </span>
+            </>
+          ) : (
+            <span
+              className="text-foreground/60 shrink-0 text-sm"
+              style={{ minWidth: "80px" }}
+            >
+              {row.label}
+            </span>
+          )}
+          <span className="text-foreground/80 text-sm">{row.value}</span>
         </motion.div>
       ))}
     </motion.div>
