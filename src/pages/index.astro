@@ -6,7 +6,6 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import { UptimeStrip, SystemBottomBar } from "@/components/Decorations";
 import {
   AdbDevices,
   GradleBuild,
@@ -32,11 +31,6 @@ import {
 
     <div class="section-reveal" data-section-name="links" style="transition-delay:0.2s">
       <Links client:visible />
-    </div>
-
-    <!-- Decorative system metrics strip -->
-    <div data-section-name="uptime">
-      <UptimeStrip client:visible delay={0.05} />
     </div>
 
     <!-- Mobile dev: Gradle build output -->
@@ -73,13 +67,6 @@ import {
     <div data-section-name="fastlane">
       <FastlaneDeploy client:visible delay={0.05} />
     </div>
-
-    <!-- Bottom system bar -->
-    <div class="hidden sm:block">
-      <div data-section-name="system-bar">
-        <SystemBottomBar client:visible delay={0.05} />
-      </div>
-    </div>
   </div>
 
   <style>
@@ -93,6 +80,7 @@ import {
       transform: translateY(0);
     }
 
+    /* System preference */
     @media (prefers-reduced-motion: reduce) {
       .section-reveal {
         opacity: 1;
@@ -101,14 +89,21 @@ import {
       }
     }
 
+    /* In-app preference (settingsStore.reduceMotion toggles .reduce-motion
+       on <html> — see src/stores/settingsStore.ts applyToDOM). */
+    :global(html.reduce-motion) .section-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="gradle-build"],
     [data-section-name="xcode-spm"],
     [data-section-name="experience"],
     [data-section-name="git-log"],
     [data-section-name="blog"],
-    [data-section-name="fastlane"],
-    [data-section-name="system-bar"] {
+    [data-section-name="fastlane"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
     }

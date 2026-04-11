@@ -66,7 +66,8 @@ flowchart LR
     PUSH["git push"] --> CI
 
     subgraph CI["GitHub Actions"]
-        L["lint"] --> T["test + coverage"]
+        L["lint"] --> TC["typecheck"]
+        TC --> T["test + coverage"]
         T --> B["build"]
         B --> E["Playwright e2e"]
         E --> LH["Lighthouse CI"]

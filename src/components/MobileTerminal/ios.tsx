@@ -64,17 +64,15 @@ export function XcodeSimulators({ delay = 0 }: { delay?: number }) {
                   <span className="text-muted-foreground/25 shrink-0 text-label">
                     ({dev.udid})
                   </span>
-                  <motion.span
+                  <span
                     className="shrink-0 text-label font-medium"
                     style={{
                       color: dev.state === "Booted" ? "var(--signal-green)" : "var(--muted-foreground)",
                       opacity: dev.state === "Booted" ? 0.8 : 0.3,
                     }}
-                    animate={dev.state === "Booted" ? { scale: [1, 1.05, 1] } : {}}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
                     {dev.state}
-                  </motion.span>
+                  </span>
                 </motion.div>
               ))}
             </div>

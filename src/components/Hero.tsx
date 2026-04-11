@@ -61,10 +61,14 @@ export function Hero() {
       onMouseLeave={handleMouseLeave}
     >
       <h1 id="hero-heading" className="sr-only">{t("hero.heading")}</h1>
-      {/* Visible identity heading */}
+      {/* Visible identity heading: size-step above the boot/whois rows so
+          the name reads as a deliberate typographic anchor, not just body
+          text hovering above the terminal chrome. */}
       <div className="space-y-1">
-        <p className="text-lg font-medium text-foreground/90">{t("hero.name")}</p>
-        <p className="text-mono-sm text-foreground/70">{t("hero.subtitle")}</p>
+        <p className="text-2xl font-semibold tracking-tight text-foreground">
+          {t("hero.name")}
+        </p>
+        <p className="text-mono text-foreground/70">{t("hero.subtitle")}</p>
       </div>
       {/* Boot messages */}
       <BootBlock

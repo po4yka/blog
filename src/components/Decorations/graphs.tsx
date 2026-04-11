@@ -52,14 +52,17 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [points, setPoints] = useState(createNetworkGraphPoints);
 
-  // Sliding window driven by scroll velocity
+  // Sliding window driven by scroll velocity. Updates on a 3s cycle
+  // per Guidelines ("CPU/memory panels update on 3-10s cycles, not every
+  // frame") so the graph reads as an ambient atmospheric widget rather
+  // than continuous animation.
   useAnimationInterval(() => {
     const { scrollVelocity } = useActivityStore.getState();
     const newPoint = Math.max(5, Math.min(95,
       scrollVelocity * 70 + Math.random() * 15 + 5,
     ));
     setPoints((prev) => [...prev.slice(1), newPoint]);
-  }, 500);
+  }, 3000);
 
   const w = 400;
   const h = 90;

@@ -99,11 +99,39 @@ describe("requireAuth", () => {
       headers: { Authorization: "Bearer valid-token" },
     });
 
-    // Should not throw
-    await requireAuth(request, db);
+    // Should not throw and return a full-admin session (capabilities: null)
+    const session = await requireAuth(request, db);
+    expect(session.capabilities).toBeNull();
 
     expect(db.prepare).toHaveBeenCalledWith(
-      expect.stringContaining("SELECT token FROM admin_sessions"),
+      expect.stringContaining("SELECT token, capabilities FROM admin_sessions"),
     );
+  });
+
+  it("returns parsed capability allowlist for scoped sessions", async () => {
+    const db = createMockDb();
+    db.first.mockResolvedValue({
+      token: "scoped-token",
+      capabilities: JSON.stringify(["read:posts", "read:projects"]),
+    });
+
+    const request = new Request("http://localhost/api/test", {
+      headers: { Authorization: "Bearer scoped-token" },
+    });
+
+    const session = await requireAuth(request, db);
+    expect(session.capabilities).toEqual(["read:posts", "read:projects"]);
+  });
+
+  it("fails closed when capabilities JSON is malformed", async () => {
+    const db = createMockDb();
+    db.first.mockResolvedValue({ token: "bad-token", capabilities: "{not json" });
+
+    const request = new Request("http://localhost/api/test", {
+      headers: { Authorization: "Bearer bad-token" },
+    });
+
+    const session = await requireAuth(request, db);
+    expect(session.capabilities).toEqual([]);
   });
 });

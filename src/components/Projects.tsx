@@ -89,7 +89,7 @@ export function Projects() {
         <motion.a
           href="/projects"
           aria-label={t("projects.viewAllLabel")}
-          className="text-muted-foreground/40 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground/70 hover:text-accent transition-colors duration-200 inline-block font-mono text-mono-sm"
           whileHover={{ x: 4 }}
           whileTap={{ scale: 0.97, x: 2 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}

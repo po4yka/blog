@@ -72,7 +72,7 @@ describe("GET /api/admin/posts", () => {
     const db = createListMockDb();
     const ctx = createApiContext({ method: "GET", db });
 
-    const response = await GET(ctx).catch((r: Response) => r);
+    const response = await (GET(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });
@@ -101,7 +101,7 @@ describe("POST /api/admin/posts", () => {
     const db = createListMockDb();
     const ctx = createApiContext({ method: "POST", body: VALID_POST, db });
 
-    const response = await POST(ctx).catch((r: Response) => r);
+    const response = await (POST(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 
@@ -169,7 +169,7 @@ describe("POST /api/admin/posts", () => {
     expect(response.status).toBe(500);
 
     const body = await response.json();
-    expect(body.error).toBe("Database error");
+    expect(body.error).toBe("Internal server error");
   });
 });
 
@@ -268,7 +268,7 @@ describe("PUT /api/admin/posts/[slug]", () => {
       db,
     });
 
-    const response = await PUT(ctx).catch((r: Response) => r);
+    const response = await (PUT(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });
@@ -305,7 +305,7 @@ describe("DELETE /api/admin/posts/[slug]", () => {
       db,
     });
 
-    const response = await DELETE(ctx).catch((r: Response) => r);
+    const response = await (DELETE(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });

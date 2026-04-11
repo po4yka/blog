@@ -87,7 +87,7 @@ function ProjectEntry({ project }: { project: Project }) {
           {project.tags.map((tag) => (
             <motion.span
               key={tag}
-              className="px-2 py-0.5 text-muted-foreground/40 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
+              className="px-2 py-0.5 text-muted-foreground/70 bg-muted-foreground/5 cursor-default text-xs rounded-[4px]"
               whileHover={{
                 scale: 1.08,
                 y: -1,
@@ -106,7 +106,7 @@ function ProjectEntry({ project }: { project: Project }) {
             <motion.a
               key={link.type}
               href={link.href}
-              className="inline-flex items-center gap-1 text-muted-foreground/40 hover:text-accent transition-colors duration-200 text-label"
+              className="inline-flex items-center gap-1 text-muted-foreground/70 hover:text-accent transition-colors duration-200 text-label"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ y: -1, scale: 1.05 }}

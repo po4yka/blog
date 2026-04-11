@@ -32,7 +32,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.3, delay: delay + 0.08 }}
           >
-            [19:42:08]: Driving the lane 'deploy' 🚀
+            [19:42:08]: Driving the lane 'deploy'
           </motion.div>
 
           {lanes.map((lane, i) => (

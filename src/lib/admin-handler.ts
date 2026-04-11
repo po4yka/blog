@@ -19,26 +19,18 @@ export type Capability =
   | "read:settings"
   | "write:settings";
 
-const ALL_CAPABILITIES = new Set<Capability>([
-  "read:posts",
-  "write:posts",
-  "read:projects",
-  "write:projects",
-  "read:roles",
-  "write:roles",
-  "read:categories",
-  "write:categories",
-  "read:settings",
-  "write:settings",
-]);
-
 /**
- * Resolve capabilities for the authenticated token.
- * Today: all admin tokens get full access.
- * Future: query a token_capabilities table for scoped tokens (e.g., read-only MCP).
+ * Resolve the capability allowlist for a session.
+ * - session.capabilities === null  -> full admin (every capability allowed)
+ * - session.capabilities === []    -> no capabilities (fail closed)
+ * - otherwise                      -> exact allowlist
  */
-function resolveCapabilities(): Set<Capability> {
-  return ALL_CAPABILITIES;
+function sessionHasCapability(
+  session: { capabilities: readonly string[] | null },
+  required: Capability,
+): boolean {
+  if (session.capabilities === null) return true;
+  return session.capabilities.includes(required);
 }
 
 export interface AdminContext<T = undefined> {
@@ -81,10 +73,9 @@ export function withAdmin<S extends z.ZodType>(
       validateOrigin(request);
 
       const db = env.DB;
-      await requireAuth(request, db);
+      const session = await requireAuth(request, db);
 
-      const capabilities = resolveCapabilities();
-      if (!capabilities.has(options.capability)) {
+      if (!sessionHasCapability(session, options.capability)) {
         return jsonError("Forbidden", 403);
       }
 
@@ -103,8 +94,14 @@ export function withAdmin<S extends z.ZodType>(
 
       return await handler({ request, params, db, data });
     } catch (err) {
+      // Re-throw Response errors (401 from requireAuth, 403 from
+      // validateOrigin) so Astro can return them directly.
       if (err instanceof Response) throw err;
-      return jsonError("Database error", 500);
+      // Anything else is a real bug -- log it so Wrangler tail surfaces
+      // the stack. The client still gets an opaque 500 so we don't leak
+      // internals.
+      console.error("[withAdmin] unhandled error:", err);
+      return jsonError("Internal server error", 500);
     }
   };
 }

@@ -69,7 +69,7 @@ describe("GET /api/admin/projects", () => {
     const db = createListMockDb();
     const ctx = createApiContext({ method: "GET", db });
 
-    const response = await GET(ctx).catch((r: Response) => r);
+    const response = await (GET(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });
@@ -98,7 +98,7 @@ describe("POST /api/admin/projects", () => {
     const db = createListMockDb();
     const ctx = createApiContext({ method: "POST", body: VALID_PROJECT, db });
 
-    const response = await POST(ctx).catch((r: Response) => r);
+    const response = await (POST(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 
@@ -165,7 +165,7 @@ describe("POST /api/admin/projects", () => {
     expect(response.status).toBe(500);
 
     const body = await response.json();
-    expect(body.error).toBe("Database error");
+    expect(body.error).toBe("Internal server error");
   });
 });
 
@@ -201,7 +201,7 @@ describe("DELETE /api/admin/projects/[id]", () => {
       db,
     });
 
-    const response = await DELETE(ctx).catch((r: Response) => r);
+    const response = await (DELETE(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });
