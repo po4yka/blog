@@ -187,7 +187,7 @@ describe("upsertPost", () => {
       readingTime: undefined,
     });
 
-    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0];
+    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0]!;
     expect(bindArgs[7]).toBe(0); // featured
     expect(bindArgs[8]).toBeNull(); // readingTime
   });
@@ -204,7 +204,7 @@ describe("deletePost", () => {
     await deletePost(mock, "hello-world");
 
     expect(mock.prepare).toHaveBeenCalledOnce();
-    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
     expect(sql).toContain("DELETE FROM blog_posts");
     expect((mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind).toHaveBeenCalledWith("hello-world");
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();
@@ -260,7 +260,7 @@ describe("upsertProject", () => {
       sortOrder: 0,
     });
 
-    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0];
+    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0]!;
     expect(bindArgs[6]).toBe(1); // featured
   });
 });
@@ -275,7 +275,7 @@ describe("deleteProject", () => {
 
     await deleteProject(mock, "proj-42");
 
-    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
     expect(sql).toContain("DELETE FROM projects");
     expect((mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind).toHaveBeenCalledWith("proj-42");
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();
@@ -330,7 +330,7 @@ describe("upsertRole", () => {
       sortOrder: 1,
     });
 
-    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0];
+    const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0]!;
     // tags (index 5) should be JSON.stringify(undefined) which is undefined —
     // the db layer passes it through so we just verify bind was called
     expect(bindArgs[0]).toBe("role-2");
@@ -348,7 +348,7 @@ describe("deleteRole", () => {
 
     await deleteRole(mock, "role-1");
 
-    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
     expect(sql).toContain("DELETE FROM roles");
     expect((mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind).toHaveBeenCalledWith("role-1");
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();
@@ -365,7 +365,7 @@ describe("addCategory", () => {
 
     await addCategory(mock, "Mobile");
 
-    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
     expect(sql).toContain("INSERT OR IGNORE INTO categories");
     expect((mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind).toHaveBeenCalledWith("Mobile");
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();
@@ -382,7 +382,7 @@ describe("removeCategory", () => {
 
     await removeCategory(mock, "Mobile");
 
-    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+    const sql: string = (mock.prepare as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
     expect(sql).toContain("DELETE FROM categories");
     expect((mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind).toHaveBeenCalledWith("Mobile");
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();

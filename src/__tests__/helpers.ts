@@ -62,7 +62,7 @@ export function createApiContext(options: {
   setMockEnv({ DB: mockDb, ADMIN_PASSWORD: adminPassword, ALLOW_PASSWORD_LOGIN: "true" });
 
   // Mutations require Origin or X-Requested-With for CSRF protection
-  const mutationHeaders =
+  const mutationHeaders: Record<string, string> =
     method !== "GET" && method !== "HEAD" && !headers["Origin"]
       ? { Origin: "http://localhost:4321" }
       : {};
