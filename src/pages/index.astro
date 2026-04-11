@@ -93,12 +93,21 @@ import {
       transform: translateY(0);
     }
 
+    /* System preference */
     @media (prefers-reduced-motion: reduce) {
       .section-reveal {
         opacity: 1;
         transform: none;
         transition: none;
       }
+    }
+
+    /* In-app preference (settingsStore.reduceMotion toggles .reduce-motion
+       on <html> — see src/stores/settingsStore.ts applyToDOM). */
+    :global(html.reduce-motion) .section-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
 
     /* Skip rendering for off-screen sections until scrolled into view */
