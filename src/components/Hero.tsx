@@ -7,8 +7,8 @@ import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
 
-const CpuMonitor = lazy(() => import("./Decorations").then(m => ({ default: m.CpuMonitor })));
-const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
+const LanguagePanel = lazy(() => import("./Decorations").then(m => ({ default: m.LanguagePanel })));
+const ConnectionPanel = lazy(() => import("./Decorations").then(m => ({ default: m.ConnectionPanel })));
 
 const PARALLAX_PX = 10;
 
@@ -155,8 +155,8 @@ export function Hero() {
             >
               <ReorderableGroup containerKey="heroSidebar" axis="y" className="flex flex-col gap-4">
                 {{
-                  cpu: <CpuMonitor delay={0.2} />,
-                  net: <NetworkGraph delay={0.3} />,
+                  cpu: <LanguagePanel delay={0.2} />,
+                  net: <ConnectionPanel delay={0.3} />,
                 }}
               </ReorderableGroup>
             </motion.div>
