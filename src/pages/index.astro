@@ -7,6 +7,13 @@ import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
 import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
+import {
+  ProjectPlatformMatrix,
+  TechTagHeatmap,
+  BlogStatsPanel,
+  ActivitySparkline,
+  LatestReleasePanel,
+} from "@/components/Decorations";
 ---
 <MainLayout isHomePage>
   <div class="space-y-8 md:space-y-14">
@@ -25,8 +32,18 @@ import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
       <Projects client:visible />
     </div>
 
+    <!-- projects → platform matrix (decorative) -->
+    <div data-section-name="platform-matrix">
+      <ProjectPlatformMatrix client:visible delay={0.05} />
+    </div>
+
     <div data-section-name="experience">
       <Experience client:visible />
+    </div>
+
+    <!-- experience → tech tag heatmap (decorative) -->
+    <div data-section-name="tech-tags">
+      <TechTagHeatmap client:visible delay={0.05} />
     </div>
 
     <!-- Mobile dev: git log -->
@@ -38,9 +55,24 @@ import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
       <BlogPreview client:visible />
     </div>
 
+    <!-- blog → blog stats (decorative) -->
+    <div data-section-name="blog-stats">
+      <BlogStatsPanel client:visible delay={0.05} />
+    </div>
+
+    <!-- activity sparkline (decorative) -->
+    <div data-section-name="activity">
+      <ActivitySparkline client:visible delay={0.05} />
+    </div>
+
     <!-- Mobile dev: fastlane deploy -->
     <div data-section-name="fastlane">
       <FastlaneDeploy client:visible delay={0.05} />
+    </div>
+
+    <!-- latest release — renders nothing if no releases found -->
+    <div data-section-name="latest-release">
+      <LatestReleasePanel client:visible delay={0.05} />
     </div>
   </div>
 
@@ -74,9 +106,14 @@ import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
 
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="experience"],
+    [data-section-name="platform-matrix"],
+    [data-section-name="tech-tags"],
     [data-section-name="git-log"],
     [data-section-name="blog"],
-    [data-section-name="fastlane"] {
+    [data-section-name="blog-stats"],
+    [data-section-name="activity"],
+    [data-section-name="fastlane"],
+    [data-section-name="latest-release"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
     }

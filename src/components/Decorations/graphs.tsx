@@ -415,6 +415,7 @@ interface NetworkInformationLike {
 }
 
 function readConnection(): ConnectionInfo | null {
+  if (typeof navigator === "undefined") return null;
   const nav = (
     (navigator as unknown as { connection?: NetworkInformationLike }).connection ??
     (navigator as unknown as { mozConnection?: NetworkInformationLike }).mozConnection ??
@@ -431,6 +432,7 @@ function readConnection(): ConnectionInfo | null {
 const CONN_POINTS = 64;
 
 function buildResourceSparkline(): number[] {
+  if (typeof performance === "undefined" || typeof performance.getEntriesByType !== "function") return [];
   const entries = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
   const durations = entries.map((e) => e.duration).filter((d) => d > 0);
   if (durations.length === 0) return [];
@@ -445,6 +447,7 @@ function buildResourceSparkline(): number[] {
 }
 
 function readPageLoad(): number | null {
+  if (typeof performance === "undefined" || typeof performance.getEntriesByType !== "function") return null;
   const navEntry = performance.getEntriesByType(
     "navigation"
   )[0] as PerformanceNavigationTiming | undefined;
@@ -455,14 +458,24 @@ function readPageLoad(): number | null {
 
 export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
   const { ref } = useInView(0.1);
-  // Lazy initializers run once on first client render — no effect setState needed.
-  const [conn, setConn] = useState<ConnectionInfo | null>(() => readConnection());
-  const [points] = useState<number[]>(() => buildResourceSparkline());
-  const [pageLoad] = useState<number | null>(() => readPageLoad());
+  // Start null/empty so SSR and initial client render match, then populate
+  // browser-only data in a single effect after hydration.
+  const [conn, setConn] = useState<ConnectionInfo | null>(null);
+  const [points, setPoints] = useState<number[]>([]);
+  const [pageLoad, setPageLoad] = useState<number | null>(null);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
-  // Only subscribe to connection change events — no synchronous setState here.
   useEffect(() => {
+    // Read browser-only APIs once immediately after hydration. These values are
+    // intentionally absent during SSR (guards return null/[]), so a single
+    // cascading render here is the correct pattern for post-hydration init.
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setConn(readConnection());
+    setPoints(buildResourceSparkline());
+    setPageLoad(readPageLoad());
+    /* eslint-enable react-hooks/set-state-in-effect */
+
+    // Subscribe to connection changes
     const navConn = (navigator as unknown as { connection?: NetworkInformationLike }).connection;
     if (navConn) {
       const handler = () => setConn(readConnection());

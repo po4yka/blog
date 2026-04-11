@@ -80,3 +80,33 @@ export interface GitHubRepoSummary {
   language: string | null;
   topics: string[];
 }
+
+export interface BlogStats {
+  total: number;
+  en: number;
+  ru: number;
+  categories: number;
+  tags: number;
+  totalReadingMinutes: number;
+  latestDate: string | null;
+}
+
+export interface TagStat {
+  label: string;
+  count: number;
+  pct: number;
+}
+
+export interface GitHubActivitySummary {
+  buckets: number[];
+  total: number;
+  latest: string | null;
+}
+
+export interface GitHubLatestRelease {
+  repo: string;
+  tagName: string;
+  name: string | null;
+  publishedAt: string;
+  url: string;
+}
