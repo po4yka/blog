@@ -85,7 +85,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
               className={`px-2.5 py-1 transition-all duration-200 cursor-pointer font-mono text-label rounded-[5px] ${
                 activeCategory === cat
                   ? "text-accent bg-accent/10"
-                  : "text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted-foreground/5"
+                  : "text-muted-foreground/70 hover:text-foreground/80 hover:bg-muted-foreground/5"
               }`}
               whileHover={{ scale: 1.08, y: -1, transition: spring.snappy }}
               whileTap={{ scale: 0.95 }}
@@ -123,7 +123,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                   >
                     {/* Marker */}
                     <span
-                      className="text-muted-foreground/40 group-hover:text-accent/60 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
+                      className="text-muted-foreground/70 group-hover:text-accent/80 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
                     >
                       ›
                     </span>
