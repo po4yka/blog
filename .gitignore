@@ -9,6 +9,7 @@ dist/
 !.env.example
 .DS_Store
 .claude/worktrees/
+.claude/settings.local.json
 .omc/
 .desloppify/
 test-results/
