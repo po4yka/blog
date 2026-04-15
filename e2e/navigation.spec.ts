@@ -34,24 +34,6 @@ test.describe("navigation", () => {
     await expect(page).toHaveTitle(/Nikita Pochaev/);
   });
 
-  test("clicking a blog post navigates to the post page", async ({ page }) => {
-    await page.goto("/blog");
-    await expect(
-      page.getByText("KMP: Shared Logic Without Shared UI")
-    ).toBeVisible();
-
-    // Click the first blog post link
-    await page
-      .getByRole("link", {
-        name: /KMP: Shared Logic Without Shared UI/,
-      })
-      .click();
-    await expect(page).toHaveURL(/\/blog\/kmp-shared-logic-without-shared-ui/);
-    await expect(page).toHaveTitle(
-      /KMP: Shared Logic Without Shared UI — Nikita Pochaev/
-    );
-  });
-
   test("nav is present on all pages", async ({ page }) => {
     const routes = ["/", "/blog", "/projects", "/experience", "/settings"];
     for (const route of routes) {
@@ -72,13 +54,9 @@ test.describe("navigation", () => {
     await page.locator("nav").getByRole("link", { name: "blog" }).click();
     await expect(page).toHaveURL(/\/blog\/?$/);
 
-    // Navigate to a blog post
-    await page
-      .getByRole("link", {
-        name: /Mobile CI That Actually Works/,
-      })
-      .click();
-    await expect(page).toHaveURL(/\/blog\/mobile-ci-that-actually-works/);
+    // Navigate to projects
+    await page.locator("nav").getByRole("link", { name: "projects" }).click();
+    await expect(page).toHaveURL(/\/projects\/?$/);
 
     // Go back to blog list
     await page.goBack();

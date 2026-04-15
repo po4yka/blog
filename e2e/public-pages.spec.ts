@@ -19,27 +19,8 @@ test.describe("public pages", () => {
     await page.goto("/blog");
     await expect(page).toHaveTitle(/Blog — Nikita Pochaev/);
     await expect(page.locator("nav")).toBeVisible();
-    // The blog list island should render with post titles from content collection
-    await expect(
-      page.getByText("KMP: Shared Logic Without Shared UI")
-    ).toBeVisible();
-    await expect(
-      page.getByText("Mobile CI That Actually Works")
-    ).toBeVisible();
-  });
-
-  test("blog post page renders", async ({ page }) => {
-    await page.goto("/blog/kmp-shared-logic-without-shared-ui");
-    await expect(page).toHaveTitle(
-      /KMP: Shared Logic Without Shared UI — Nikita Pochaev/
-    );
-    await expect(page.locator("nav")).toBeVisible();
-    // Post content should be visible
-    await expect(
-      page.getByText("KMP: Shared Logic Without Shared UI")
-    ).toBeVisible();
-    // Tags from the post metadata
-    await expect(page.getByText("Architecture", { exact: true })).toBeVisible();
+    // No posts are published yet -- the island renders its empty state
+    await expect(page.getByText("no posts found")).toBeVisible();
   });
 
   test("projects page renders", async ({ page }) => {

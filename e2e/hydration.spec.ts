@@ -84,17 +84,4 @@ test.describe("React island hydration", () => {
     expect(hydrationErrors).toHaveLength(0);
   });
 
-  test("no hydration errors on blog post page", async ({ page }) => {
-    const errors = setupConsoleCapture(page);
-
-    await page.goto("/blog/kmp-shared-logic-without-shared-ui");
-    await page.waitForLoadState("networkidle");
-
-    const hydrationErrors = errors.filter(
-      (e) =>
-        e.toLowerCase().includes("hydration") ||
-        e.toLowerCase().includes("did not match"),
-    );
-    expect(hydrationErrors).toHaveLength(0);
-  });
 });

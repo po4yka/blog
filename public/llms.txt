@@ -23,14 +23,6 @@ Nikita has led platform teams, migrated large codebases (80+ screens) from legac
 - [Projects](https://po4yka.dev/projects): Open-source and professional projects
 - [Experience](https://po4yka.dev/experience): Professional background and skills
 
-## Blog Posts
-
-- [KMP: Shared Logic Without Shared UI](https://po4yka.dev/blog/kmp-shared-logic-without-shared-ui): Structuring a KMP project to share networking, caching, and domain logic while keeping native UI ([markdown](https://po4yka.dev/blog/kmp-shared-logic-without-shared-ui.md))
-- [Mobile CI That Actually Works](https://po4yka.dev/blog/mobile-ci-that-actually-works): Setting up CI/CD for mobile -- Gradle caching, signing, distribution ([markdown](https://po4yka.dev/blog/mobile-ci-that-actually-works.md))
-- [A Deep Dive into Compose Stability](https://po4yka.dev/blog/compose-stability-deep-dive): Understanding Compose compiler stability inference and fixing recomposition ([markdown](https://po4yka.dev/blog/compose-stability-deep-dive.md))
-- [Cutting Gradle Build Times in Half](https://po4yka.dev/blog/gradle-build-time-optimization): Configuration cache, build cache, modularization for faster Android builds ([markdown](https://po4yka.dev/blog/gradle-build-time-optimization.md))
-- [iOS Background Downloads Done Right](https://po4yka.dev/blog/ios-background-downloads-done-right): Reliable background downloads with URLSession, handling edge cases ([markdown](https://po4yka.dev/blog/ios-background-downloads-done-right.md))
-
 ## Optional
 
 - [Full site content](https://po4yka.dev/llms-full.txt): Complete content in a single file for LLM ingestion
