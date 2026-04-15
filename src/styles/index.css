@@ -1,6 +1,7 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+@import 'katex/dist/katex.min.css';
 
 /* Blog prose styling for MDX-rendered content */
 .prose-blog h2 {
@@ -108,6 +109,63 @@
   margin: 2rem 0;
   border-color: var(--border);
   opacity: 0.3;
+}
+
+/* GFM tables */
+.prose-blog table {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose-blog thead {
+  border-bottom: 1px solid var(--border);
+}
+
+.prose-blog th,
+.prose-blog td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.prose-blog th {
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.prose-blog td {
+  opacity: 0.75;
+}
+
+/* GFM task lists */
+.prose-blog li input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: var(--accent);
+}
+
+/* KaTeX block math — allow horizontal scroll on overflow */
+.prose-blog .katex-display {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
+.prose-blog .katex-display > .katex {
+  font-size: 1.05em;
+}
+
+/* Figures (markdown images wrapped in figure) */
+.prose-blog img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.25rem 0;
 }
 
 /* Mobile font size floor -- prevent tiny text on small screens */
