@@ -109,7 +109,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
             left: 0,
             right: 0,
             height: "2px",
-            background: "var(--accent)",
+            background: "linear-gradient(to right, var(--accent), var(--signal-green), var(--info))",
             opacity: 0.6,
             zIndex: 10,
           }}
@@ -144,16 +144,24 @@ export function Nav({ pathname: initialPathname }: NavProps) {
               <a
                 key={link.labelKey}
                 href={link.href}
-                className={`relative px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
+                className={`relative overflow-hidden px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
                   active
                     ? "text-foreground"
                     : "text-foreground/70 hover:text-foreground/80"
                 }`}
-                style={{
-                  backgroundColor: active ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "transparent",
-                }}
               >
-                {t(link.labelKey)}
+                {/* Sliding active background indicator */}
+                {active && (
+                  <motion.span
+                    layoutId={reduceMotion ? undefined : "nav-indicator"}
+                    className="absolute inset-0 rounded-[6px] bg-accent/8"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    aria-hidden
+                  />
+                )}
+                <span className="relative">
+                  {t(link.labelKey)}
+                </span>
                 {/* Animated underline */}
                 <span
                   className="absolute bottom-0.5 left-3 right-3 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"

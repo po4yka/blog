@@ -9,16 +9,48 @@ export function NotFound() {
   const { reduceMotion } = useSettings();
   const [glitchTransform, setGlitchTransform] = useState("none");
 
-  // Periodic glitch effect on the 404 number (respects reduce-motion)
+  // Glitch effect on the 404 number (respects reduce-motion)
   useEffect(() => {
     if (reduceMotion) return;
-    const id = setInterval(() => {
-      const x = Math.random() * 4 - 2;
-      const y = Math.random() * 2 - 1;
-      setGlitchTransform(`translate(${x}px, ${y}px)`);
-      setTimeout(() => setGlitchTransform("none"), 150);
-    }, 4000);
-    return () => clearInterval(id);
+
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+    // Entry flicker: rapid glitch sequence for the first 800ms
+    const entryInterval = setInterval(() => {
+      const x = Math.random() * 8 - 4;
+      const y = Math.random() * 4 - 2;
+      const skew = Math.random() * 4 - 2;
+      setGlitchTransform(
+        `translate(${x}px, ${y}px) skewX(${skew}deg)`
+      );
+      const t = setTimeout(() => setGlitchTransform("none"), 80);
+      timeouts.push(t);
+    }, 100);
+
+    const entryEnd = setTimeout(() => {
+      clearInterval(entryInterval);
+      setGlitchTransform("none");
+
+      // Periodic subtle glitch after entry sequence
+      const periodicId = setInterval(() => {
+        const x = Math.random() * 6 - 3;
+        const y = Math.random() * 3 - 1.5;
+        setGlitchTransform(`translate(${x}px, ${y}px)`);
+        const t = setTimeout(() => setGlitchTransform("none"), 200);
+        timeouts.push(t);
+      }, 4000);
+
+      timeouts.push(periodicId as unknown as ReturnType<typeof setTimeout>);
+    }, 800);
+
+    return () => {
+      clearInterval(entryInterval);
+      clearTimeout(entryEnd);
+      timeouts.forEach((id) => {
+        clearTimeout(id);
+        clearInterval(id as unknown as ReturnType<typeof setInterval>);
+      });
+    };
   }, [reduceMotion]);
 
   return (
@@ -103,7 +135,7 @@ export function NotFound() {
               style={{
                 display: "inline-block",
                 transform: glitchTransform,
-                textShadow: glitchTransform !== "none" ? "2px 0 var(--accent), -2px 0 var(--destructive)" : "none",
+                textShadow: glitchTransform !== "none" ? "3px 0 var(--accent), -3px 0 var(--destructive)" : "none",
                 transition: glitchTransform !== "none" ? "none" : "all 0.1s ease",
               }}
             >
