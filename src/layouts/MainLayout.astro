@@ -107,7 +107,8 @@ const { pathname } = Astro.url;
         document.addEventListener('mousemove', (e) => {
           targetX = e.clientX;
           targetY = e.clientY;
-          const hover = (e.target as Element)?.closest?.(INTERACTIVE);
+          const t = e.target;
+          const hover = t && t.closest ? t.closest(INTERACTIVE) : null;
           targetRadius = hover ? HOVER_RADIUS : BASE_RADIUS;
           if (!visible) {
             visible = true;

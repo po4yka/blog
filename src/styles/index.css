@@ -25,7 +25,7 @@
 .prose-blog p,
 .prose-blog ul,
 .prose-blog ol {
-  max-width: 65ch;
+  max-width: 75ch;
 }
 
 .prose-blog a {
@@ -53,8 +53,8 @@
 
 .prose-blog p {
   margin-bottom: 1rem;
-  font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-  line-height: 1.85;
+  font-size: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
+  line-height: 1.8;
   color: var(--foreground);
   opacity: 0.75;
 }
@@ -75,7 +75,7 @@
 }
 
 .prose-blog li {
-  font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  font-size: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
   line-height: 1.75;
   color: var(--foreground);
   opacity: 0.75;
