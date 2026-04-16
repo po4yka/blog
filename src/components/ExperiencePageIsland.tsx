@@ -189,26 +189,51 @@ function TagConnections({
       className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
       style={{ zIndex: 10 }}
     >
+      {!reduceMotion && (
+        <defs>
+          <filter id="tag-connection-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+          </filter>
+        </defs>
+      )}
       {paths.map((p, i) => (
-        <path
-          key={i}
-          d={p.d}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth="1.5"
-          strokeOpacity="0.25"
-          strokeLinecap="round"
-          strokeDasharray={p.length}
-          strokeDashoffset={reduceMotion ? 0 : p.length}
-          style={
-            reduceMotion
-              ? undefined
-              : {
-                  animation: `draw-line 300ms ease forwards`,
-                  animationDelay: `${i * 50}ms`,
-                }
-          }
-        />
+        <g key={i}>
+          {!reduceMotion && (
+            <path
+              d={p.d}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="5"
+              strokeOpacity="0.12"
+              strokeLinecap="round"
+              strokeDasharray={p.length}
+              strokeDashoffset={p.length}
+              filter="url(#tag-connection-glow)"
+              style={{
+                animation: `draw-line 350ms ease forwards`,
+                animationDelay: `${i * 50}ms`,
+              }}
+            />
+          )}
+          <path
+            d={p.d}
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth="1.5"
+            strokeOpacity="0.25"
+            strokeLinecap="round"
+            strokeDasharray={p.length}
+            strokeDashoffset={reduceMotion ? 0 : p.length}
+            style={
+              reduceMotion
+                ? undefined
+                : {
+                    animation: `draw-line 300ms ease forwards`,
+                    animationDelay: `${i * 50}ms`,
+                  }
+            }
+          />
+        </g>
       ))}
       <style>{`@keyframes draw-line { to { stroke-dashoffset: 0; } }`}</style>
     </svg>

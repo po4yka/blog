@@ -243,7 +243,13 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
     >
       {/* Previous commands */}
       {displayHistory.map((h, i) => (
-        <div key={i} className="space-y-0.5">
+        <motion.div
+          key={i}
+          className="space-y-0.5"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className="flex items-center gap-1 text-muted-foreground/40">
             <span style={{ color: "var(--accent)" }}>po4yka</span>
             <span className="text-muted-foreground/35">@ghostty</span>
@@ -251,7 +257,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             <span className="ml-1 text-foreground/60">{h.cmd}</span>
           </div>
           <div className="text-muted-foreground/50 pl-2">{h.output}</div>
-        </div>
+        </motion.div>
       ))}
 
       {/* Active prompt */}
@@ -282,6 +288,22 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
               <span className="invisible">{input}</span>
               {suggestion}
             </span>
+          )}
+          {/* Focused blinking cursor — only when focused and input is empty */}
+          {focused && !input && (
+            <span
+              className="pointer-events-none absolute top-0 left-0"
+              aria-hidden="true"
+              style={{
+                display: "inline-block",
+                width: "0.5rem",
+                height: "1em",
+                backgroundColor: "var(--accent)",
+                opacity: 0.7,
+                borderRadius: "1px",
+                animation: "blink 1s step-end infinite",
+              }}
+            />
           )}
         </div>
         {!focused && !input && (

@@ -3,6 +3,7 @@ import { useInView } from "@/hooks/useInView";
 import { useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { ease, duration } from "@/lib/motion";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { AnimatedCheck } from "./AnimatedCheck";
 
 const TYPING_SPEED_MS = 35;
 
@@ -112,12 +113,12 @@ export function Cmd({
       )}
       {/* Copy indicator */}
       <motion.span
-        className="text-accent/60 select-none text-xs"
+        className="text-accent/60 select-none flex items-center"
         initial={{ opacity: 0, x: -4 }}
         animate={copied ? { opacity: 1, x: 0 } : { opacity: 0, x: -4 }}
         transition={{ duration: duration.fast }}
       >
-        {copied ? "copied!" : ""}
+        {copied && <AnimatedCheck size={12} />}
       </motion.span>
       {/* Copy icon hint on hover -- only after typing completes */}
       {!copied && typingDone && (
@@ -170,12 +171,12 @@ export function OutputBlock({
     >
       {children}
       <motion.span
-        className="absolute -top-1 right-0 text-accent/60 text-xs font-mono select-none"
+        className="absolute -top-1 right-0 text-accent/60 flex items-center select-none"
         initial={{ opacity: 0 }}
         animate={copied ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: duration.fast }}
       >
-        {copied ? "copied!" : ""}
+        {copied && <AnimatedCheck size={12} />}
       </motion.span>
     </motion.div>
   );

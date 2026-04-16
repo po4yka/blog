@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Link2, Check, ChevronUp } from "lucide-react";
-import { Cmd, Accent, LessViewer } from "./Terminal";
+import { ArrowLeft, ArrowRight, Link2, ChevronUp } from "lucide-react";
+import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { duration, spring } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
@@ -89,7 +89,7 @@ function CopyLinkButton() {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
-      {copied ? <><Check size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
+      {copied ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
     </motion.button>
   );
 }
