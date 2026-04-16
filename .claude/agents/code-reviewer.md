@@ -70,7 +70,7 @@ Flag ANY of these patterns in UI code or copy:
 ## Design System Checks
 
 - Typography: Inter for UI/body, JetBrains Mono for headings/metadata
-- Accent: muted purple (`#8b7cf6` dark, `#7c6cf5` light) -- single accent family only
+- Accent: muted purple (`#9184f7` dark, `#6b5ce6` light) -- single accent family only
 - Motion: supports clarity, never blocks reading, respects `reduceMotion`
 - Layout: avoid identical card grids, prefer editorial asymmetry
 

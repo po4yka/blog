@@ -15,7 +15,7 @@ import { animateNumbers } from "./_animatedNumber.utils";
 
 const TAG_HIGHLIGHT_STYLE = {
   color: "var(--accent)",
-  backgroundColor: "rgba(145, 132, 247, 0.08)",
+  backgroundColor: "var(--accent-8)",
 };
 
 function RoleEntry({
@@ -37,7 +37,7 @@ function RoleEntry({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
       whileHover={{
-        backgroundColor: "rgba(145, 132, 247, 0.03)",
+        backgroundColor: "var(--accent-3)",
         x: 2,
         transition: { type: "spring", stiffness: 300, damping: 25 },
       }}
@@ -96,7 +96,7 @@ function RoleEntry({
                   scale: 1.08,
                   y: -1,
                   color: "var(--accent)",
-                  backgroundColor: "rgba(145, 132, 247, 0.08)",
+                  backgroundColor: "var(--accent-8)",
                   transition: spring.snappy,
                 }}
                 onMouseEnter={() => onTagHover(tagKey)}

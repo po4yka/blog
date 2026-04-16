@@ -55,7 +55,7 @@ const { pathname } = Astro.url;
       <div
         id="cursor-glow"
         class="fixed inset-0 pointer-events-none"
-        style="z-index:40;opacity:0;transition:opacity 0.3s ease;background:radial-gradient(300px circle at var(--cursor-x,-999px) var(--cursor-y,-999px),rgba(145,132,247,0.06) 0%,transparent 100%)"
+        style="z-index:40;opacity:0;transition:opacity 0.3s ease;background:radial-gradient(300px circle at var(--cursor-x,-999px) var(--cursor-y,-999px),var(--cursor-glow) 0%,transparent 100%)"
         transition:persist
       ></div>
     </div>

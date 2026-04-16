@@ -19,7 +19,7 @@ The project's design system is fully defined in `DESIGN.md` and implemented in `
 
 The project uses the **Catppuccin Mocha** palette with a single muted purple accent:
 - Dark: `#191a21` background, `#24273a` card, `#9184f7` accent
-- Light: `#f6f5f8` background, `#ffffff` card, `#7c6cf5` accent
+- Light: `#f6f5f8` background, `#ffffff` card, `#6b5ce6` accent
 
 Color palette recommendations from the search engine are reference material only. Never override the project palette.
 

@@ -4,8 +4,7 @@ import { blogPosts } from "@/data/blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { useLocale } from "@/stores/settingsStore";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease } from "@/lib/motion";
 
 export function BlogPreview() {
   const { ref, inView } = useInView(0.1);
@@ -32,7 +31,7 @@ export function BlogPreview() {
               transition={{ duration: 0.35, delay: 0.04 + i * 0.06, ease }}
               whileHover={{
                 x: 4,
-                backgroundColor: "rgba(145, 132, 247, 0.04)",
+                backgroundColor: "var(--accent-4)",
                 transition: { type: "spring", stiffness: 300, damping: 25 },
               }}
               whileTap={{ scale: 0.995 }}

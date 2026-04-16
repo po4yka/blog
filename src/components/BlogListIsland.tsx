@@ -116,7 +116,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                     transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     whileHover={{
                       x: 4,
-                      backgroundColor: "rgba(145, 132, 247, 0.04)",
+                      backgroundColor: "var(--accent-4)",
                       transition: { type: "spring", stiffness: 300, damping: 25 },
                     }}
                     whileTap={{ scale: 0.995 }}

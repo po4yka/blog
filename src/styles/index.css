@@ -4,6 +4,44 @@
 @import 'katex/dist/katex.min.css';
 
 /* Blog prose styling for MDX-rendered content */
+.prose-blog {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+.prose-blog code,
+.prose-blog pre {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+.prose-blog p,
+.prose-blog ul,
+.prose-blog ol {
+  max-width: 65ch;
+}
+
+.prose-blog a {
+  color: var(--accent);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.prose-blog a:hover {
+  background-size: 100% 1px;
+}
+
 .prose-blog h2 {
   margin-top: 2.5rem;
   margin-bottom: 1rem;
@@ -51,10 +89,10 @@
 
 .prose-blog code {
   font-size: 0.85em;
-  background: rgba(145, 132, 247, 0.1);
+  background: var(--accent-10);
   padding: 0.15em 0.4em;
   border-radius: 4px;
-  color: #b4a6f6;
+  color: var(--accent);
 }
 
 .prose-blog pre {

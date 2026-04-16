@@ -4,7 +4,7 @@
 
 The site is a **Ghostty terminal workstation** — a well-configured developer environment, not a startup landing page. The metaphor is literal: the primary design unit is a macOS terminal window with chrome, traffic lights, and monospace output. This is where content lives, not floating on a blank canvas.
 
-The palette is Catppuccin Mocha for dark mode (the default) and a soft lavender-tinted editorial surface for light. Both share a single chromatic accent: muted purple (`#9184f7` dark / `#7c6cf5` light). Everything else is neutral. There are no gradients, no neon, no glassmorphism excess.
+The palette is Catppuccin Mocha for dark mode (the default) and a soft lavender-tinted editorial surface for light. Both share a single chromatic accent: muted purple (`#9184f7` dark / `#6b5ce6` light). Everything else is neutral. There are no gradients, no neon, no glassmorphism excess.
 
 Typography is monospace-first. JetBrains Mono carries all headings, UI labels, metadata, and terminal output. Inter is available for long-form blog prose where extended reading comfort matters. The hierarchy is built from opacity and size, not font switching. The result feels precise and technical without being cold.
 
@@ -57,7 +57,7 @@ Typography is monospace-first. JetBrains Mono carries all headings, UI labels, m
 | `--titlebar` | `#edebf1` | MacWindow titlebar |
 | `--foreground` | `#1c1b22` | Primary text — deep graphite |
 | `--muted-foreground` | `#78758a` | Tertiary text |
-| `--accent` | `#7c6cf5` | Same purple family, slightly deeper for contrast |
+| `--accent` | `#6b5ce6` | Same purple family, slightly deeper for contrast |
 | `--border` | `rgba(28,27,34,0.09)` | Hairline separators |
 | `--signal-green` | `#40a845` | OK status |
 | `--signal-amber` | `#c09a1a` | Warnings |
@@ -301,7 +301,7 @@ Depth is created through **background color shifts**, **border hairlines**, and 
 Stack: Astro 6 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
 Primary font: JetBrains Mono (all UI) | Secondary: Inter (blog prose only)
 Dark bg: #191a21 | Card: #24273a | Accent: #9184f7
-Light bg: #f6f5f8 | Card: #ffffff  | Accent: #7c6cf5
+Light bg: #f6f5f8 | Card: #ffffff  | Accent: #6b5ce6
 Border: rgba(205,214,244,0.07) dark | rgba(28,27,34,0.09) light
 Radius: 10px base | Font size: text-mono (13px) for UI, text-mono-lg (15px) for emphasis
 ```

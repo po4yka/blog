@@ -4,8 +4,7 @@ import { roles } from "@/data/experienceData";
 import { Cmd, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { useLocale } from "@/stores/settingsStore";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease } from "@/lib/motion";
 
 export function Experience() {
   const { ref, inView } = useInView(0.05);
@@ -29,7 +28,7 @@ export function Experience() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
               whileHover={{
-                backgroundColor: "rgba(145, 132, 247, 0.03)",
+                backgroundColor: "var(--accent-3)",
                 x: 2,
                 transition: { type: "spring", stiffness: 300, damping: 25 },
               }}
@@ -85,7 +84,7 @@ export function Experience() {
                       whileHover={{
                         scale: 1.08,
                         color: "var(--accent)",
-                        backgroundColor: "rgba(145, 132, 247, 0.08)",
+                        backgroundColor: "var(--accent-8)",
                         transition: { type: "spring", stiffness: 400, damping: 15 },
                       }}
                     >

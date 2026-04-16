@@ -82,6 +82,16 @@
   --bar-empty: rgba(205, 214, 244, 0.06);
   /* Dim traffic light dots */
   --dot-dim: rgba(205, 214, 244, 0.08);
+  /* Accent alpha tiers (resolve dynamically per-theme via color-mix) */
+  --accent-3: color-mix(in srgb, var(--accent) 3%, transparent);
+  --accent-4: color-mix(in srgb, var(--accent) 4%, transparent);
+  --accent-6: color-mix(in srgb, var(--accent) 6%, transparent);
+  --accent-8: color-mix(in srgb, var(--accent) 8%, transparent);
+  --accent-10: color-mix(in srgb, var(--accent) 10%, transparent);
+  /* Cursor glow */
+  --cursor-glow: rgba(145, 132, 247, 0.06);
+  /* Selection */
+  --selection-bg: rgba(145, 132, 247, 0.25);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -90,7 +100,7 @@
 
 .light {
   --texture-opacity: 0.015;
-  --phosphor-glow: 0 0 6px rgba(124, 108, 245, 0.18);
+  --phosphor-glow: 0 0 6px rgba(107, 92, 230, 0.18);
   --background: #f6f5f8;
   --foreground: #1c1b22;
   --card: #ffffff;
@@ -102,8 +112,8 @@
   --secondary: #eceaf0;
   --secondary-foreground: #1c1b22;
   --muted: #eae8ee;
-  --muted-foreground: #78758a;
-  --accent: #7c6cf5;
+  --muted-foreground: #706d84;
+  --accent: #6b5ce6;
   --accent-foreground: #ffffff;
   --destructive: #e04668;
   --destructive-foreground: #ffffff;
@@ -120,20 +130,20 @@
   --signal-amber-dim: rgba(192, 154, 26, 0.10);
   --info: #3574d4;
   --ok: #40a845;
-  --ring: rgba(124, 108, 245, 0.25);
-  --chart-1: #7c6cf5;
+  --ring: rgba(107, 92, 230, 0.25);
+  --chart-1: #6b5ce6;
   --chart-2: #40a845;
   --chart-3: #3574d4;
   --chart-4: #c09a1a;
   --chart-5: #d94058;
   --sidebar: #f0eef4;
   --sidebar-foreground: #1c1b22;
-  --sidebar-primary: #7c6cf5;
+  --sidebar-primary: #6b5ce6;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #eae8ee;
   --sidebar-accent-foreground: #1c1b22;
   --sidebar-border: rgba(28, 27, 34, 0.08);
-  --sidebar-ring: rgba(124, 108, 245, 0.20);
+  --sidebar-ring: rgba(107, 92, 230, 0.20);
   --titlebar: #edebf1;
   --titlebar-border: rgba(28, 27, 34, 0.06);
   --window-shadow: 0 8px 32px rgba(28, 27, 34, 0.08), 0 2px 8px rgba(28, 27, 34, 0.05);
@@ -148,6 +158,10 @@
   --bar-empty: rgba(28, 27, 34, 0.06);
   /* Dim traffic light dots */
   --dot-dim: rgba(28, 27, 34, 0.10);
+  /* Cursor glow */
+  --cursor-glow: rgba(107, 92, 230, 0.04);
+  /* Selection */
+  --selection-bg: rgba(107, 92, 230, 0.18);
 }
 
 /* Smooth theme transition on key elements */
@@ -259,13 +273,18 @@ body, .bg-background, .bg-card, [class*="bg-"] {
 
 /* macOS-style selection */
 ::selection {
-  background: rgba(145, 132, 247, 0.25);
+  background: var(--selection-bg);
   color: #e8eaf6;
 }
 
 .light ::selection {
-  background: rgba(124, 108, 245, 0.18);
+  background: var(--selection-bg);
   color: #1c1b22;
+}
+
+/* Phosphor glow utility (DESIGN.md: .accent-glow) */
+.accent-glow {
+  text-shadow: var(--phosphor-glow);
 }
 
 /* Scrollbar — thin macOS style */

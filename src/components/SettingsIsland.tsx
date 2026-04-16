@@ -5,8 +5,7 @@ import type { TranslationKey } from "@/lib/i18n";
 import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease } from "@/lib/motion";
 
 const themeOptions: { value: ThemeMode; icon: typeof Sun; labelKey: TranslationKey }[] = [
   { value: "dark", icon: Moon, labelKey: "settings.dark" },

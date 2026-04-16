@@ -106,7 +106,7 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
               className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
               style={{
                 lineHeight: 1.7,
-                backgroundColor: hoveredHash === c.hash ? "rgba(145, 132, 247, 0.04)" : "transparent",
+                backgroundColor: hoveredHash === c.hash ? "var(--accent-4)" : "transparent",
                 transition: "background-color 0.15s ease",
               }}
               initial={{ opacity: 0, x: -4 }}
@@ -134,7 +134,7 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
                   className="shrink-0 px-1.5 py-0 text-xs rounded-[3px] font-medium"
                   style={{
                     color: "var(--accent)",
-                    backgroundColor: "rgba(145,132,247,0.1)",
+                    backgroundColor: "var(--accent-10)",
                   }}
                   whileHover={{ scale: 1.1 }}
                 >

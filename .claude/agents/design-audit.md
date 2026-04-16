@@ -46,7 +46,7 @@ If no recent changes, audit all component files the user specifies.
 
 ### 2. Color (Single Accent Family)
 
-- [ ] Accent: muted purple only (`#8b7cf6` dark, `#7c6cf5` light, CSS var `--accent`)
+- [ ] Accent: muted purple only (`#9184f7` dark, `#6b5ce6` light, CSS var `--accent`)
 - [ ] No competing accent colors
 - [ ] No loud gradients, neon tones, or oversaturated palettes
 - [ ] Primary text: charcoal/graphite (not pure black)

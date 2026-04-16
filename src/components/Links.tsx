@@ -4,8 +4,7 @@ import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease } from "@/lib/motion";
 
 const links = [
   { icon: "✉", label: "email", href: "mailto:hello@po4yka.dev" },

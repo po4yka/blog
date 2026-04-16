@@ -13,7 +13,7 @@ This project uses **Inter** as its primary sans-serif and **JetBrains Mono** as 
 
 ## Accent Color
 
-This project uses a muted purple accent (`#8b7cf6` dark, `#7c6cf5` light) as its single accent family. This is an intentional choice, not "AI purple". Taste-skill rules banning purple/violet accents do not apply.
+This project uses a muted purple accent (`#9184f7` dark, `#6b5ce6` light) as its single accent family. This is an intentional choice, not "AI purple". Taste-skill rules banning purple/violet accents do not apply.
 
 ## Framework
 

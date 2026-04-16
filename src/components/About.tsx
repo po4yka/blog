@@ -37,7 +37,7 @@ export function About() {
             {t("about.p2prefix")}{" "}
             <motion.span
               style={{ color: "var(--accent)", cursor: "default" }}
-              whileHover={{ textShadow: "0 0 12px rgba(145, 132, 247, 0.4)" }}
+              whileHover={{ textShadow: "var(--phosphor-glow)" }}
             >
               {t("about.p2kmp")}
             </motion.span>{" "}

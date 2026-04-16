@@ -2,8 +2,7 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { MotionProvider } from "./MotionProvider";
 import { useLocale } from "@/stores/settingsStore";
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
+import { ease } from "@/lib/motion";
 
 export function NotFound() {
   const { t } = useLocale();

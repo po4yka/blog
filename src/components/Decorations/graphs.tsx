@@ -269,7 +269,7 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
                 className="grid py-[5px] -mx-2 px-2 cursor-default text-label rounded-[3px]"
                 style={{
                   gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
-                  backgroundColor: hoveredPid === p.pid ? "rgba(145, 132, 247, 0.06)" : "transparent",
+                  backgroundColor: hoveredPid === p.pid ? "var(--accent-6)" : "transparent",
                   transition: "background-color 0.15s ease",
                 }}
                 initial={{ opacity: 0 }}
