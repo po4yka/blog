@@ -19,6 +19,12 @@ const sidebarLinks = [
   { label: "Settings", path: "/admin/settings", icon: Settings },
 ];
 
+function isLinkActive(linkPath: string, currentPath: string): boolean {
+  return linkPath === "/admin"
+    ? currentPath === "/admin"
+    : currentPath.startsWith(linkPath);
+}
+
 export function AdminLayout() {
   const { isAuthenticated, logout } = useAuthContext();
   const navigate = useNavigate();
@@ -63,10 +69,7 @@ export function AdminLayout() {
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {sidebarLinks.map((link) => {
-            const isActive =
-              link.path === "/admin"
-                ? location.pathname === "/admin"
-                : location.pathname.startsWith(link.path);
+            const isActive = isLinkActive(link.path, location.pathname);
             const Icon = link.icon;
             return (
               <button
@@ -129,10 +132,7 @@ export function AdminLayout() {
         {/* Mobile nav tabs */}
         <div className="flex gap-1 mt-2 overflow-x-auto pb-1 -mx-1 px-1">
           {sidebarLinks.map((link) => {
-            const isActive =
-              link.path === "/admin"
-                ? location.pathname === "/admin"
-                : location.pathname.startsWith(link.path);
+            const isActive = isLinkActive(link.path, location.pathname);
             return (
               <button
                 key={link.path}

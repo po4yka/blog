@@ -10,12 +10,26 @@ import {
   getCredentialById,
   updateCredentialCounter,
 } from "@/lib/webauthn";
-import { createSession, makeSessionCookie } from "@/lib/auth";
+import { createSession, makeSessionCookie, checkRateLimit, recordLoginAttempt } from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
 export const POST: APIRoute = async ({ request }) => {
   const db = env.DB;
+
+  const ip =
+    request.headers.get("cf-connecting-ip") ??
+    request.headers.get("x-forwarded-for") ??
+    (import.meta.env.PROD ? null : "127.0.0.1");
+  if (!ip) return jsonError("Unable to determine client IP", 400);
+
+  const allowed = await checkRateLimit(db, ip);
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: "Too many attempts" }), {
+      status: 429,
+      headers: { "Content-Type": "application/json", "Retry-After": "900" },
+    });
+  }
 
   let body: unknown;
   try {
@@ -72,10 +86,12 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
   } catch {
+    await recordLoginAttempt(db, ip);
     return jsonError("Verification failed", 401);
   }
 
   if (!verification.verified || !verification.authenticationInfo) {
+    await recordLoginAttempt(db, ip);
     return jsonError("Verification failed", 401);
   }
 

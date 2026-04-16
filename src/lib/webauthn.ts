@@ -130,3 +130,14 @@ export async function hasAnyCredential(db: D1Database): Promise<boolean> {
     .first<{ cnt: number }>();
   return (row?.cnt ?? 0) > 0;
 }
+
+export async function deleteCredentialById(
+  db: D1Database,
+  credentialID: string,
+): Promise<boolean> {
+  const result = await db
+    .prepare("DELETE FROM admin_credentials WHERE credential_id = ?")
+    .bind(credentialID)
+    .run();
+  return (result.meta?.changes ?? 0) > 0;
+}

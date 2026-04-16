@@ -1,11 +1,12 @@
 // Simple token-based auth for the admin API.
 // Sessions are stored in D1 with a 24-hour expiry.
 
-const ALLOWED_ORIGINS = [
-  "https://po4yka.dev",
-  "http://localhost:4321",
-  "http://localhost:3000",
-];
+const PROD_ORIGINS = ["https://po4yka.dev"];
+const DEV_ORIGINS = ["https://po4yka.dev", "http://localhost:4321", "http://localhost:3000"];
+
+function getAllowedOrigins(): string[] {
+  return import.meta.env.PROD ? PROD_ORIGINS : DEV_ORIGINS;
+}
 
 export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
   const encoder = new TextEncoder();
@@ -60,7 +61,7 @@ export function validateOrigin(request: Request): void {
     return;
   }
 
-  if (!ALLOWED_ORIGINS.includes(origin)) {
+  if (!getAllowedOrigins().includes(origin)) {
     throw new Response(JSON.stringify({ error: "Forbidden origin" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },

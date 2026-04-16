@@ -37,7 +37,11 @@ export const POST: APIRoute = async ({ request }) => {
   const ip =
     request.headers.get("cf-connecting-ip") ??
     request.headers.get("x-forwarded-for") ??
-    "unknown";
+    (import.meta.env.PROD ? null : "127.0.0.1");
+
+  if (!ip) {
+    return jsonError("Unable to determine client IP", 400);
+  }
 
   const allowed = await checkRateLimit(db, ip);
   if (!allowed) {

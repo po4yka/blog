@@ -32,11 +32,13 @@ const MONTH_ORDER: Record<string, number> = {
   Dec: 11,
 };
 
-function parseDateForSort(dateStr: string): number {
+function parseDateForSort(dateStr: string, filePath?: string): number {
   const parts = dateStr.split(" ");
-  if (parts.length !== 2) return 0;
-  const month = MONTH_ORDER[parts[0]] ?? 0;
-  const year = parseInt(parts[1], 10);
+  if (parts.length !== 2 || !(parts[0]! in MONTH_ORDER) || isNaN(parseInt(parts[1]!, 10))) {
+    throw new Error(`Invalid date format "${dateStr}"${filePath ? ` in ${filePath}` : ""}. Expected "Mon YYYY" (e.g. "Jan 2025").`);
+  }
+  const month = MONTH_ORDER[parts[0]!] ?? 0;
+  const year = parseInt(parts[1]!, 10);
   return year * 12 + month;
 }
 

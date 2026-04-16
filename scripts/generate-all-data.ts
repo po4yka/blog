@@ -43,6 +43,7 @@ let hasError = false;
 for (const gen of generators) {
   try {
     const output = gen.generate();
+    fs.mkdirSync(path.dirname(gen.outputFile), { recursive: true });
     fs.writeFileSync(gen.outputFile, output, "utf-8");
     console.log(`Generated ${gen.outputFile}`);
   } catch (err) {

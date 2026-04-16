@@ -49,7 +49,8 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
   const addLink = () => onChange([...links, { type: "GitHub", href: "#" }]);
   const updateLink = (i: number, field: "type" | "href", value: string) => {
     const updated = [...links];
-    updated[i] = { ...updated[i]!, [field]: value };
+    const existing = updated[i];
+    if (existing) updated[i] = { ...existing, [field]: value };
     onChange(updated);
   };
   const removeLink = (i: number) => onChange(links.filter((_, j) => j !== i));
