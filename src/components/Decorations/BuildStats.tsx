@@ -17,13 +17,13 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
 
   return (
     <PanelShell label="BUILD" labelRight="po4yka.dev" delay={delay}>
-      <div className="space-y-1.5">
+      <div className="px-5 py-3 space-y-1.5">
         {rows.map((row) => (
-          <div key={row.label} className="flex items-baseline justify-between gap-3">
+          <div key={row.label} className="flex items-baseline justify-between gap-4 min-w-0">
             <span className="text-muted-foreground/50 text-mono-sm shrink-0">
               {row.label}
             </span>
-            <span className="text-foreground/70 text-mono-sm text-right truncate">
+            <span className="text-foreground/70 text-mono-sm text-right truncate min-w-0">
               {row.value}
             </span>
           </div>

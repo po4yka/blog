@@ -26,9 +26,11 @@ export function generateBuildMetaSource(): string {
     : 0;
 
   const experienceFile = path.resolve("src/content/experience.json");
-  const experienceCount = fs.existsSync(experienceFile)
-    ? (JSON.parse(fs.readFileSync(experienceFile, "utf-8")) as unknown[]).length
-    : 0;
+  let experienceCount = 0;
+  if (fs.existsSync(experienceFile)) {
+    const raw = JSON.parse(fs.readFileSync(experienceFile, "utf-8")) as { roles?: unknown[] } | unknown[];
+    experienceCount = Array.isArray(raw) ? raw.length : (raw.roles?.length ?? 0);
+  }
 
   return `// Auto-generated build metadata. Do not edit manually.
 // Run "npm run generate:all" to regenerate.
