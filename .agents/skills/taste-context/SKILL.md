@@ -9,7 +9,7 @@ The taste-skill family includes opinionated defaults that conflict with this pro
 
 ## Font Stack
 
-This project uses **Inter** as its primary sans-serif and **JetBrains Mono** as its monospace font. These are deliberate choices documented in `docs/Guidelines.md`. Taste-skill rules that ban Inter do not apply here.
+This project uses **JetBrains Mono** as its primary UI font and **Inter** only as a secondary reading font for long-form blog prose. These are deliberate choices documented in `docs/Guidelines.md` and `DESIGN.md`. Taste-skill rules that ban Inter do not apply here, but Inter should not displace the monospace-first system.
 
 ## Accent Color
 
@@ -21,8 +21,12 @@ This project uses **Astro 6 with React islands**, not Next.js. Ignore RSC-specif
 
 ## Icon Library
 
-This project uses **MUI Material Icons** (`@mui/icons-material`). Taste-skill mandates for Phosphor or Radix icons do not apply.
+This project primarily uses **Lucide React** (`lucide-react`). Taste-skill mandates for Phosphor or MUI icons do not apply.
 
 ## Authority
 
 When taste-skill rules conflict with `docs/Guidelines.md` or `AGENTS.md`, the project documentation always wins.
+
+## Related Overrides
+
+See also `.agents/skills/uiux-context/SKILL.md` for UI/UX Pro Max skill overrides.

@@ -1,7 +1,6 @@
 ---
 name: link-purpose
 description: Analyzes code for WCAG 2.4.4 Link Purpose (In Context) compliance. Identifies generic link text, ambiguous links, and links without sufficient context. Recommends descriptive link text and proper ARIA attributes.
-allowed-tools: Read, Glob, Grep
 ---
 
 You are an expert accessibility analyzer specializing in WCAG 2.4.4 Link Purpose (In Context) compliance.

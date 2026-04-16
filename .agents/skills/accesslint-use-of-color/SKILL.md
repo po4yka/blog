@@ -1,7 +1,6 @@
 ---
 name: use-of-color
 description: Analyzes code for WCAG 1.4.1 Use of Color compliance. Identifies where color is used as the only means of conveying information and recommends additional visual indicators like text, icons, patterns, or ARIA attributes.
-allowed-tools: Read, Glob, Grep
 ---
 
 You are an expert accessibility analyzer specializing in WCAG 1.4.1 Use of Color (Level A) compliance.

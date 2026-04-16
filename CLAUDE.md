@@ -70,7 +70,7 @@ Read `docs/Guidelines.md` before any visual changes. Key rules:
 
 ## Impeccable Design Skills
 
-This project includes [Impeccable](https://impeccable.style) design skills in `.claude/skills/` and `.codex/skills/`.
+This project includes [Impeccable](https://impeccable.style) design skills in `.claude/skills/` for Claude and `.agents/skills/` for Codex.
 
 Before design work, ensure `.impeccable.md` exists at the project root. If missing, run `/teach-impeccable` first.
 
@@ -89,7 +89,7 @@ Update skills: `bash scripts/update-impeccable.sh`
 
 ## Taste Design Skills
 
-Additional design engineering skills from [taste-skill](https://github.com/Leonxlnx/taste-skill) in `.claude/skills/` and `.codex/skills/`.
+Additional design engineering skills from [taste-skill](https://github.com/Leonxlnx/taste-skill) in `.claude/skills/` for Claude and `.agents/skills/` for Codex.
 
 These supplement Impeccable with anti-AI-slop CSS patterns, output completeness, and parametric design dials.
 
@@ -114,7 +114,16 @@ Key skills:
 - `/banner-design` -- multi-format banner creation for social/web/print
 - `/design-tokens` -- reference docs for three-layer token architecture
 
-These skills provide supplementary design intelligence. `DESIGN.md` and `src/styles/theme.css` always take precedence. See `.claude/skills/uiux-context/SKILL.md` for project overrides.
+These skills provide supplementary design intelligence. `DESIGN.md` and `src/styles/theme.css` always take precedence. See `.claude/skills/uiux-context/SKILL.md` for Claude overrides and `.agents/skills/uiux-context/SKILL.md` for Codex overrides.
+
+## Codex Skill Layout
+
+Maintain Claude and Codex skills separately:
+- Claude skills: `.claude/skills/`
+- Codex skills: `.agents/skills/`
+- Codex subagents: `.codex/agents/`
+
+`.codex/skills/` is retired legacy layout and should not be updated or referenced.
 
 Update skills: `bash scripts/update-uiux-pro-max.sh`
 

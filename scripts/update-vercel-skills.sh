@@ -22,15 +22,17 @@ for skill in "${VERCEL_SKILLS[@]}"; do
 done
 
 echo "Updating Codex skills..."
-mkdir -p "$PROJECT_ROOT/.codex/skills"
+mkdir -p "$PROJECT_ROOT/.agents/skills"
 for skill in "${VERCEL_SKILLS[@]}"; do
-  rm -rf "$PROJECT_ROOT/.codex/skills/$skill"
-  cp -r "$TEMP_DIR/agent-skills/skills/$skill" "$PROJECT_ROOT/.codex/skills/$skill"
+  rm -rf "$PROJECT_ROOT/.agents/skills/$skill"
+  cp -r "$TEMP_DIR/agent-skills/skills/$skill" "$PROJECT_ROOT/.agents/skills/$skill"
 done
 
 # Fix upstream name: field mismatches (align with directory names)
 echo "Fixing skill name fields..."
 sed -i '' 's/^name: vercel-composition-patterns$/name: composition-patterns/' "$PROJECT_ROOT/.claude/skills/composition-patterns/SKILL.md"
 sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$PROJECT_ROOT/.claude/skills/react-best-practices/SKILL.md"
+sed -i '' 's/^name: vercel-composition-patterns$/name: composition-patterns/' "$PROJECT_ROOT/.agents/skills/composition-patterns/SKILL.md"
+sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$PROJECT_ROOT/.agents/skills/react-best-practices/SKILL.md"
 
 echo "Done. Vercel skills updated on $(date +%Y-%m-%d)."

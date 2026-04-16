@@ -14,6 +14,7 @@
     "generate:blog": "tsx scripts/generate-blog-data.ts",
     "generate:all": "tsx scripts/generate-all-data.ts",
     "validate:blog": "tsx scripts/validate-blog-sync.ts",
+    "validate:skills": "bash scripts/validate-codex-skills.sh",
     "validate:all": "tsx scripts/validate-all-sync.ts",
     "setup:passkey": "tsx scripts/setup-passkey.ts",
     "test:e2e": "playwright test",

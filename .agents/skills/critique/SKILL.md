@@ -154,7 +154,7 @@ Quick notes on smaller issues worth addressing.
 
 ## Phase 3: Ask the User
 
-**After presenting findings**, use targeted questions based on what was actually found. STOP and call the AskUserQuestion tool to clarify. These answers will shape the action plan.
+**After presenting findings**, use targeted questions based on what was actually found. Use `request_user_input` when available, otherwise ask directly. These answers will shape the action plan.
 
 Ask questions along these lines (adapt to the specific findings — do NOT ask generic questions):
 

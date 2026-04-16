@@ -24,9 +24,10 @@ done
 cp -r "$TEMP_DIR/impeccable/.claude/skills/"* "$PROJECT_ROOT/.claude/skills/"
 
 echo "Updating Codex skills..."
+mkdir -p "$PROJECT_ROOT/.agents/skills"
 for skill in "${IMPECCABLE_SKILLS[@]}"; do
-  rm -rf "$PROJECT_ROOT/.codex/skills/$skill"
+  rm -rf "$PROJECT_ROOT/.agents/skills/$skill"
 done
-cp -r "$TEMP_DIR/impeccable/.codex/skills/"* "$PROJECT_ROOT/.codex/skills/"
+cp -r "$TEMP_DIR/impeccable/.codex/skills/"* "$PROJECT_ROOT/.agents/skills/"
 
 echo "Done. Skills updated on $(date +%Y-%m-%d)."
