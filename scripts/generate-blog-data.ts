@@ -41,7 +41,7 @@ function parseDateForSort(dateStr: string): number {
 }
 
 function escapeForTemplateLiteral(str: string): string {
-  return str.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$");
+  return str.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
 }
 
 function escapeForDoubleQuotedString(str: string): string {
