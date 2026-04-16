@@ -6,13 +6,11 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
+import { RealGitLog, RealCIStatus } from "@/components/MobileTerminal";
 import {
   OpenSourcePanel,
   TechTagHeatmap,
   BlogStatsPanel,
-  ActivitySparkline,
-  LatestReleasePanel,
 } from "@/components/Decorations";
 ---
 <MainLayout isHomePage>
@@ -46,9 +44,9 @@ import {
       <TechTagHeatmap client:visible delay={0.05} />
     </div>
 
-    <!-- Mobile dev: git log -->
+    <!-- Real git commits from GitHub -->
     <div data-section-name="git-log">
-      <GitLog client:visible delay={0.05} />
+      <RealGitLog client:visible delay={0.05} />
     </div>
 
     <div data-section-name="blog">
@@ -60,19 +58,9 @@ import {
       <BlogStatsPanel client:visible delay={0.05} />
     </div>
 
-    <!-- activity sparkline (decorative) -->
-    <div data-section-name="activity">
-      <ActivitySparkline client:visible delay={0.05} />
-    </div>
-
-    <!-- Mobile dev: fastlane deploy -->
-    <div data-section-name="fastlane">
-      <FastlaneDeploy client:visible delay={0.05} />
-    </div>
-
-    <!-- latest release — renders nothing if no releases found -->
-    <div data-section-name="latest-release">
-      <LatestReleasePanel client:visible delay={0.05} />
+    <!-- Real CI/CD status from GitHub Actions -->
+    <div data-section-name="ci-status">
+      <RealCIStatus client:visible delay={0.05} />
     </div>
   </div>
 
@@ -106,14 +94,12 @@ import {
 
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="experience"],
-    [data-section-name="platform-matrix"],
+    [data-section-name="open-source"],
     [data-section-name="tech-tags"],
     [data-section-name="git-log"],
     [data-section-name="blog"],
     [data-section-name="blog-stats"],
-    [data-section-name="activity"],
-    [data-section-name="fastlane"],
-    [data-section-name="latest-release"] {
+    [data-section-name="ci-status"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
     }
