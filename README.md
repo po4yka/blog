@@ -127,6 +127,12 @@ npm run generate:blog
 npm run generate:all
 ```
 
+## Articles
+
+| # | Title | Tags | Date |
+|---|-------|------|------|
+| 1 | [RAG breaks earlier than people think](/src/content/blog/en/rag-breaks-earlier-than-people-think.mdx) | RAG, LLM, Knowledge Management, Architecture | Apr 2026 |
+
 ## Testing
 
 175 unit tests (Vitest) + 20 E2E tests (Playwright). Coverage thresholds: 70% lines/functions, 55% branches.
