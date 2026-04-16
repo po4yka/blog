@@ -1,4 +1,4 @@
-import { useClientValue } from "@/hooks/useClientValue";
+import { useState, useEffect } from "react";
 import { PanelShell } from "./_helpers";
 
 interface VisitorInfo {
@@ -50,7 +50,10 @@ function getVisitorInfo(): VisitorInfo {
 }
 
 export function VisitorContext({ delay = 0 }: { delay?: number }) {
-  const info = useClientValue(getVisitorInfo, null);
+  const [info, setInfo] = useState<VisitorInfo | null>(null);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time initialization with browser APIs
+  useEffect(() => { setInfo(getVisitorInfo()); }, []);
 
   if (!info) return null;
 
