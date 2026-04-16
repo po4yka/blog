@@ -4,6 +4,8 @@ import type { BlogPost } from "@/types";
 
 export type { BlogPost };
 
-export const blogPosts: BlogPost[] = [];
+export const blogPosts: BlogPost[] = [
+
+];
 
 export const categories = ["All"];
