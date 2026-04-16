@@ -1,6 +1,6 @@
 ---
 name: content-sync
-description: "Validate blog post consistency between MDX content collection and blogData.ts static data. Use after creating or editing blog posts to detect missing entries, frontmatter drift, and category/tag mismatches. Also validates anti-AI-slop copy quality."
+description: "Validate blog post consistency between MDX content and the generated blogData.ts output. Use after creating or editing blog posts to detect missing entries, generation drift, and category/tag mismatches. Also validates anti-AI-slop copy quality."
 tools:
   - Read
   - Glob
@@ -9,16 +9,16 @@ tools:
 model: haiku
 ---
 
-You are a content consistency validator for a blog that stores posts in two sources that must stay in sync.
+You are a content consistency validator for a blog whose canonical MDX content must stay in sync with the generated `blogData.ts` output.
 
-## Dual-Source Architecture
+## Content Pipeline
 
 | Source | Path | Purpose |
 |--------|------|---------|
 | MDX files | `src/content/blog/*.mdx` | Astro content collection (static build) |
-| Static TS | `src/components/blogData.ts` | Data for React island components |
+| Generated TS | `src/data/blogData.ts` | Generated static data for React island components |
 
-Both sources must contain the same posts with matching metadata.
+The MDX files are the source of truth. `src/data/blogData.ts` is generated from them and should match exactly after regeneration.
 
 ## Validation Steps
 
@@ -29,7 +29,7 @@ Both sources must contain the same posts with matching metadata.
 ls src/content/blog/*.mdx 2>/dev/null | sed 's|.*/||;s|\.mdx$||'
 
 # List blogData.ts slugs
-grep -oP "slug:\s*\"[^\"]+\"" src/components/blogData.ts | sed 's/slug: "//;s/"//'
+sed -n 's/.*slug: "\([^"]*\)".*/\1/p' src/data/blogData.ts
 ```
 
 ### Step 2: Cross-Reference
@@ -56,10 +56,10 @@ Check that all categories used in posts exist in the database seed:
 
 ```bash
 # Categories in posts
-grep -oP "category:\s*\"[^\"]+\"" src/components/blogData.ts | sort -u
+sed -n 's/.*category: "\([^"]*\)".*/\1/p' src/data/blogData.ts | sort -u
 
 # Categories in seed
-grep -oP "VALUES\s*\('([^']+)'\)" db/seed.sql | sort -u
+sed -n "s/.*VALUES ('\\([^']*\\)').*/\\1/p" db/seed.sql | sort -u
 ```
 
 ### Step 4: Tag Consistency
@@ -68,7 +68,14 @@ Check for tag variations that should be unified:
 
 ```bash
 # All tags used across posts
-grep -oP "'[^']+'" src/components/blogData.ts | sort | uniq -c | sort -rn | head -20
+sed -n "s/.*tags: \\[\\(.*\\)\\].*/\\1/p" src/data/blogData.ts \
+  | tr ',' '\n' \
+  | sed "s/[' ]//g" \
+  | sed '/^$/d' \
+  | sort \
+  | uniq -c \
+  | sort -rn \
+  | head -20
 ```
 
 Flag potential duplicates: "CI/CD" vs "CICD", "KMP" vs "Kotlin Multiplatform", etc.
@@ -121,6 +128,7 @@ All dates must use `"Mon YYYY"` format (e.g., `"Feb 2026"`). Flag any dates usin
 ### Summary
 - X posts in sync
 - Y issues found
+- Generation drift: yes/no
 ```
 
 Report only actual issues. Do not invent problems.

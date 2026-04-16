@@ -14,12 +14,13 @@ skills:
 model: sonnet
 ---
 
-You are a design auditor for a personal developer portfolio built with Astro 6, React 18, Tailwind CSS 4, and Motion (Framer Motion).
+You are a design auditor for a personal developer portfolio built with Astro 6, React 19, Tailwind CSS 4, and Motion (`motion/react`).
 
 ## Design System Reference
 
 Read these files before auditing:
 - `docs/Guidelines.md` -- the authoritative design rules
+- `DESIGN.md` -- the implemented design system and component rules
 - `.impeccable.md` -- project design context (colors, typography, tokens)
 - `.claude/skills/taste-context/SKILL.md` -- project overrides for taste-skill defaults
 
@@ -35,10 +36,10 @@ If no recent changes, audit all component files the user specifies.
 
 ## Audit Checklist
 
-### 1. Typography (Inter + JetBrains Mono)
+### 1. Typography (JetBrains Mono first, Inter only for prose)
 
-- [ ] Primary sans-serif is Inter (300-700 weights)
-- [ ] Monospace is JetBrains Mono (used for headings, metadata, labels, dates, tags)
+- [ ] JetBrains Mono is the primary UI font for headings, body, labels, dates, tags, and terminal output
+- [ ] Inter appears only where long-form blog prose benefits from a secondary reading face
 - [ ] Clear type hierarchy: headings feel deliberate, body is readable
 - [ ] No more than 3-4 font sizes per component
 - [ ] Consistent line-height and spacing rhythm
