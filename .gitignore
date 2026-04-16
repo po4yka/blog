@@ -1,18 +1,49 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-.vite/
 .astro/
+
+# Cloudflare
 .wrangler/
-*.local
+
+# Environment
 .env
 .env.*
 !.env.example
-.DS_Store
-.claude/worktrees/
-.claude/settings.local.json
-.omc/
-.desloppify/
+*.local
+
+# Node.js debug logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Linting / formatting caches
+.eslintcache
+
+# Testing
 test-results/
 playwright-report/
-.lighthouseci/
+blob-report/
 coverage/
+
+# Lighthouse CI
+.lighthouseci/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+
+# Claude Code / OMC
+.claude/worktrees/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+.omc/
+.desloppify/
