@@ -7,11 +7,12 @@ test.describe("Blog list page", () => {
     await page.getByRole("button", { name: "All" }).waitFor({ state: "visible" });
   });
 
-  test("shows empty state when no posts are published", async ({ page }) => {
-    await expect(page.getByText("no posts found")).toBeVisible();
+  test("shows blog posts when published", async ({ page }) => {
+    // At least one post should be visible
+    await expect(page.locator("a[href*='/blog/']").first()).toBeVisible();
   });
 
-  test("only the 'All' category is available", async ({ page }) => {
+  test("category filter buttons are available", async ({ page }) => {
     await expect(page.getByRole("button", { name: "All" })).toBeVisible();
   });
 });

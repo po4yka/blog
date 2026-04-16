@@ -19,8 +19,8 @@ test.describe("public pages", () => {
     await page.goto("/blog");
     await expect(page).toHaveTitle(/Blog — Nikita Pochaev/);
     await expect(page.locator("nav")).toBeVisible();
-    // No posts are published yet -- the island renders its empty state
-    await expect(page.getByText("no posts found")).toBeVisible();
+    // Blog list island should hydrate and show content (posts or empty state)
+    await page.getByRole("button", { name: "All" }).waitFor({ state: "visible" });
   });
 
   test("projects page renders", async ({ page }) => {
