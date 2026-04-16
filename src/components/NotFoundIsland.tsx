@@ -1,15 +1,17 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { MotionProvider } from "./MotionProvider";
-import { useLocale } from "@/stores/settingsStore";
+import { useLocale, useSettings } from "@/stores/settingsStore";
 import { ease } from "@/lib/motion";
 
 export function NotFound() {
   const { t } = useLocale();
+  const { reduceMotion } = useSettings();
   const [glitchTransform, setGlitchTransform] = useState("none");
 
-  // Periodic glitch effect on the 404 number
+  // Periodic glitch effect on the 404 number (respects reduce-motion)
   useEffect(() => {
+    if (reduceMotion) return;
     const id = setInterval(() => {
       const x = Math.random() * 4 - 2;
       const y = Math.random() * 2 - 1;
@@ -17,7 +19,7 @@ export function NotFound() {
       setTimeout(() => setGlitchTransform("none"), 150);
     }, 4000);
     return () => clearInterval(id);
-  }, []);
+  }, [reduceMotion]);
 
   return (
     <MotionProvider>

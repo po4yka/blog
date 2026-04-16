@@ -11,6 +11,8 @@ export function BlogPreview() {
   const { t } = useLocale();
   const previewPosts = blogPosts.slice(0, 3);
 
+  if (previewPosts.length === 0) return null;
+
   return (
     <MotionProvider>
     <section id="blog-preview" aria-labelledby="blog-heading" className="space-y-5">

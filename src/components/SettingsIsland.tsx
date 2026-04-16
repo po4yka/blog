@@ -91,6 +91,7 @@ export function Settings() {
                 {theme === "system" ? `${tt("settings.system")} (${resolvedTheme})` : tt(themeLabelKeys[theme])}
               </span>
             </div>
+            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.themeDesc")}</p>
             <div className="flex gap-2">
               {themeOptions.map(({ value, icon: Icon, labelKey }) => (
                 <button
@@ -122,6 +123,7 @@ export function Settings() {
                 {tt(reduceMotion ? "settings.motionReduced" : "settings.motionFull")}
               </span>
             </div>
+            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.motionDesc")}</p>
             <div className="flex gap-2">
               {[false, true].map((val) => (
                 <button
@@ -149,6 +151,7 @@ export function Settings() {
                 {fontSize}
               </span>
             </div>
+            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.fontSizeDesc")}</p>
             <div className="flex gap-2">
               {(["compact", "default", "large"] as FontSize[]).map((size) => (
                 <button
@@ -176,6 +179,7 @@ export function Settings() {
                 {locale}
               </span>
             </div>
+            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.languageDesc")}</p>
             <div className="flex gap-2">
               {(["en", "ru"] as const).map((loc) => (
                 <button

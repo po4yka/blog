@@ -87,26 +87,13 @@ export function Hero() {
               titleExt="~/po4yka | main"
               dimLights
               delay={0.1}
-              lineNumbers={5}
+              lineNumbers={4}
               statusLine
               processDots
             >
               <InfoTable
                 fieldCodes
                 rows={[
-                  {
-                    label: t("hero.infoName"),
-                    value: (
-                      <motion.span
-                        className="text-foreground"
-                        style={{ fontWeight: 500 }}
-                        whileHover={{ color: "var(--accent)" }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {t("hero.name")}
-                      </motion.span>
-                    ),
-                  },
                   {
                     label: t("hero.infoRole"),
                     value: (
