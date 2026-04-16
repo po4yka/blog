@@ -7,6 +7,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 
 import { ease, duration, stagger, spring } from "@/lib/motion";
+import { blogUrl, type Locale } from "@/lib/i18n";
 
 export interface BlogPostMeta {
   slug: string;
@@ -25,10 +26,11 @@ interface BlogListIslandProps {
   lang?: string;
 }
 
-export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
+export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIslandProps) {
   const { t } = useLocale();
   const [activeCategory, setActiveCategory] = useState("All");
   const { ref } = useInView(0.05);
+  const lang = (langProp ?? "en") as Locale;
 
   const filtered =
     activeCategory === "All"
@@ -108,7 +110,7 @@ export function BlogListIsland({ posts, categories }: BlogListIslandProps) {
                 {filtered.map((post, i) => (
                   <motion.a
                     key={post.slug}
-                    href={`/blog/${post.slug}`}
+                    href={blogUrl(lang, post.slug)}
                     className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline font-mono rounded-[6px]"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}

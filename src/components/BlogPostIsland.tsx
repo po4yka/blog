@@ -172,7 +172,7 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
             <ArrowLeft size={12} />
             {t("blogPost.allPosts")}
           </motion.a>
-          <LanguageSwitcher translationUrl={translationUrl} />
+          <LanguageSwitcher translationUrl={translationUrl} activeLang={lang} />
         </div>
 
         {/* Command */}

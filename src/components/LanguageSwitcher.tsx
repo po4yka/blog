@@ -4,16 +4,18 @@ import type { Locale } from "@/lib/i18n";
 interface LanguageSwitcherProps {
   /** When on a blog page, provide the URL of the translation (if it exists) */
   translationUrl?: string;
+  /** Override the active language indicator (e.g. from the page's own lang prop) */
+  activeLang?: Locale;
   className?: string;
 }
 
-export function LanguageSwitcher({ translationUrl, className = "" }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ translationUrl, activeLang, className = "" }: LanguageSwitcherProps) {
   const { locale, setLocale, t } = useLocale();
+  const displayLang = activeLang ?? locale;
 
   const handleSwitch = (target: Locale) => {
-    if (target === locale) return;
+    if (target === displayLang) return;
     setLocale(target);
-    // On blog pages with a translation URL, navigate to it
     if (translationUrl) {
       window.location.href = translationUrl;
     }
@@ -28,11 +30,11 @@ export function LanguageSwitcher({ translationUrl, className = "" }: LanguageSwi
       <button
         onClick={() => handleSwitch("en")}
         className={`px-1.5 py-0.5 rounded-[4px] transition-colors duration-200 cursor-pointer ${
-          locale === "en"
+          displayLang === "en"
             ? "text-accent bg-accent/10"
             : "text-muted-foreground/40 hover:text-foreground/60"
         }`}
-        aria-current={locale === "en" ? "true" : undefined}
+        aria-current={displayLang === "en" ? "true" : undefined}
       >
         {t("lang.en")}
       </button>
@@ -40,11 +42,11 @@ export function LanguageSwitcher({ translationUrl, className = "" }: LanguageSwi
       <button
         onClick={() => handleSwitch("ru")}
         className={`px-1.5 py-0.5 rounded-[4px] transition-colors duration-200 cursor-pointer ${
-          locale === "ru"
+          displayLang === "ru"
             ? "text-accent bg-accent/10"
             : "text-muted-foreground/40 hover:text-foreground/60"
         }`}
-        aria-current={locale === "ru" ? "true" : undefined}
+        aria-current={displayLang === "ru" ? "true" : undefined}
       >
         {t("lang.ru")}
       </button>
