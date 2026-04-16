@@ -26,3 +26,7 @@ This project uses **MUI Material Icons** (`@mui/icons-material`). Taste-skill ma
 ## Authority
 
 When taste-skill rules conflict with `docs/Guidelines.md` or `CLAUDE.md`, the project documentation always wins.
+
+## Related Overrides
+
+See also `.claude/skills/uiux-context/SKILL.md` for UI/UX Pro Max skill overrides.

@@ -101,6 +101,33 @@ These skills ban Inter font and purple accents by default. This project uses bot
 
 Update skills: `bash scripts/update-taste-skills.sh`
 
+## UI/UX Pro Max Skills
+
+Design intelligence databases from [ui-ux-pro-max-skill](https://uupm.cc) providing searchable UI styles, color palettes, font pairings, and UX guidelines.
+
+Key skills:
+- `/ui-ux-pro-max` -- BM25 search over 67 styles, 161 palettes, 57 font pairings, Astro stack guide
+- `/brand-system` -- brand voice, visual identity, messaging frameworks, asset validation
+- `/slides` -- strategic HTML presentations with design tokens and copywriting formulas
+- `/banner-design` -- multi-format banner creation for social/web/print
+- `/design-tokens` -- reference docs for three-layer token architecture
+
+These skills provide supplementary design intelligence. `DESIGN.md` and `src/styles/theme.css` always take precedence. See `.claude/skills/uiux-context/SKILL.md` for project overrides.
+
+Update skills: `bash scripts/update-uiux-pro-max.sh`
+
+## Signal Deck Design System
+
+Terminal-industrial design skill merging Nothing-style restraint with operator-console logic. Creates interfaces that feel like modern hardware control surfaces: precise, signal-driven, monochrome-dominant with phosphor accents.
+
+Activate with: "signal deck", "signal-deck", "/signal-deck", "operator console style", "terminal modernism", "phosphor design".
+
+Key files:
+- `/signal-deck` -- design philosophy, craft rules, anti-patterns, workflow
+- `references/tokens.md` -- typography (IBM Plex Mono + Inter + JetBrains Mono), color system, spacing, motion, signal surfaces
+- `references/components.md` -- 18 component types with editorial vs instrument panel modes
+- `references/platform-mapping.md` -- HTML/CSS, React/Tailwind, SwiftUI, Jetpack Compose
+
 ## Vercel Agent Skills
 
 React and web design skills from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills).

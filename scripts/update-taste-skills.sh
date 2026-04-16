@@ -28,4 +28,11 @@ for skill in "${TASTE_SKILLS[@]}"; do
   cp -r "$TEMP_DIR/taste-skill/skills/$skill" "$PROJECT_ROOT/.codex/skills/$skill"
 done
 
+# Fix upstream name: field mismatches (align with directory names)
+echo "Fixing skill name fields..."
+sed -i '' 's/^name: design-taste-frontend$/name: taste-skill/' "$PROJECT_ROOT/.claude/skills/taste-skill/SKILL.md"
+sed -i '' 's/^name: redesign-existing-projects$/name: redesign-skill/' "$PROJECT_ROOT/.claude/skills/redesign-skill/SKILL.md"
+sed -i '' 's/^name: full-output-enforcement$/name: output-skill/' "$PROJECT_ROOT/.claude/skills/output-skill/SKILL.md"
+sed -i '' 's/^name: minimalist-ui$/name: minimalist-skill/' "$PROJECT_ROOT/.claude/skills/minimalist-skill/SKILL.md"
+
 echo "Done. Taste skills updated on $(date +%Y-%m-%d)."

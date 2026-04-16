@@ -13,6 +13,7 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 - TanStack Query for server state (admin CRUD)
 - Cloudflare Workers + D1 (SQLite) for hosting and database
 - React Router 7 for admin SPA routing
+- SimpleWebAuthn for passkey/WebAuthn authentication
 
 ## Architecture
 
@@ -27,7 +28,7 @@ Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate 
 - Entry: `src/admin/App.tsx` (QueryClientProvider + AuthProvider + RouterProvider)
 - API client: `src/admin/api.ts` (typed fetch wrapper with auth token)
 - Query hooks: `src/admin/hooks/useAdminQueries.ts` (centralized query keys and hooks)
-- Auth: `src/admin/hooks/useAuth.ts` + `src/admin/contexts/AuthContext.tsx`
+- Auth: `src/admin/hooks/useAuth.ts` + `src/admin/contexts/AuthContext.tsx` (passkey-first, password fallback)
 
 ### State Management
 
@@ -38,17 +39,21 @@ Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate 
 
 Server-rendered Astro endpoints under `src/pages/api/`. Each exports `prerender = false`.
 
-- `src/lib/db.ts` -- typed D1 data access layer (all queries, JSON field serialization)
+- `src/lib/admin-handler.ts` -- `withAdmin()` capability-scoped route wrapper (auth, CSRF, Zod validation, error handling)
+- `src/lib/collections/define.ts` -- `defineCollection()` derives CRUD operations, Zod schemas, and route handlers from field definitions
+- `src/lib/collections/{posts,projects,roles}.ts` -- entity definitions
+- `src/lib/db.ts` -- data access layer; delegates posts/projects/roles to collections
 - `src/lib/auth.ts` -- token-based session auth (D1 `admin_sessions` table)
-- Auth via `ADMIN_PASSWORD` env var (Cloudflare secret)
+- `src/lib/webauthn.ts` + `src/lib/webauthn-config.ts` -- WebAuthn/passkey credential storage
+- Auth: passkey-first via WebAuthn (`@simplewebauthn/*`), password fallback via `ADMIN_PASSWORD` + `ALLOW_PASSWORD_LOGIN` env vars
 
 ### Database
 
-Cloudflare D1 (SQLite). Schema in `db/schema.sql`, seed data in `db/seed.sql`.
+Cloudflare D1 (SQLite). Schema in `db/schema.sql`, seed data in `db/seed.sql`, migrations in `db/migrations/`.
 
-Tables: `blog_posts`, `projects`, `roles`, `categories`, `site_settings`, `admin_sessions`.
+Tables: `blog_posts`, `projects`, `roles`, `categories`, `site_settings`, `admin_sessions`, `login_attempts`, `admin_credentials`, `auth_challenges`.
 
-JSON arrays (tags, platforms, links) stored as TEXT, parsed in the data access layer.
+JSON arrays (tags, platforms, links) stored as TEXT, parsed in the data access layer (via `defineCollection` field type `"json"` or manual `parseJson`).
 
 ## Design
 
@@ -94,6 +99,33 @@ These skills ban Inter font and purple accents by default. This project uses bot
 
 Update skills: `bash scripts/update-taste-skills.sh`
 
+## UI/UX Pro Max Skills
+
+Design intelligence databases from [ui-ux-pro-max-skill](https://uupm.cc) providing searchable UI styles, color palettes, font pairings, and UX guidelines.
+
+Key skills:
+- `/ui-ux-pro-max` -- BM25 search over 67 styles, 161 palettes, 57 font pairings, Astro stack guide
+- `/brand-system` -- brand voice, visual identity, messaging frameworks, asset validation
+- `/slides` -- strategic HTML presentations with design tokens and copywriting formulas
+- `/banner-design` -- multi-format banner creation for social/web/print
+- `/design-tokens` -- reference docs for three-layer token architecture
+
+These skills provide supplementary design intelligence. `DESIGN.md` and `src/styles/theme.css` always take precedence. See `.claude/skills/uiux-context/SKILL.md` for project overrides.
+
+Update skills: `bash scripts/update-uiux-pro-max.sh`
+
+## Signal Deck Design System
+
+Terminal-industrial design skill merging Nothing-style restraint with operator-console logic. Creates interfaces that feel like modern hardware control surfaces: precise, signal-driven, monochrome-dominant with phosphor accents.
+
+Activate with: "signal deck", "signal-deck", "/signal-deck", "operator console style", "terminal modernism".
+
+Key files:
+- `/signal-deck` -- design philosophy, craft rules, anti-patterns, workflow
+- `references/tokens.md` -- typography (IBM Plex Mono + Inter + JetBrains Mono), color system, spacing, motion, signal surfaces
+- `references/components.md` -- 18 component types with editorial vs instrument panel modes
+- `references/platform-mapping.md` -- HTML/CSS, React/Tailwind, SwiftUI, Jetpack Compose
+
 ## Vercel Agent Skills
 
 React and web design skills from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills).
@@ -126,7 +158,7 @@ Custom skills encoding this project's unique patterns and workflows:
 - `/add-island` -- add React island to Astro page with correct hydration, SSR guards, and motion
 - `/add-api-route` -- create API route with D1 access, auth, and Zod validation
 - `/add-terminal-block` -- create decorative MobileTerminal/Decoration component with MacWindow+motion pattern
-- `/add-blog-post` -- create blog post with dual-source sync (MDX + blogData.ts)
+- `/add-blog-post` -- create blog post (MDX source of truth, auto-generated data files)
 
 ## Custom Sub-Agents
 
