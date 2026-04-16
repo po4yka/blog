@@ -55,7 +55,7 @@ const { pathname } = Astro.url;
       <div
         id="cursor-glow"
         class="fixed inset-0 pointer-events-none"
-        style="z-index:40;opacity:0;transition:opacity 0.3s ease;background:radial-gradient(300px circle at var(--cursor-x,-999px) var(--cursor-y,-999px),var(--cursor-glow) 0%,transparent 100%)"
+        style="z-index:40;opacity:0;transition:opacity 0.3s ease"
         transition:persist
       ></div>
     </div>
@@ -83,12 +83,46 @@ const { pathname } = Astro.url;
         const stored = (() => { try { return JSON.parse(localStorage.getItem('site_preferences') || '{}'); } catch { return {}; } })();
         const prefs = stored.state || stored;
         if (prefs.reduceMotion) { el.style.display = 'none'; return; }
+
+        let targetX = -999, targetY = -999;
+        let currentX = -999, currentY = -999;
+        let targetRadius = 350;
+        let currentRadius = 350;
+        let visible = false;
+        let raf = 0;
+        const LERP = 0.12;
+        const RADIUS_LERP = 0.08;
+        const BASE_RADIUS = 350;
+        const HOVER_RADIUS = 500;
+        const INTERACTIVE = 'a,button,[role="button"],[tabindex]';
+
+        function render() {
+          currentX += (targetX - currentX) * LERP;
+          currentY += (targetY - currentY) * LERP;
+          currentRadius += (targetRadius - currentRadius) * RADIUS_LERP;
+          el.style.background = `radial-gradient(${Math.round(currentRadius)}px circle at ${currentX.toFixed(1)}px ${currentY.toFixed(1)}px, var(--cursor-glow) 0%, transparent 100%)`;
+          if (visible) raf = requestAnimationFrame(render);
+        }
+
         document.addEventListener('mousemove', (e) => {
-          el.style.setProperty('--cursor-x', e.clientX + 'px');
-          el.style.setProperty('--cursor-y', e.clientY + 'px');
-          el.style.opacity = '1';
+          targetX = e.clientX;
+          targetY = e.clientY;
+          const hover = (e.target as Element)?.closest?.(INTERACTIVE);
+          targetRadius = hover ? HOVER_RADIUS : BASE_RADIUS;
+          if (!visible) {
+            visible = true;
+            currentX = targetX;
+            currentY = targetY;
+            el.style.opacity = '1';
+            raf = requestAnimationFrame(render);
+          }
         }, { passive: true });
-        document.addEventListener('mouseleave', () => { el.style.opacity = '0'; });
+
+        document.addEventListener('mouseleave', () => {
+          visible = false;
+          cancelAnimationFrame(raf);
+          el.style.opacity = '0';
+        });
       }
       initCursorGlow();
       document.addEventListener('astro:page-load', initCursorGlow);

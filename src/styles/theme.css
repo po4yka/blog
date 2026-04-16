@@ -89,7 +89,7 @@
   --accent-8: color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-10: color-mix(in srgb, var(--accent) 10%, transparent);
   /* Cursor glow */
-  --cursor-glow: rgba(145, 132, 247, 0.06);
+  --cursor-glow: rgba(145, 132, 247, 0.09);
   /* Selection */
   --selection-bg: rgba(145, 132, 247, 0.25);
 }
@@ -159,7 +159,7 @@
   /* Dim traffic light dots */
   --dot-dim: rgba(28, 27, 34, 0.10);
   /* Cursor glow */
-  --cursor-glow: rgba(107, 92, 230, 0.04);
+  --cursor-glow: rgba(107, 92, 230, 0.06);
   /* Selection */
   --selection-bg: rgba(107, 92, 230, 0.18);
 }
