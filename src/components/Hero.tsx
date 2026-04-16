@@ -1,21 +1,18 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { lazy, Suspense, useCallback } from "react";
-import { BootBlock, Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
+import { Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { ReorderableGroup } from "./Decorations/ReorderableGroup";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
 
-const LanguagePanel = lazy(() => import("./Decorations").then(m => ({ default: m.LanguagePanel })));
-const ConnectionPanel = lazy(() => import("./Decorations").then(m => ({ default: m.ConnectionPanel })));
+const VisitorContext = lazy(() => import("./Decorations").then(m => ({ default: m.VisitorContext })));
+const BuildStats = lazy(() => import("./Decorations").then(m => ({ default: m.BuildStats })));
+const LatestPostPanel = lazy(() => import("./Decorations").then(m => ({ default: m.LatestPostPanel })));
+const ActivitySparkline = lazy(() => import("./Decorations").then(m => ({ default: m.ActivitySparkline })));
+const LatestReleasePanel = lazy(() => import("./Decorations").then(m => ({ default: m.LatestReleasePanel })));
 
 const PARALLAX_PX = 10;
-
-const TOOLCHAIN = {
-  androidSdk: "35",
-  xcode: "16.2",
-} as const;
 
 export function Hero() {
   const { t } = useLocale();
@@ -48,32 +45,22 @@ export function Hero() {
       onMouseLeave={handleMouseLeave}
     >
       <h1 id="hero-heading" className="sr-only">{t("hero.heading")}</h1>
-      {/* Visible identity heading: size-step above the boot/whois rows so
-          the name reads as a deliberate typographic anchor, not just body
-          text hovering above the terminal chrome. */}
       <div className="space-y-1">
         <p className="text-2xl font-semibold tracking-tight text-foreground">
           {t("hero.name")}
         </p>
         <p className="text-mono text-foreground/70">{t("hero.subtitle")}</p>
       </div>
-      {/* Boot messages */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                {t("hero.startingSession")} — <Accent>po4yka.dev</Accent>
-              </>
-            ),
-          },
-          { status: "OK", text: `Android SDK ${TOOLCHAIN.androidSdk} ${t("hero.detected")}` },
-          { status: "OK", text: `Xcode ${TOOLCHAIN.xcode} ${t("hero.toolchainReady")}` },
-        ]}
-      />
 
-      {/* whois + system monitor side-by-side on desktop */}
+      {/* Visitor context + build stats panels */}
+      <Suspense fallback={null}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <VisitorContext delay={0.05} />
+          <BuildStats delay={0.1} />
+        </div>
+      </Suspense>
+
+      {/* whois + sidebar */}
       <div className="space-y-4">
         <Cmd>
           cd ~/po4yka &amp;&amp; cat <Accent>identity.md</Accent>
@@ -143,18 +130,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Decorative system widgets — desktop only, with parallax */}
+          {/* Sidebar: real content panels — desktop only, with parallax */}
           <Suspense fallback={null}>
             <motion.div
               className="hidden lg:flex flex-col gap-4"
               style={{ x: decorX, y: decorY }}
             >
-              <ReorderableGroup containerKey="heroSidebar" axis="y" className="flex flex-col gap-4">
-                {{
-                  cpu: <LanguagePanel delay={0.2} />,
-                  net: <ConnectionPanel delay={0.3} />,
-                }}
-              </ReorderableGroup>
+              <LatestPostPanel delay={0.15} />
+              <ActivitySparkline delay={0.2} />
+              <LatestReleasePanel delay={0.25} />
             </motion.div>
           </Suspense>
         </div>

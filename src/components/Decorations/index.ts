@@ -7,3 +7,7 @@ export { TechTagHeatmap } from "./TechTagHeatmap";
 export { ProjectPlatformMatrix } from "./ProjectPlatformMatrix";
 export { ActivitySparkline } from "./ActivitySparkline";
 export { LatestReleasePanel } from "./LatestReleasePanel";
+export { VisitorContext } from "./VisitorContext";
+export { BuildStats } from "./BuildStats";
+export { LatestPostPanel } from "./LatestPostPanel";
+export { OpenSourcePanel } from "./OpenSourcePanel";

@@ -8,7 +8,7 @@ import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
 import { FastlaneDeploy, GitLog } from "@/components/MobileTerminal";
 import {
-  ProjectPlatformMatrix,
+  OpenSourcePanel,
   TechTagHeatmap,
   BlogStatsPanel,
   ActivitySparkline,
@@ -32,9 +32,9 @@ import {
       <Projects client:visible />
     </div>
 
-    <!-- projects → platform matrix (decorative) -->
-    <div data-section-name="platform-matrix">
-      <ProjectPlatformMatrix client:visible delay={0.05} />
+    <!-- projects → open source repos from GitHub (real data) -->
+    <div data-section-name="open-source">
+      <OpenSourcePanel client:visible delay={0.05} />
     </div>
 
     <div data-section-name="experience">

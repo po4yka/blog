@@ -8,6 +8,7 @@ import { generateBlogDataSource } from "./generate-blog-data.js";
 import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
+import { generateBuildMetaSource } from "./generate-build-meta.js";
 
 interface GeneratorConfig {
   name: string;
@@ -35,6 +36,11 @@ const generators: GeneratorConfig[] = [
     name: "seed",
     outputFile: path.resolve("db/seed.sql"),
     generate: generateSeedSource,
+  },
+  {
+    name: "buildMeta",
+    outputFile: path.resolve("src/data/buildMeta.ts"),
+    generate: generateBuildMetaSource,
   },
 ];
 
