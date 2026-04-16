@@ -24,7 +24,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
-  const { theme, setTheme } = useSettings();
+  const { theme, setTheme, reduceMotion } = useSettings();
   const { t } = useLocale();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -63,8 +63,19 @@ export function Nav({ pathname: initialPathname }: NavProps) {
   const switchThemeLabel = `${t("nav.switchTheme")} (${theme})`;
   const themeLabel = theme;
 
-  const cycleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  const cycleTheme = (e: React.MouseEvent) => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
+    if (!reduceMotion && doc.startViewTransition) {
+      const { clientX: x, clientY: y } = e;
+      document.documentElement.style.setProperty("--tx", `${x}px`);
+      document.documentElement.style.setProperty("--ty", `${y}px`);
+      doc.startViewTransition(() => {
+        setTheme(newTheme);
+      });
+    } else {
+      setTheme(newTheme);
+    }
   };
 
   const ThemeIcon = theme === "light" ? Sun : Moon;

@@ -170,7 +170,26 @@
   outline-offset: 2px;
 }
 
-/* Smooth theme transition on key elements */
+/* View Transition: radial wipe for theme switch */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  clip-path: circle(0% at var(--tx, 50%) var(--ty, 50%));
+  animation: theme-wipe 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes theme-wipe {
+  to { clip-path: circle(150% at var(--tx, 50%) var(--ty, 50%)); }
+}
+/* Skip wipe animation when reduce-motion is active */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) { animation: none; clip-path: none; }
+}
+html.reduce-motion ::view-transition-new(root) { animation: none; clip-path: none; }
+
+/* Smooth theme transition on key elements (fallback for no View Transitions) */
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
