@@ -231,11 +231,8 @@ export function LessViewer({
   children: ReactNode;
   delay?: number;
 }) {
-  const { ref, inView } = useInView(0.1);
-
   return (
     <motion.div
-      ref={ref}
       className="overflow-hidden rounded-[10px]"
       style={{
         background: "var(--card)",
@@ -243,7 +240,7 @@ export function LessViewer({
         boxShadow: "var(--window-shadow)",
       }}
       initial={{ opacity: 0, y: 12 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: duration.slow, delay, ease }}
       whileHover={{
         y: -1,

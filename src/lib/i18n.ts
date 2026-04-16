@@ -149,7 +149,7 @@ const en = {
 
   // footer
   "footer.shellHelp": "interactive shell -- try: help, ls posts/, cat meridian, open blog, neofetch",
-  "footer.copyright": "Nikita Pochaev \u00b7 built with ghostty vibes",
+  "footer.copyright": "Nikita Pochaev",
 
   // experience page
   "experiencePage.positionsIndexed": "positions indexed",
@@ -305,7 +305,7 @@ const ru: TranslationKeys = {
 
   // footer
   "footer.shellHelp": "\u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0439 \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b -- \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435: help, ls posts/, cat meridian, open blog, neofetch",
-  "footer.copyright": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432 \u00b7 \u0441\u0434\u0435\u043b\u0430\u043d\u043e \u0441 ghostty vibes",
+  "footer.copyright": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432",
 
   // experience page
   "experiencePage.positionsIndexed": "\u043f\u043e\u0437\u0438\u0446\u0438\u0439 \u043f\u0440\u043e\u0438\u043d\u0434\u0435\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
