@@ -11,3 +11,4 @@ export { VisitorContext } from "./VisitorContext";
 export { BuildStats } from "./BuildStats";
 export { LatestPostPanel } from "./LatestPostPanel";
 export { OpenSourcePanel } from "./OpenSourcePanel";
+export { ActivityCalendar } from "./ActivityCalendar";

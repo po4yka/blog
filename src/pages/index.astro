@@ -9,7 +9,7 @@ import { BlogPreview } from "@/components/BlogPreview";
 import { RealGitLog, RealCIStatus } from "@/components/MobileTerminal";
 import {
   OpenSourcePanel,
-  TechTagHeatmap,
+  ActivityCalendar,
   BlogStatsPanel,
 } from "@/components/Decorations";
 ---
@@ -39,9 +39,9 @@ import {
       <Experience client:visible />
     </div>
 
-    <!-- experience → tech tag heatmap (decorative) -->
-    <div data-section-name="tech-tags">
-      <TechTagHeatmap client:visible delay={0.05} />
+    <!-- GitHub activity calendar (real data) -->
+    <div data-section-name="activity-calendar">
+      <ActivityCalendar client:visible delay={0.05} />
     </div>
 
     <!-- Real git commits from GitHub -->
@@ -95,7 +95,7 @@ import {
     /* Skip rendering for off-screen sections until scrolled into view */
     [data-section-name="experience"],
     [data-section-name="open-source"],
-    [data-section-name="tech-tags"],
+    [data-section-name="activity-calendar"],
     [data-section-name="git-log"],
     [data-section-name="blog"],
     [data-section-name="blog-stats"],
