@@ -27,18 +27,5 @@ const categories = [
 ];
 ---
 <MainLayout title="Blog — Nikita Pochaev" lang="ru">
-  <div transition:name="blog-content" class="island-loader">
-    <div class="skeleton-window island-skeleton">
-      <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 16px;"></div>
-      <div class="skeleton" style="height: 14px; width: 70%; margin-bottom: 12px;"></div>
-      <div class="skeleton" style="height: 14px; width: 55%; margin-bottom: 24px;"></div>
-      <div class="skeleton-window" style="box-shadow: none; padding: 16px;">
-        <div class="skeleton" style="height: 32px; margin-bottom: 16px;"></div>
-        <div class="skeleton" style="height: 48px; margin-bottom: 12px;"></div>
-        <div class="skeleton" style="height: 48px; margin-bottom: 12px;"></div>
-        <div class="skeleton" style="height: 48px;"></div>
-      </div>
-    </div>
-    <BlogListIsland client:idle posts={serializedPosts} categories={categories} lang="ru" />
-  </div>
+  <BlogListIsland client:idle posts={serializedPosts} categories={categories} lang="ru" />
 </MainLayout>
