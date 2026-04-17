@@ -9,7 +9,7 @@ featured: true
 
 ## 1. RAG breaks earlier than people think
 
-The first pre-commit hook I wrote for the vault blocked every commit I actually wanted to make. The rule was fine; the binding site was wrong, and it took four error-output reads before I saw it. I spent three weeks building that vault for an AI infrastructure team, and the tooling decisions surfaced their reasons only after they broke. What eventually became a 197-commit knowledge base started as a reaction against the retrieval stack I had been shipping before, and that stack has a ceiling.
+Most RAG systems fail at a smaller corpus than their authors expect, and the failure is structural. There is a ceiling baked into single-vector retrieval, and above it no amount of rerankers, hybrid search, or larger context saves the query. The stack I had been shipping before rebuilding my knowledge base hit exactly that ceiling, and the 197-commit wiki that replaced it started as a reaction.
 
 Weller et al. ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038), ICLR 2026) state the ceiling as an inequality. For a corpus of n documents with top-k queries and score margin γ, the embedding dimension d must satisfy $d \geq \frac{\log \binom{n}{k}}{\log(1 + 1/\gamma)}$. Below that bound, some top-k combinations are representationally unreachable in the vector space.
 
