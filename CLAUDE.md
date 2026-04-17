@@ -23,6 +23,8 @@ Pages are prerendered at build time. React islands hydrate via `client:load` or 
 
 **Content pipeline (single-source):** Canonical sources are MDX files (`src/content/blog/`) and JSON files (`src/content/projects.json`, `src/content/experience.json`). Build-time generators produce static TypeScript data files (`blogData.ts`, `projectsData.ts`, `experienceData.ts`) and `db/seed.sql`. Run `npm run generate:all` to regenerate all, or `npm run generate:blog` for blog only. Never edit generated data files manually.
 
+**Long-form posts authored in havamal:** some MDX files under `src/content/blog/{en,ru}/` are produced by `python3 scripts/sync_to_blog.py` in the sibling `havamal/` repo from `havamal/articles/<slug>/ARTICLE.md` + a `blog.yaml` sidecar. The sync owns the full MDX file when active. For those posts, edit the havamal source and re-run sync rather than hand-editing the MDX; otherwise the next sync will overwrite changes. See `havamal/AGENTS.md § Sync to Blog` for the workflow. Posts created directly with `/add-blog-post` are unaffected.
+
 ### Admin Panel (SSR)
 
 Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate data through API routes backed by Cloudflare D1.

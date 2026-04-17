@@ -21,6 +21,8 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 
 Pages are prerendered at build time. React islands hydrate via `client:load` or `client:visible`. Data comes from static TypeScript files (`blogData.ts`, `projectsData.ts`, `experienceData.ts`) and Astro content collections.
 
+**Long-form MDX under `src/content/blog/{en,ru}/` may be authored in the sibling `havamal/` repo** and pushed here by `python3 scripts/sync_to_blog.py` in havamal (see `havamal/AGENTS.md § Sync to Blog`). Those MDX files are owned by the sync — edit the havamal `articles/<slug>/ARTICLE.md` source and re-run sync instead of hand-editing the MDX. Posts created directly with `/add-blog-post` are independent.
+
 ### Admin Panel (SSR)
 
 Mounted at `/admin/*` as a React SPA. Uses TanStack Query hooks to fetch/mutate data through API routes backed by Cloudflare D1.
