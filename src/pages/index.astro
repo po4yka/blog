@@ -92,14 +92,15 @@ import {
       transition: none;
     }
 
-    /* Skip rendering for off-screen sections until scrolled into view */
+    /* Skip rendering for off-screen sections until scrolled into view.
+       Only sections that always render non-empty content — empty-prone
+       API-driven sections (open-source, activity-calendar, git-log,
+       ci-status) would otherwise reserve a 300px placeholder that
+       collapses to 0px once the component hydrates and returns null,
+       producing a visible gap while the user is scrolling. */
     [data-section-name="experience"],
-    [data-section-name="open-source"],
-    [data-section-name="activity-calendar"],
-    [data-section-name="git-log"],
     [data-section-name="blog"],
-    [data-section-name="blog-stats"],
-    [data-section-name="ci-status"] {
+    [data-section-name="blog-stats"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
     }
