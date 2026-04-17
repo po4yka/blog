@@ -111,6 +111,8 @@ function ProjectEntry({ project }: { project: Project }) {
               rel="noopener noreferrer"
               whileHover={{ y: -1, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              data-umami-event="click-project-link"
+              data-umami-event-target={`${project.name}:${link.type}`}
             >
               {link.type === "GitHub" ? <GithubIcon size={11} /> : <ExternalLink size={10} />}
               {link.type}

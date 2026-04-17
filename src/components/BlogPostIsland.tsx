@@ -1,4 +1,10 @@
 import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
+
+declare global {
+  interface Window {
+    umami?: { track: (event: string, data?: Record<string, unknown>) => void };
+  }
+}
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
@@ -138,6 +144,8 @@ function ScrollToTop() {
 export function BlogPostIsland({ post, slug, prev, next, children, lang: langProp }: BlogPostIslandProps) {
   const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const firedRef = useRef(false);
   const [readingTime, setReadingTime] = useState(post.readingTime ?? 0);
 
   const lang = langProp ?? "en";
@@ -147,6 +155,24 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
       setReadingTime(estimateReadingTime(contentRef.current));
     }
   }, [post.readingTime]);
+
+  useEffect(() => {
+    const el = endRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (firedRef.current) return;
+        if (entries[0]?.isIntersecting) {
+          firedRef.current = true;
+          window.umami?.track("blog-read-complete", { slug, lang });
+          observer.disconnect();
+        }
+      },
+      { threshold: 1.0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [slug, lang]);
 
   return (
     <MotionProvider>
@@ -228,6 +254,8 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
             <CopyLinkButton />
           </div>
         </LessViewer>
+
+        <div ref={endRef} aria-hidden />
 
         {/* Navigation */}
         <div className="flex items-center justify-between pt-4 font-mono text-mono-sm">

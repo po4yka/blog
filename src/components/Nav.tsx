@@ -192,6 +192,8 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92, rotate: theme === "dark" ? 180 : -180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
+            data-umami-event="theme-toggle"
+            data-umami-event-next={theme === "dark" ? "light" : "dark"}
           >
             <ThemeIcon size={13} strokeWidth={1.8} />
             <span className="hidden lg:inline">{themeLabel}</span>
@@ -217,6 +219,8 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             aria-label={switchThemeLabel}
             whileTap={{ scale: 0.85, rotate: 180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
+            data-umami-event="theme-toggle"
+            data-umami-event-next={theme === "dark" ? "light" : "dark"}
           >
             <ThemeIcon size={18} strokeWidth={1.8} />
           </motion.button>

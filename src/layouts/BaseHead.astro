@@ -58,17 +58,13 @@ const {
 
 {/* Analytics */}
 {import.meta.env.PROD && (
-  <>
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "3b7186281b464d9c87aecc08a54eb6bd"}'
-    />
-    <script
-      defer
-      src="/m.js"
-      data-website-id="00b2d486-bc06-431f-b5cf-80dce36ab698"
-      data-host-url="/"
-    />
-  </>
+  <script
+    is:inline
+    defer
+    src="/m.js"
+    data-website-id="00b2d486-bc06-431f-b5cf-80dce36ab698"
+    data-host-url="/"
+    data-do-not-track="true"
+    data-domains="po4yka.dev"
+  />
 )}

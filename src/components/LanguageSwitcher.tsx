@@ -41,6 +41,8 @@ export function LanguageSwitcher({ translationUrl, activeLang, className = "" }:
             aria-current={displayLang === lang ? "true" : undefined}
             whileHover={displayLang !== lang ? { scale: 1.05 } : undefined}
             whileTap={{ scale: 0.95 }}
+            data-umami-event="lang-switch"
+            data-umami-event-target={lang}
           >
             {/* Sliding background indicator */}
             {displayLang === lang && (
