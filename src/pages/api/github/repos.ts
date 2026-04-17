@@ -40,9 +40,8 @@ export const GET: APIRoute = async () => {
         headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
       });
     }
-    return new Response(JSON.stringify({ error: "GitHub API error" }), {
-      status: res.status,
-      headers: { "Content-Type": "application/json" },
+    return Response.json([], {
+      headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
   }
 

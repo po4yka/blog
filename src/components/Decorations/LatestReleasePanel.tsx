@@ -26,8 +26,8 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
       .catch(() => setRelease(null));
   }, []);
 
-  // Nothing to show: still loading or no releases found
-  if (release === undefined || release === null) return null;
+  // Nothing to show: still loading, no releases found, or malformed response
+  if (!release?.url) return null;
 
   const rows = [
     { label: "repo", value: <span style={{ color: "var(--accent)", opacity: 0.8 }}>{release.repo}</span> },

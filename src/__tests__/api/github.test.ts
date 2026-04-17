@@ -63,12 +63,13 @@ describe("GET /api/github/repos", () => {
     vi.useRealTimers();
   });
 
-  it("returns error when API fails with no cache", async () => {
+  it("returns empty array when API fails with no cache", async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
 
     const GET = await getHandler();
     const response = await GET(ctx);
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
   });
 });
 
