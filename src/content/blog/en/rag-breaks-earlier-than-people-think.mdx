@@ -71,7 +71,7 @@ It's shipped at least three times, on very different substrates.
 
 ### The shoestring version
 
-Bash scripts against an Obsidian vault. A handful of agents, a set of skills, no build system except a contract around what tools each agent can touch. Every agent declares its primitives from a fixed set -- one might be allowed to read pages and write the index, but forbidden to touch the schema file. Anything off the list fails at build time. This design moves almost nothing to ingest time. The agents integrate on demand, and query-time work stays close to what you'd pay without the wiki. What breaks first is cross-platform skew: the same vault driving several LLM CLIs only stays coherent because the contract is narrow enough to hide their differences.
+Bash scripts against an Obsidian vault. A handful of agents, a set of skills, no build system except a contract around what tools each agent can touch. Every agent declares its primitives from a fixed set -- one might be allowed to read pages and write the index, but forbidden to touch the schema file. Anything off the list fails before the skill ever runs. This design moves almost nothing to ingest time. The agents integrate on demand, and query-time work stays close to what you'd pay without the wiki. What breaks first is cross-platform skew: the same vault driving several LLM CLIs only stays coherent because the contract is narrow enough to hide their differences.
 
 ### The heavy version
 
@@ -142,3 +142,11 @@ I don't have a good way to tell whether the wiki is improving. Add-rate is easy 
 No published benchmark measures time-travel consistency: the same question asked at different points as the corpus evolves. Summarisation-fidelity metrics like F-Fidelity and FaithEval exist. No memory system paper reports using them.
 
 What the commit hooks catch is mechanical: schema violations, broken wikilinks, contradictions flagged by the narrative-schema linter. Silent regression, a quietly wrong summary that nothing in the system notices, shows up the next time I open the page. Or it doesn't.
+
+## 6. What to build, and when
+
+The choice between RAG and a wiki is a choice about where to pay. RAG stands up fast, costs little per token, and caps out when the corpus gets large enough that the retrieval geometry runs out of room. A wiki costs more at ingest and less at query, holds up better under repeated questions on the same material, and rewards the human who maintains it. Real systems tend to ship both layers: vector search over immutable sources for precise recall, a compiled wiki for synthesis across a specific project.
+
+What the failure modes in this piece share is where compute gets paid. The move from query time to ingest time is the underlying bet. Whether the output lands as markdown pages, typed edges in a temporal graph, or pre-computed community summaries depends on what the artefact is for. A wiki is read by humans; a graph is queried by systems. Both sit downstream of the same decision: compile once, read many.
+
+I don't have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That's the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open.
