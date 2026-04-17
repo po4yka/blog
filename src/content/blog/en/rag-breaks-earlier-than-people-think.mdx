@@ -37,7 +37,7 @@ RAG is the correct first answer to "how do I ground an LLM in my data." For a pr
 
 Two branches. One keeps optimising the query-time loop: better rerankers, late interaction, hybrid search, learned retrieval policies. Most public work is there. The other compiles the corpus once into something the model can read directly. Pay the work upfront, when the source comes in.
 
-All of these failures share one assumption: the corpus stays raw, and the model re-derives its understanding of it on every query. The alternative is to compile the corpus once, into an artefact the model can read directly, and pay the cost at ingest instead of at query time. Karpathy posted a gist in April 2026 calling this second branch an LLM Wiki. What follows is what that means architecturally, and three very different systems that have already shipped it.
+All of these failures share one assumption: the corpus stays raw, and the model re-derives its understanding of it on every query. The alternative is to compile the corpus once, into an artefact the model can read directly, and pay the cost at ingest instead of at query time. Karpathy posted a gist in April 2026 calling this second branch an **LLM Wiki**. What follows is what that means architecturally, and three very different systems that have already shipped it.
 
 ## 2. The wiki reframes the loop
 
@@ -45,17 +45,21 @@ All of these failures share one assumption: the corpus stays raw, and the model 
 
 I read this the first time on a Sunday and reread it twice looking for where the hard part was. The mechanics fit on one page.
 
-Raw sources live at the bottom (PDFs, transcripts, pasted notes, web clips) and are immutable once saved. The wiki itself sits in the middle as a set of markdown pages the LLM writes, one page per concept or decision, linked into each other with wikilinks. On top sits a schema document: CLAUDE.md, AGENTS.md, whatever file states what the wiki is for. The LLM reads it every time it does anything else.
+The wiki has three layers.
 
-Ingest does the actual rewriting. A source comes in, the LLM reads it against the schema and the index, and edits whichever pages the source touches, often ten or fifteen at once.
+- **Raw sources** at the bottom: PDFs, transcripts, pasted notes, web clips. Immutable once saved.
+- **The wiki** in the middle: markdown pages the LLM writes, one per concept or decision, linked with wikilinks.
+- **The schema** on top: CLAUDE.md, AGENTS.md, whatever file states what the wiki is for. The LLM reads it before every action.
+
+**Ingest** does the actual rewriting. A source comes in, the LLM reads it against the schema and the index, and edits whichever pages the source touches, often ten or fifteen at once.
 
 Query looks lighter on paper: read the index, drill into a few pages, answer with citations. In practice query also writes back, because an answer worth keeping turns into a new page, and a query can kick off a small secondary ingest to save it.
 
-Lint is the background pass and the unresolved design question. It walks the wiki for contradictions, stale claims, orphan pages, and missing cross-references. Nobody agrees on when it runs, how aggressive it should be, or what it does when it finds something.
+**Lint** is the background pass and the unresolved design question. It walks the wiki for contradictions, stale claims, orphan pages, and missing cross-references. Nobody agrees on when it runs, how aggressive it should be, or what it does when it finds something.
 
 Retrieval is incidental in this model. `index.md`, a plain markdown catalogue maintained by the LLM itself, works at the scale most projects actually live at (hundreds of sources, a few hundred pages) and removes the need for an embedding stack entirely. You can add vectors later if the catalogue stops scaling. You start without them.
 
-Compilation is the analogy. Each ingest is an incremental build over the previous artefact rather than a fresh pass. A single source typically touches several pages, and a page integrates evidence from several sources. At query time the generator reads compiled pages instead of raw text. Two lines in the gist carry most of the argument: "The human's job is curate sources, direct analysis, ask good questions. The LLM's job is everything else," and "Most people abandon wikis because maintenance burden grows faster than value. LLMs don't get bored."
+**Compilation** is the analogy. Each ingest is an incremental build over the previous artefact rather than a fresh pass. A single source typically touches several pages, and a page integrates evidence from several sources. At query time the generator reads compiled pages instead of raw text. Two lines in the gist carry most of the argument: "The human's job is curate sources, direct analysis, ask good questions. The LLM's job is everything else," and "Most people abandon wikis because maintenance burden grows faster than value. LLMs don't get bored."
 
 The first operation I tried to think through was lint, because I knew the first wiki I'd write would be wrong in ways I wouldn't notice. Karpathy's version is informal: run it periodically, read the report. He cites Vannevar Bush's Memex (1945) as prior art for the whole pattern: a private, curated knowledge store with associative trails between documents, maintained by the person who used it.
 
@@ -65,21 +69,35 @@ A lifecycle extension bolts onto the wiki. Facts carry a confidence score that d
 
 It's shipped at least three times, on very different substrates.
 
-The shoestring version is Bash scripts against an Obsidian vault. A handful of agents, a set of skills, no build system except a contract around what tools each agent can touch. Every agent declares its primitives from a fixed set -- one might be allowed to read pages and write the index, but forbidden to touch the schema file. Anything off the list fails at build time. This design moves almost nothing to ingest time. The agents integrate on demand, and query-time work stays close to what you'd pay without the wiki. What breaks first is cross-platform skew: the same vault driving several LLM CLIs only stays coherent because the contract is narrow enough to hide their differences.
+### The shoestring version
 
-Tauri runtime, React front end, installable binaries. The heaviest version packs the whole thing into a desktop application and moves the most work to ingest. A source arrives, the pipeline runs a two-step chain-of-thought pass: analysis against the current purpose file and index, then generation of typed FILE blocks for everything the source touches. Ingest is keyed by content hash. Re-ingest is a no-op. Jobs run through a persistent crash-recoverable queue with retry so an interrupted ingest resumes instead of being lost. Optional vector search bolts onto the catalogue at the end. The ingest cost buys one thing: the wiki is already compiled by the time you open the app.
+Bash scripts against an Obsidian vault. A handful of agents, a set of skills, no build system except a contract around what tools each agent can touch. Every agent declares its primitives from a fixed set -- one might be allowed to read pages and write the index, but forbidden to touch the schema file. Anything off the list fails at build time. This design moves almost nothing to ingest time. The agents integrate on demand, and query-time work stays close to what you'd pay without the wiki. What breaks first is cross-platform skew: the same vault driving several LLM CLIs only stays coherent because the contract is narrow enough to hide their differences.
 
-The most portable version is a plugin: one Agent Skills definition, every major LLM CLI, no build step. A single small markdown file -- the hot cache -- holds it together, a few hundred words of the recent context of work in progress. Session start reads it. Session end updates it. The gap between those two reads is where continuity lives. Without it, every new session opens with amnesia. The cache goes stale if work shifts between contexts without a session-end update. Nothing detects the staleness.
+### The heavy version
+
+Tauri runtime, React front end, installable binaries. This version packs the whole thing into a desktop application and moves the most work to ingest. A source arrives, the pipeline runs a two-step chain-of-thought pass: analysis against the current purpose file and index, then generation of typed FILE blocks for everything the source touches. Ingest is keyed by content hash. Re-ingest is a no-op. Jobs run through a persistent crash-recoverable queue with retry so an interrupted ingest resumes instead of being lost. Optional vector search bolts onto the catalogue at the end. The ingest cost buys one thing: the wiki is already compiled by the time you open the app.
+
+### The portable version
+
+A plugin: one Agent Skills definition, every major LLM CLI, no build step. A single small markdown file -- the hot cache -- holds it together, a few hundred words of the recent context of work in progress. Session start reads it. Session end updates it. The gap between those two reads is where continuity lives. Without it, every new session opens with amnesia. The cache goes stale if work shifts between contexts without a session-end update. Nothing detects the staleness.
 
 ## 3. Other shapes of the same move
 
-Before I settled on the wiki shape I'd been watching adjacent systems.
+The three systems in Part 2 all commit to the wiki shape: compile the corpus into markdown, let the human read the artefact. Others solve the same problem from different angles, and what they keep as the artefact says as much as their mechanics. Four families are worth naming.
+
+### Memory agents: Letta and Mem0
 
 Letta (formerly MemGPT, [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) pages between main context, recall, and archival tiers by function call. Mem0 extracts entity-and-relation facts from every message, resolves conflicts, and writes to a hybrid vector-plus-graph backend; on LOCOMO ([arXiv:2504.19413](https://arxiv.org/abs/2504.19413)) it reports 66.9% accuracy against OpenAI memory's 52%, with a six-point gap against a full-context baseline at 2,000 turns.
 
+### Temporal graphs: Zep
+
 Zep does the most interesting thing in this group. Its graph layer, Graphiti ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)), timestamps every edge with `valid_at` and `invalid_at`. Old beliefs stay in the store with an explicit expiry. A query can ask what the system thought last Tuesday. That's the same problem the wiki's lifecycle extension tries to solve, from the database side.
 
+### Graph RAG: Microsoft's line
+
 Graph-RAG starts expensive. Microsoft's GraphRAG ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) extracts an entity graph, runs Leiden clustering, pre-writes community summaries at every level. Community estimates put indexing at roughly $20-$50 per million tokens, and global-search queries can easily top half a million tokens each. Then Microsoft published LazyGraphRAG (November 2024), which drops the pre-summarisation and matches quality at roughly 1/700 the per-query cost. That's Microsoft Research admitting its own indexing pipeline was wasteful. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) arrives nearby: lazy entity extraction at ingest, dual-level retrieval, lightweight per-query profile by design.
+
+### Concept graphs: HippoRAG
 
 HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest. It turns the corpus into a concept graph of noun phrases and answers queries by running Personalized PageRank. Single-step multi-hop reasoning. The v1 failure was sparsity: the concept graph missed too many noun phrases for plain factual recall. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) targets that gap.
 
@@ -87,15 +105,17 @@ Letta, Mem0, Zep, and every graph system above store their artefact in a databas
 
 ## 4. When the wiki doesn't fit
 
-In my experience, below roughly 50,000 tokens -- a soft, context-window-dependent threshold -- the corpus fits inside a modern context window and the wiki loses to full-context. The wiki starts being worth building around the point where the context stops holding the whole corpus, which is also the point where you have to start maintaining the compression. The upper bound is hundreds of sources and a few hundred pages, above which the plain markdown index stops scaling as a catalogue, and the pattern has to grow its own hierarchy or an embedding layer to keep working.
+A wiki isn't always the right answer. Four places it loses -- three concrete, one still a suspicion.
 
-Ingest feeds back into the wiki. Karpathy is explicit about this: partial-context updates miss dependencies, compression drops nuance you can't recover. The feedback works through the ingest input. A pass reads existing wiki pages alongside the new source, so a slightly wrong summary already in the corpus becomes the authority the next ingest integrates against, and the error is inside the corpus by the time lint runs.
+**Scale.** In my experience, below roughly 50,000 tokens -- a soft, context-window-dependent threshold -- the corpus fits inside a modern context window and the wiki loses to full-context. The wiki starts being worth building around the point where the context stops holding the whole corpus, which is also the point where you have to start maintaining the compression. The upper bound is hundreds of sources and a few hundred pages, above which the plain markdown index stops scaling as a catalogue, and the pattern has to grow its own hierarchy or an embedding layer to keep working.
+
+**Error accumulation.** Ingest feeds back into the wiki. Karpathy is explicit about this: partial-context updates miss dependencies, compression drops nuance you can't recover. The feedback works through the ingest input. A pass reads existing wiki pages alongside the new source, so a slightly wrong summary already in the corpus becomes the authority the next ingest integrates against, and the error is inside the corpus by the time lint runs.
 
 Lint is the prescribed fix. It catches contradictions and orphan pages cheaply. What it can't see is a quietly wrong summary that nothing downstream notices. Two shipped systems have already corrected for this in public. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) explicitly rewrites v1's entity-centric indexing because it lost context during both ingest and inference. LazyGraphRAG is Microsoft Research admitting, in a product blog, that GraphRAG's upfront summarisation was prohibitive and wasted compute on documents the queries never touched.
 
-Regulated content that relies on specific wording loses when the wiki paraphrases it. Plain vector RAG over the originals preserves the phrase the wiki dropped. Multi-author coordination breaks things differently. Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) layers typed read/write permissions and provenance tracking over shared memory to keep per-user views isolated -- machinery a single-author wiki doesn't need.
+**Specific wording and multi-author corpora.** Regulated content that relies on specific wording loses when the wiki paraphrases it. Plain vector RAG over the originals preserves the phrase the wiki dropped. Multi-author coordination breaks things differently. Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) layers typed read/write permissions and provenance tracking over shared memory to keep per-user views isolated -- machinery a single-author wiki doesn't need.
 
-Silent rot. Without a `last_verified` timestamp on each fact, the wiki can't tell which claims still hold and which have quietly gone stale. Zep's bi-temporal edges partly solve it for supersession, but nobody has a general answer for facts that nothing in the system is actively rechecking. A wiki that stops being maintained doesn't fail loudly. It starts lying, and you find out the next time you read the page.
+**Silent rot (suspicion, not diagnosis).** Without a `last_verified` timestamp on each fact, the wiki can't tell which claims still hold and which have quietly gone stale. Zep's bi-temporal edges partly solve it for supersession, but nobody has a general answer for facts that nothing in the system is actively rechecking. A wiki that stops being maintained doesn't fail loudly. It starts lying, and you find out the next time you read the page.
 
 ## 5. What breaks first when you build a wiki
 
@@ -117,6 +137,8 @@ During the hardening phase, metadata iterates faster than content. The rule file
 
 The uncomfortable part of this approach is that it sounds like overhead. The maintenance cost is paid upfront in templates, schema, hook chains, and the shape of the append-only log, and the per-commit cost afterwards is close to zero. A long meeting becomes a dozen pre-linked decision pages in the time it takes to run the ingest pass, because the graph walkers and the schema do the work the author would otherwise do by hand. Not every edit, though. Irreversible ones still require a timestamped log entry that names me. The `decided_by` field in a decision's frontmatter is always a human name; the agents never fill it. Contested claims stay in place with counter-evidence added below them, never silently overwritten.
 
-I don't have a good way to tell whether the wiki is improving. Add-rate is easy to measure and doesn't mean what I'd like it to mean. The public benchmarks (LongMemEval [arXiv:2410.10813](https://arxiv.org/abs/2410.10813), LOCOMO [arXiv:2504.19413](https://arxiv.org/abs/2504.19413), DMR from MemGPT [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) test single-turn factual retrieval and little else, and Zep's paper reporting on DMR ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)) admits the questions are ambiguous enough that a high score can reflect LLM inference skill rather than memory fidelity. No published benchmark measures time-travel consistency: the same question asked at different points as the corpus evolves. Summarisation-fidelity metrics like F-Fidelity and FaithEval exist. No memory system paper reports using them.
+I don't have a good way to tell whether the wiki is improving. Add-rate is easy to measure and doesn't mean what I'd like it to mean. The public benchmarks (LongMemEval [arXiv:2410.10813](https://arxiv.org/abs/2410.10813), LOCOMO [arXiv:2504.19413](https://arxiv.org/abs/2504.19413), DMR from MemGPT [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) test single-turn factual retrieval and little else, and Zep's paper reporting on DMR ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)) admits the questions are ambiguous enough that a high score can reflect LLM inference skill rather than memory fidelity.
+
+No published benchmark measures time-travel consistency: the same question asked at different points as the corpus evolves. Summarisation-fidelity metrics like F-Fidelity and FaithEval exist. No memory system paper reports using them.
 
 What the commit hooks catch is mechanical: schema violations, broken wikilinks, contradictions flagged by the narrative-schema linter. Silent regression, a quietly wrong summary that nothing in the system notices, shows up the next time I open the page. Or it doesn't.
