@@ -5,7 +5,7 @@ import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import type { TranslationKey } from "@/lib/i18n";
+import { blogUrl, type Locale, type TranslationKey } from "@/lib/i18n";
 
 const navLinks: { labelKey: TranslationKey; href: string; exact?: boolean }[] = [
   { labelKey: "nav.home", href: "/", exact: true },
@@ -17,9 +17,13 @@ const navLinks: { labelKey: TranslationKey; href: string; exact?: boolean }[] = 
 
 interface NavProps {
   pathname?: string;
+  lang?: Locale;
+  translationSlug?: string;
 }
 
-export function Nav({ pathname: initialPathname }: NavProps) {
+export function Nav({ pathname: initialPathname, lang, translationSlug }: NavProps) {
+  const otherLang: Locale = lang === "ru" ? "en" : "ru";
+  const translationUrl = translationSlug ? blogUrl(otherLang, translationSlug) : undefined;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -177,7 +181,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
 
         {/* Desktop right: lang switch + theme toggle + status */}
         <div className="hidden md:flex items-center gap-3">
-          <LanguageSwitcher />
+          <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
 
           {/* Theme toggle */}
           <motion.button
@@ -271,7 +275,7 @@ export function Nav({ pathname: initialPathname }: NavProps) {
                 );
               })}
               <div className="py-3 px-3">
-                <LanguageSwitcher />
+                <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
               </div>
             </div>
           </motion.div>

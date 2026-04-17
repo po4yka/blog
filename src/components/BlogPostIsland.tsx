@@ -5,7 +5,6 @@ import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { duration, spring } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
 interface PostMeta {
@@ -29,7 +28,6 @@ interface BlogPostIslandProps {
   next: AdjacentPost | null;
   children?: ReactNode;
   lang?: Locale;
-  translationSlug?: string;
 }
 
 function estimateReadingTime(el: HTMLElement): number {
@@ -137,14 +135,12 @@ function ScrollToTop() {
 
 // --- Main Component ---
 
-export function BlogPostIsland({ post, slug, prev, next, children, lang: langProp, translationSlug }: BlogPostIslandProps) {
+export function BlogPostIsland({ post, slug, prev, next, children, lang: langProp }: BlogPostIslandProps) {
   const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
   const [readingTime, setReadingTime] = useState(post.readingTime ?? 0);
 
   const lang = langProp ?? "en";
-  const otherLang = lang === "en" ? "ru" : "en";
-  const translationUrl = translationSlug ? blogUrl(otherLang , translationSlug) : undefined;
 
   useEffect(() => {
     if (!post.readingTime && contentRef.current) {
@@ -159,21 +155,18 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
 
       <div className="space-y-8">
         {/* Back */}
-        <div className="flex items-center justify-between">
-          <motion.a
-            href={blogUrl(lang)}
-            className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: duration.base }}
-            whileHover={{ x: -4 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <ArrowLeft size={12} />
-            {t("blogPost.allPosts")}
-          </motion.a>
-          <LanguageSwitcher translationUrl={translationUrl} activeLang={lang} />
-        </div>
+        <motion.a
+          href={blogUrl(lang)}
+          className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: duration.base }}
+          whileHover={{ x: -4 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          <ArrowLeft size={12} />
+          {t("blogPost.allPosts")}
+        </motion.a>
 
         {/* Command */}
         <Cmd>

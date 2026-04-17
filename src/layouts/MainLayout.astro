@@ -17,9 +17,10 @@ interface Props {
   blogSlug?: string;
   lang?: string;
   hasTranslation?: boolean;
+  translationSlug?: string;
 }
 
-const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false } = Astro.props;
+const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false, translationSlug } = Astro.props;
 const { pathname } = Astro.url;
 ---
 <html lang={lang}>
@@ -36,7 +37,7 @@ const { pathname } = Astro.url;
       class="min-h-screen bg-background text-foreground transition-colors duration-300"
       style="font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Monaco', 'Courier New', monospace;"
     >
-      <Nav client:load pathname={pathname} transition:persist />
+      <Nav client:load pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
       <main
         id="main-content"
         class="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"

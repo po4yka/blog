@@ -41,7 +41,7 @@ const { post, prev, next, hasTranslation } = Astro.props;
 const baseSlug = parsePostId(post.id).baseSlug;
 const { Content } = await render(post);
 ---
-<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={post.data} blogSlug={baseSlug} hasTranslation={hasTranslation}>
+<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={post.data} blogSlug={baseSlug} hasTranslation={hasTranslation} translationSlug={hasTranslation ? baseSlug : undefined}>
   <div transition:name="blog-content" transition:animate={slide({ duration: '0.3s' })}>
     <BlogPostIsland
       client:idle
@@ -50,7 +50,6 @@ const { Content } = await render(post);
       prev={prev}
       next={next}
       lang="en"
-      translationSlug={hasTranslation ? baseSlug : undefined}
     >
       <Content />
     </BlogPostIsland>
