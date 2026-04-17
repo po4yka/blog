@@ -49,7 +49,7 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
           href={release.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-2 truncate block max-w-[180px]"
+          className="underline decoration-dotted underline-offset-2 block break-all"
           style={{ color: "var(--muted-foreground)", opacity: 0.5 }}
           title={release.url.replace("https://github.com/", "")}
         >

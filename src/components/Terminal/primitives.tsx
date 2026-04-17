@@ -72,7 +72,7 @@ export function InfoTable({
               {row.label}
             </span>
           )}
-          <span className="text-foreground/80 text-sm">{row.value}</span>
+          <span className="text-foreground/80 text-sm min-w-0 flex-1">{row.value}</span>
         </motion.div>
       ))}
     </motion.div>
