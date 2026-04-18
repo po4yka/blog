@@ -20,7 +20,9 @@ export const GET: APIRoute = async () => {
     });
   }
 
-  const body = (await upstream.text()).replace("/api/send", "/api/m");
+  const body =
+    (await upstream.text()).replace("/api/send", "/api/m") +
+    ';try{document.cookie="_us=1;max-age=86400;path=/;samesite=lax"}catch(_){}';
 
   return new Response(body, {
     status: 200,
