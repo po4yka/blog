@@ -11,10 +11,43 @@ const OUTPUT_FILE = path.resolve("src/data/blogData.ts");
 interface FrontMatter {
   title: string;
   date: string;
+  publishedAt?: string | Date;
+  updatedAt?: string | Date;
   summary: string;
   tags: string[];
   category: string;
   featured?: boolean;
+}
+
+const FALLBACK_DAY = "01";
+
+function toIsoDateString(value: string | Date | undefined, humanDate: string): string {
+  // 1) explicit publishedAt from frontmatter (string or Date)
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+  if (typeof value === "string" && value.length > 0) {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString().slice(0, 10);
+    }
+  }
+  // 2) infer from the "Mon YYYY" date string
+  const parts = humanDate.split(" ");
+  if (parts.length === 2 && parts[0]! in MONTH_ORDER) {
+    const month = String((MONTH_ORDER[parts[0]!] ?? 0) + 1).padStart(2, "0");
+    const year = parts[1]!;
+    return `${year}-${month}-${FALLBACK_DAY}`;
+  }
+  // 3) last resort: today
+  return new Date().toISOString().slice(0, 10);
+}
+
+function countWords(content: string): number {
+  // Strip fenced code blocks so long snippets don't inflate the count.
+  const stripped = content.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]*`/g, " ");
+  const tokens = stripped.split(/\s+/).filter((t) => /\w/.test(t));
+  return tokens.length;
 }
 
 const MONTH_ORDER: Record<string, number> = {
@@ -68,6 +101,9 @@ interface BlogEntry {
   lang: string;
   frontmatter: FrontMatter;
   content: string;
+  isoDate: string;
+  isoDateModified: string;
+  wordCount: number;
 }
 
 function readBlogPosts(): BlogEntry[] {
@@ -87,7 +123,17 @@ function readBlogPosts(): BlogEntry[] {
     const fm = data as FrontMatter;
     const slug = file.replace(/\.mdx$/, "");
     const body = decodeHtmlEntities(content.trim());
-    entries.push({ slug, lang: "en", frontmatter: fm, content: body });
+    const isoDate = toIsoDateString(fm.publishedAt, fm.date);
+    const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
+    entries.push({
+      slug,
+      lang: "en",
+      frontmatter: fm,
+      content: body,
+      isoDate,
+      isoDateModified,
+      wordCount: countWords(body),
+    });
   }
 
   for (const lang of langDirs) {
@@ -99,7 +145,17 @@ function readBlogPosts(): BlogEntry[] {
       const fm = data as FrontMatter;
       const slug = file.replace(/\.mdx$/, "");
       const body = decodeHtmlEntities(content.trim());
-      entries.push({ slug, lang, frontmatter: fm, content: body });
+      const isoDate = toIsoDateString(fm.publishedAt, fm.date);
+      const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
+      entries.push({
+        slug,
+        lang,
+        frontmatter: fm,
+        content: body,
+        isoDate,
+        isoDateModified,
+        wordCount: countWords(body),
+      });
     }
   }
 
@@ -118,13 +174,16 @@ function deriveCategories(entries: BlogEntry[]): string[] {
 }
 
 function generateBlogPostEntry(entry: BlogEntry): string {
-  const { slug, lang, frontmatter: fm, content } = entry;
+  const { slug, lang, frontmatter: fm, content, isoDate, isoDateModified, wordCount } = entry;
   const lines: string[] = [];
   lines.push("  {");
   lines.push(`    slug: "${escapeForDoubleQuotedString(slug)}",`);
   lines.push(`    lang: "${escapeForDoubleQuotedString(lang)}",`);
   lines.push(`    title: "${escapeForDoubleQuotedString(fm.title)}",`);
   lines.push(`    date: "${escapeForDoubleQuotedString(fm.date)}",`);
+  lines.push(`    isoDate: "${escapeForDoubleQuotedString(isoDate)}",`);
+  lines.push(`    isoDateModified: "${escapeForDoubleQuotedString(isoDateModified)}",`);
+  lines.push(`    wordCount: ${wordCount},`);
   lines.push("    summary:");
   lines.push(`      "${escapeForDoubleQuotedString(fm.summary)}",`);
   lines.push(`    tags: [${fm.tags.map((t) => `"${escapeForDoubleQuotedString(t)}"`).join(", ")}],`);

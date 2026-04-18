@@ -5,6 +5,12 @@ export interface BlogPost {
   slug: string;
   title: string;
   date: string;
+  /** ISO-8601 publication date (e.g. "2026-04-01"). Falls back to date when absent. */
+  isoDate?: string;
+  /** ISO-8601 last-modified date. Falls back to isoDate when absent. */
+  isoDateModified?: string;
+  /** Word count of the post body; fed into JSON-LD wordCount. */
+  wordCount?: number;
   summary: string;
   tags: string[];
   category: string;
@@ -18,6 +24,9 @@ export interface BlogPost {
 export interface BlogPostData {
   title: string;
   date: string;
+  isoDate?: string;
+  isoDateModified?: string;
+  wordCount?: number;
   summary: string;
   tags: string[];
   category: string;

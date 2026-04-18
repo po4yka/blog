@@ -40,12 +40,21 @@ export async function getStaticPaths() {
 const { post, prev, next, hasTranslation } = Astro.props;
 const baseSlug = parsePostId(post.id).baseSlug;
 const { Content } = await render(post);
+// Pull the generated ISO date from blogData so the client gets a parseable timestamp.
+import { blogPosts } from "@/data/blogData";
+const generated = blogPosts.find((p) => p.slug === baseSlug && p.lang === "en");
+const blogData = {
+  ...post.data,
+  isoDate: generated?.isoDate,
+  isoDateModified: generated?.isoDateModified,
+  wordCount: generated?.wordCount,
+};
 ---
-<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={post.data} blogSlug={baseSlug} hasTranslation={hasTranslation} translationSlug={hasTranslation ? baseSlug : undefined}>
+<MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={blogData} blogSlug={baseSlug} hasTranslation={hasTranslation} translationSlug={hasTranslation ? baseSlug : undefined}>
   <div transition:name="blog-content" transition:animate={slide({ duration: '0.3s' })}>
     <BlogPostIsland
       client:idle
-      post={post.data}
+      post={blogData}
       slug={baseSlug}
       prev={prev}
       next={next}

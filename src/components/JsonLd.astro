@@ -5,9 +5,10 @@ interface Props {
   isHomePage?: boolean;
   blogPost?: BlogPostData;
   slug?: string;
+  lang?: string;
 }
 
-const { isHomePage = false, blogPost, slug } = Astro.props;
+const { isHomePage = false, blogPost, slug, lang = "en" } = Astro.props;
 
 const SITE_URL = "https://po4yka.dev";
 
@@ -72,40 +73,32 @@ const websiteSchema = isHomePage
     }
   : null;
 
-function parseDate(dateStr: string): string {
-  const months: Record<string, string> = {
-    Jan: "01",
-    Feb: "02",
-    Mar: "03",
-    Apr: "04",
-    May: "05",
-    Jun: "06",
-    Jul: "07",
-    Aug: "08",
-    Sep: "09",
-    Oct: "10",
-    Nov: "11",
-    Dec: "12",
-  };
-  const parts = dateStr.split(" ");
-  if (parts.length === 2) {
-    const month = months[parts[0]!];
-    const year = parts[1];
-    if (month && year) return `${year}-${month}-01`;
-  }
-  return dateStr;
-}
+const blogPostUrl = blogPost
+  ? lang === "ru"
+    ? `${SITE_URL}/blog/ru/${slug}`
+    : `${SITE_URL}/blog/${slug}`
+  : null;
 
-const blogPostingSchema = blogPost
+const blogPostingSchema = blogPost && blogPostUrl
   ? {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: blogPost.title,
       description: blogPost.summary,
-      datePublished: parseDate(blogPost.date),
+      datePublished: blogPost.isoDate ?? blogPost.date,
+      dateModified: blogPost.isoDateModified ?? blogPost.isoDate ?? blogPost.date,
+      inLanguage: lang === "ru" ? "ru-RU" : "en-US",
+      ...(typeof blogPost.wordCount === "number" && blogPost.wordCount > 0
+        ? { wordCount: blogPost.wordCount }
+        : {}),
       author: { "@id": `${SITE_URL}/#person` },
       keywords: blogPost.tags,
-      url: `${SITE_URL}/blog/${slug}`,
+      articleSection: blogPost.category,
+      url: blogPostUrl,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": blogPostUrl,
+      },
     }
   : null;
 ---

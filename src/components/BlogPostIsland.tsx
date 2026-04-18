@@ -16,11 +16,12 @@ import { blogUrl, type Locale } from "@/lib/i18n";
 interface PostMeta {
   title: string;
   date: string;
+  isoDate?: string;
+  isoDateModified?: string;
   summary: string;
   tags: string[];
   category: string;
   readingTime?: number;
-  isoDate?: string;
 }
 
 interface AdjacentPost {
