@@ -184,11 +184,30 @@ Maintain Claude and Codex skills separately:
 
 `.codex/skills/` is retired legacy layout and should not be updated or referenced.
 
+## SEO & LLM Discoverability
+
+The site is tuned for AI crawlers and agent tooling. Do not regress these surfaces:
+
+- `public/robots.txt` — per-bot rules for GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, Google-Extended, PerplexityBot, CCBot, Meta-ExternalAgent, Applebot-Extended, Bytespider, Amazonbot, etc. Admin tree disallowed for every bot. Sitemaps listed: `sitemap-index.xml` and `llms.txt`.
+- `public/llms.txt` (hand-authored) + `src/pages/llms-full.txt.ts` (auto-generated full dump).
+- Raw-markdown endpoints: `src/pages/blog/[slug].md.ts` and `src/pages/blog/ru/[slug].md.ts`.
+- RSS: `src/pages/rss.xml.ts` (en) and `src/pages/rss.ru.xml.ts` (ru); linked from `<head>`.
+- JSON-LD: `src/components/JsonLd.astro` (Person + WebSite + BlogPosting with ISO dates, `inLanguage`, `wordCount`, `mainEntityOfPage`) and `src/components/ProjectsJsonLd.astro` (ItemList of SoftwareApplication/MobileApplication).
+- Per-post OG images built at build time by `scripts/generate-og-images.ts` (Satori + Resvg) into `public/og/`. Wired into `npm run generate:all`. Cloudflare Workers cannot render these at runtime.
+- `src/layouts/BaseHead.astro` owns canonical, `og:*` (incl. `og:locale` + `og:site_name`), twitter, RSS links, and self-referential `hreflang` + `x-default` on every post.
+- `src/components/BlogPostIsland.tsx` wraps posts in `<article>` + `<header>` + `<time dateTime>`. Keep this shape.
+- Admin layout emits `<meta name="robots" content="noindex,nofollow">`.
+- Static-first rule: AI crawlers do not execute JavaScript. Content must land in initial HTML; islands are for interactive chrome only.
+
+New pages/content types should consider: JSON-LD node, `llms-full.txt` inclusion, `.md` variant, sitemap entry.
+
 ## Conventions
 
 - Components in `src/components/`, UI primitives in `src/components/ui/`
 - Admin SPA in `src/admin/` (pages, hooks, contexts, api client)
 - Server-side code in `src/lib/` (db, auth)
+- Canonical content in `src/content/` (MDX blog posts, JSON projects/experience); data files are generated via `npm run generate:all` — never edit them manually
+- MDX blog frontmatter must include ISO `publishedAt` (e.g. `"2026-04-01"`); `date` stays the display label (`"Apr 2026"`). Add `updatedAt` when editing an existing post
 - API routes in `src/pages/api/`
 - Stores in `src/stores/` (Zustand for client-side only)
 - Styles: Tailwind utility classes preferred; global styles in `src/styles/`

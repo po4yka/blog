@@ -1,31 +1,33 @@
 ---
 name: add-blog-post
-description: "Create a new blog post with correct MDX frontmatter, static data entry, and content collection registration. Use when writing or adding any blog content. Ensures the post appears correctly on both the static site and in the admin panel's data source."
+description: "Create a new blog post with correct MDX frontmatter and auto-generated data files. Use when writing or adding any blog content. MDX is the source of truth; data files are generated automatically."
 user-invocable: true
 argument-hint: "<post-title>"
 ---
 
 # Add Blog Post
 
-Create a new blog post. Posts exist in two sources that must stay in sync.
+Create a new blog post. MDX files are the source of truth; `src/data/blogData.ts` is auto-generated from them.
 
-## Dual-Source Architecture
+## Architecture
 
-| Source | Purpose | Format |
-|--------|---------|--------|
-| `src/content/blog/<slug>.mdx` | Astro content collection (static build) | MDX with YAML frontmatter |
-| `src/components/blogData.ts` | Static data for island components | TypeScript object array |
+| Source | Purpose | Editable? |
+|--------|---------|-----------|
+| `src/content/blog/{en,ru}/<slug>.mdx` | Astro content collection (static build) | Yes -- source of truth |
+| `src/data/blogData.ts` | Static data for React island components | No -- auto-generated via `npm run generate:blog` |
+| `public/og/{lang}-<slug>.png` | Per-post OG image | No -- auto-generated via `npm run generate:all` |
 
-Both sources must contain the same post metadata. The MDX file is the source of truth for content; `blogData.ts` provides data to React islands at build time.
+Never edit `blogData.ts` manually. Create or edit the MDX file, then run the generator.
 
 ## Step 1: Create MDX File
 
-Create `src/content/blog/<slug>.mdx`:
+English posts live under `src/content/blog/en/<slug>.mdx`. Russian translations go under `src/content/blog/ru/<slug>.mdx` with the same slug.
 
 ```mdx
 ---
 title: "Post Title Here"
 date: "Mon YYYY"
+publishedAt: "2026-04-01"
 summary: "One or two sentences. Concrete and specific."
 tags: ["KMP", "Architecture"]
 category: "Architecture"
@@ -44,47 +46,64 @@ Body text...
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `title` | string | Yes | Clear, specific -- not SEO bait |
-| `date` | string | Yes | Format: `"Mon YYYY"` (e.g., `"Feb 2026"`) |
-| `summary` | string | Yes | 1-2 sentences, concrete |
+| `date` | string | Yes | Human display label. Format: `"Mon YYYY"` (e.g., `"Feb 2026"`) |
+| `publishedAt` | ISO date | Yes | `YYYY-MM-DD`. Used for JSON-LD `datePublished`, RSS `pubDate`, `<time dateTime>`. Day defaults to `01` when only month is known |
+| `updatedAt` | ISO date | No | Add when editing a shipped post. Drives JSON-LD `dateModified` |
+| `summary` | string | Yes | 1-2 sentences, concrete. Also used for RSS description and `og:description` |
 | `tags` | string[] | Yes | Use existing tags when possible |
 | `category` | string | Yes | Must match an existing category |
 | `featured` | boolean | No | Default false. Only 1-2 posts should be featured |
+| `readingTime` | number | No | Minutes. Generator computes this if omitted |
+
+Do **not** drop `publishedAt`. `BlogPosting` JSON-LD, RSS feeds, and semantic `<time dateTime>` all depend on it.
 
 ### Slug Convention
 
 The filename (without `.mdx`) becomes the slug. Use kebab-case:
 - `kmp-shared-logic-without-shared-ui.mdx` -> slug: `kmp-shared-logic-without-shared-ui`
 
-## Step 2: Add to blogData.ts
+Both language variants must share the same slug so self-referential `hreflang` pairs correctly.
 
-Add an entry to the `blogPosts` array in `src/components/blogData.ts`:
+## Step 2: Generate Blog Data + OG Image
 
-```typescript
-{
-  slug: "kmp-shared-logic-without-shared-ui",
-  title: "KMP: Shared Logic Without Shared UI",
-  date: "Feb 2026",
-  summary: "How we structured a KMP project to share networking and domain logic while keeping native views.",
-  tags: ["KMP", "Architecture"],
-  category: "Architecture",
-  featured: true,
-  content: `The full post content as a template literal string.
-
-## Subheading
-
-Body text...`,
-},
+```sh
+npm run generate:all
 ```
 
-The `content` field contains the full post body as a template literal (backtick string). Keep it identical to the MDX body content.
+Generators:
+- `scripts/generate-blog-data.ts` writes `src/data/blogData.ts` from MDX frontmatter
+- `scripts/generate-og-images.ts` renders `/public/og/{lang}-{slug}.png` via Satori + Resvg (not runtime-renderable on Cloudflare Workers)
+
+Quick iteration on blog data only: `npm run generate:blog`.
+
+## Step 3: Validate Sync
+
+```sh
+npm run validate:blog
+```
+
+`scripts/validate-blog-sync.ts` checks that every MDX file has a matching entry in `blogData.ts`.
+
+## Step 4: Discoverability Wiring (automatic)
+
+These surfaces pick up the new post with no manual work, but verify after generation:
+
+- `/blog/{slug}.md` (en) or `/blog/ru/{slug}.md` (ru) -- raw markdown endpoint
+- `/rss.xml` (en) or `/rss.ru.xml` (ru) -- feed entry
+- `/llms-full.txt` -- content included in the aggregate dump
+- Sitemap entry (via `@astrojs/sitemap`)
+- `BlogPosting` JSON-LD on the post page with ISO dates
+- `/og/{lang}-{slug}.png` used as `og:image` and `twitter:image`
+- Self-referential `hreflang` + `x-default` in `<head>`; translated pair is linked when the sibling `{en,ru}/{slug}.mdx` exists
 
 ## Existing Categories
 
-Check `db/seed.sql` or the admin panel for current categories. Known categories:
+Current categories (from `db/seed.sql`):
+- All
 - Architecture
 - DevOps
-- Mobile
-- Performance
+- Android
+- iOS
 - Tooling
 
 Add new categories to `db/seed.sql` if needed:
@@ -132,13 +151,16 @@ Good: "Our mobile CI was slow and flaky. Here is how we cut build times from 45 
 
 ## Checklist
 
-- [ ] MDX file created at `src/content/blog/<slug>.mdx`
-- [ ] Slug matches filename (kebab-case)
-- [ ] Date format is `"Mon YYYY"`
+- [ ] MDX file created under `src/content/blog/{en,ru}/<slug>.mdx`
+- [ ] Slug matches filename (kebab-case); same slug across language variants
+- [ ] `date` display label is `"Mon YYYY"`
+- [ ] `publishedAt` is ISO `YYYY-MM-DD`
+- [ ] `updatedAt` added (only when revising a shipped post)
 - [ ] Category matches an existing category (or new one added to seed)
 - [ ] Tags reuse existing tags where possible
-- [ ] Entry added to `src/components/blogData.ts` with matching metadata
-- [ ] Content in both sources is identical
+- [ ] Run `npm run generate:all` to regenerate data files and OG image
+- [ ] Run `npm run validate:blog` (or `npm run validate:all`) to confirm sync
 - [ ] Copy passes anti-AI-slop check (no generic phrases)
 - [ ] Summary is 1-2 concrete sentences
 - [ ] Title is specific and human-sounding
+- [ ] After `npm run build`, spot-check `/blog/{slug}.md`, `/rss.xml`, `/og/{lang}-{slug}.png`
