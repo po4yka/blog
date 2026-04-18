@@ -28,6 +28,9 @@ const {
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+{lang === "ru" && blogPost && (
+  <link rel="preload" href="/fonts/piazzolla-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
+)}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>{title}</title>
 <meta name="description" content={description} />

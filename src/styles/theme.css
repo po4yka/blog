@@ -17,6 +17,7 @@
   --font-sans: "Geist Variable", "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", "Geist Mono", "Geist Mono Fallback", "Fira Code", ui-monospace, "Cascadia Code", "SF Mono", monospace;
   --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
+  --font-serif: "Piazzolla Variable", "Piazzolla", "Piazzolla Fallback", Georgia, "Iowan Old Style", "Charter", "Times New Roman", serif;
 }
 
 /* ─── DARK THEME — graphite + eggshell ────────────────────────────── */

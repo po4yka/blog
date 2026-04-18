@@ -6,12 +6,12 @@ The site is a **Swiss / International Typographic Style surface fused with an op
 
 The palette is neutral greyscale. Dark mode defaults to a near-black graphite canvas (`#0b0b0c`) with eggshell text (`#e9e8e4`). Light mode is warm paper (`#f5f3ee`) with ink (`#101012`). Emphasis is pure white on dark, pure black on light — weight and rule weight do the work that color used to do.
 
-Typography leads with **Geist Sans** for all headings, body, navigation, and UI labels. **Geist Mono** is demoted to code, terminal output, and metadata strips. The result is technical without being cold, and readable without sacrificing identity.
+Typography leads with **Geist Sans** for headings, navigation, UI labels, and site chrome. **Geist Mono** is demoted to code, terminal output, and metadata strips. **Piazzolla** — a variable high-contrast serif with native Cyrillic — carries long-form blog prose. The split is deliberate: technical chrome stays geometric and cold-eyed, while reading surfaces pick up editorial warmth.
 
 **Key characteristics:**
 - Near-black graphite canvas (`#0b0b0c` dark) / warm paper (`#f5f3ee` light)
 - No chromatic accent. Emphasis = `--emphasis` (pure white dark / pure black light) + weight + underline
-- Geist Sans as the primary type voice; Geist Mono for code and operator labels only
+- Geist Sans as the primary type voice; Geist Mono for code and operator labels only; **Piazzolla** (variable serif) exclusively for `.prose-blog` long-form reading
 - Flat operator panels: `1px solid var(--border)`, `2px border-radius`, no shadow, no window chrome
 - Numbered section system: every section opens with `SectionHeader` — `01 / IDENTITY`, `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING`, `07 / WRITING` (blog index), `09 / SETTINGS`, `!! / NOT FOUND`
 - Hairline rules as structural dividers — `var(--rule)` token
@@ -80,11 +80,13 @@ There is no chromatic accent. The only "accent" is `--emphasis` — pure white o
 --font-sans:  "Geist Variable", "Geist", system-ui, sans-serif;
 --font-mono:  "Geist Mono Variable", "Geist Mono", "Fira Code", ui-monospace, monospace;
 --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
+--font-serif: "Piazzolla Variable", "Piazzolla", "Piazzolla Fallback", Georgia, "Iowan Old Style", "Charter", "Times New Roman", serif;
 ```
 
-- **`--font-sans`** — all headings, body, navigation, labels, button text, UI copy
+- **`--font-sans`** — headings (including inside blog prose), navigation, labels, button text, UI copy, site chrome
 - **`--font-mono`** — code blocks, terminal output (`Cmd`, `BootBlock`, `InfoTable`), `.label-meta` metadata strips
 - **`--font-pixel`** — decorative counters and numbered section prefixes only; maximum 6 uses per page
+- **`--font-serif`** — blog post body prose only (`.prose-blog` block-level text). Variable wght 100–900. Latin + Latin-Ext + Cyrillic + Cyrillic-Ext subsets self-hosted in `public/fonts/piazzolla-*.woff2`. Never ship on non-post surfaces.
 
 Fira Code is an optional fallback in the mono stack for code blocks where programming ligatures help. Do not ship it unless ligatures are intentionally enabled.
 
@@ -101,7 +103,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 | body | 15–17px | 400 | 0 | UI copy, navigation |
 | `label-meta` | 11px mono, uppercase | 400 | 0.12em | Metadata strips, section number labels |
 
-All headings use `--font-sans`. `label-meta` uses `--font-mono`. Blog post prose uses `--font-sans` at 17px, line-height 1.7, max-width 40rem (~62ch with Geist Sans).
+All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at 17px, line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
 ### Hierarchy Rules
 
@@ -237,7 +239,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 **Grid column assignments:**
 - Hero: name + subtitle cols 1–8, technical sidebar cols 9–12
-- Blog post body: cols 2–8 (asymmetric, shifted right of center)
+- Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem.
 - Project list: cols 1–12 single column
 - Experience timeline: cols 1–8, year column cols 9–12
 
@@ -320,7 +322,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | Hero layout | Stacked, identity-first | Split: display-1 name left + widgets right |
 | Project blocks | Single column, full-width | Alternating split rows |
 | Navigation | Hamburger → `var(--background)` overlay | Horizontal with border-bottom rule |
-| Blog post body | Full width | cols 2–8 of 12 (capped at 40rem) |
+| Blog post body | Full width, prose capped at 46rem | Article + 14rem sticky TOC; prose capped at 46rem |
 | Font size | `14px` compact (user default) | `15px` default |
 
 **Touch targets:** minimum `44×44px` for all interactive elements on mobile.
@@ -334,9 +336,10 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 
 ```
 Stack: Astro 6 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
-Primary font: Geist Sans (all UI + headings + body)
+Primary font: Geist Sans (all UI + headings, including h2/h3/h4 inside blog prose)
 Mono font: Geist Mono (code, terminal output, label-meta strips)
 Pixel font: Geist Pixel (decorative counters only, ≤6 uses/page)
+Serif font: Piazzolla (blog post body prose only — .prose-blog block text)
 Dark bg: #0b0b0c | Card: #141416 | Emphasis: #ffffff
 Light bg: #f5f3ee | Card: #ffffff  | Emphasis: #000000
 Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.10) light
@@ -391,11 +394,13 @@ Row separator: border-bottom 1px dashed var(--rule).
 
 ### Typography guidance
 
-- Use `--font-sans` for everything except code, terminal output, and `.label-meta` strips
+- Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
+- Use `--font-serif` only inside `.prose-blog` body text. Headings inside the prose stay in `--font-sans` — do not switch the TOC or `display-2` post title to serif
 - Use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for the hero name only
 - Use `display-2` (clamp 28–40px, wt 500, tracking -0.020em) for blog post titles
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
+- Do not extend `--font-serif` beyond blog prose — no serif on project cards, experience blocks, settings, or any chrome surface
 
 ### Motion guidance
 
