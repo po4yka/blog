@@ -6,7 +6,7 @@ declare global {
   }
 }
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Link2, ChevronUp, ArrowUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, Link2, ChevronUp, ArrowUp, FileCode2 } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { duration } from "@/lib/motion";
@@ -130,6 +130,42 @@ function CopyLinkButton() {
       aria-label={t("blogPost.copyLink")}
     >
       {copied ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
+    </button>
+  );
+}
+
+// --- Copy as Markdown ---
+
+function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale }) {
+  const [state, setState] = useState<"idle" | "copied" | "error">("idle");
+  const { t } = useLocale();
+
+  const mdUrl = lang === "ru" ? `/blog/ru/${slug}.md` : `/blog/${slug}.md`;
+
+  const handleCopy = useCallback(async () => {
+    try {
+      const res = await fetch(mdUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const markdown = await res.text();
+      await navigator.clipboard.writeText(markdown);
+      setState("copied");
+      setTimeout(() => setState("idle"), 2000);
+    } catch {
+      setState("error");
+      setTimeout(() => setState("idle"), 2000);
+    }
+  }, [mdUrl]);
+
+  const label = state === "error" ? t("blogPost.copyMarkdownFail") : t("blogPost.copyMarkdown");
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
+      title={label}
+      aria-label={label}
+    >
+      {state === "copied" ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><FileCode2 size={11} /> {label}</>}
     </button>
   );
 }
@@ -334,6 +370,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                     linkedin.com/in/pochaev-nikita
                   </a>
                   <CopyLinkButton />
+                  <CopyMarkdownButton slug={slug} lang={lang} />
                 </div>
               </div>
 

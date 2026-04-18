@@ -50,6 +50,16 @@
   background-size: 100% 2px;
 }
 
+.prose-blog a:visited {
+  color: var(--foreground);
+  opacity: 0.75;
+}
+
+.prose-blog a:visited:hover {
+  color: var(--emphasis);
+  opacity: 1;
+}
+
 .prose-blog :is(h2, h3, h4) {
   scroll-margin-top: 3rem;
 }
@@ -229,6 +239,9 @@
 @media (max-width: 640px) {
   .prose-blog pre code {
     font-size: 0.75rem;
+  }
+  .prose-blog code {
+    font-size: 0.9em;
   }
 }
 
