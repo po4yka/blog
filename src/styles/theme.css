@@ -14,8 +14,8 @@
   --font-weight-strong: 600;
   --radius: 2px;
 
-  --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono Variable", "Geist Mono", "Fira Code", ui-monospace, "Cascadia Code", "SF Mono", monospace;
+  --font-sans: "Geist Variable", "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", "Geist Mono Fallback", "Fira Code", ui-monospace, "Cascadia Code", "SF Mono", monospace;
   --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
 }
 

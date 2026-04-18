@@ -4,6 +4,7 @@ import { slide } from "astro:transitions";
 import MainLayout from "@/layouts/MainLayout.astro";
 import { BlogPostIsland } from "@/components/BlogPostIsland";
 import { parsePostId } from "@/lib/i18n";
+import "katex/dist/katex.min.css";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");

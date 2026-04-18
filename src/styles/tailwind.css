@@ -4,8 +4,8 @@
 @import 'tw-animate-css';
 
 @theme inline {
-  --font-mono: "Geist Mono Variable", "Geist Mono", "Fira Code", ui-monospace, monospace;
-  --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", "Geist Mono Fallback", "Fira Code", ui-monospace, monospace;
+  --font-sans: "Geist Variable", "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Custom font sizes matching the design system */
   --text-2xs: 0.5rem;       /* 8px  */
