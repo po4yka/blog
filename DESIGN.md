@@ -470,6 +470,10 @@ The following components were removed during the Swiss refactor and its follow-u
 | `SystemBottomBar` | `6c11ea7` | Composite of three deleted widgets |
 | `FastlaneDeploy` | `6c11ea7` | Fabricated CI lane output with invented test counts |
 | `GitLog` (in `MobileTerminal/ci.tsx`) | `6c11ea7` | Hardcoded commit list |
+| `LanguagePanel` | _dead-code purge_ | Exported but rendered nowhere; duplicated `OpenSourcePanel` surface |
+| `ConnectionPanel` | _dead-code purge_ | Exported but rendered nowhere; browser-network sparkline |
+| `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere; overlapped with `StackHeatmap` |
+| `ProjectPlatformMatrix` | _dead-code purge_ | Exported but rendered nowhere; project×platform matrix |
 
 Real-data equivalents that cover every functional use-case:
 
@@ -478,15 +482,12 @@ Real-data equivalents that cover every functional use-case:
 | Live CI runs | `RealCIStatus` (GitHub Actions API) |
 | Recent commits | `RealGitLog` (GitHub API) |
 | Repo inventory | `OpenSourcePanel` (GitHub API) |
-| Language breakdown | `LanguagePanel` (GitHub API) |
 | Activity heatmap | `ActivityCalendar` + `ActivitySparkline` (GitHub events) |
 | Browser / device state | `VisitorContext` (`navigator.*`) |
-| Network context | `ConnectionPanel` (`navigator.connection` + `performance`) |
 | Build metadata | `BuildStats` (from `buildMeta.ts`) |
 | Latest post | `LatestPostPanel` (from `blogData`) |
 | Latest release | `LatestReleasePanel` (GitHub API) |
 | Blog stats | `BlogStatsPanel` (from `blogData`) |
-| Tag frequency | `TechTagHeatmap` (from `projects`) |
-| Platform matrix | `ProjectPlatformMatrix` (from `projects`) |
+| Stack timeline | `StackHeatmap` (from `experienceData` + `buildMeta`) |
 
 If a new widget need appears and there is no real data source for it, **do not render a fake one** — leave the slot empty or add a real data source first.

@@ -2,21 +2,32 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
-import { MacWindow } from "@/components/Terminal";
+import { PanelShell } from "./_helpers";
 import type { GitHubRepoSummary } from "@/types";
 import { ease, stagger } from "@/lib/motion";
 
 const MAX_REPOS = 6;
 
-function LanguageDot({ language }: { language: string | null }) {
-  // Neutral dot — no chromatic language colors
-  return (
-    <span
-      className="inline-block w-[7px] h-[7px] rounded-[2px] shrink-0 bg-muted-foreground"
-      style={{ opacity: 0.5 }}
-      title={language ?? "Unknown"}
-    />
-  );
+const LANG_GLYPH: Record<string, string> = {
+  TypeScript: "TS",
+  JavaScript: "JS",
+  Python: "PY",
+  Go: "GO",
+  Rust: "RS",
+  Kotlin: "KT",
+  Java: "JV",
+  Swift: "SW",
+  Ruby: "RB",
+  "C++": "C+",
+  Shell: "SH",
+  HTML: "HT",
+  CSS: "CS",
+  Dart: "DA",
+};
+
+function langGlyph(language: string | null): string {
+  if (!language) return "--";
+  return LANG_GLYPH[language] ?? language.slice(0, 2).toUpperCase();
 }
 
 export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
@@ -42,7 +53,11 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
   return (
     <MotionProvider>
       <div ref={ref}>
-        <MacWindow title="open-source" subtitle={`${totalStars} stars`} delay={delay}>
+        <PanelShell
+          label="po4yka / github"
+          labelRight={`${totalStars} STARS`}
+          delay={delay}
+        >
           <div className="space-y-0">
             {repos.map((repo, i) => (
               <motion.a
@@ -50,25 +65,32 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline font-mono rounded-[2px] border-b border-border/30 last:border-b-0"
+                className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline rounded-[2px] border-b border-border/30 last:border-b-0"
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.3, delay: delay + i * stagger.fast, ease }}
               >
-                <LanguageDot language={repo.language} />
+                <span
+                  className="label-meta shrink-0 w-[18px] text-center"
+                  style={{ color: "var(--muted-foreground-dim)" }}
+                  title={repo.language ?? "Unknown"}
+                >
+                  {langGlyph(repo.language)}
+                </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-foreground/80 group-hover:text-foreground group-hover:underline transition-colors duration-200 text-mono-sm truncate">
                       {repo.name}
                     </span>
-                    {repo.stars > 0 && (
-                      <span className="text-muted-foreground text-label shrink-0">
-                        {repo.stars}
-                      </span>
-                    )}
+                    <span
+                      className="text-label shrink-0"
+                      style={{ color: "var(--muted-foreground-dim)" }}
+                    >
+                      &#9733; {repo.stars}
+                    </span>
                   </div>
                   {repo.description && (
-                    <p className="text-muted-foreground text-label truncate mt-0.5">
+                    <p className="text-muted-foreground text-label line-clamp-2 mt-0.5">
                       {repo.description}
                     </p>
                   )}
@@ -76,7 +98,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
               </motion.a>
             ))}
           </div>
-        </MacWindow>
+        </PanelShell>
       </div>
     </MotionProvider>
   );

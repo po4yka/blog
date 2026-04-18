@@ -1,9 +1,5 @@
-export { LanguagePanel } from "./panels";
-export { ConnectionPanel } from "./graphs";
 export { StackHeatmap } from "./StackHeatmap";
 export { BlogStatsPanel } from "./BlogStatsPanel";
-export { TechTagHeatmap } from "./TechTagHeatmap";
-export { ProjectPlatformMatrix } from "./ProjectPlatformMatrix";
 export { ActivitySparkline } from "./ActivitySparkline";
 export { LatestReleasePanel } from "./LatestReleasePanel";
 export { VisitorContext } from "./VisitorContext";

@@ -8,12 +8,20 @@ import { easeStep8 } from "@/lib/motion";
 const WEEKS = 13; // ~3 months
 const DAYS_PER_WEEK = 7;
 const TOTAL_DAYS = WEEKS * DAYS_PER_WEEK;
+const ACTIVE_WINDOW = 91; // 13 weeks * 7 days
 const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+
+const MONTHS = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+];
 
 interface DayCell {
   date: string; // YYYY-MM-DD
   count: number;
   level: 0 | 1 | 2 | 3 | 4;
+  label: string;   // "MAR 14"
+  ariaLabel: string; // "Mar 14 — 8 events"
 }
 
 function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
@@ -36,7 +44,10 @@ function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
     d.setDate(d.getDate() - i);
     const key = d.toISOString().slice(0, 10);
     const count = counts.get(key) ?? 0;
-    cells.push({ date: key, count, level: 0 });
+    const mon = MONTHS[d.getMonth()]!;
+    const label = `${mon} ${d.getDate()}`;
+    const ariaLabel = `${mon.charAt(0)}${mon.slice(1).toLowerCase()} ${d.getDate()} — ${count} event${count === 1 ? "" : "s"}`;
+    cells.push({ date: key, count, level: 0, label, ariaLabel });
   }
 
   const trimmed = cells.slice(cells.length - TOTAL_DAYS);
@@ -66,6 +77,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [events, setEvents] = useState<Array<{ created_at: string }>>([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/github/calendar`)
@@ -80,7 +92,9 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   }, []);
 
   const cells = useMemo(() => buildCalendar(events), [events]);
-  const totalContributions = cells.reduce((sum, c) => sum + c.count, 0);
+
+  const totalEvents = cells.reduce((sum, c) => sum + c.count, 0);
+  const activeDays = cells.filter((c) => c.count > 0).length;
 
   const weeks: DayCell[][] = [];
   for (let w = 0; w < WEEKS; w++) {
@@ -103,16 +117,58 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
     return labels;
   }, [weeks]);
 
+  const hoveredCell = hoveredIdx !== null ? cells[hoveredIdx] ?? null : null;
+
+  const baselineLabel = `${totalEvents} EVENT${totalEvents === 1 ? "" : "S"} · ${activeDays}/${ACTIVE_WINDOW} ACTIVE`;
+  const hoverLabel = hoveredCell && hoveredCell.count > 0
+    ? `${hoveredCell.label} · ${hoveredCell.count} EVENT${hoveredCell.count === 1 ? "" : "S"}`
+    : null;
+
   if (loading) return null;
 
   return (
     <MotionProvider>
       <PanelShell
         label="ACTIVITY"
-        labelRight={`${totalContributions} events · ${WEEKS} weeks`}
+        labelRight={`${WEEKS} weeks`}
         delay={delay}
       >
         <div ref={ref} className="px-5 py-3">
+          {/* Hover overlay / baseline strip */}
+          <div
+            className="relative"
+            style={{ minHeight: 14, marginBottom: 4 }}
+            aria-live="polite"
+          >
+            {hoverLabel ? (
+              <span
+                className="absolute left-0 right-0 select-none"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  color: "var(--foreground)",
+                  opacity: 0.9,
+                  lineHeight: 1,
+                }}
+              >
+                {hoverLabel}
+              </span>
+            ) : (
+              <span
+                className="absolute left-0 right-0 text-muted-foreground-dim select-none"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  letterSpacing: "0.08em",
+                  lineHeight: 1,
+                }}
+              >
+                {baselineLabel}
+              </span>
+            )}
+          </div>
+
           {/* Month labels */}
           <div className="flex gap-[3px] mb-1 ml-[28px]">
             {Array.from({ length: WEEKS }).map((_, w) => {
@@ -147,41 +203,57 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
             <div className="flex gap-[3px]">
               {weeks.map((week, w) => (
                 <div key={w} className="flex flex-col gap-[3px]">
-                  {week.map((day, d) => (
-                    <motion.div
-                      key={day.date}
-                      className="rounded-[2px]"
-                      style={{
-                        width: 11,
-                        height: 11,
-                        backgroundColor: LEVEL_COLORS[day.level],
-                      }}
-                      initial={{ opacity: 0 }}
-                      animate={inView ? { opacity: 1 } : {}}
-                      transition={{
-                        duration: 0.15,
-                        delay: delay + 0.05 + (w * 7 + d) * 0.002,
-                        ease: easeStep8,
-                      }}
-                      title={`${day.date}: ${day.count} events`}
-                    />
-                  ))}
+                  {week.map((day, d) => {
+                    const cellIdx = w * DAYS_PER_WEEK + d;
+                    return (
+                      <motion.div
+                        key={day.date}
+                        className="rounded-[2px] cursor-default"
+                        style={{
+                          width: 11,
+                          height: 11,
+                          backgroundColor: LEVEL_COLORS[day.level],
+                        }}
+                        initial={{ opacity: 0 }}
+                        animate={inView ? { opacity: 1 } : {}}
+                        transition={{
+                          duration: 0.15,
+                          delay: delay + 0.05 + (w * 7 + d) * 0.002,
+                          ease: easeStep8,
+                        }}
+                        title={`${day.date}: ${day.count} event${day.count === 1 ? "" : "s"}`}
+                        aria-label={day.ariaLabel}
+                        onMouseEnter={() => setHoveredIdx(cellIdx)}
+                        onMouseLeave={() => setHoveredIdx((cur) => (cur === cellIdx ? null : cur))}
+                      />
+                    );
+                  })}
                 </div>
               ))}
             </div>
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-end gap-1.5 mt-2">
-            <span className="text-muted-foreground-dim" style={{ fontSize: "8px" }}>Less</span>
+          <div className="flex items-center gap-1.5 mt-2">
+            <span
+              className="text-muted-foreground-dim"
+              style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase" }}
+            >
+              less
+            </span>
             {LEVEL_COLORS.map((color, i) => (
               <div
                 key={i}
                 className="rounded-[2px]"
-                style={{ width: 9, height: 9, backgroundColor: color }}
+                style={{ width: 11, height: 11, backgroundColor: color, flexShrink: 0 }}
               />
             ))}
-            <span className="text-muted-foreground-dim" style={{ fontSize: "8px" }}>More</span>
+            <span
+              className="text-muted-foreground-dim"
+              style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase" }}
+            >
+              more
+            </span>
           </div>
         </div>
       </PanelShell>

@@ -176,13 +176,13 @@ export function StackHeatmap({ delay = 0 }: { delay?: number }) {
                       ? isHovered
                         ? 1
                         : inHoverRow || inHoverCol
-                          ? 0.95
-                          : 0.8
+                          ? 0.9
+                          : 0.75
                       : isHovered
-                        ? 0.35
+                        ? 0.25
                         : inHoverRow || inHoverCol
-                          ? 0.18
-                          : 0.07;
+                          ? 0.15
+                          : 0.06;
                     const ml = data.monthLabels[c]!;
                     return (
                       <motion.span
@@ -240,6 +240,55 @@ export function StackHeatmap({ delay = 0 }: { delay?: number }) {
                   </span>
                 );
               })}
+            </div>
+          </div>
+
+          <div className="flex gap-3 mt-2">
+            <div style={{ width: 92 }} />
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <span
+                className="inline-block rounded-[2px] shrink-0"
+                style={{
+                  width: 10,
+                  height: 10,
+                  backgroundColor: "var(--foreground)",
+                  opacity: 0.75,
+                }}
+              />
+              <span
+                className="text-muted-foreground-dim"
+                style={{
+                  fontSize: 9,
+                  fontFamily: "var(--font-mono)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginLeft: 2,
+                }}
+              >
+                ACTIVE
+              </span>
+              <span
+                className="inline-block rounded-[2px] shrink-0"
+                style={{
+                  width: 10,
+                  height: 10,
+                  backgroundColor: "var(--muted-foreground-dim)",
+                  opacity: 0.06,
+                  marginLeft: 4,
+                }}
+              />
+              <span
+                className="text-muted-foreground-dim"
+                style={{
+                  fontSize: 9,
+                  fontFamily: "var(--font-mono)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginLeft: 2,
+                }}
+              >
+                IDLE
+              </span>
             </div>
           </div>
 
