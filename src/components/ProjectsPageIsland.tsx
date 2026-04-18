@@ -26,8 +26,8 @@ function ProjectEntry({ project }: { project: Project }) {
     <motion.div
       ref={ref}
       className="py-5 border-b border-border last:border-b-0 group"
-      initial={{ opacity: 0, y: 10 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
     >
       {/* Title row */}

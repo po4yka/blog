@@ -33,8 +33,7 @@ export function SectionHeader({
 
   return (
     <header
-      className={`space-y-2 pb-3 ${className}`}
-      style={{ borderBottom: "1px solid var(--rule)" }}
+      className={`space-y-2 pb-3 relative ${className}`}
     >
       <div className="flex items-baseline justify-between gap-4 min-w-0">
         <div className="flex items-baseline gap-2.5 min-w-0 truncate">
@@ -88,6 +87,11 @@ export function SectionHeader({
           {description}
         </p>
       )}
+      <span
+        aria-hidden="true"
+        className="rule-draw absolute left-0 right-0 bottom-0 block"
+        style={{ height: 1, background: "var(--rule)" }}
+      />
     </header>
   );
 }

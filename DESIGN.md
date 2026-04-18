@@ -266,7 +266,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | PanelShell widget | `var(--card)` + `1px solid var(--border)` |
 | Sticky nav | `var(--background)` + `border-bottom: 1px solid var(--border)` |
 | Nested containers | `var(--muted)` — no shadow |
-| Island skeletons | shimmer from `var(--muted)` → `var(--secondary)` |
+| Loading indicators | `[LOADING...]` bracket cycle (`.loading-bracket`) — static mono text, no skeleton shimmer |
 
 **Zero shadows on:** panels, buttons, tags, blog list items, footer, any flat surface. Shadows are reserved for floating overlays (dialogs, dropdowns) only.
 
@@ -408,7 +408,8 @@ Permitted:
 - Mobile menu height/opacity `AnimatePresence` (functional state change)
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
-- `shimmer` keyframe on `.skeleton` loading state
+- `rule-draw` keyframe on SectionHeader hairline (steps(24) left→right plotter wipe)
+- `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
 Not permitted:
 - Parallax, cursor-follow, scroll-velocity tickers

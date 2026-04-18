@@ -51,8 +51,8 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline font-mono rounded-[2px] border-b border-border/30 last:border-b-0"
-                initial={{ opacity: 0, y: 6 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.3, delay: delay + i * stagger.fast, ease }}
               >
                 <LanguageDot language={repo.language} />

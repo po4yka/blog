@@ -66,8 +66,8 @@ export function Links() {
               style={{
                 border: "1px solid var(--border)",
               }}
-              initial={{ opacity: 0, y: 6 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease }}
             >
               <span className="text-muted-foreground-dim text-mono-sm">

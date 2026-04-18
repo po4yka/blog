@@ -30,8 +30,8 @@ export function Experience() {
             <motion.div
               key={role.period}
               className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group font-mono"
-              initial={{ opacity: 0, y: 8 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
             >
               <div className="flex items-baseline justify-between gap-4 flex-wrap">

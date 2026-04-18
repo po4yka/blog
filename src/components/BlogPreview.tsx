@@ -61,8 +61,8 @@ export function BlogPreview() {
                 key={post.slug}
                 href={blogUrl(displayLang as Locale, post.slug)}
                 className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono"
-                initial={{ opacity: 0, y: 8 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.35, delay: 0.04 + i * 0.06, ease }}
               >
                 <div className="flex-1 min-w-0">

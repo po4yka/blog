@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
-import { ease } from "@/lib/motion";
+import { ease, easeStep8 } from "@/lib/motion";
 import { barColor } from "./_utils";
 
 /** Shared panel shell — flat, hairline, operator-console header row. */
@@ -26,8 +26,8 @@ export function PanelShell({
         borderRadius: 2,
         background: "var(--panel-bg)",
       }}
-      initial={{ opacity: 0, y: 8 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.45, delay, ease }}
     >
       <div
@@ -81,7 +81,7 @@ export function UsageBar({
       <motion.span
         className="absolute left-0 top-0 overflow-hidden"
         animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
+        transition={{ duration: 0.8, ease: easeStep8 }}
       >
         <span className="text-mono-sm whitespace-nowrap" style={{ color, letterSpacing: "-0.5px" }}>
           {allBlocks}

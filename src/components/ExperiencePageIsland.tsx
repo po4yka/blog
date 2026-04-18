@@ -1,11 +1,10 @@
 import { motion } from "motion/react";
-import { lazy, Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
-
-const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
+import { StackHeatmap } from "./Decorations";
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease } from "@/lib/motion";
@@ -33,8 +32,8 @@ function RoleEntry({
     <motion.div
       ref={ref}
       className="py-5 border-b border-border last:border-b-0 group"
-      initial={{ opacity: 0, y: 10 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
     >
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
@@ -258,8 +257,8 @@ export function ExperiencePage() {
           <motion.div
             ref={skillsRef}
             className="space-y-1"
-            initial={{ opacity: 0, y: 8 }}
-            animate={skillsInView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0 }}
+            animate={skillsInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.4, ease }}
           >
             {skills.map((group) => (
@@ -276,10 +275,8 @@ export function ExperiencePage() {
         </span>
       </div>
 
-      {/* Decorative system widgets */}
-      <Suspense fallback={null}>
-        <CpuGraph delay={0.05} />
-      </Suspense>
+      {/* Career stack heatmap — real data derived from experience roles */}
+      <StackHeatmap delay={0.05} />
     </div>
     </MotionProvider>
     </ErrorBoundary>

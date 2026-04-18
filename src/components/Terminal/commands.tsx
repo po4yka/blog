@@ -109,8 +109,8 @@ export function OutputBlock({
       ref={ref}
       className={`relative pl-6 md:pl-8 font-mono cursor-pointer group/output ${className}`}
       style={{ borderLeft: "1px solid var(--rule)" }}
-      initial={{ opacity: 0, y: 6 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
       onClick={handleCopy}
       title="Click to copy"

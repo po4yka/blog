@@ -199,9 +199,9 @@ function ScrollToTop() {
         marginRight: "env(safe-area-inset-right)",
       }}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       title={t("blogPost.scrollToTop")}
       aria-label={t("blogPost.scrollToTop")}
     >

@@ -30,15 +30,15 @@ export function About() {
           style={{ lineHeight: 1.8 }}
         >
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.05 }}
           >
             {t("about.p1")}
           </motion.p>
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.12 }}
           >
             {t("about.p2prefix")}{" "}
@@ -48,8 +48,8 @@ export function About() {
             {t("about.p2suffix")}
           </motion.p>
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.19 }}
           >
             {t("about.p3")}

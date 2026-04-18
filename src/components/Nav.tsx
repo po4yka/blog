@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale } from "@/stores/settingsStore";
@@ -44,10 +44,14 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     return () => document.removeEventListener("astro:after-swap", onSwap);
   }, []);
 
-  // Scroll progress — hooks are safe to call (motion handles SSR),
-  // but we only render the progress bar after mount to avoid hydration mismatch
+  // Scroll progress — 24 discrete segments, lit in sequence as page scrolls.
+  // Segmented readout reads as LED meter, not smooth loading bar.
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
+  const [litSegments, setLitSegments] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const next = Math.min(24, Math.max(0, Math.floor(v * 24)));
+    setLitSegments((prev) => (prev === next ? prev : next));
+  });
 
   const onScroll = useThrottledCallback(
     () => setScrolled(window.scrollY > 20),
@@ -102,22 +106,24 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Scroll progress bar — only render after mount to avoid SSR mismatch */}
+      {/* Scroll progress — 24 discrete segments, lit sequentially. LED-meter readout. */}
       {mounted && !reduceMotion && (
-        <motion.div
-          style={{
-            scaleX,
-            transformOrigin: "left",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "1px",
-            background: "var(--foreground)",
-            opacity: 0.2,
-            zIndex: 10,
-          }}
-        />
+        <div
+          aria-hidden="true"
+          className="absolute top-0 left-0 right-0 flex gap-[1px] pointer-events-none"
+          style={{ height: "1px", zIndex: 10 }}
+        >
+          {Array.from({ length: 24 }, (_, i) => (
+            <span
+              key={i}
+              className="flex-1"
+              style={{
+                background: "var(--foreground)",
+                opacity: i < litSegments ? 0.55 : 0.06,
+              }}
+            />
+          ))}
+        </div>
       )}
 
       <div className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">

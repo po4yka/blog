@@ -153,8 +153,8 @@ export function BootBlock({
         border: "1px solid var(--border)",
         borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 6 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
     >
       <div
@@ -226,8 +226,8 @@ export function LessViewer({
         border: "1px solid var(--border)",
         borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: duration.slow, delay, ease }}
     >
       <div

@@ -7,7 +7,7 @@ import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 
-import { ease, duration, stagger } from "@/lib/motion";
+import { ease, duration, stagger, easeStep8 } from "@/lib/motion";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
 export interface BlogPostMeta {
@@ -145,9 +145,9 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
           <AnimatePresence mode="wait">
             <motion.ul
               key={`${activeCategory}|${activeTag ?? ""}`}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: duration.fast }}
               className="list-none m-0 p-0"
             >
@@ -161,8 +161,8 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                     {/* Marker */}
                     <motion.span
                       className="text-muted-foreground-dim shrink-0 pt-3 text-label"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                       aria-hidden="true"
                     >
@@ -172,8 +172,8 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                     {/* Title + summary */}
                     <motion.div
                       className="flex-1 min-w-0 relative"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     >
                       <h3 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
@@ -188,8 +188,8 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                     {/* Date */}
                     <motion.span
                       className="text-muted-foreground-dim shrink-0 pt-3 text-label"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     >
                       {post.date}
@@ -235,8 +235,8 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 10 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.slow, delay: 0.1, ease }}
     >
       <div
@@ -278,7 +278,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
                       style={{ background: "var(--foreground)", opacity: 0.35 }}
                       initial={{ width: 0 }}
                       animate={inView ? { width: `${Math.max(pct, 4)}%` } : {}}
-                      transition={{ duration: 0.6, delay: 0.3, ease }}
+                      transition={{ duration: 0.6, delay: 0.3, ease: easeStep8 }}
                     />
                   </div>
                   <span className="text-muted-foreground w-8 text-label">{count}</span>

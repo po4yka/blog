@@ -78,8 +78,8 @@ export function Settings() {
       <MacWindow label="preferences.conf" sectionNumber="09" delay={0.05}>
         <motion.div
           className="space-y-6"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.4, ease }}
         >
           {/* Theme */}

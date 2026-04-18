@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
-import { ease } from "@/lib/motion";
+import { easeStep8 } from "@/lib/motion";
 
 const WEEKS = 13; // ~3 months
 const DAYS_PER_WEEK = 7;
@@ -161,7 +161,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                       transition={{
                         duration: 0.15,
                         delay: delay + 0.05 + (w * 7 + d) * 0.002,
-                        ease,
+                        ease: easeStep8,
                       }}
                       title={`${day.date}: ${day.count} events`}
                     />
