@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
 import { InfoTable } from "@/components/Terminal";
+import { deferIdle } from "./_utils";
 import type { GitHubLatestRelease } from "@/types";
 
 function relativeTime(iso: string): string {
@@ -20,10 +21,13 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
   );
 
   useEffect(() => {
-    fetch("/api/github/latest-release")
-      .then((r) => r.json())
-      .then((d: GitHubLatestRelease | null) => setRelease(d))
-      .catch(() => setRelease(null));
+    // Defer decorative fetch off the critical path so it does not race LCP.
+    return deferIdle(() => {
+      fetch("/api/github/latest-release")
+        .then((r) => r.json())
+        .then((d: GitHubLatestRelease | null) => setRelease(d))
+        .catch(() => setRelease(null));
+    });
   }, []);
 
   if (!release?.url) return null;

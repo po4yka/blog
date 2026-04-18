@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
+import { deferIdle } from "./_utils";
 import type { GitHubActivitySummary } from "@/types";
 
 function SparkBar({
@@ -37,10 +38,13 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
   const [data, setData] = useState<GitHubActivitySummary | null>(null);
 
   useEffect(() => {
-    fetch("/api/github/events")
-      .then((r) => r.json())
-      .then((d: GitHubActivitySummary) => setData(d))
-      .catch(() => {});
+    // Defer decorative fetch off the critical path so it does not race LCP.
+    return deferIdle(() => {
+      fetch("/api/github/events")
+        .then((r) => r.json())
+        .then((d: GitHubActivitySummary) => setData(d))
+        .catch(() => {});
+    });
   }, []);
 
   const buckets = data?.buckets ?? Array(14).fill(0);
