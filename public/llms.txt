@@ -26,4 +26,5 @@ Nikita has led platform teams, migrated large codebases (80+ screens) from legac
 ## Optional
 
 - [Full site content](https://po4yka.dev/llms-full.txt): Complete content in a single file for LLM ingestion
+- [Site metadata index](https://po4yka.dev/site-index.json): JSON index of posts, projects, and experience (also exposed as WebMCP tools in-browser)
 - [Sitemap](https://po4yka.dev/sitemap-index.xml): XML sitemap

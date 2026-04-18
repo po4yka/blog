@@ -46,6 +46,11 @@ const { pathname } = Astro.url;
       <KeyboardShortcuts client:idle transition:persist />
     </div>
     <script>
+      // WebMCP bootstrap: expose site-scoped tools to in-browser AI agents.
+      // No-ops in browsers that do not implement navigator.modelContext.
+      import("@/lib/webmcp").then((m) => m.registerWebMCP()).catch(() => {});
+    </script>
+    <script>
       // Sync <html lang> with stored locale preference (for non-blog pages)
       function syncLang() {
         try {
