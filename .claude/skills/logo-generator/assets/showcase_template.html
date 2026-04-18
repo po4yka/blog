@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{PRODUCT_NAME}} — Logo Design Exploration</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* Project tokens (dark default, from DESIGN.md) */
+        :root {
+            --background: #0b0b0c;
+            --foreground: #e9e8e4;
+            --card: #141416;
+            --muted: #1e1e22;
+            --muted-foreground: #a6a6ac;
+            --muted-foreground-dim: #8a8a90;
+            --border: rgba(233, 232, 228, 0.10);
+            --rule: rgba(233, 232, 228, 0.14);
+            --emphasis: #ffffff;
+            --font-sans: "Geist", system-ui, sans-serif;
+            --font-mono: "Geist Mono", ui-monospace, monospace;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --background: #f5f3ee;
+                --foreground: #101012;
+                --card: #ffffff;
+                --muted: #dedcd5;
+                --muted-foreground: #4a4a50;
+                --muted-foreground-dim: #6a6a70;
+                --border: rgba(16, 16, 18, 0.10);
+                --rule: rgba(16, 16, 18, 0.14);
+                --emphasis: #000000;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: var(--background);
+            color: var(--foreground);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .font-mono {
+            font-family: var(--font-mono);
+        }
+
+        .label-meta {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted-foreground);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .page {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 5rem clamp(1.25rem, 2vw + 0.5rem, 3rem);
+        }
+
+        .section-header {
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--rule);
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-sans);
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: -0.010em;
+            color: var(--foreground);
+        }
+
+        .identity-block {
+            margin-bottom: 5rem;
+            max-width: 48rem;
+        }
+
+        .identity-label {
+            margin-bottom: 1.5rem;
+        }
+
+        .identity-name {
+            font-family: var(--font-sans);
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 500;
+            letter-spacing: -0.020em;
+            color: var(--foreground);
+            margin-bottom: 1rem;
+        }
+
+        .identity-tagline {
+            color: var(--muted-foreground);
+            max-width: 36rem;
+        }
+
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 6rem;
+        }
+
+        .logo-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .logo-card:hover {
+            background: var(--muted);
+            border-color: var(--rule);
+        }
+
+        .logo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .logo-card-index {
+            color: var(--muted-foreground-dim);
+        }
+
+        .logo-card-pattern {
+            color: var(--muted-foreground);
+        }
+
+        .logo-canvas {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            color: var(--foreground);
+        }
+
+        .logo-canvas svg,
+        .logo-canvas > div > svg {
+            width: 128px;
+            height: 128px;
+        }
+
+        .logo-card-body {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .logo-card-title {
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-card-subtitle {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted-foreground-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .logo-card-philosophy {
+            color: var(--muted-foreground);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .showcase-section {
+            margin-bottom: 6rem;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .showcase-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+
+        .showcase-card:hover {
+            border-color: var(--rule);
+        }
+
+        .showcase-card-img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .showcase-card-meta {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .footer {
+            padding-top: 3rem;
+            border-top: 1px solid var(--rule);
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer span {
+            color: var(--muted-foreground-dim);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        {{LOGO_COMPONENTS}}
+
+        const LogoShowcase = () => {
+            const logos = [
+                {{LOGO_DATA}}
+            ];
+
+            return (
+                <div className="page">
+
+                    {/* Identity block */}
+                    <div className="identity-block">
+                        <div className="label-meta identity-label">01 / IDENTITY</div>
+                        <h1 className="identity-name">{{PRODUCT_NAME}}</h1>
+                        <p className="identity-tagline">{{TAGLINE}}</p>
+                    </div>
+
+                    {/* Variants header */}
+                    <div className="section-header">
+                        <h2 className="section-title">Variants</h2>
+                        <span className="label-meta">{logos.length} RECORDS · GENERATED</span>
+                    </div>
+
+                    {/* Logo grid */}
+                    <div className="logo-grid">
+                        {logos.map((logo, index) => (
+                            <div key={index} className="logo-card">
+                                <div className="logo-card-header">
+                                    <span className="label-meta logo-card-index">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+                                    <span className="label-meta logo-card-pattern">
+                                        {logo.subtitle}
+                                    </span>
+                                </div>
+
+                                <div className="logo-canvas">
+                                    <logo.Component />
+                                </div>
+
+                                <div className="logo-card-body">
+                                    <h3 className="logo-card-title">{logo.title}</h3>
+                                    <div className="logo-card-subtitle">{logo.subtitle}</div>
+                                    <p className="logo-card-philosophy">{logo.philosophy}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Showcase section (injected only when showcase renders exist) */}
+                    {{SHOWCASE_SECTION}}
+
+                    {/* Footer */}
+                    <div className="footer">
+                        <span className="label-meta">LOGO-GENERATOR</span>
+                        <span className="label-meta">{{YEAR}}</span>
+                    </div>
+
+                </div>
+            );
+        };
+
+        ReactDOM.render(<LogoShowcase />, document.getElementById('root'));
+    </script>
+
+</body>
+</html>
