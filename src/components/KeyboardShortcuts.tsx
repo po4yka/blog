@@ -64,7 +64,7 @@ export function KeyboardShortcuts() {
   const cycleTheme = useCallback(() => {
     const store = useSettingsStore.getState();
     const idx = themeOrder.indexOf(store.theme);
-    store.setTheme(themeOrder[(idx + 1) % themeOrder.length] ?? "dark");
+    store.setTheme(themeOrder[(idx + 1) % themeOrder.length] ?? "light");
   }, []);
 
   useEffect(() => {

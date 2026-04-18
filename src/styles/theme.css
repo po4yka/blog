@@ -19,8 +19,8 @@
   --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
 }
 
-/* ─── DARK THEME — graphite + eggshell (default) ──────────────────── */
-.dark, :root:not(.light) {
+/* ─── DARK THEME — graphite + eggshell ────────────────────────────── */
+.dark {
   --background: #0b0b0c;
   --foreground: #e9e8e4;
   --card: #141416;
@@ -67,8 +67,8 @@
   --selection-bg: rgba(233, 232, 228, 0.20);
 }
 
-/* ─── LIGHT THEME — paper + ink ───────────────────────────────────── */
-.light {
+/* ─── LIGHT THEME — paper + ink (default) ─────────────────────────── */
+.light, :root:not(.dark) {
   --background: #f5f3ee;
   --foreground: #101012;
   --card: #ffffff;

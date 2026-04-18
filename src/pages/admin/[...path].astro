@@ -38,7 +38,7 @@ window.__vite_plugin_react_preamble_installed__ = true;
       try {
         var raw = localStorage.getItem('site_preferences');
         var prefs = raw ? JSON.parse(raw) : {};
-        var theme = prefs.theme || 'dark';
+        var theme = prefs.theme || 'light';
         var resolved = theme === 'system'
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme;

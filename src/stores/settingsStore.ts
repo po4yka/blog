@@ -23,14 +23,14 @@ interface SettingsActions {
 type SettingsStore = SitePreferences & SettingsActions;
 
 const defaults: SitePreferences = {
-  theme: "dark",
+  theme: "light",
   reduceMotion: false,
   fontSize: "default",
   locale: defaultLocale,
 };
 
 function getSystemTheme(): "light" | "dark" {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
