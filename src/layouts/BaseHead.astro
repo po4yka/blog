@@ -50,16 +50,30 @@ const {
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" hreflang="en" title="po4yka.dev — English posts" href="/rss.xml" />
 <link rel="alternate" type="application/rss+xml" hreflang="ru" title="po4yka.dev — Русские записи" href="/rss.ru.xml" />
-{blogSlug && hasTranslation && lang === "en" && (
+{/*
+  Hreflang strategy for blog posts:
+  - If a translation exists, emit both language variants plus x-default -> the English URL.
+  - If only this language exists, emit self-referential hreflang plus x-default pointing at
+    the canonical post URL, telling crawlers this is the sole available language.
+*/}
+{blogSlug && lang === "en" && (
   <>
     <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
-    <link rel="alternate" hreflang="ru" href={`https://po4yka.dev/blog/ru/${blogSlug}`} />
+    {hasTranslation && (
+      <link rel="alternate" hreflang="ru" href={`https://po4yka.dev/blog/ru/${blogSlug}`} />
+    )}
+    <link rel="alternate" hreflang="x-default" href={`https://po4yka.dev/blog/${blogSlug}`} />
   </>
 )}
-{blogSlug && hasTranslation && lang === "ru" && (
+{blogSlug && lang === "ru" && (
   <>
     <link rel="alternate" hreflang="ru" href={`https://po4yka.dev/blog/ru/${blogSlug}`} />
-    <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
+    {hasTranslation && (
+      <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
+    )}
+    <link rel="alternate" hreflang="x-default" href={hasTranslation
+      ? `https://po4yka.dev/blog/${blogSlug}`
+      : `https://po4yka.dev/blog/ru/${blogSlug}`} />
   </>
 )}
 <JsonLd isHomePage={isHomePage} blogPost={blogPost} slug={blogSlug} lang={lang} />
