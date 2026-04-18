@@ -9,11 +9,11 @@ The taste-skill family includes opinionated defaults that conflict with this pro
 
 ## Font Stack
 
-This project uses **JetBrains Mono** as its primary UI font and **Inter** only as a secondary reading font for long-form blog prose. These are deliberate choices documented in `docs/Guidelines.md` and `DESIGN.md`. Taste-skill rules that ban Inter do not apply here, but Inter should not displace the monospace-first system.
+This project uses **Geist Sans** (`--font-sans`) for site chrome and all headings (including h2/h3/h4 inside blog prose), **Geist Mono** (`--font-mono`) for code blocks, terminal output, and `.label-meta` strips, and **Piazzolla** (`--font-serif`, variable serif with native Cyrillic) exclusively for blog post body prose inside `.prose-blog`. Documented in `docs/Guidelines.md` and `DESIGN.md`. Taste-skill bans on Inter do not apply because the project does not use Inter anywhere.
 
 ## Accent Color
 
-This project uses a muted purple accent (`#9184f7` dark, `#6b5ce6` light) as its single accent family. This is an intentional choice, not "AI purple". Taste-skill rules banning purple/violet accents do not apply.
+This project has **no chromatic accent**. Emphasis is carried by `--emphasis` (pure white on dark, pure black on light) combined with font weight and 1px underline rules. `--destructive` (`#e8634b` dark / `#b83a28` light) is the only non-neutral token and is strictly reserved for irreversible destructive actions. Taste-skill rules banning coloured accents align with the project — apply them.
 
 ## Framework
 

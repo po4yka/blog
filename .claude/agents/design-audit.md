@@ -36,22 +36,23 @@ If no recent changes, audit all component files the user specifies.
 
 ## Audit Checklist
 
-### 1. Typography (JetBrains Mono first, Inter only for prose)
+### 1. Typography (Geist Sans chrome, Piazzolla for blog prose)
 
-- [ ] JetBrains Mono is the primary UI font for headings, body, labels, dates, tags, and terminal output
-- [ ] Inter appears only where long-form blog prose benefits from a secondary reading face
+- [ ] Geist Sans (`--font-sans`) is the primary font for UI chrome: headings (including h2/h3/h4 inside `.prose-blog`), navigation, labels, button text, and metadata that isn't `.label-meta`
+- [ ] Geist Mono (`--font-mono`) appears only where its character is load-bearing: code blocks, terminal output (`Cmd`/`BootBlock`/`InfoTable`), `.label-meta` strips
+- [ ] Piazzolla (`--font-serif`) appears ONLY on `.prose-blog` block-level body text — never on project cards, experience rows, settings, or any chrome surface
 - [ ] Clear type hierarchy: headings feel deliberate, body is readable
 - [ ] No more than 3-4 font sizes per component
 - [ ] Consistent line-height and spacing rhythm
 - [ ] No overly corporate or generic type treatment
 
-### 2. Color (Single Accent Family)
+### 2. Color (No chromatic accent)
 
-- [ ] Accent: muted purple only (`#9184f7` dark, `#6b5ce6` light, CSS var `--accent`)
-- [ ] No competing accent colors
+- [ ] No accent color family — emphasis uses `--emphasis` (pure white on dark, pure black on light) plus weight and 1px underline only
+- [ ] `--destructive` (`#e8634b` dark / `#b83a28` light) used strictly for irreversible destructive actions, never as decoration
 - [ ] No loud gradients, neon tones, or oversaturated palettes
-- [ ] Primary text: charcoal/graphite (not pure black)
-- [ ] Muted secondary text for labels and metadata
+- [ ] Primary text: eggshell on dark (`#e9e8e4`), ink on light (`#101012`)
+- [ ] Muted secondary text via `--muted-foreground` / `--muted-foreground-dim` for labels and metadata
 - [ ] WCAG AA contrast maintained (4.5:1 for text, 3:1 for UI elements)
 
 ### 3. Layout

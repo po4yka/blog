@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
 ---
 
-> **Project Override:** Presentations for this project should use the Catppuccin Mocha color palette (`#191a21` background, `#24273a` card, `#9184f7` accent) and JetBrains Mono typography. Import design tokens from the blog's `src/styles/theme.css` CSS custom properties. See `DESIGN.md` for the complete design specification.
+> **Project Override:** Presentations for this project use the neutral greyscale palette (`#0b0b0c` graphite dark / `#f5f3ee` warm paper light, `#141416` / `#ffffff` cards, `--emphasis` white/black — no chromatic accent) and Geist Sans typography for chrome with Geist Mono for code/labels. Piazzolla (`--font-serif`) is for blog-post bodies only and should not appear on slides. Import design tokens from the blog's `src/styles/theme.css` CSS custom properties. See `DESIGN.md` for the complete design specification.
 
 # Slides
 

@@ -111,6 +111,7 @@ const en = {
   "blogPost.related": "RELATED",
   "blogPost.previous": "PREVIOUS",
   "blogPost.next": "NEXT",
+  "blogPost.toc": "CONTENTS",
 
   // settings
   "settings.heading": "Settings",
@@ -280,6 +281,7 @@ const ru: TranslationKeys = {
   "blogPost.related": "\u041f\u041e\u0425\u041e\u0416\u0415\u0415",
   "blogPost.previous": "\u041f\u0420\u0415\u0414\u042b\u0414\u0423\u0429\u0415\u0415",
   "blogPost.next": "\u0421\u041b\u0415\u0414\u0423\u042e\u0429\u0415\u0415",
+  "blogPost.toc": "\u0421\u041e\u0414\u0415\u0420\u0416\u0410\u041d\u0418\u0415",
 
   // settings
   "settings.heading": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",

@@ -99,7 +99,7 @@ Key skills:
 - `/output-skill` -- prevents AI truncation and placeholder patterns
 - `/minimalist-skill` -- editorial minimalism (Notion/Linear aesthetic)
 
-These skills ban Inter font and purple accents by default. This project uses both intentionally. See `.claude/skills/taste-context/SKILL.md` for project overrides that take precedence.
+These skills ban Inter font and purple accents by default. Neither applies here: the project uses Geist Sans for chrome and Piazzolla for blog prose, and there is no chromatic accent — emphasis is pure white/black. See `.claude/skills/taste-context/SKILL.md` for project overrides that take precedence.
 
 Update skills: `bash scripts/update-taste-skills.sh`
 

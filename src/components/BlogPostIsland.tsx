@@ -12,6 +12,7 @@ import { MotionProvider } from "./MotionProvider";
 import { duration } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
 import { blogUrl, type Locale } from "@/lib/i18n";
+import { cn } from "./ui/utils";
 
 interface PostMeta {
   title: string;
@@ -210,6 +211,77 @@ function ScrollToTop() {
   );
 }
 
+// --- Table of contents (sticky, desktop-only) ---
+
+type TocItem = { id: string; text: string; level: 2 | 3 };
+
+function TableOfContents({
+  contentRef,
+  label,
+}: {
+  contentRef: { current: HTMLDivElement | null };
+  label: string;
+}) {
+  const [items, setItems] = useState<TocItem[]>([]);
+  const [activeId, setActiveId] = useState<string>("");
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const hs = Array.from(el.querySelectorAll<HTMLHeadingElement>("h2[id], h3[id]"));
+    const next: TocItem[] = hs.map((h) => {
+      const clone = h.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll(".heading-anchor").forEach((a) => a.remove());
+      return {
+        id: h.id,
+        text: (clone.textContent ?? "").trim(),
+        level: h.tagName === "H2" ? 2 : 3,
+      };
+    });
+    setItems(next);
+    if (hs.length < 3) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActiveId((visible.target as HTMLElement).id);
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 },
+    );
+    hs.forEach((h) => io.observe(h));
+    return () => io.disconnect();
+  }, [contentRef]);
+
+  if (items.length < 3) return null;
+
+  return (
+    <aside className="hidden lg:block">
+      <nav aria-label={label} className="sticky top-24 space-y-3">
+        <div className="label-meta text-muted-foreground-dim">{label}</div>
+        <ul className="list-none m-0 p-0 space-y-1.5">
+          {items.map(({ id, text, level }) => (
+            <li key={id} className={level === 3 ? "pl-3" : ""}>
+              <a
+                href={`#${id}`}
+                className={cn(
+                  "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
+                  activeId === id
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  );
+}
+
 // --- Main Component ---
 
 export function BlogPostIsland({ post, slug, prev, next, related, children, lang: langProp }: BlogPostIslandProps) {
@@ -280,9 +352,10 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
           meta={`${readingTime} ${t("blogPost.min")}`}
           delay={0.1}
         >
-          <article>
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
+          <article className="min-w-0">
             {/* Article header */}
-            <header className="mb-10" style={{ maxWidth: "40rem" }}>
+            <header className="mb-10" style={{ maxWidth: "46rem" }}>
               <h1 className="display-2 text-foreground">
                 {post.title}
               </h1>
@@ -339,13 +412,12 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
             <div
               ref={contentRef}
               className="prose-blog"
-              style={{ maxWidth: "40rem" }}
             >
               {children}
             </div>
 
             {/* Footer — author micro-block + related posts */}
-            <div className="mt-8 pt-4 border-t border-border space-y-6" style={{ maxWidth: "40rem" }}>
+            <div className="mt-8 pt-4 border-t border-border space-y-6" style={{ maxWidth: "46rem" }}>
               {/* Author row */}
               <div className="space-y-2">
                 <div className="font-sans text-[15px] leading-snug">
@@ -406,6 +478,8 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
               )}
             </div>
           </article>
+          <TableOfContents contentRef={contentRef} label={t("blogPost.toc")} />
+          </div>
         </LessViewer>
 
         <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />

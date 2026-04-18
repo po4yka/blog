@@ -69,8 +69,8 @@ Flag ANY of these patterns in UI code or copy:
 
 ## Design System Checks
 
-- Typography: JetBrains Mono for UI/body/headings/metadata, Inter only for long-form blog prose
-- Accent: muted purple (`#9184f7` dark, `#6b5ce6` light) -- single accent family only
+- Typography: Geist Sans (`--font-sans`) for UI chrome + headings (including inside blog prose), Geist Mono (`--font-mono`) for code + `.label-meta` strips, Piazzolla (`--font-serif`) exclusively on `.prose-blog` body text
+- Accent: none — emphasis is `--emphasis` (pure white dark / pure black light) plus weight and underline; `--destructive` reserved for irreversible actions
 - Motion: supports clarity, never blocks reading, respects `reduceMotion`
 - Layout: avoid identical card grids, prefer editorial asymmetry
 

@@ -8,7 +8,7 @@ metadata:
   version: "1.0.0"
 ---
 
-> **Project Override:** Banners for this project should use the Catppuccin Mocha palette (`#191a21` background, `#9184f7` accent, `#cdd6f4` text), JetBrains Mono typography, and the terminal workstation aesthetic. See `DESIGN.md` for the full design system. The `ai-artist` and `ai-multimodal` skills referenced below are not installed in this project -- use alternative image generation methods or create HTML/CSS-only banners.
+> **Project Override:** Banners for this project use the neutral greyscale palette — `#0b0b0c` graphite dark or `#f5f3ee` warm paper light, eggshell (`#e9e8e4`) or ink (`#101012`) text, no chromatic accent (emphasis is `--emphasis` white/black plus weight + underline). Typography: Geist Sans for chrome and Geist Mono for operator labels; Piazzolla belongs on blog post bodies only and should not appear on banners. Flat operator panels with 1px hairline borders, 2px radius, no shadows, no traffic lights. See `DESIGN.md` for the full design system. The `ai-artist` and `ai-multimodal` skills referenced below are not installed in this project -- use alternative image generation methods or create HTML/CSS-only banners.
 
 # Banner Design - Multi-Format Creative Banner System
 

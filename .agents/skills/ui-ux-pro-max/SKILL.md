@@ -314,7 +314,7 @@ Search specific domains using the CLI tool below.
 Extract key information from user request:
 - **Product type**: Personal portfolio, technical blog, developer showcase
 - **Target audience**: Technical professionals, hiring managers, fellow engineers
-- **Style keywords**: terminal workstation, Catppuccin Mocha, monospace-first, minimal, credible
+- **Style keywords**: Swiss typographic, operator console, neutral greyscale, no accent, editorial serif (blog prose), minimal, credible
 - **Stack**: Astro 6 + React 19 + Tailwind CSS 4 (use `--stack astro`)
 
 ### Step 2: Search Design Intelligence (Supplementary)

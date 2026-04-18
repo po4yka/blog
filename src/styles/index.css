@@ -8,9 +8,10 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 .prose-blog {
-  font-family: var(--font-sans);
-  letter-spacing: -0.003em;
-  max-width: 40rem; /* ~62 ch with Geist Sans 17px */
+  font-family: var(--font-serif);
+  letter-spacing: 0;
+  max-width: 46rem; /* ~70 ch with Piazzolla 17px */
+  font-feature-settings: "kern", "liga", "clig", "calt";
 }
 
 .prose-blog h2,
@@ -30,7 +31,7 @@
 .prose-blog ul,
 .prose-blog ol,
 .prose-blog blockquote {
-  max-width: 40rem;
+  max-width: 46rem;
 }
 
 .prose-blog a {

@@ -132,7 +132,7 @@ The visual language combines Swiss grid discipline and neutral greyscale with th
 The visual language combines:
 
 - terminal authenticity (real CLI patterns, not decorative approximations)
-- Geist Sans as the primary type voice; Geist Mono demoted to code and operator labels
+- Geist Sans as the primary type voice; Geist Mono demoted to code and operator labels; Piazzolla (variable serif with Cyrillic) carries blog post body prose
 - neutral greyscale palette — dark graphite (`#0b0b0c`) / warm paper (`#f5f3ee`)
 - numbered section labels (`01 / IDENTITY`, `04 / PROJECTS`) with hairline dividers
 - calm whitespace between operator panels
@@ -219,12 +219,13 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 
 Typography should carry the design.
 
-- **Geist Sans** (`--font-sans`) is the primary font for all UI: headings, body text, labels, navigation, and button text. It replaces the former monospace-everywhere approach.
+- **Geist Sans** (`--font-sans`) is the primary font for site chrome: headings (including inside blog prose), UI copy, navigation, labels, and button text. It replaces the former monospace-everywhere approach.
+- **Piazzolla** (`--font-serif`) is reserved for blog post body prose only — a variable-weight high-contrast serif with native Cyrillic. It gives long-form reading surfaces editorial warmth while site chrome stays geometric.
 - **Geist Mono** (`--font-mono`) is demoted to code blocks, terminal output components (`Cmd`, `BootBlock`, `InfoTable`), and `.label-meta` metadata strips.
 - **Geist Pixel** (`--font-pixel`) is reserved for decorative numbered section prefixes only — maximum 6 uses per page.
 - Create a clear type hierarchy using **weight** (400→500), **opacity**, and **size** -- not font switching between families.
 - Headings should feel deliberate and confident; use `display-1` / `display-2` at display sizes with negative tracking.
-- Body prose (blog posts) uses Geist Sans at 17px, line-height 1.7, max-width 40rem.
+- Body prose (blog posts) uses Piazzolla (`--font-serif`) at 17px, line-height 1.7, `letter-spacing: 0`, max-width 46rem (~70ch). Headings *inside* the prose stay in Geist Sans so they match the TOC and the rest of the site.
 - Avoid too many font sizes and weights.
 - Use consistent line-height and spacing rhythm.
 
@@ -245,7 +246,7 @@ Typography should carry the design.
 - precise
 - technical
 - confident
-- readable — Geist Sans provides warmth that pure monospace did not
+- readable — Geist Sans provides warmth to UI chrome that pure monospace did not; Piazzolla extends that warmth into long-form blog reading
 - not decorative for decoration’s sake
 
 ---

@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
 ---
 
-> **Project Override:** This project's brand is already defined in `DESIGN.md` and `docs/Guidelines.md`. This skill provides supplementary frameworks and validation tooling -- not a new brand. The terminal workstation aesthetic, Catppuccin Mocha palette, and JetBrains Mono typography are the established brand. Do not override them.
+> **Project Override:** This project's brand is already defined in `DESIGN.md` and `docs/Guidelines.md`. This skill provides supplementary frameworks and validation tooling -- not a new brand. The Swiss / International Typographic Style fused with an operator-console industrial layer, neutral greyscale palette (no chromatic accent), Geist Sans chrome with Piazzolla for blog prose body are the established brand. Do not override them.
 
 # Brand
 

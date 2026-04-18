@@ -17,15 +17,16 @@ The project's design system is fully defined in `DESIGN.md` and implemented in `
 
 ## Color Palette
 
-The project uses the **Catppuccin Mocha** palette with a single muted purple accent:
-- Dark: `#191a21` background, `#24273a` card, `#9184f7` accent
-- Light: `#f6f5f8` background, `#ffffff` card, `#6b5ce6` accent
+The project uses a strictly neutral greyscale palette with **no chromatic accent**:
+- Dark: `#0b0b0c` background, `#141416` card, `#e9e8e4` eggshell text, `#ffffff` `--emphasis`
+- Light: `#f5f3ee` warm paper, `#ffffff` card, `#101012` ink text, `#000000` `--emphasis`
+- Emphasis is carried by weight + 1px underline + `--emphasis`; `--destructive` is reserved for irreversible actions only
 
 Color palette recommendations from the search engine are reference material only. Never override the project palette.
 
 ## Typography
 
-The project uses **JetBrains Mono** (primary, all UI) and **Inter** (blog prose only). Font pairing recommendations from the search engine are reference material only. Do not suggest alternative fonts.
+The project uses **Geist Sans** (site chrome + all headings, including inside blog prose), **Geist Mono** (code + operator labels + `.label-meta`), and **Piazzolla** (variable serif with Cyrillic, exclusively inside `.prose-blog` body text). Font pairing recommendations from the search engine are reference material only. Do not suggest alternative fonts.
 
 ## Components
 
