@@ -6,6 +6,7 @@
   X-XSS-Protection: 0
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 /
-  Link: </llms.txt>; rel="describedby"; type="text/plain"; title="LLM discovery index", </llms-full.txt>; rel="describedby"; type="text/plain"; title="Full site content for LLMs", </site-index.json>; rel="describedby"; type="application/json"; title="Site metadata index for agents", </sitemap-index.xml>; rel="sitemap"; type="application/xml", </rss.xml>; rel="alternate"; type="application/rss+xml"; hreflang="en"; title="Blog (English)", </rss.ru.xml>; rel="alternate"; type="application/rss+xml"; hreflang="ru"; title="Blog (Russian)", </robots.txt>; rel="service-meta"; type="text/plain"
+  Link: <https://po4yka.dev/llms.txt>; rel="describedby"; type="text/plain"; title="LLM discovery index", <https://po4yka.dev/llms-full.txt>; rel="describedby"; type="text/plain"; title="Full site content for LLMs", <https://po4yka.dev/site-index.json>; rel="describedby"; type="application/json"; title="Site metadata index for agents", <https://po4yka.dev/sitemap-index.xml>; rel="sitemap"; type="application/xml", <https://po4yka.dev/rss.xml>; rel="alternate"; type="application/rss+xml"; hreflang="en"; title="Blog (English)", <https://po4yka.dev/rss.ru.xml>; rel="alternate"; type="application/rss+xml"; hreflang="ru"; title="Blog (Russian)", <https://po4yka.dev/robots.txt>; rel="service-meta"; type="text/plain"
