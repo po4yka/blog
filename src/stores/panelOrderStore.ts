@@ -6,7 +6,7 @@ export type ContainerKey = "heroSidebar" | "memoryGrid" | "systemBar";
 const defaults: Record<ContainerKey, string[]> = {
   heroSidebar: ["cpu", "net"],
   memoryGrid: ["memory", "disks"],
-  systemBar: ["net-bottom", "cpu-history"],
+  systemBar: ["net-bottom", "stack-history"],
 };
 
 interface PanelOrderState {

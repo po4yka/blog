@@ -1,5 +1,6 @@
 export { LanguagePanel } from "./panels";
-export { CpuGraph, ConnectionPanel } from "./graphs";
+export { ConnectionPanel } from "./graphs";
+export { StackHeatmap } from "./StackHeatmap";
 export { BlogStatsPanel } from "./BlogStatsPanel";
 export { TechTagHeatmap } from "./TechTagHeatmap";
 export { ProjectPlatformMatrix } from "./ProjectPlatformMatrix";
