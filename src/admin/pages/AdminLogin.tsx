@@ -8,7 +8,7 @@ import { getPasskeyStatus } from "@/admin/api";
 export function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [shake, setShake] = useState(false);
+  const [invalidCount, setInvalidCount] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [hasPasskey, setHasPasskey] = useState(false);
   const [allowPassword, setAllowPassword] = useState(false);
@@ -43,8 +43,7 @@ export function AdminLogin() {
       navigate("/admin");
     } else {
       setError(result.error ?? "Passkey authentication failed");
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
+      setInvalidCount((c) => c + 1);
     }
   };
 
@@ -56,8 +55,7 @@ export function AdminLogin() {
       navigate("/admin");
     } else {
       setError("Invalid password");
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
+      setInvalidCount((c) => c + 1);
     }
   };
 
@@ -99,9 +97,14 @@ export function AdminLogin() {
           </div>
         </div>
 
-        <motion.div
-          animate={shake ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
-          transition={{ duration: 0.4 }}
+        <div
+          key={invalidCount}
+          className={invalidCount > 0 ? "form-flash" : ""}
+          style={{
+            outline: "1px solid transparent",
+            outlineOffset: "4px",
+            borderRadius: 2,
+          }}
         >
           {/* Passkey button (primary when available) */}
           {hasPasskey && (
@@ -179,7 +182,7 @@ export function AdminLogin() {
               No passkey registered. Run <code className="text-foreground/60">npm run setup:passkey</code> to get started.
             </p>
           )}
-        </motion.div>
+        </div>
 
         {/* Error display */}
         {error && (

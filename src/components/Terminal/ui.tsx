@@ -1,5 +1,3 @@
-import { motion } from "motion/react";
-import { spring } from "@/lib/motion";
 import type { ReactNode } from "react";
 
 /**
@@ -21,7 +19,7 @@ export function Accent({ children }: { children: ReactNode; glow?: boolean }) {
 }
 
 /**
- * Tag / metadata chip — flat, hairline, no hover lift.
+ * Tag / metadata chip — flat, hairline, static. No hover motion.
  */
 export function Tag({
   children,
@@ -31,7 +29,7 @@ export function Tag({
   variant?: "default" | "highlight";
 }) {
   return (
-    <motion.span
+    <span
       className="inline-block px-2 py-0.5 cursor-default font-mono text-xs uppercase"
       style={{
         letterSpacing: "0.08em",
@@ -40,12 +38,8 @@ export function Tag({
         border: `1px solid ${variant === "highlight" ? "var(--foreground)" : "var(--border)"}`,
         borderRadius: 2,
       }}
-      whileHover={{
-        y: -1,
-        transition: spring.snappy,
-      }}
     >
       {children}
-    </motion.span>
+    </span>
   );
 }

@@ -288,6 +288,16 @@ body, .bg-background, .bg-card, [class*="bg-"] {
   50% { opacity: 0; }
 }
 
+/* One-shot outline flash — invalid form feedback.
+   Wrapper must have `outline: 1px solid transparent; outline-offset: N` at rest. */
+@keyframes form-flash {
+  from { outline-color: var(--destructive); }
+  to { outline-color: transparent; }
+}
+.form-flash {
+  animation: form-flash 0.45s ease-out forwards;
+}
+
 @keyframes bar-fill {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }

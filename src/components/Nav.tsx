@@ -158,25 +158,24 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
 
           {/* Theme toggle */}
-          <motion.button
+          <button
             onClick={cycleTheme}
-            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
+            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
             title={switchThemeLabel}
             aria-label={switchThemeLabel}
-            whileTap={{ scale: 0.92, rotate: theme === "dark" ? 180 : -180 }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
             data-umami-event="theme-toggle"
             data-umami-event-next={theme === "dark" ? "light" : "dark"}
           >
             <ThemeIcon size={13} strokeWidth={1.8} />
             <span className="hidden lg:inline">{themeLabel}</span>
-          </motion.button>
+          </button>
 
           {/* Online dot */}
           <span className="flex items-center gap-1.5">
             <span
-              className="w-[5px] h-[5px] rounded-full"
-              style={{ backgroundColor: "var(--foreground)", opacity: 0.5, animation: "pulse-scale 3s ease-in-out infinite" }}
+              aria-hidden="true"
+              className="w-[5px] h-[5px]"
+              style={{ backgroundColor: "var(--foreground)", opacity: 0.5, borderRadius: 1 }}
             />
             <span className="text-3xs text-muted-foreground">
               {t("nav.online")}
@@ -186,27 +185,24 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
 
         {/* Mobile: theme toggle + hamburger */}
         <div className="md:hidden flex items-center gap-1">
-          <motion.button
+          <button
             onClick={cycleTheme}
-            className="flex items-center justify-center text-foreground/60 min-h-[44px] min-w-[44px] cursor-pointer"
+            className="flex items-center justify-center text-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
             aria-label={switchThemeLabel}
-            whileTap={{ scale: 0.85, rotate: 180 }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
             data-umami-event="theme-toggle"
             data-umami-event-next={theme === "dark" ? "light" : "dark"}
           >
             <ThemeIcon size={18} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="flex items-center justify-center text-muted-foreground/60 min-h-[44px] min-w-[44px] cursor-pointer"
+          </button>
+          <button
+            className="flex items-center justify-center text-muted-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={t("nav.toggleMenu")}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            whileTap={{ scale: 0.9 }}
           >
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
-          </motion.button>
+          </button>
         </div>
       </div>
 
