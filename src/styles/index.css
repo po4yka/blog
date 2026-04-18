@@ -165,7 +165,7 @@
 }
 
 .prose-blog blockquote p {
-  font-style: italic;
+  color: var(--muted-foreground);
 }
 
 .prose-blog hr {

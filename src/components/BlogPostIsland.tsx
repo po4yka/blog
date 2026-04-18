@@ -348,7 +348,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
             <div className="mt-8 pt-4 border-t border-border space-y-6" style={{ maxWidth: "40rem" }}>
               {/* Author row */}
               <div className="space-y-2">
-                <div className="text-label">
+                <div className="font-sans text-[15px] leading-snug">
                   <span className="text-foreground font-medium">Nikita Pochaev</span>
                   <span className="text-muted-foreground"> — {t("blogPost.authorRole")}</span>
                 </div>
@@ -388,7 +388,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                           <div className="label-meta text-muted-foreground-dim">
                             {rp.category}
                           </div>
-                          <div className="mt-1 text-[17px] font-medium text-foreground/80 group-hover:text-foreground transition-colors duration-150">
+                          <div className="mt-1 font-sans text-[17px] leading-snug font-medium text-foreground/80 group-hover:text-foreground transition-colors duration-150">
                             {rp.title}
                           </div>
                           <div className="mt-1 label-meta opacity-70">
