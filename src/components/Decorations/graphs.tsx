@@ -307,23 +307,6 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   const [hoveredCell, setHoveredCell] = useState<{ r: number; c: number } | null>(null);
   const [baseGrid] = useState(createCpuBaseGrid);
 
-  const [waveOffsets, setWaveOffsets] = useState<number[][]>(() =>
-    Array.from({ length: CPU_GRAPH_ROWS }, () =>
-      Array.from({ length: CPU_GRAPH_COLS }, () => 0)
-    )
-  );
-
-  useAnimationInterval(() => {
-    setWaveOffsets(
-      Array.from({ length: CPU_GRAPH_ROWS }, () =>
-        Array.from(
-          { length: CPU_GRAPH_COLS },
-          () => (Math.random() - 0.5) * 0.15
-        )
-      )
-    );
-  }, 12_000);
-
   return (
     <MotionProvider>
     <PanelShell label="cpu history" labelRight="6 cores · 3.7 GHz" delay={delay}>
@@ -333,7 +316,6 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
             <div key={r} className="flex gap-[3px]">
               {row.map((val, c) => {
                 const baseOpacity = Math.max(0.06, val / 100) * 0.8;
-                const waveOpacity = Math.max(0.04, Math.min(0.9, baseOpacity + (waveOffsets[r]?.[c] ?? 0)));
                 // Grayscale ramp: high load = foreground, low = muted
                 const color = val > 60 ? "var(--foreground)" : val > 30 ? "var(--muted-foreground)" : "var(--muted-foreground-dim)";
                 const isHovered = hoveredCell?.r === r && hoveredCell?.c === c;
@@ -345,8 +327,8 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
                       width: "10px",
                       height: "10px",
                       backgroundColor: color,
-                      opacity: isHovered ? 1 : waveOpacity,
-                      transition: "opacity 1.5s ease",
+                      opacity: isHovered ? 1 : baseOpacity,
+                      transition: "opacity 0.2s ease",
                     }}
                     initial={{ opacity: 0 }}
                     animate={inView ? { opacity: baseOpacity } : {}}

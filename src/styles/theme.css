@@ -298,11 +298,6 @@ body, .bg-background, .bg-card, [class*="bg-"] {
   animation: form-flash 0.45s ease-out forwards;
 }
 
-@keyframes bar-fill {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
 /* Selection */
 ::selection {
   background: var(--selection-bg);
