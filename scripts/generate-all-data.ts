@@ -9,6 +9,7 @@ import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
 import { generateBuildMetaSource } from "./generate-build-meta.js";
+import { generateOgImages } from "./generate-og-images.js";
 
 interface GeneratorConfig {
   name: string;
@@ -63,3 +64,13 @@ if (hasError) {
 }
 
 console.log("All data files generated successfully.");
+
+// OG image rendering is async (satori + resvg). Run it after the sync
+// generators so blogData.ts is up-to-date before we read it.
+try {
+  await generateOgImages();
+  console.log("OG images generated successfully.");
+} catch (err) {
+  console.error(`Failed to generate OG images: ${err}`);
+  process.exit(1);
+}
