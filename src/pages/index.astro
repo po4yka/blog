@@ -6,7 +6,7 @@ import { Links } from "@/components/Links";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
-import { RealGitLog, RealCIStatus } from "@/components/MobileTerminal";
+import { RealGitLog } from "@/components/MobileTerminal";
 import {
   OpenSourcePanel,
   ActivityCalendar,
@@ -57,11 +57,6 @@ import {
     <div data-section-name="blog-stats">
       <BlogStatsPanel client:visible delay={0.05} />
     </div>
-
-    <!-- Real CI/CD status from GitHub Actions -->
-    <div data-section-name="ci-status">
-      <RealCIStatus client:visible delay={0.05} />
-    </div>
   </div>
 
   <style>
@@ -94,15 +89,26 @@ import {
 
     /* Skip rendering for off-screen sections until scrolled into view.
        Only sections that always render non-empty content — empty-prone
-       API-driven sections (open-source, activity-calendar, git-log,
-       ci-status) would otherwise reserve a 300px placeholder that
-       collapses to 0px once the component hydrates and returns null,
-       producing a visible gap while the user is scrolling. */
+       API-driven sections (open-source, activity-calendar, git-log)
+       would otherwise reserve a 300px placeholder that collapses to
+       0px once the component hydrates and returns null, producing a
+       visible gap while the user is scrolling. */
     [data-section-name="experience"],
     [data-section-name="blog"],
     [data-section-name="blog-stats"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
+    }
+
+    /* Collapse empty-prone API-driven section wrappers (open-source,
+       activity-calendar, git-log) when the island has no content yet.
+       Without this, each wrapper keeps its Tailwind space-y-14 margin
+       and produces a phantom 56 px gap. `:has()` and `:empty` are
+       universally supported in modern browsers (Chrome 105+, Safari
+       15.4+, Firefox 121+). When the island hydrates and renders
+       content, `:empty` stops matching and the section reappears. */
+    [data-section-name]:has(> astro-island:empty) {
+      display: none;
     }
   </style>
 
