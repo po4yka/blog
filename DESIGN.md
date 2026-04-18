@@ -13,7 +13,7 @@ Typography leads with **Geist Sans** for all headings, body, navigation, and UI 
 - No chromatic accent. Emphasis = `--emphasis` (pure white dark / pure black light) + weight + underline
 - Geist Sans as the primary type voice; Geist Mono for code and operator labels only
 - Flat operator panels: `1px solid var(--border)`, `2px border-radius`, no shadow, no window chrome
-- Numbered section system: every section opens with `SectionHeader` — `01 / IDENTITY`, `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING`
+- Numbered section system: every section opens with `SectionHeader` — `01 / IDENTITY`, `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING`, `07 / WRITING` (blog index), `09 / SETTINGS`, `!! / NOT FOUND`
 - Hairline rules as structural dividers — `var(--rule)` token
 - Near-zero decorative motion: fade-in stagger on mount, opacity shift on hover, nothing else
 - Terminal output uses real mobile dev tool patterns: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
@@ -32,12 +32,14 @@ Typography leads with **Geist Sans** for all headings, body, navigation, and UI 
 | `--secondary` | `#18181b` | Nested containers |
 | `--muted` | `#1e1e22` | Subtle fills, hover state backgrounds |
 | `--muted-foreground` | `#a6a6ac` | Secondary labels — 7.8:1 on bg |
-| `--muted-foreground-dim` | `#7c7c82` | Tertiary labels — 4.9:1 on bg |
+| `--muted-foreground-dim` | `#8a8a90` | Tertiary labels — 6.5:1 on bg, 4.8:1 on card |
 | `--border` | `rgba(233,232,228,0.10)` | Panel edges, hairline separators |
 | `--rule` | `rgba(233,232,228,0.14)` | Section divider rules |
 | `--emphasis` | `#ffffff` | Full-luminance emphasis, focus rings |
 | `--code-bg` | `#16161a` | Code block backgrounds |
-| `--destructive` | `#e8634b` | Destructive actions only |
+| `--destructive` | `#e8634b` | Destructive actions + invalid-form flash only |
+| `--panel-bg` | `rgba(20,20,22,0.65)` | Translucent panel background (sidebar widgets) |
+| `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop (with blur) |
 
 ### Light Theme (warm paper + ink)
 
@@ -54,7 +56,9 @@ Typography leads with **Geist Sans** for all headings, body, navigation, and UI 
 | `--rule` | `rgba(16,16,18,0.14)` | Section divider rules |
 | `--emphasis` | `#000000` | Full-luminance emphasis, focus rings |
 | `--code-bg` | `#eeebe4` | Code block backgrounds |
-| `--destructive` | `#b83a28` | Destructive actions only |
+| `--destructive` | `#b83a28` | Destructive actions + invalid-form flash only |
+| `--panel-bg` | `rgba(255,255,255,0.70)` | Translucent panel background |
+| `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop |
 
 ### Emphasis Rule
 
@@ -163,6 +167,13 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - Row 3: `border-bottom: 1px solid var(--rule)`
 - Applied to every home section and primary page header
 
+**Error flash** (`form-flash` keyframe — for invalid form feedback)
+- One-shot `@keyframes form-flash { from { outline-color: var(--destructive); } to { outline-color: transparent; } }`
+- Wrapper must have base outline: `outline: 1px solid transparent; outline-offset: 4px; border-radius: 2px`
+- Re-triggered via React `key={invalidCount}` remount so repeated failures restart cleanly
+- Replaces the AI-cliché horizontal shake animation (`x: [-8, 8, -6, 6, -3, 3, 0]`) for rejected-credentials feedback
+- Reduce-motion: already caught by the global `animation-duration: 0.01ms !important` wildcard in `index.css`
+
 ### Buttons
 
 **Primary**
@@ -183,6 +194,11 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - No background, no border
 - Text: `var(--muted-foreground)`
 - Hover: text lifts to `var(--foreground)`, 1px underline appears
+
+**Press feedback (all button variants)**
+- Use Tailwind `active:opacity-70` for click / tap feedback — a brief 30 % dim on press
+- Do NOT use `whileTap={{ scale: 0.9N }}` / `rotate: ±180` / spring bounce — these are AI-slop tells
+- Do NOT use `animation: "pulse-scale …"` on status dots — keep ambient dots static
 
 No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
@@ -278,13 +294,18 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - No glassmorphism on any surface
 - No pill-shaped buttons or container radii beyond 2px
 - No generic SaaS card grids
-- No fake metrics or KPI cards presented as real data
+- No fake metrics or KPI cards presented as real data — if there is no real data source, do not render the widget
 - No Matrix/hacker aesthetic — no green-on-black, no code rain, no CRT bezels
-- No phosphor glow, no scanlines, no cursor-glow, no parallax
+- No phosphor glow, no scanlines, no cursor-glow, no parallax, no mouse-follow
 - No more than 6–8 atmospheric sections on a single page
 - No stacking two decorative blocks back-to-back
 - No ASCII art illustrations — box-drawing characters for structure are fine; character art is not
 - No `--font-mono` for body text or headings — monospace is demoted to code and operator labels only
+- No `whileTap={{ scale }}` / `whileTap={{ rotate }}` — bounce-on-press is an AI tell; use `active:opacity-70`
+- No `whileHover={{ y }}` / `whileHover={{ scale }}` / `whileHover={{ rotate }}` — hover feedback is colour / underline / background only
+- No `animation: "pulse-scale …"` on status dots or anywhere else — status dots stay static
+- No legacy tokens: `--accent`, `--accent-N`, `--phosphor-glow`, `--titlebar*`, `--window-shadow*`, `--dot-dim`, `--signal-*` were all deleted — do not re-introduce them
+- No `text-accent` / `bg-accent` / `hover:text-accent` classes — use `text-foreground font-medium` / `bg-muted` / `hover:underline` instead
 
 ---
 
@@ -382,11 +403,37 @@ Permitted:
 - Fade-in stagger on mount (signals list structure, 120–150ms per item)
 - Opacity shift on hover (100ms, no color change)
 - Underline clip-path animation on links (300ms ease)
+- `active:opacity-70` on button press (CSS `:active` pseudo, not Motion whileTap)
+- Background colour shift on hover for list rows (to `var(--muted)`)
+- Mobile menu height/opacity `AnimatePresence` (functional state change)
+- `.form-flash` one-shot outline for invalid form submission (450ms)
+- `blink` keyframe on TerminalPrompt caret (focused-input indicator)
+- `shimmer` keyframe on `.skeleton` loading state
 
 Not permitted:
 - Parallax, cursor-follow, scroll-velocity tickers
 - Color jumps or accent flash on hover
 - Blob physics, floating elements, intro animations
+- `whileTap` scale / rotate / translate — use `active:opacity-70`
+- `whileHover` scale / y-shift / rotate — stick to opacity / background / underline
+- Pulse / breathe loops on dots, panels, or atmospheric widgets
+- Any keyframe named `shake`, `wobble`, `bounce`, `jiggle`, `float`, `pulse-scale` — hard banned
+
+### SSR guidance
+
+For build-time-static panels (data from synchronous imports like `buildMeta`, `blogData`, `projectsData`):
+
+- **Import directly** — `import { BuildStats } from "./Decorations"`. Do NOT wrap in `React.lazy()`.
+- **Do NOT wrap in `<Suspense fallback={null}>`** — the component is synchronous.
+- Result: Astro SSRs the panel's content into the initial HTML response, no FOUC, no lazy chunk request.
+
+For async-data panels (fetch `/api/*` or read `navigator.*` / `performance.*`):
+
+- **Keep lazy-loaded** — `const X = lazy(() => import("./Decorations").then(m => ({ default: m.X })))`.
+- Wrap in `<Suspense fallback={null}>`.
+- These panels hydrate on the client when their parent island becomes visible.
+
+Admin SPA: `/admin/*` uses a catch-all Astro route that mounts React manually via `<script>import "@/admin/mount"</script>`. Because there's no Astro `client:*` island on that page, the React-Refresh preamble is injected manually in `src/pages/admin/[...path].astro` under `{isDev && (<script type="module" is:inline …>)}`. Do not remove it — admin will go blank in dev otherwise.
 
 ### Design quality checklist
 
@@ -400,3 +447,45 @@ Before finalizing any UI output, verify:
 - [ ] Reduced motion respected on all animations
 - [ ] Atmospheric terminal blocks do not exceed 6–8 on a single page
 - [ ] Mobile layout is intentionally designed, not a collapsed desktop
+- [ ] Press feedback via `active:opacity-70`, not `whileTap` scale/rotate
+- [ ] Status dots, online indicators, traffic-light analogues: static — no pulse loops
+- [ ] No `whileHover` that mutates geometry (y, x, scale, rotate)
+- [ ] If the widget has no real data source, it does not exist
+
+---
+
+## 10. Deleted Inventory
+
+The following components were removed during the Swiss refactor and its follow-up passes. They are **not available for import** and must not be reconstructed:
+
+| Component | Removed in | Reason |
+|---|---|---|
+| `TrafficLights` | `a0146f7` | macOS window theatre — replaced by flat hairline header |
+| `UptimeStrip` | `e42eccc` → `a0146f7` | Fake uptime/load/tasks ticker |
+| `CpuMonitor`, `MemoryPanel`, `DiskBars` | `6c11ea7` | Seeded-RNG fake system metrics |
+| `MemoryGrid` | `6c11ea7` | Thin wrapper over `MemoryPanel` |
+| `ProcessTable` | `6c11ea7` | Hardcoded process list + synth CPU/mem |
+| `NetworkGraph` | `6c11ea7` | Scroll-velocity sparkline dressed as "network I/O" |
+| `SystemBottomBar` | `6c11ea7` | Composite of three deleted widgets |
+| `FastlaneDeploy` | `6c11ea7` | Fabricated CI lane output with invented test counts |
+| `GitLog` (in `MobileTerminal/ci.tsx`) | `6c11ea7` | Hardcoded commit list |
+
+Real-data equivalents that cover every functional use-case:
+
+| Need | Use |
+|---|---|
+| Live CI runs | `RealCIStatus` (GitHub Actions API) |
+| Recent commits | `RealGitLog` (GitHub API) |
+| Repo inventory | `OpenSourcePanel` (GitHub API) |
+| Language breakdown | `LanguagePanel` (GitHub API) |
+| Activity heatmap | `ActivityCalendar` + `ActivitySparkline` (GitHub events) |
+| Browser / device state | `VisitorContext` (`navigator.*`) |
+| Network context | `ConnectionPanel` (`navigator.connection` + `performance`) |
+| Build metadata | `BuildStats` (from `buildMeta.ts`) |
+| Latest post | `LatestPostPanel` (from `blogData`) |
+| Latest release | `LatestReleasePanel` (GitHub API) |
+| Blog stats | `BlogStatsPanel` (from `blogData`) |
+| Tag frequency | `TechTagHeatmap` (from `projects`) |
+| Platform matrix | `ProjectPlatformMatrix` (from `projects`) |
+
+If a new widget need appears and there is no real data source for it, **do not render a fake one** — leave the slot empty or add a real data source first.
