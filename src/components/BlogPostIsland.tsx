@@ -20,6 +20,7 @@ interface PostMeta {
   tags: string[];
   category: string;
   readingTime?: number;
+  isoDate?: string;
 }
 
 interface AdjacentPost {
@@ -202,48 +203,59 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
           meta={`${readingTime} ${t("blogPost.min")}`}
           delay={0.1}
         >
-          {/* Article header */}
-          <div className="mb-10" style={{ maxWidth: "40rem" }}>
-            <h1 className="display-2 text-foreground">
-              {post.title}
-            </h1>
-            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">
-              <span>
-                {t("blogPost.author")} <span className="text-foreground font-medium">Nikita Pochaev</span>
-              </span>
-              <span aria-hidden="true">·</span>
-              <span>
-                {t("blogPost.date")} <span className="text-foreground/80">{post.date}</span>
-              </span>
-              <span aria-hidden="true">·</span>
-              <span>
-                {t("blogPost.category")} <span className="text-foreground/80">{post.category}</span>
-              </span>
+          <article>
+            {/* Article header */}
+            <header className="mb-10" style={{ maxWidth: "40rem" }}>
+              <h1 className="display-2 text-foreground">
+                {post.title}
+              </h1>
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">
+                <span>
+                  {t("blogPost.author")} <span className="text-foreground font-medium">Nikita Pochaev</span>
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {t("blogPost.date")}{" "}
+                  <time dateTime={post.isoDate ?? post.date} className="text-foreground/80">
+                    {post.date}
+                  </time>
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {t("blogPost.category")} <span className="text-foreground/80">{post.category}</span>
+                </span>
+              </div>
+              {/* Tag list in header — semantic metadata placement */}
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-muted-foreground cursor-default font-mono text-label"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </header>
+
+            {/* MDX Content rendered by Astro, passed as children */}
+            <div
+              ref={contentRef}
+              className="prose-blog"
+              style={{ maxWidth: "40rem" }}
+            >
+              {children}
             </div>
-          </div>
 
-          {/* MDX Content rendered by Astro, passed as children */}
-          <div
-            ref={contentRef}
-            className="prose-blog"
-            style={{ maxWidth: "40rem" }}
-          >
-            {children}
-          </div>
-
-          {/* Tags */}
-          <div className="mt-8 pt-4 border-t border-border flex flex-wrap items-center gap-3" style={{ maxWidth: "40rem" }}>
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-muted-foreground cursor-default font-mono text-label"
-              >
-                #{tag}
-              </span>
-            ))}
-            <span className="flex-1" />
-            <CopyLinkButton />
-          </div>
+            {/* Footer — copy-link action */}
+            <div
+              className="mt-8 pt-4 border-t border-border flex flex-wrap items-center gap-3"
+              style={{ maxWidth: "40rem" }}
+            >
+              <span className="flex-1" />
+              <CopyLinkButton />
+            </div>
+          </article>
         </LessViewer>
 
         <div ref={endRef} aria-hidden />
