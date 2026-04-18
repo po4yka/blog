@@ -116,10 +116,14 @@
 }
 
 /* ─── Focus ring — pure emphasis colour, offset for visibility ────── */
+/* No border-radius: outline stays sharp-rectangular to match the flat
+   operator-panel kit. Modern Chrome/Safari/Firefox follow the element's
+   own border-radius for the outline shape, so anything with natively
+   rounded corners (e.g., shadcn Dialog's 2 px radii) still gets a
+   matching rounded ring; elements with no radius get a sharp ring. */
 :focus-visible {
   outline: 2px solid var(--emphasis);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 /* View Transition (theme wipe) — simple fade, no radial clip theatre */
