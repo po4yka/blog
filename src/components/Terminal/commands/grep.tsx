@@ -56,7 +56,7 @@ const grep: Command = {
         <div className="space-y-0.5">
           {found.map((p) => (
             <div key={p.slug} className="flex gap-4">
-              <span className="text-accent/70 shrink-0" style={{ minWidth: 140 }}>
+              <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
               <span className="text-muted-foreground/50">
@@ -84,7 +84,7 @@ const grep: Command = {
         <div className="space-y-0.5">
           {found.map((p) => (
             <div key={p.slug} className="flex gap-4">
-              <span className="text-accent/70 shrink-0" style={{ minWidth: 140 }}>
+              <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
               <span className="text-muted-foreground/50">

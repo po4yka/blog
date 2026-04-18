@@ -5,9 +5,13 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
 
+// Build-time-static panels — imported eagerly so Astro SSR can paint their
+// content into the initial HTML response (no FOUC, no lazy fallback).
+import { BuildStats } from "./Decorations";
+import { LatestPostPanel } from "./Decorations";
+
+// Async-data panels — keep lazy so their code only loads when Hero hydrates.
 const VisitorContext = lazy(() => import("./Decorations").then(m => ({ default: m.VisitorContext })));
-const BuildStats = lazy(() => import("./Decorations").then(m => ({ default: m.BuildStats })));
-const LatestPostPanel = lazy(() => import("./Decorations").then(m => ({ default: m.LatestPostPanel })));
 const ActivitySparkline = lazy(() => import("./Decorations").then(m => ({ default: m.ActivitySparkline })));
 const LatestReleasePanel = lazy(() => import("./Decorations").then(m => ({ default: m.LatestReleasePanel })));
 
@@ -30,12 +34,12 @@ export function Hero() {
       </div>
 
       {/* Visitor context + build stats panels */}
-      <Suspense fallback={null}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Suspense fallback={null}>
           <VisitorContext delay={0.05} />
-          <BuildStats delay={0.1} />
-        </div>
-      </Suspense>
+        </Suspense>
+        <BuildStats delay={0.1} />
+      </div>
 
       {/* whois + sidebar */}
       <div className="space-y-4">
@@ -107,13 +111,13 @@ export function Hero() {
           </div>
 
           {/* Sidebar: real content panels — desktop only */}
-          <Suspense fallback={null}>
-            <div className="hidden lg:flex flex-col gap-4">
-              <LatestPostPanel delay={0.15} />
+          <div className="hidden lg:flex flex-col gap-4">
+            <LatestPostPanel delay={0.15} />
+            <Suspense fallback={null}>
               <ActivitySparkline delay={0.2} />
               <LatestReleasePanel delay={0.25} />
-            </div>
-          </Suspense>
+            </Suspense>
+          </div>
         </div>
       </div>
     </section>

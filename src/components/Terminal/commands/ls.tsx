@@ -20,7 +20,7 @@ const ls: Command = {
         <div className="space-y-0.5">
           {projects.map((p) => (
             <div key={p.slug} className="flex gap-4">
-              <span className="text-accent/70 shrink-0" style={{ minWidth: 140 }}>
+              <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
               <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 80 }}>
@@ -43,7 +43,7 @@ const ls: Command = {
         <div className="space-y-0.5">
           {blogPosts.map((p) => (
             <div key={p.slug} className="flex gap-4">
-              <span className="text-accent/70 shrink-0" style={{ minWidth: 140 }}>
+              <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
               <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 80 }}>

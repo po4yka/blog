@@ -1,6 +1,4 @@
-import { motion } from "motion/react";
 import { useMemo } from "react";
-import { useInView } from "@/hooks/useInView";
 import { Shell } from "@/components/MobileTerminal/Shell";
 import { Accent } from "@/components/Terminal";
 import { projects } from "@/data/projectsData";
@@ -14,7 +12,6 @@ const STATUS_OPACITY: Record<string, number> = {
 };
 
 export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
-  const { ref, inView } = useInView(0.1);
   const platforms = useMemo(() => collectPlatforms(projects), []);
 
   return (
@@ -28,7 +25,7 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
       windowTitle="projects — matrix"
     >
       {() => (
-        <div ref={ref} className="px-5 py-3.5 overflow-x-auto">
+        <div className="px-5 py-3.5 overflow-x-auto">
           {/* Desktop: matrix table */}
           <table className="hidden sm:table w-full text-label font-mono border-collapse">
             <thead>
@@ -57,13 +54,10 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
               </tr>
             </thead>
             <tbody>
-              {projects.map((project, i) => (
-                <motion.tr
+              {projects.map((project) => (
+                <tr
                   key={project.id}
                   className="hover:bg-muted transition-colors duration-150"
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.25, delay: delay + 0.1 + i * 0.04 }}
                 >
                   <td
                     className="text-foreground/75 pr-4 py-[3px] truncate"
@@ -89,20 +83,17 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
                       {project.status ?? "—"}
                     </span>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
 
           {/* Mobile: stacked list */}
           <div className="sm:hidden space-y-2.5">
-            {projects.map((project, i) => (
-              <motion.div
+            {projects.map((project) => (
+              <div
                 key={project.id}
                 className="space-y-0.5"
-                initial={{ opacity: 0, x: -4 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.25, delay: delay + 0.1 + i * 0.04 }}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-foreground/75 text-mono-sm font-mono">{project.name}</span>
@@ -118,7 +109,7 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
                 <div className="text-muted-foreground text-label font-mono">
                   {project.platforms.join(", ")}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

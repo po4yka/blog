@@ -1,7 +1,5 @@
-export { CpuMonitor, MemoryPanel, LanguagePanel } from "./panels";
-export { NetworkGraph, CpuGraph, ProcessTable, ConnectionPanel } from "./graphs";
-export { SystemBottomBar } from "./strips";
-export { MemoryGrid } from "./MemoryGrid";
+export { LanguagePanel } from "./panels";
+export { CpuGraph, ConnectionPanel } from "./graphs";
 export { BlogStatsPanel } from "./BlogStatsPanel";
 export { TechTagHeatmap } from "./TechTagHeatmap";
 export { ProjectPlatformMatrix } from "./ProjectPlatformMatrix";

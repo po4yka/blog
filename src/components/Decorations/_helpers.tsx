@@ -65,7 +65,7 @@ export function UsageBar({
   inView?: boolean;
 }) {
   const allBlocks = "\u2588".repeat(blocks);
-  const color = barColor(pct);
+  const color = barColor();
 
   return (
     <motion.span

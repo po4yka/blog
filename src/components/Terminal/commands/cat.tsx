@@ -64,7 +64,7 @@ const cat: Command = {
                       href={l.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent/60 hover:text-accent transition-colors"
+                      className="text-foreground/80 hover:text-foreground hover:underline underline-offset-2 transition-colors"
                     >
                       {l.type}
                     </a>

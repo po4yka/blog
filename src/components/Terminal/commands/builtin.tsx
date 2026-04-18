@@ -11,7 +11,7 @@ const help: Command = {
         <div className="text-foreground/60">Available commands:</div>
         {cmds.map((c) => (
           <div key={c.name} className="flex gap-4">
-            <span className="text-accent/70 shrink-0" style={{ minWidth: 100 }}>
+            <span className="text-foreground font-medium shrink-0" style={{ minWidth: 100 }}>
               {c.name}
             </span>
             <span className="text-muted-foreground/50">{c.description}</span>

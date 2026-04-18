@@ -5,7 +5,6 @@ import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
 
-const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.NetworkGraph })));
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
@@ -279,10 +278,7 @@ export function ExperiencePage() {
 
       {/* Decorative system widgets */}
       <Suspense fallback={null}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <NetworkGraph delay={0.05} />
-          <CpuGraph delay={0.1} />
-        </div>
+        <CpuGraph delay={0.05} />
       </Suspense>
     </div>
     </MotionProvider>
