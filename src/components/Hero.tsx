@@ -57,9 +57,11 @@ export function Hero() {
               delay={0.1}
               lineNumbers={4}
               statusLine
+              instant
             >
               <InfoTable
                 fieldCodes
+                instant
                 rows={[
                   {
                     label: t("hero.infoRole"),

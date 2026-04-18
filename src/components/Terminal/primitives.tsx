@@ -16,10 +16,15 @@ export function InfoTable({
   rows,
   delay = 0,
   fieldCodes = false,
+  instant = false,
 }: {
   rows: { label: string; value: ReactNode }[];
   delay?: number;
   fieldCodes?: boolean;
+  /** Skip the initial opacity fade-in. Use for above-the-fold LCP content
+   *  so the initial HTML renders already visible and Chrome can measure
+   *  paint without waiting for JS hydration + useInView + motion stagger. */
+  instant?: boolean;
 }) {
   const { ref, inView } = useInView(0.1);
   const maxLabelLen = fieldCodes
@@ -30,8 +35,8 @@ export function InfoTable({
     <motion.div
       ref={ref}
       className="space-y-0 font-mono"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
+      initial={instant ? false : { opacity: 0 }}
+      animate={instant || inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.base, delay, ease }}
     >
       {rows.map((row, i) => (
@@ -43,8 +48,8 @@ export function InfoTable({
             gap: fieldCodes ? "0.5rem" : "1.5rem",
             borderBottom: i < rows.length - 1 ? "1px solid var(--border)" : undefined,
           }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
+          initial={instant ? false : { opacity: 0 }}
+          animate={instant || inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.25, delay: delay + stagger.fast + i * stagger.fast }}
         >
           {fieldCodes ? (

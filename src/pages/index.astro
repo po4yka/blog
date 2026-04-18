@@ -15,8 +15,8 @@ import {
 ---
 <MainLayout isHomePage>
   <div class="space-y-8 md:space-y-14">
-    <div class="section-reveal" data-section-name="hero">
-      <Hero client:visible />
+    <div data-section-name="hero">
+      <Hero client:load />
     </div>
     <div class="section-reveal" data-section-name="about" style="transition-delay:0.1s">
       <About client:visible />

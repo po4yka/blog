@@ -24,6 +24,7 @@ export function MacWindow({
   lineNumbers,
   statusLine,
   titleExt,
+  instant = false,
 }: {
   title?: string;
   /** Preferred name for new call sites. Falls back to `title`. */
@@ -36,6 +37,9 @@ export function MacWindow({
   lineNumbers?: boolean | number;
   statusLine?: boolean | string | ReactNode;
   titleExt?: string;
+  /** Skip the initial opacity/y fade-in. Use for above-the-fold LCP content
+   *  so the initial HTML renders already visible. */
+  instant?: boolean;
 }) {
   const { ref, inView } = useInView(0.1);
   const lineCount = typeof lineNumbers === "number" ? lineNumbers : lineNumbers ? 10 : 0;
@@ -57,8 +61,8 @@ export function MacWindow({
         border: "1px solid var(--border)",
         borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 8 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={instant ? false : { opacity: 0, y: 8 }}
+      animate={instant || inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
     >
       {hasHeader && (
