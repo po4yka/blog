@@ -92,7 +92,7 @@ function ProjectEntry({ project }: { project: Project }) {
         <div className="flex items-center gap-3">
           {project.links.map((link) => (
             <a
-              key={link.type}
+              key={link.href}
               href={link.href}
               className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
               target="_blank"

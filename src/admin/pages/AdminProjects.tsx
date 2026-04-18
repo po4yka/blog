@@ -162,7 +162,7 @@ export function AdminProjects() {
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {project.links.map((link) => (
-                      <span key={link.type} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                      <span key={link.href} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
                         {link.type}: {link.href}
                       </span>
                     ))}
