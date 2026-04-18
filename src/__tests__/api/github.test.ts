@@ -167,3 +167,236 @@ describe("GET /api/github/latest-release", () => {
     expect(data).toBeNull();
   });
 });
+
+describe("GET /api/github/commits", () => {
+  async function getHandler() {
+    const mod = await import("@/pages/api/github/commits");
+    return mod.GET;
+  }
+
+  const ctx = { request: new Request("http://localhost/api/github/commits") } as import("astro").APIContext;
+
+  it("extracts commits from PushEvents and ignores other event types", async () => {
+    const now = new Date();
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [
+        // Non-push: ignored
+        { type: "WatchEvent", created_at: now.toISOString(), repo: { name: "po4yka/blog" } },
+        // Push with 2 commits: both counted
+        {
+          type: "PushEvent",
+          created_at: new Date(now.getTime() - 3 * 3600000).toISOString(), // 3h ago
+          repo: { name: "po4yka/blog" },
+          payload: {
+            commits: [
+              { sha: "abcdef1234567890", message: "feat: add thing\n\nbody" },
+              { sha: "1234567890abcdef", message: "fix: tweak" },
+            ],
+          },
+        },
+        // Another push, older
+        {
+          type: "PushEvent",
+          created_at: new Date(now.getTime() - 2 * 86400000).toISOString(), // 2d ago
+          repo: { name: "po4yka/other" },
+          payload: {
+            commits: [{ sha: "deadbeefdeadbeef", message: "chore: cleanup" }],
+          },
+        },
+      ],
+    });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Cache")).toBe("MISS");
+
+    const data = await response.json();
+    expect(data).toHaveLength(3);
+    expect(data[0].hash).toBe("abcdef1"); // 7-char short sha
+    expect(data[0].msg).toBe("feat: add thing"); // first line only
+    expect(data[0].date).toBe("3h ago");
+    expect(data[0].url).toBe("https://github.com/po4yka/blog/commit/abcdef1234567890");
+    expect(data[2].date).toBe("2d ago");
+  });
+
+  it("caps output at MAX_COMMITS (7)", async () => {
+    const now = new Date().toISOString();
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [
+        {
+          type: "PushEvent",
+          created_at: now,
+          repo: { name: "po4yka/blog" },
+          payload: {
+            commits: Array.from({ length: 20 }, (_, i) => ({
+              sha: `${i}`.padStart(40, "0"),
+              message: `commit ${i}`,
+            })),
+          },
+        },
+      ],
+    });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    const data = await response.json();
+    expect(data).toHaveLength(7);
+  });
+
+  it("returns empty array when GitHub API fails with no cache", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Cache")).toBe("MISS");
+    expect(await response.json()).toEqual([]);
+  });
+});
+
+describe("GET /api/github/calendar", () => {
+  async function getHandler() {
+    const mod = await import("@/pages/api/github/calendar");
+    return mod.GET;
+  }
+
+  const ctx = { request: new Request("http://localhost/api/github/calendar") } as import("astro").APIContext;
+
+  it("returns created_at dates from events", async () => {
+    const events = [
+      { created_at: "2026-04-10T12:00:00Z" },
+      { created_at: "2026-04-11T08:00:00Z" },
+    ];
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => events });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Cache")).toBe("MISS");
+    expect(await response.json()).toEqual(events);
+  });
+
+  it("serves stale cache when GitHub API fails after a prior success", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [{ created_at: "2026-04-10T12:00:00Z" }],
+    });
+    const GET = await getHandler();
+    await GET(ctx);
+
+    // Expire cache (15-min TTL)
+    vi.useFakeTimers();
+    vi.advanceTimersByTime(16 * 60 * 1000);
+
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 503 });
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Cache")).toBe("STALE");
+    vi.useRealTimers();
+  });
+
+  it("returns empty array on first-time failure", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 503 });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+  });
+});
+
+describe("GET /api/github/actions", () => {
+  async function getHandler() {
+    const mod = await import("@/pages/api/github/actions");
+    return mod.GET;
+  }
+
+  const ctx = { request: new Request("http://localhost/api/github/actions") } as import("astro").APIContext;
+
+  it("maps workflow runs to ActionsSummary and computes duration for completed runs", async () => {
+    const created = "2026-04-18T12:00:00Z";
+    const updated = "2026-04-18T12:03:30Z"; // +210 sec
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        workflow_runs: [
+          {
+            name: "CI",
+            status: "completed",
+            conclusion: "success",
+            html_url: "https://github.com/po4yka/blog/actions/runs/1",
+            created_at: created,
+            updated_at: updated,
+            head_sha: "abcdef1234567890",
+            head_branch: "main",
+            run_number: 42,
+          },
+          {
+            name: "Deploy",
+            status: "in_progress",
+            conclusion: null,
+            html_url: "https://github.com/po4yka/blog/actions/runs/2",
+            created_at: created,
+            updated_at: created,
+            head_sha: "1234567890abcdef",
+            head_branch: "main",
+            run_number: 43,
+          },
+        ],
+      }),
+    });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Cache")).toBe("MISS");
+
+    const data = await response.json();
+    expect(data).toHaveLength(2);
+    expect(data[0].durationSec).toBe(210);
+    expect(data[0].commit).toBe("abcdef1");
+    expect(data[0].runNumber).toBe(42);
+    expect(data[1].durationSec).toBeNull(); // in_progress → null
+  });
+
+  it("serves cache on second call within TTL", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        workflow_runs: [
+          {
+            name: "CI",
+            status: "completed",
+            conclusion: "success",
+            html_url: "https://github.com/po4yka/blog/actions/runs/1",
+            created_at: "2026-04-18T12:00:00Z",
+            updated_at: "2026-04-18T12:01:00Z",
+            head_sha: "abcdef1234567890",
+            head_branch: "main",
+            run_number: 1,
+          },
+        ],
+      }),
+    });
+
+    const GET = await getHandler();
+    await GET(ctx);
+
+    // Second call uses cache — fetch must not be called again
+    const response = await GET(ctx);
+    expect(response.headers.get("X-Cache")).toBe("HIT");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns empty array when GitHub API fails with no cache", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+  });
+});
