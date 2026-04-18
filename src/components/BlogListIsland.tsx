@@ -30,13 +30,28 @@ interface BlogListIslandProps {
 export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIslandProps) {
   const { t } = useLocale();
   const [activeCategory, setActiveCategory] = useState("All");
+  // Initialize from ?tag= on first render (SSR-safe; initializer runs once).
+  const [activeTag, setActiveTag] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("tag");
+  });
   const { ref } = useInView(0.05);
   const lang = (langProp ?? "en") as Locale;
 
-  const filtered =
-    activeCategory === "All"
-      ? posts
-      : posts.filter((p) => p.category === activeCategory);
+  const clearTag = () => {
+    setActiveTag(null);
+    if (typeof window !== "undefined" && typeof history !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("tag");
+      history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const filtered = posts.filter((p) => {
+    if (activeCategory !== "All" && p.category !== activeCategory) return false;
+    if (activeTag && !p.tags.includes(activeTag)) return false;
+    return true;
+  });
 
   const featured = posts.find((p) => p.featured);
 
@@ -113,11 +128,26 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
           ))}
         </div>
 
+        {/* Active tag filter chip */}
+        {activeTag && (
+          <div className="pl-1 flex flex-wrap items-center gap-2 font-mono text-label">
+            <span className="text-muted-foreground-dim">{t("blogPost.filteredBy")}</span>
+            <span className="text-foreground/80">#{activeTag}</span>
+            <button
+              onClick={clearTag}
+              aria-label={t("blogPost.clearFilter")}
+              className="text-muted-foreground hover:text-foreground transition-colors duration-150 cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* Posts list — flat, no MacWindow wrapping */}
         <div ref={ref}>
           <AnimatePresence mode="wait">
             <motion.ul
-              key={activeCategory}
+              key={`${activeCategory}|${activeTag ?? ""}`}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}

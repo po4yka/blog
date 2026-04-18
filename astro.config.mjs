@@ -7,8 +7,24 @@ import tailwindcss from "@tailwindcss/vite";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 const isAstroDev = process.argv.includes("dev");
+
+const autolinkConfig = [
+  rehypeAutolinkHeadings,
+  {
+    behavior: "append",
+    properties: { className: ["heading-anchor"], "aria-label": "Permalink to this section" },
+    content: {
+      type: "element",
+      tagName: "span",
+      properties: { "aria-hidden": "true" },
+      children: [{ type: "text", value: "#" }],
+    },
+  },
+];
 
 export default defineConfig({
   site: "https://po4yka.dev",
@@ -20,13 +36,13 @@ export default defineConfig({
   adapter: cloudflare(isAstroDev ? { platformProxy: { enabled: true } } : {}),
   markdown: {
     remarkPlugins: [remarkGfm, remarkMath],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
   },
   integrations: [
     react(),
     mdx({
       remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex],
+      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
     }),
     sitemap(),
   ],

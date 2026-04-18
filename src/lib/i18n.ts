@@ -101,6 +101,14 @@ const en = {
   "blogPost.copyLink": "Copy link",
   "blogPost.copied": "Copied",
   "blogPost.scrollToTop": "Scroll to top",
+  "blogPost.updated": "Updated",
+  "blogPost.authorRole": "AI Engineer \u00b7 Senior Mobile Developer",
+  "blogPost.tags": "Tags",
+  "blogPost.filteredBy": "filtered by",
+  "blogPost.clearFilter": "Clear filter",
+  "blogPost.related": "RELATED",
+  "blogPost.previous": "PREVIOUS",
+  "blogPost.next": "NEXT",
 
   // settings
   "settings.heading": "Settings",
@@ -260,6 +268,14 @@ const ru: TranslationKeys = {
   "blogPost.copyLink": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0441\u0441\u044b\u043b\u043a\u0443",
   "blogPost.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
   "blogPost.scrollToTop": "\u041d\u0430\u0432\u0435\u0440\u0445",
+  "blogPost.updated": "\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u043e",
+  "blogPost.authorRole": "AI-\u0438\u043d\u0436\u0435\u043d\u0435\u0440 \u00b7 Senior-\u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a \u043c\u043e\u0431\u0438\u043b\u044c\u043d\u044b\u0445 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0439",
+  "blogPost.tags": "\u0422\u0435\u0433\u0438",
+  "blogPost.filteredBy": "\u0444\u0438\u043b\u044c\u0442\u0440",
+  "blogPost.clearFilter": "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u0444\u0438\u043b\u044c\u0442\u0440",
+  "blogPost.related": "\u041f\u041e\u0425\u041e\u0416\u0415\u0415",
+  "blogPost.previous": "\u041f\u0420\u0415\u0414\u042b\u0414\u0423\u0429\u0415\u0415",
+  "blogPost.next": "\u0421\u041b\u0415\u0414\u0423\u042e\u0429\u0415\u0415",
 
   // settings
   "settings.heading": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",

@@ -50,6 +50,26 @@
   background-size: 100% 2px;
 }
 
+.prose-blog :is(h2, h3, h4) {
+  scroll-margin-top: 3rem;
+}
+
+.prose-blog .heading-anchor {
+  opacity: 0;
+  margin-left: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  background-image: none;
+  font-weight: 400;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.prose-blog :is(h2, h3, h4):hover .heading-anchor,
+.prose-blog .heading-anchor:focus-visible {
+  opacity: 1;
+  color: var(--foreground);
+}
+
 .prose-blog h2 {
   margin-top: 2.75rem;
   margin-bottom: 1rem;

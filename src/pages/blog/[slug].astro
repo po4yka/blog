@@ -25,19 +25,57 @@ export async function getStaticPaths() {
     const baseSlug = parsePostId(post.id).baseSlug;
     const prevPost = idx > 0 ? enPosts[idx - 1]! : null;
     const nextPost = idx < enPosts.length - 1 ? enPosts[idx + 1]! : null;
+
+    // Compute related: same lang, different slug, ranked by tag overlap desc, then recency.
+    const currentTags = new Set(post.data.tags ?? []);
+    const candidates = enPosts
+      .filter((p) => parsePostId(p.id).baseSlug !== baseSlug)
+      .map((p) => {
+        const tags: string[] = p.data.tags ?? [];
+        const overlap = tags.reduce((n, t) => n + (currentTags.has(t) ? 1 : 0), 0);
+        const sameCategory = p.data.category === post.data.category ? 1 : 0;
+        return { p, overlap, sameCategory };
+      });
+    candidates.sort((a, b) => {
+      if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+      if (b.sameCategory !== a.sameCategory) return b.sameCategory - a.sameCategory;
+      return new Date(b.p.data.date).getTime() - new Date(a.p.data.date).getTime();
+    });
+    const related = candidates.slice(0, 3).map(({ p }) => ({
+      slug: parsePostId(p.id).baseSlug,
+      title: p.data.title,
+      date: p.data.date,
+      isoDate: p.data.isoDate,
+      category: p.data.category,
+      summary: p.data.summary,
+    }));
+
     return {
       params: { slug: baseSlug },
       props: {
         post,
-        prev: prevPost ? { slug: parsePostId(prevPost.id).baseSlug, title: prevPost.data.title } : null,
-        next: nextPost ? { slug: parsePostId(nextPost.id).baseSlug, title: nextPost.data.title } : null,
+        prev: prevPost
+          ? {
+              slug: parsePostId(prevPost.id).baseSlug,
+              title: prevPost.data.title,
+              date: prevPost.data.date,
+            }
+          : null,
+        next: nextPost
+          ? {
+              slug: parsePostId(nextPost.id).baseSlug,
+              title: nextPost.data.title,
+              date: nextPost.data.date,
+            }
+          : null,
+        related,
         hasTranslation: ruSlugs.has(baseSlug),
       },
     };
   });
 }
 
-const { post, prev, next, hasTranslation } = Astro.props;
+const { post, prev, next, related, hasTranslation } = Astro.props;
 const baseSlug = parsePostId(post.id).baseSlug;
 const { Content } = await render(post);
 // Pull the generated ISO date from blogData so the client gets a parseable timestamp.
@@ -58,6 +96,7 @@ const blogData = {
       slug={baseSlug}
       prev={prev}
       next={next}
+      related={related}
       lang="en"
     >
       <Content />
