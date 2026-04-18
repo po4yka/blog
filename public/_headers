@@ -6,3 +6,6 @@
   X-XSS-Protection: 0
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+/
+  Link: </llms.txt>; rel="describedby"; type="text/plain"; title="LLM discovery index", </llms-full.txt>; rel="describedby"; type="text/plain"; title="Full site content for LLMs", </sitemap-index.xml>; rel="sitemap"; type="application/xml", </rss.xml>; rel="alternate"; type="application/rss+xml"; hreflang="en"; title="Blog (English)", </rss.ru.xml>; rel="alternate"; type="application/rss+xml"; hreflang="ru"; title="Blog (Russian)", </robots.txt>; rel="service-meta"; type="text/plain"
