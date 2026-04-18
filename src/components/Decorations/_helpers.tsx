@@ -11,7 +11,7 @@ export function PanelShell({
   delay = 0,
 }: {
   label: string;
-  labelRight?: string;
+  labelRight?: React.ReactNode;
   children: React.ReactNode;
   delay?: number;
 }) {
