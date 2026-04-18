@@ -127,15 +127,17 @@ export function NotFound() {
             <span className="text-foreground/60" style={{ fontSize: "1rem" }}>{t("notFound.pageNotFound")}</span>
           </motion.div>
 
-          <motion.button
-            onClick={() => { window.location.href = "/"; }}
+          <motion.a
+            href="/"
+            aria-label={t("notFound.goHome")}
+            title={t("notFound.goHome")}
             className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 text-mono"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
             {t("notFound.goBack")}
-          </motion.button>
+          </motion.a>
         </div>
       </motion.div>
     </div>

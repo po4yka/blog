@@ -51,8 +51,8 @@ test.describe("public pages", () => {
     await page.goto("/settings");
     await expect(page).toHaveTitle(/Settings — Nikita Pochaev/);
     await expect(page.locator("nav")).toBeVisible();
-    // Settings island shows theme controls
-    await expect(page.getByText("preferences.conf", { exact: true })).toBeVisible();
+    // Settings island hydrates and exposes theme controls
+    await expect(page.getByRole("button", { name: "light", exact: true })).toBeVisible();
   });
 
   test("404 page renders for unknown routes", async ({ page }) => {
@@ -60,7 +60,9 @@ test.describe("public pages", () => {
     expect(response?.status()).toBe(404);
     await expect(page).toHaveTitle(/404 — Nikita Pochaev/);
     await expect(page.getByText("Page not found")).toBeVisible();
-    // "Go home" link should be present
-    await expect(page.getByTitle("Go home")).toBeVisible();
+    // Home recovery link should be present
+    const homeLink = page.getByRole("link", { name: "Go home" });
+    await expect(homeLink).toBeVisible();
+    await expect(homeLink).toHaveAttribute("href", "/");
   });
 });
