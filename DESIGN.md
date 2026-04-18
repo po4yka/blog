@@ -479,7 +479,6 @@ Real-data equivalents that cover every functional use-case:
 
 | Need | Use |
 |---|---|
-| Live CI runs | `RealCIStatus` (GitHub Actions API) |
 | Recent commits | `RealGitLog` (GitHub API) |
 | Repo inventory | `OpenSourcePanel` (GitHub API) |
 | Activity heatmap | `ActivityCalendar` + `ActivitySparkline` (GitHub events) |

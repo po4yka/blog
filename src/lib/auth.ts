@@ -69,19 +69,6 @@ export function validateOrigin(request: Request): void {
   }
 }
 
-export async function rotateSession(db: D1Database, oldToken: string): Promise<string> {
-  const newToken = crypto.randomUUID();
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-  await db.batch([
-    db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(oldToken),
-    db
-      .prepare("INSERT INTO admin_sessions (token, expires_at) VALUES (?, ?)")
-      .bind(newToken, expiresAt),
-  ]);
-
-  return newToken;
-}
 
 /**
  * Create a new admin session.

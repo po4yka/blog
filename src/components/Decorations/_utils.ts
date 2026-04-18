@@ -40,8 +40,3 @@ export function deferIdle(fn: () => void, { timeout = 2000 }: { timeout?: number
     if (timeoutId !== undefined) window.clearTimeout(timeoutId);
   };
 }
-
-export function barColor(): string {
-  // Neutral grayscale — no chromatic signal colors
-  return "var(--muted-foreground)";
-}

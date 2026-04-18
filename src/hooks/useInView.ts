@@ -34,26 +34,3 @@ export function useInView(threshold = 0.15) {
   return { ref, inView };
 }
 
-/**
- * Returns { ref, isVisible } — continuously tracks whether the element
- * is in viewport. Does NOT disconnect — suitable for toggling infinite
- * animations when off-screen.
- */
-export function useVisible(threshold = 0, rootMargin = "100px 0px") {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    return observe(
-      el,
-      (isIntersecting) => setIsVisible(isIntersecting),
-      threshold,
-      rootMargin
-    );
-  }, [threshold, rootMargin]);
-
-  return { ref, isVisible };
-}

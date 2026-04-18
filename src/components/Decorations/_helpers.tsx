@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
-import { ease, easeStep8 } from "@/lib/motion";
-import { barColor } from "./_utils";
+import { ease } from "@/lib/motion";
 
 /** Shared panel shell — flat, hairline, operator-console header row. */
 export function PanelShell({
@@ -50,43 +49,5 @@ export function PanelShell({
       </div>
       {children}
     </motion.div>
-  );
-}
-
-export function UsageBar({
-  pct,
-  blocks = 22,
-  delay = 0,
-  inView = true,
-}: {
-  pct: number;
-  blocks?: number;
-  delay?: number;
-  inView?: boolean;
-}) {
-  const allBlocks = "\u2588".repeat(blocks);
-  const color = barColor();
-
-  return (
-    <motion.span
-      className="inline-flex items-center cursor-default relative"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.4, delay }}
-      title={`${pct}%`}
-    >
-      <span className="text-mono-sm" style={{ color: "var(--bar-empty)", letterSpacing: "-0.5px" }}>
-        {allBlocks}
-      </span>
-      <motion.span
-        className="absolute left-0 top-0 overflow-hidden"
-        animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.8, ease: easeStep8 }}
-      >
-        <span className="text-mono-sm whitespace-nowrap" style={{ color, letterSpacing: "-0.5px" }}>
-          {allBlocks}
-        </span>
-      </motion.span>
-    </motion.span>
   );
 }
