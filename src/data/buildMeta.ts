@@ -2,8 +2,8 @@
 // Run "npm run generate:all" to regenerate.
 
 export const buildMeta = {
-  commitHash: "998259b",
-  deployDate: "2026-04-18T06:30:27.740Z",
+  commitHash: "ea76d1d",
+  deployDate: "2026-04-18T06:34:58.735Z",
   astroVersion: "6.1.7",
   postCount: 1,
   projectCount: 8,

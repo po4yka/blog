@@ -4,6 +4,22 @@
 // Server-rendered so any admin path works without static enumeration.
 export const prerender = false;
 import "@/styles/index.css";
+
+// React Fast Refresh preamble for dev mode only.
+// Astro's React integration injects this preamble automatically on pages that
+// contain a `client:*` island; the admin SPA mounts React via a bare <script>
+// import instead, so Astro skips injection and `@vitejs/plugin-react` throws
+// "can't detect preamble" before the app can render. Injecting it manually
+// here restores HMR / Fast Refresh on /admin/* in dev. In production the path
+// `/@react-refresh` does not exist, so the block is omitted entirely.
+const isDev = import.meta.env.DEV;
+const reactRefreshPreamble = `
+import RefreshRuntime from '/@react-refresh';
+RefreshRuntime.injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;
+window.__vite_plugin_react_preamble_installed__ = true;
+`.trim();
 ---
 <html lang="en">
   <head>
@@ -13,6 +29,9 @@ import "@/styles/index.css";
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Admin — po4yka.dev</title>
+    {isDev && (
+      <script type="module" is:inline set:html={reactRefreshPreamble} />
+    )}
     <script is:inline>
     (function() {
       try {
