@@ -42,6 +42,8 @@ const {
 <meta name="twitter:image" content="https://po4yka.dev/og-default.png" />
 <meta name="generator" content={Astro.generator} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" hreflang="en" title="po4yka.dev — English posts" href="/rss.xml" />
+<link rel="alternate" type="application/rss+xml" hreflang="ru" title="po4yka.dev — Русские записи" href="/rss.ru.xml" />
 {blogSlug && hasTranslation && lang === "en" && (
   <>
     <link rel="alternate" hreflang="en" href={`https://po4yka.dev/blog/${blogSlug}`} />
