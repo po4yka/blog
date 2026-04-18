@@ -1,18 +1,51 @@
 import { buildMeta } from "@/data/buildMeta";
 import { PanelShell } from "./_helpers";
 
+const GH_REPO = "po4yka/blog";
+
 function formatDate(iso: string): string {
   const d = new Date(iso);
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
+function pluralize(count: number, singular: string, plural: string): string {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
 export function BuildStats({ delay = 0 }: { delay?: number }) {
-  const rows = [
-    { label: "Deploy", value: formatDate(buildMeta.deployDate) },
-    { label: "Commit", value: buildMeta.commitHash },
+  const rows: Array<{ label: string; value: React.ReactNode }> = [
+    {
+      label: "Deploy",
+      value: (
+        <time dateTime={buildMeta.deployDate}>
+          {formatDate(buildMeta.deployDate)}
+        </time>
+      ),
+    },
+    {
+      label: "Commit",
+      value: (
+        <a
+          href={`https://github.com/${GH_REPO}/commit/${buildMeta.commitHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-foreground/90 hover:text-foreground hover:underline decoration-dotted underline-offset-2 transition-colors duration-150"
+          title={`View commit ${buildMeta.commitHash} on GitHub`}
+        >
+          {buildMeta.commitHash}
+        </a>
+      ),
+    },
     { label: "Astro", value: `v${buildMeta.astroVersion}` },
-    { label: "Content", value: `${buildMeta.postCount} posts · ${buildMeta.projectCount} projects · ${buildMeta.roleCount} roles` },
+    {
+      label: "Content",
+      value: [
+        pluralize(buildMeta.postCount, "post", "posts"),
+        pluralize(buildMeta.projectCount, "project", "projects"),
+        pluralize(buildMeta.roleCount, "role", "roles"),
+      ].join(" · "),
+    },
   ];
 
   return (
