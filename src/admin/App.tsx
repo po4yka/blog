@@ -20,7 +20,7 @@ function LoadingFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <span
-        className="font-mono text-muted-foreground/40 animate-pulse"
+        className="font-mono text-muted-foreground/40"
         style={{ fontSize: "0.75rem", letterSpacing: "0.08em" }}
       >
         Loading...

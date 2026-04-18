@@ -103,7 +103,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       transition={{ duration: 0.4 }}
     >
       {/* Scroll progress bar — only render after mount to avoid SSR mismatch */}
-      {mounted && (
+      {mounted && !reduceMotion && (
         <motion.div
           style={{
             scaleX,

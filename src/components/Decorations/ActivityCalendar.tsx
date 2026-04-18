@@ -156,8 +156,8 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                         height: 11,
                         backgroundColor: LEVEL_COLORS[day.level],
                       }}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={inView ? { opacity: 1, scale: 1 } : {}}
+                      initial={{ opacity: 0 }}
+                      animate={inView ? { opacity: 1 } : {}}
                       transition={{
                         duration: 0.15,
                         delay: delay + 0.05 + (w * 7 + d) * 0.002,

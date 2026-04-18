@@ -10,7 +10,6 @@ export const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export const spring = {
   gentle: { type: "spring" as const, stiffness: 300, damping: 20 },
-  snappy: { type: "spring" as const, stiffness: 400, damping: 15 },
   hover: { type: "spring" as const, stiffness: 300, damping: 25 },
 } as const;
 

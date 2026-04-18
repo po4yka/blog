@@ -155,7 +155,7 @@ export function AdminLayout() {
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-32">
-              <span className="font-mono text-muted-foreground/40 animate-pulse" style={{ fontSize: "0.75rem" }}>
+              <span className="font-mono text-muted-foreground/40" style={{ fontSize: "0.75rem" }}>
                 Loading…
               </span>
             </div>
