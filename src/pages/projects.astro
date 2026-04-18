@@ -1,7 +1,10 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
 import { ProjectsPage } from "@/components/ProjectsPageIsland";
+import ProjectsJsonLd from "@/components/ProjectsJsonLd.astro";
 ---
 <MainLayout title="Projects — Nikita Pochaev">
+  {/* JSON-LD lives in the body; Google recognizes application/ld+json anywhere in the document. */}
+  <ProjectsJsonLd />
   <ProjectsPage client:load />
 </MainLayout>

@@ -1,0 +1,77 @@
+---
+// Emits SoftwareApplication nodes for every project in projectsData, wrapped in
+// an ItemList so crawlers get an ordered catalogue instead of disconnected
+// entities. Rendered on /projects only — the home-page island stays lean.
+import { projects } from "@/data/projectsData";
+
+const SITE_URL = "https://po4yka.dev";
+
+function platformsToOS(platforms: string[]): string {
+  const mapped: string[] = [];
+  for (const p of platforms) {
+    const norm = p.toLowerCase();
+    if (norm.includes("android")) mapped.push("Android");
+    else if (norm === "ios" || norm.includes("iphone") || norm.includes("ipad")) mapped.push("iOS");
+    else if (norm.includes("web")) mapped.push("Web");
+    else if (norm.includes("backend") || norm.includes("server")) mapped.push("Server");
+    else if (norm.includes("tool")) mapped.push("Cross-platform");
+    else if (norm.includes("desktop") || norm.includes("mac")) mapped.push("Desktop");
+    else if (norm.includes("ai")) mapped.push("AI");
+    else mapped.push(p);
+  }
+  // de-duplicate while preserving order
+  return Array.from(new Set(mapped)).join(", ");
+}
+
+function pickCategory(platforms: string[]): string {
+  const joined = platforms.join(" ").toLowerCase();
+  if (joined.includes("android") || joined.includes("ios")) return "MobileApplication";
+  if (joined.includes("backend") || joined.includes("server")) return "WebApplication";
+  if (joined.includes("tool")) return "DeveloperApplication";
+  if (joined.includes("web")) return "WebApplication";
+  return "SoftwareApplication";
+}
+
+function pickDownloadUrl(links: { type: string; href: string }[] | undefined): string | null {
+  if (!links || links.length === 0) return null;
+  const store = links.find((l) => {
+    const t = l.type.toLowerCase();
+    return t.includes("play") || t.includes("app store") || t.includes("store");
+  });
+  if (store) return store.href;
+  const github = links.find((l) => l.type.toLowerCase().includes("github"));
+  return github?.href ?? null;
+}
+
+const itemList = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Projects by Nikita Pochaev",
+  itemListOrder: "https://schema.org/ItemListOrderDescending",
+  numberOfItems: projects.length,
+  itemListElement: projects.map((project, idx) => {
+    const type = pickCategory(project.platforms);
+    const url = project.slug ? `${SITE_URL}/projects#${project.slug}` : `${SITE_URL}/projects`;
+    const downloadUrl = pickDownloadUrl(project.links);
+    const operatingSystem = platformsToOS(project.platforms);
+    const node: Record<string, unknown> = {
+      "@type": type,
+      name: project.name,
+      description: project.longDescription ?? project.description,
+      applicationCategory: type,
+      operatingSystem: operatingSystem || "Cross-platform",
+      url,
+      author: { "@id": `${SITE_URL}/#person` },
+    };
+    if (downloadUrl) node.downloadUrl = downloadUrl;
+    if (project.year) node.datePublished = project.year;
+    if (project.tags.length > 0) node.keywords = project.tags.join(", ");
+    return {
+      "@type": "ListItem",
+      position: idx + 1,
+      item: node,
+    };
+  }),
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(itemList)} />
