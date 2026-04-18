@@ -4,7 +4,6 @@ import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
-import { StackHeatmap } from "./Decorations";
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { ease } from "@/lib/motion";
@@ -275,8 +274,6 @@ export function ExperiencePage() {
         </span>
       </div>
 
-      {/* Career stack heatmap — real data derived from experience roles */}
-      <StackHeatmap delay={0.05} />
     </div>
     </MotionProvider>
     </ErrorBoundary>

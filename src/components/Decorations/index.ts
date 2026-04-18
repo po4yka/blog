@@ -1,4 +1,3 @@
-export { StackHeatmap } from "./StackHeatmap";
 export { BlogStatsPanel } from "./BlogStatsPanel";
 export { ActivitySparkline } from "./ActivitySparkline";
 export { LatestReleasePanel } from "./LatestReleasePanel";

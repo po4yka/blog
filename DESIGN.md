@@ -472,8 +472,9 @@ The following components were removed during the Swiss refactor and its follow-u
 | `GitLog` (in `MobileTerminal/ci.tsx`) | `6c11ea7` | Hardcoded commit list |
 | `LanguagePanel` | _dead-code purge_ | Exported but rendered nowhere; duplicated `OpenSourcePanel` surface |
 | `ConnectionPanel` | _dead-code purge_ | Exported but rendered nowhere; browser-network sparkline |
-| `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere; overlapped with `StackHeatmap` |
+| `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere |
 | `ProjectPlatformMatrix` | _dead-code purge_ | Exported but rendered nowhere; project×platform matrix |
+| `StackHeatmap` | _follow-up_ | Low-information dot-matrix — a 10×68 grid the reader can't parse at a glance |
 
 Real-data equivalents that cover every functional use-case:
 
@@ -487,6 +488,5 @@ Real-data equivalents that cover every functional use-case:
 | Latest post | `LatestPostPanel` (from `blogData`) |
 | Latest release | `LatestReleasePanel` (GitHub API) |
 | Blog stats | `BlogStatsPanel` (from `blogData`) |
-| Stack timeline | `StackHeatmap` (from `experienceData` + `buildMeta`) |
 
 If a new widget need appears and there is no real data source for it, **do not render a fake one** — leave the slot empty or add a real data source first.
