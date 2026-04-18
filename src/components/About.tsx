@@ -44,7 +44,7 @@ export function About() {
             {t("about.p2suffix")}
           </motion.p>
           <motion.p
-            className="text-foreground/55"
+            className="text-foreground/75"
             initial={{ opacity: 0, y: 6 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.4, delay: 0.19 }}

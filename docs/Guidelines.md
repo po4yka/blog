@@ -12,8 +12,8 @@ It must feel like a real, authored, high-taste website for a mobile engineer —
 
 The site should communicate the following clearly:
 
-- Nikita Pochaev is a **Mobile Developer**
-- Main focus: **Android**, **iOS**, **Kotlin Multiplatform**, **MobileOps**
+- Nikita Pochaev is an **AI Engineer & Senior Mobile Developer**
+- Main focus: **Android**, **Kotlin Multiplatform**, **MobileOps**, **AI/ML integration**
 - The site should showcase:
   - selected apps and projects
   - links to **GitHub**

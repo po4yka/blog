@@ -1,8 +1,5 @@
-import { lazy, Suspense } from "react";
 import { TerminalPrompt } from "./Terminal";
 import { motion } from "motion/react";
-
-const UptimeStrip = lazy(() => import("./Decorations").then(m => ({ default: m.UptimeStrip })));
 import { MotionProvider } from "./MotionProvider";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useLocale } from "@/stores/settingsStore";
@@ -17,10 +14,6 @@ export function Footer() {
     <MotionProvider>
     <footer aria-label="Site footer" className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
       <div className="space-y-6">
-        <Suspense fallback={null}>
-          <UptimeStrip delay={0} />
-        </Suspense>
-
         {/* Interactive terminal */}
         <div
           className="p-4"

@@ -76,7 +76,7 @@ function ProjectEntry({ project }: { project: Project }) {
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/55 pl-6 text-mono-sm" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-foreground/75 pl-6 text-mono-sm" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}

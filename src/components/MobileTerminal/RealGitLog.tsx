@@ -56,7 +56,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
               >
                 {copiedHash === c.hash ? "copied!" : c.hash}
               </motion.span>
-              <span className="text-foreground/55 flex-1 truncate">{c.msg}</span>
+              <span className="text-foreground/75 flex-1 truncate">{c.msg}</span>
               <span className="text-muted-foreground/25 shrink-0 text-label">
                 {c.date}
               </span>

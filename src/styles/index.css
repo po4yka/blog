@@ -24,8 +24,9 @@
 
 .prose-blog p,
 .prose-blog ul,
-.prose-blog ol {
-  max-width: 75ch;
+.prose-blog ol,
+.prose-blog blockquote {
+  max-width: 40rem; /* ≈ 640px — 65–70ch in Inter 17px, comfortable reading range */
 }
 
 .prose-blog a {
@@ -43,9 +44,19 @@
 }
 
 .prose-blog h2 {
-  margin-top: 2.5rem;
+  margin-top: 2.75rem;
   margin-bottom: 1rem;
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  font-size: clamp(1.1875rem, 1.0625rem + 0.5vw, 1.375rem); /* 19→22px */
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  opacity: 0.95;
+}
+
+.prose-blog h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.0625rem; /* 17px */
   font-weight: 500;
   color: var(--foreground);
   opacity: 0.9;

@@ -51,7 +51,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
               >
                 {lane.icon}
               </motion.span>
-              <span className="text-foreground/55">{lane.step}</span>
+              <span className="text-foreground/75">{lane.step}</span>
             </motion.div>
           ))}
 
@@ -141,7 +141,7 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
                   {c.tag}
                 </motion.span>
               )}
-              <span className="text-foreground/55 flex-1">{c.msg}</span>
+              <span className="text-foreground/75 flex-1">{c.msg}</span>
               <span className="text-muted-foreground/25 shrink-0 text-label">
                 {c.time}
               </span>

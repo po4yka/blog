@@ -27,5 +27,5 @@ const categories = [
 ];
 ---
 <MainLayout title="Blog — Nikita Pochaev">
-  <BlogListIsland client:idle posts={serializedPosts} categories={categories} />
+  <BlogListIsland client:load posts={serializedPosts} categories={categories} />
 </MainLayout>

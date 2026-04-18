@@ -69,7 +69,7 @@ function RoleEntry({
           {role.highlights.map((h, i) => (
             <motion.li
               key={i}
-              className="text-foreground/55 list-disc marker:text-accent/25 text-mono-sm"
+              className="text-foreground/75 list-disc marker:text-accent/25 text-mono-sm"
               style={{ lineHeight: 1.7 }}
               whileHover={{ color: "var(--foreground)", opacity: 0.65 }}
               transition={{ duration: 0.15 }}
@@ -120,7 +120,7 @@ function SkillsSection({ group }: { group: SkillGroup }) {
       <span className="text-muted-foreground/50 shrink-0" style={{ minWidth: "100px" }}>
         {group.label}
       </span>
-      <span className="text-foreground/55">
+      <span className="text-foreground/75">
         {group.items.map((item, i) => (
           <span key={item}>
             {i > 0 && <span className="text-muted-foreground/20"> · </span>}

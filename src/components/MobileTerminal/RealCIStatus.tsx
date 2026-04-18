@@ -76,7 +76,7 @@ export function RealCIStatus({ delay = 0 }: { delay?: number }) {
                 <span className="shrink-0 font-medium" style={{ color, opacity: 0.8 }}>
                   {icon}
                 </span>
-                <span className="text-foreground/55 flex-1 truncate group-hover:text-foreground/70 transition-colors duration-150">
+                <span className="text-foreground/75 flex-1 truncate group-hover:text-foreground/70 transition-colors duration-150">
                   {run.name}
                 </span>
                 <span className="text-accent/50 text-label shrink-0">

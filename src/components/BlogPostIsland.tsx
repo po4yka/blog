@@ -206,27 +206,21 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
           delay={0.1}
         >
           {/* Article header */}
-          <div className="mb-8">
-            <h1
-              className="text-foreground font-mono font-medium"
-              style={{
-                fontSize: "1.25rem",
-                lineHeight: 1.35,
-              }}
-            >
+          <div className="mb-10 max-w-[40rem]">
+            <h1 className="display-2 text-foreground font-mono">
               {post.title}
             </h1>
             <div
-              className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/50 font-mono text-mono-sm"
+              className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground font-mono text-mono-sm"
             >
               <span>
-                {t("blogPost.author")} <span className="text-accent/70">Nikita Pochaev</span>
+                {t("blogPost.author")} <span className="text-accent">Nikita Pochaev</span>
               </span>
               <span>
-                {t("blogPost.date")} <span className="text-foreground/60">{post.date}</span>
+                {t("blogPost.date")} <span className="text-foreground/80">{post.date}</span>
               </span>
               <span>
-                {t("blogPost.category")} <span className="text-foreground/60">{post.category}</span>
+                {t("blogPost.category")} <span className="text-foreground/80">{post.category}</span>
               </span>
             </div>
           </div>

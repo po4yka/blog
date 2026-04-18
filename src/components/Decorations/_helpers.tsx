@@ -38,13 +38,13 @@ export function PanelShell({
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <span
-          className="text-muted-foreground/50 uppercase text-mono-sm font-medium"
+          className="text-muted-foreground uppercase text-mono-sm font-medium"
           style={{ letterSpacing: "0.12em" }}
         >
           {label}
         </span>
         {labelRight && (
-          <span className="text-muted-foreground/30 text-label">
+          <span className="text-muted-foreground text-label">
             {labelRight}
           </span>
         )}

@@ -14,7 +14,7 @@ export function LatestPostPanel({ delay = 0 }: { delay?: number }) {
         <p className="text-foreground/75 text-mono-sm group-hover:text-accent transition-colors duration-200 line-clamp-2">
           {latest.title}
         </p>
-        <p className="text-muted-foreground/40 text-label">
+        <p className="text-muted-foreground/80 text-label">
           {latest.date}
         </p>
       </a>

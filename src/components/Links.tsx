@@ -21,7 +21,8 @@ export function Links() {
 
   return (
     <MotionProvider>
-    <section className="space-y-5">
+    <section aria-labelledby="links-heading" className="space-y-5">
+      <h2 id="links-heading" className="sr-only">{t("links.heading")}</h2>
       <Cmd>
         cat <Accent>~/.config/links.toml</Accent>
       </Cmd>

@@ -52,7 +52,7 @@ export function Projects() {
               <div className="flex-1 min-w-0">
                 {/* First line: platform · name · year */}
                 <div className="flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-muted-foreground/40 text-mono-sm shrink-0 letter-wide" aria-hidden="true">
+                  <span className="text-muted-foreground/80 text-mono-sm shrink-0 letter-wide" aria-hidden="true">
                     [{project.platforms[0]?.toLowerCase() ?? ""}]
                   </span>
                   <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm">

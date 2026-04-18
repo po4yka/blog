@@ -65,7 +65,7 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
                   transition={{ duration: 0.25, delay: delay + 0.1 + i * 0.04 }}
                 >
                   <td
-                    className="text-foreground/55 pr-4 py-[3px] truncate"
+                    className="text-foreground/75 pr-4 py-[3px] truncate"
                     style={{ maxWidth: "180px" }}
                     title={project.name}
                   >
@@ -107,7 +107,7 @@ export function ProjectPlatformMatrix({ delay = 0 }: { delay?: number }) {
                 transition={{ duration: 0.25, delay: delay + 0.1 + i * 0.04 }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-foreground/55 text-mono-sm font-mono">{project.name}</span>
+                  <span className="text-foreground/75 text-mono-sm font-mono">{project.name}</span>
                   {project.status && (
                     <span
                       className="text-label"

@@ -76,7 +76,7 @@ export function MacWindow({
         <TrafficLights dim={dimLights} />
         <span className="flex-1 text-center font-mono text-label select-none">
           {title && (
-            <span className="text-muted-foreground/50 letter-wide">{title}</span>
+            <span className="text-foreground/80 letter-wide">{title}</span>
           )}
           {title && titleExt && (
             <span className="text-muted-foreground/30"> | {titleExt}</span>

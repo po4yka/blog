@@ -36,7 +36,8 @@
   --secondary: #1e2030;
   --secondary-foreground: #cdd6f4;
   --muted: #232637;
-  --muted-foreground: #6c7086;
+  --muted-foreground: #9ba2b8; /* was #6c7086 (3.55:1). #9ba2b8 ≈ 6.9:1 — passes WCAG AA */
+  --muted-foreground-dim: #7b8198; /* for secondary labels, 4.8:1 */
   --accent: #9184f7;
   --accent-foreground: #191a21;
   --destructive: #f38ba8;
@@ -112,7 +113,8 @@
   --secondary: #eceaf0;
   --secondary-foreground: #1c1b22;
   --muted: #eae8ee;
-  --muted-foreground: #706d84;
+  --muted-foreground: #5b5a6e; /* was #706d84 (4.46:1). #5b5a6e ≈ 7.0:1 — passes WCAG AA */
+  --muted-foreground-dim: #6e6d81; /* secondary labels, 5.2:1 */
   --accent: #6b5ce6;
   --accent-foreground: #ffffff;
   --destructive: #e04668;
@@ -257,10 +259,26 @@ body, .bg-background, .bg-card, [class*="bg-"] {
     line-height: 1.4;
   }
 
-  h1 { font-size: 1.5rem; }
-  h2 { font-size: 1.125rem; }
-  h3 { font-size: 1rem; }
-  h4 { font-size: 0.875rem; }
+  /* Display scale — hero page titles, tight tracking for JBM.
+     Used via .display-1 / .display-2 on specific H1s. */
+  .display-1 {
+    font-size: clamp(2rem, 1.4rem + 2.2vw, 2.75rem); /* 32→44px */
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+  }
+  .display-2 {
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2rem); /* 24→32px */
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+
+  /* Base heading scale — applies to every h1-h4 in main content */
+  h1 { font-size: 1.75rem; font-weight: 500; letter-spacing: -0.015em; } /* was 1.5rem */
+  h2 { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; } /* was 1.125rem */
+  h3 { font-size: 1.0625rem; font-weight: 500; }                         /* was 1rem */
+  h4 { font-size: 0.9375rem; font-weight: 500; }                         /* was 0.875rem */
 
   label, button, input {
     font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Monaco', 'Courier New', monospace;

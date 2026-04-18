@@ -44,12 +44,11 @@ export function Hero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <h1 id="hero-heading" className="sr-only">{t("hero.heading")}</h1>
-      <div className="space-y-1">
-        <p className="text-2xl font-semibold tracking-tight text-foreground">
+      <div className="space-y-2">
+        <h1 id="hero-heading" className="display-1 text-foreground">
           {t("hero.name")}
-        </p>
-        <p className="text-mono text-foreground/70">{t("hero.subtitle")}</p>
+        </h1>
+        <p className="text-mono-lg text-foreground/80">{t("hero.subtitle")}</p>
       </div>
 
       {/* Visitor context + build stats panels */}
