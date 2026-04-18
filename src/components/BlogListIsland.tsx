@@ -58,7 +58,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
   return (
     <ErrorBoundary>
     <MotionProvider>
-    <div className="space-y-8">
+    <div className="space-y-12 md:space-y-14">
       <SectionHeader
         number="07"
         label="WRITING"
@@ -71,7 +71,8 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         }
       />
 
-      {/* Boot block */}
+      {/* Boot block — compressed to 2 lines; the "{n} POSTS" meta in
+          SectionHeader already carries the count. */}
       <BootBlock
         lines={[
           {
@@ -81,10 +82,6 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                 Mounted <Accent>po4yka.dev/blog</Accent>
               </>
             ),
-          },
-          {
-            status: "OK",
-            text: `${posts.length} ${t("blog.publishedPosts")}`,
           },
           {
             status: "INFO",
@@ -158,38 +155,39 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                 <motion.li key={post.slug}>
                   <a
                     href={blogUrl(lang, post.slug)}
-                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border last:border-b-0 no-underline"
+                    className="group w-full text-left flex items-start gap-4 py-6 border-b border-rule last:border-b-0 no-underline"
                     style={{ display: "flex" }}
                   >
                     {/* Marker */}
                     <motion.span
-                      className="text-muted-foreground shrink-0 pt-0.5 text-mono-sm"
+                      className="text-muted-foreground-dim shrink-0 pt-3 text-label"
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
+                      aria-hidden="true"
                     >
                       ›
                     </motion.span>
 
-                    {/* Title */}
+                    {/* Title + summary */}
                     <motion.div
                       className="flex-1 min-w-0 relative"
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     >
-                      <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-150 text-sm">
+                      <h3 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
                         {post.title}
-                      </span>
-                      <p className="mt-0.5 text-muted-foreground/80 truncate text-mono-sm">
+                        <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
+                      </h3>
+                      <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
                         {post.summary}
                       </p>
-                      <span className="blog-underline absolute top-[1.3em] left-0 right-0 h-[1px]" />
                     </motion.div>
 
                     {/* Date */}
                     <motion.span
-                      className="text-muted-foreground shrink-0 text-label"
+                      className="text-muted-foreground-dim shrink-0 pt-3 text-label"
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
@@ -237,24 +235,19 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
   return (
     <motion.div
       ref={ref}
-      style={{
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "2px",
-      }}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay: 0.1, ease }}
     >
       <div
-        className="flex items-center gap-3 px-4 py-[10px]"
+        className="flex items-center gap-3 py-2"
         style={{
-          borderBottom: "1px solid var(--border)",
+          borderBottom: "1px solid var(--rule)",
         }}
       >
         <span className="text-muted-foreground-dim select-none text-2xs label-meta">$ wc -l ./posts/*</span>
       </div>
-      <div className="px-5 py-4 space-y-3 text-mono-sm">
+      <div className="pt-5 space-y-4 text-mono-sm">
         {/* Summary row */}
         <div className="flex items-baseline gap-4 text-foreground/80">
           <span>

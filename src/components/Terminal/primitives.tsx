@@ -294,16 +294,6 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             />
           )}
         </div>
-        {!focused && !input && (
-          <span
-            className="inline-block w-2 h-4"
-            style={{
-              backgroundColor: "var(--emphasis)",
-              opacity: 0.7,
-              animation: "blink 1s steps(2, start) infinite",
-            }}
-          />
-        )}
       </form>
     </motion.div>
   );
