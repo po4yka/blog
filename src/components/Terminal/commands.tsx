@@ -1,14 +1,11 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
-import { useState, useCallback, useEffect, useRef, type ReactNode } from "react";
+import { useState, useCallback, type ReactNode } from "react";
 import { ease, duration } from "@/lib/motion";
-import { useSettingsStore } from "@/stores/settingsStore";
 import { AnimatedCheck } from "./AnimatedCheck";
 
-const TYPING_SPEED_MS = 35;
-
 /**
- * Command prompt with per-character typing reveal — click to copy command text
+ * Command prompt. Static — no typing theatre. Click to copy.
  */
 export function Cmd({
   children,
@@ -19,45 +16,6 @@ export function Cmd({
 }) {
   const { ref, inView } = useInView(0.1);
   const [copied, setCopied] = useState(false);
-  const [revealedChars, setRevealedChars] = useState(0);
-  const [totalChars, setTotalChars] = useState(0);
-  const [typingStarted, setTypingStarted] = useState(false);
-  const textRef = useRef<HTMLSpanElement>(null);
-
-  const typingDone = totalChars > 0 && revealedChars >= totalChars;
-
-  // Measure total character count once text is rendered
-  useEffect(() => {
-    if (textRef.current) {
-      setTotalChars(textRef.current.textContent?.length ?? 0);
-    }
-  }, [children]);
-
-  // Start typing when in view (after delay)
-  useEffect(() => {
-    if (!inView || typingStarted) return;
-
-    const reduceMotion = useSettingsStore.getState().reduceMotion;
-    const timeout = setTimeout(() => {
-      setTypingStarted(true);
-      if (reduceMotion || totalChars === 0) {
-        setRevealedChars(totalChars);
-        return;
-      }
-
-      let charIdx = 0;
-      const id = setInterval(() => {
-        charIdx++;
-        setRevealedChars(charIdx);
-        if (charIdx >= totalChars) clearInterval(id);
-      }, TYPING_SPEED_MS);
-
-      // Cleanup if unmounted during typing
-      return () => clearInterval(id);
-    }, delay * 1000);
-
-    return () => clearTimeout(timeout);
-  }, [inView, typingStarted, delay, totalChars]);
 
   const handleCopy = useCallback(() => {
     const el = ref.current;
@@ -85,45 +43,32 @@ export function Cmd({
       onClick={handleCopy}
       title="Click to copy command"
     >
-      {/* $ prompt -- appears immediately */}
-      <span className="text-accent/60 select-none group-hover:text-accent transition-colors duration-200">
+      <span
+        className="select-none"
+        style={{ color: "var(--emphasis)", fontWeight: 500 }}
+      >
         $
       </span>
-      {/* Command text -- revealed character by character */}
       <span
-        className="inline-flex items-baseline overflow-hidden whitespace-nowrap"
-        style={{ width: typingStarted ? `${revealedChars}ch` : "0ch" }}
+        data-cmd-text
+        className="text-foreground whitespace-nowrap group-hover:opacity-100 transition-opacity duration-200"
+        style={{ opacity: 0.92 }}
       >
-        <span
-          ref={textRef}
-          data-cmd-text
-          className="text-foreground/90 group-hover:text-foreground transition-colors duration-200 whitespace-nowrap"
-        >
-          {children}
-        </span>
+        {children}
       </span>
-      {/* Blinking cursor -- visible once typing starts */}
-      {typingStarted && (
-        <span
-          className="text-accent/40 select-none"
-          style={{ animation: "blink 1s step-end infinite" }}
-        >
-          _
-        </span>
-      )}
-      {/* Copy indicator */}
       <motion.span
-        className="text-accent/60 select-none flex items-center"
+        className="select-none flex items-center"
+        style={{ color: "var(--muted-foreground)" }}
         initial={{ opacity: 0, x: -4 }}
         animate={copied ? { opacity: 1, x: 0 } : { opacity: 0, x: -4 }}
         transition={{ duration: duration.fast }}
       >
         {copied && <AnimatedCheck size={12} />}
       </motion.span>
-      {/* Copy icon hint on hover -- only after typing completes */}
-      {!copied && typingDone && (
+      {!copied && (
         <span
-          className="text-muted-foreground/0 group-hover:text-muted-foreground/30 transition-colors duration-200 select-none text-xs"
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none text-xs"
+          style={{ color: "var(--muted-foreground-dim)" }}
         >
           ⌘C
         </span>
@@ -133,7 +78,7 @@ export function Cmd({
 }
 
 /**
- * Styled output block with click-to-copy
+ * Output block with click-to-copy. Hairline left rule replaces the accent-tinted border.
  */
 export function OutputBlock({
   children,
@@ -162,8 +107,9 @@ export function OutputBlock({
   return (
     <motion.div
       ref={ref}
-      className={`relative border-l-2 border-accent/15 pl-6 md:pl-8 hover:border-accent/30 transition-colors duration-300 font-mono cursor-pointer group/output ${className}`}
-      initial={{ opacity: 0, y: 8 }}
+      className={`relative pl-6 md:pl-8 font-mono cursor-pointer group/output ${className}`}
+      style={{ borderLeft: "1px solid var(--rule)" }}
+      initial={{ opacity: 0, y: 6 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
       onClick={handleCopy}
@@ -171,7 +117,8 @@ export function OutputBlock({
     >
       {children}
       <motion.span
-        className="absolute -top-1 right-0 text-accent/60 flex items-center select-none"
+        className="absolute -top-1 right-0 flex items-center select-none"
+        style={{ color: "var(--muted-foreground)" }}
         initial={{ opacity: 0 }}
         animate={copied ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: duration.fast }}

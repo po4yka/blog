@@ -9,7 +9,7 @@ import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, ChevronUp } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
-import { duration, spring } from "@/lib/motion";
+import { duration } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
@@ -67,7 +67,10 @@ function ReadingProgress() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-transparent">
-      <motion.div className="h-full bg-accent/60" style={{ width: `${progress}%` }} />
+      <motion.div
+        className="h-full"
+        style={{ width: `${progress}%`, background: "var(--foreground)", opacity: 0.4 }}
+      />
     </div>
   );
 }
@@ -86,15 +89,13 @@ function CopyLinkButton() {
   }, []);
 
   return (
-    <motion.button
+    <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 cursor-pointer font-mono text-label"
+      className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
       title={t("blogPost.copyLink")}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
     >
       {copied ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
-    </motion.button>
+    </button>
   );
 }
 
@@ -120,9 +121,9 @@ function ScrollToTop() {
 
   return (
     <motion.button
-      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-2.5 bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors duration-200 cursor-pointer rounded-lg"
+      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-2.5 bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer"
       style={{
-        boxShadow: "var(--window-shadow-sm)",
+        borderRadius: "2px",
         marginBottom: "env(safe-area-inset-bottom)",
         marginRight: "env(safe-area-inset-right)",
       }}
@@ -130,8 +131,6 @@ function ScrollToTop() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
-      whileHover={{ scale: 1.1, y: -2 }}
-      whileTap={{ scale: 0.9 }}
       title={t("blogPost.scrollToTop")}
     >
       <ChevronUp size={18} />
@@ -183,12 +182,10 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
         {/* Back */}
         <motion.a
           href={blogUrl(lang)}
-          className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-accent transition-colors duration-200 no-underline font-mono text-mono-sm"
+          className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline font-mono text-mono-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: duration.base }}
-          whileHover={{ x: -4 }}
-          whileTap={{ scale: 0.97 }}
         >
           <ArrowLeft size={12} />
           {t("blogPost.allPosts")}
@@ -206,19 +203,19 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
           delay={0.1}
         >
           {/* Article header */}
-          <div className="mb-10 max-w-[40rem]">
-            <h1 className="display-2 text-foreground font-mono">
+          <div className="mb-10" style={{ maxWidth: "40rem" }}>
+            <h1 className="display-2 text-foreground">
               {post.title}
             </h1>
-            <div
-              className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground font-mono text-mono-sm"
-            >
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">
               <span>
-                {t("blogPost.author")} <span className="text-accent">Nikita Pochaev</span>
+                {t("blogPost.author")} <span className="text-foreground font-medium">Nikita Pochaev</span>
               </span>
+              <span aria-hidden="true">·</span>
               <span>
                 {t("blogPost.date")} <span className="text-foreground/80">{post.date}</span>
               </span>
+              <span aria-hidden="true">·</span>
               <span>
                 {t("blogPost.category")} <span className="text-foreground/80">{post.category}</span>
               </span>
@@ -229,20 +226,20 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
           <div
             ref={contentRef}
             className="prose-blog"
+            style={{ maxWidth: "40rem" }}
           >
             {children}
           </div>
 
           {/* Tags */}
-          <div className="mt-8 pt-4 border-t border-border/30 flex flex-wrap items-center gap-3">
+          <div className="mt-8 pt-4 border-t border-border flex flex-wrap items-center gap-3" style={{ maxWidth: "40rem" }}>
             {post.tags.map((tag) => (
-              <motion.span
+              <span
                 key={tag}
-                className="text-muted-foreground/40 cursor-default font-mono text-label"
-                whileHover={{ color: "var(--accent)", scale: 1.08, y: -1, transition: spring.snappy }}
+                className="text-muted-foreground cursor-default font-mono text-label"
               >
                 #{tag}
-              </motion.span>
+              </span>
             ))}
             <span className="flex-1" />
             <CopyLinkButton />
@@ -254,26 +251,22 @@ export function BlogPostIsland({ post, slug, prev, next, children, lang: langPro
         {/* Navigation */}
         <div className="flex items-center justify-between pt-4 font-mono text-mono-sm">
           {prev ? (
-            <motion.a
-              href={blogUrl(lang , prev.slug)}
-              className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 no-underline"
-              whileHover={{ x: -4 }}
-              whileTap={{ scale: 0.97 }}
+            <a
+              href={blogUrl(lang, prev.slug)}
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
             >
               <ArrowLeft size={12} />
               {prev.title}
-            </motion.a>
+            </a>
           ) : <span />}
           {next ? (
-            <motion.a
-              href={blogUrl(lang , next.slug)}
-              className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-accent transition-colors duration-200 no-underline"
-              whileHover={{ x: 4 }}
-              whileTap={{ scale: 0.97 }}
+            <a
+              href={blogUrl(lang, next.slug)}
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
             >
               {next.title}
               <ArrowRight size={12} />
-            </motion.a>
+            </a>
           ) : <span />}
         </div>
       </div>

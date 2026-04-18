@@ -88,7 +88,7 @@ export function AdminProjects() {
       >
         {projects.length === 0 && (
           <div className="p-8 text-center">
-            <p className="text-muted-foreground/40" style={{ fontSize: "0.8125rem" }}>No projects yet</p>
+            <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>No projects yet</p>
           </div>
         )}
 
@@ -101,12 +101,12 @@ export function AdminProjects() {
             <div className="flex items-center gap-3 px-4 py-3.5">
               <button
                 onClick={() => setExpanded(expanded === project.id ? null : project.id ?? null)}
-                className="shrink-0 text-muted-foreground/25 hover:text-foreground/50 transition-colors cursor-pointer p-0.5"
+                className="shrink-0 text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5"
               >
                 {expanded === project.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </button>
 
-              {project.featured && <Star size={12} className="text-accent fill-accent/20 shrink-0" />}
+              {project.featured && <Star size={12} className="fill-foreground/20 shrink-0" />}
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-foreground truncate" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
@@ -114,7 +114,7 @@ export function AdminProjects() {
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
                   {project.platforms.map((p) => (
-                    <span key={p} className="font-mono text-accent/40" style={{ fontSize: "0.5625rem" }}>{p}</span>
+                    <span key={p} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>{p}</span>
                   ))}
                   <span className="text-border/50">·</span>
                   <span className="font-mono text-muted-foreground/30" style={{ fontSize: "0.5625rem" }}>
@@ -125,7 +125,7 @@ export function AdminProjects() {
 
               <button
                 onClick={() => setEditing({ ...project })}
-                className="shrink-0 font-mono text-muted-foreground/30 hover:text-accent transition-colors cursor-pointer"
+                className="shrink-0 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 style={{ fontSize: "0.625rem" }}
               >
                 Edit
@@ -133,7 +133,7 @@ export function AdminProjects() {
               <button
                 onClick={() => handleDelete(project.id!)}
                 className={`shrink-0 p-1 transition-colors cursor-pointer ${
-                  confirmingId === project.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
+                  confirmingId === project.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
                 <Trash2 size={13} />
@@ -150,19 +150,19 @@ export function AdminProjects() {
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <p className="text-foreground/50 mb-2" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
+                  <p className="text-foreground/80 mb-2" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/40 border border-border/40" style={{ fontSize: "0.5625rem", borderRadius: "2px" }}>
+                      <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/80 border border-border/60" style={{ fontSize: "0.5625rem", borderRadius: "2px" }}>
                         {tag}
                       </span>
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {project.links.map((link) => (
-                      <span key={link.type} className="font-mono text-accent/50" style={{ fontSize: "0.625rem" }}>
+                      <span key={link.type} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
                         {link.type}: {link.href}
                       </span>
                     ))}

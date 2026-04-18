@@ -45,7 +45,6 @@ export function AdminLayout() {
   return (
     <div
       className="min-h-screen bg-background text-foreground flex"
-      style={{ fontFamily: "'JetBrains Mono', monospace" }}
     >
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-[220px] min-h-screen bg-card/50 border-r border-border/60 sticky top-0 h-screen">
@@ -53,7 +52,7 @@ export function AdminLayout() {
         <div className="px-5 pt-6 pb-5 border-b border-border/40">
           <a
             href="/"
-            className="font-mono text-foreground/80 hover:text-accent transition-colors duration-300"
+            className="font-mono text-foreground/80 hover:text-foreground transition-colors duration-200"
             style={{ fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.02em" }}
           >
             po4yka.dev
@@ -77,15 +76,15 @@ export function AdminLayout() {
                 onClick={() => navigate(link.path)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2 transition-all duration-200 cursor-pointer text-left ${
                   isActive
-                    ? "bg-accent/10 text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/5"
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
-                style={{ fontSize: "0.8125rem", borderRadius: "6px", fontWeight: isActive ? 500 : 400 }}
+                style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: isActive ? 500 : 400 }}
               >
-                <Icon size={15} className={isActive ? "text-accent" : ""} />
+                <Icon size={15} className={isActive ? "text-foreground" : ""} />
                 {link.label}
                 {isActive && (
-                  <ChevronRight size={11} className="ml-auto text-muted-foreground/30" />
+                  <ChevronRight size={11} className="ml-auto text-muted-foreground/50" />
                 )}
               </button>
             );
@@ -97,7 +96,7 @@ export function AdminLayout() {
           <button
             onClick={() => { logout(); navigate("/admin/login"); }}
             className="w-full flex items-center gap-2.5 px-3 py-2 text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.75rem", borderRadius: "4px" }}
+            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             <LogOut size={14} />
             Sign out

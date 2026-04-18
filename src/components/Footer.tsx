@@ -1,5 +1,4 @@
 import { TerminalPrompt } from "./Terminal";
-import { motion } from "motion/react";
 import { MotionProvider } from "./MotionProvider";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useLocale } from "@/stores/settingsStore";
@@ -18,7 +17,7 @@ export function Footer() {
         <div
           className="p-4"
           style={{
-            borderRadius: "8px",
+            borderRadius: "2px",
             background: "var(--card)",
             border: "1px solid var(--border)",
           }}
@@ -31,15 +30,11 @@ export function Footer() {
 
         <div
           className="pt-5"
-          style={{ borderTop: "1px solid var(--titlebar-border)" }}
+          style={{ borderTop: "1px solid var(--rule)" }}
         >
-          <motion.p
-            className="text-center font-mono text-label text-foreground/60"
-            whileHover={{ color: "var(--foreground)", opacity: 0.7 }}
-            transition={{ duration: 0.3 }}
-          >
+          <p className="text-center font-mono text-label text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
-          </motion.p>
+          </p>
         </div>
       </div>
     </footer>

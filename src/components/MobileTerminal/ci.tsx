@@ -8,14 +8,14 @@ import { useCopy } from "./_helpers";
 
 export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
   const lanes = [
-    { step: "Ensuring clean git status", icon: "\u2713", color: "var(--ok)" },
-    { step: "Running unit tests (436 passed)", icon: "\u2713", color: "var(--ok)" },
-    { step: "Incrementing build number \u2192 247", icon: "\u2713", color: "var(--ok)" },
-    { step: "Building release APK", icon: "\u2713", color: "var(--ok)" },
-    { step: "Building release IPA", icon: "\u2713", color: "var(--ok)" },
-    { step: "Uploading to Google Play (internal)", icon: "\u2713", color: "var(--ok)" },
-    { step: "Uploading to TestFlight", icon: "\u2713", color: "var(--ok)" },
-    { step: "Posting Slack notification", icon: "\u2713", color: "var(--ok)" },
+    { step: "Ensuring clean git status", icon: "\u2713" },
+    { step: "Running unit tests (436 passed)", icon: "\u2713" },
+    { step: "Incrementing build number \u2192 247", icon: "\u2713" },
+    { step: "Building release APK", icon: "\u2713" },
+    { step: "Building release IPA", icon: "\u2713" },
+    { step: "Uploading to Google Play (internal)", icon: "\u2713" },
+    { step: "Uploading to TestFlight", icon: "\u2713" },
+    { step: "Posting Slack notification", icon: "\u2713" },
   ];
 
   return (
@@ -27,7 +27,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
       {({ inView }) => (
         <>
           <motion.div
-            className="text-muted-foreground/25 pb-3 text-label"
+            className="text-muted-foreground pb-3 text-label"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.3, delay: delay + 0.08 }}
@@ -38,19 +38,18 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
           {lanes.map((lane, i) => (
             <motion.div
               key={lane.step}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-mono rounded-[4px]"
+              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 transition-colors duration-150 text-mono"
               style={{ lineHeight: 1.7 }}
               initial={{ opacity: 0, x: -4 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.25, delay: delay + 0.12 + i * 0.04 }}
             >
-              <motion.span
-                className="font-medium"
-                style={{ color: lane.color, opacity: 0.8 }}
-                whileHover={{ scale: 1.2, rotate: 10 }}
+              <span
+                className="font-medium text-foreground"
+                style={{ opacity: 0.7 }}
               >
                 {lane.icon}
-              </motion.span>
+              </span>
               <span className="text-foreground/75">{lane.step}</span>
             </motion.div>
           ))}
@@ -62,10 +61,10 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.3, delay: delay + 0.5 }}
           >
-            <div className="text-foreground/50">
-              <span style={{ color: "var(--ok)", opacity: 0.8 }}>fastlane.tools finished successfully</span>
+            <div className="text-foreground/70">
+              fastlane.tools finished successfully
             </div>
-            <div className="text-muted-foreground/30 text-mono-sm">
+            <div className="text-muted-foreground text-mono-sm">
               Duration: 4 minutes 12 seconds · Build #247
             </div>
           </motion.div>
@@ -75,7 +74,7 @@ export function FastlaneDeploy({ delay = 0 }: { delay?: number }) {
   );
 }
 
-// --- git log --oneline -- click hash to copy ---
+// --- git log --oneline — click hash to copy ---
 
 export function GitLog({ delay = 0 }: { delay?: number }) {
   const { copiedText, copy } = useCopy();
@@ -96,17 +95,16 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
       delay={delay}
       command={<>git log <Accent>--oneline</Accent> --decorate -7</>}
       windowTitle="git — log"
-      dimLights
     >
       {({ inView }) => (
         <>
           {commits.map((c, i) => (
             <motion.div
               key={c.hash}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
+              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[2px]"
               style={{
                 lineHeight: 1.7,
-                backgroundColor: hoveredHash === c.hash ? "var(--accent-4)" : "transparent",
+                backgroundColor: hoveredHash === c.hash ? "var(--muted)" : "transparent",
                 transition: "background-color 0.15s ease",
               }}
               initial={{ opacity: 0, x: -4 }}
@@ -115,34 +113,27 @@ export function GitLog({ delay = 0 }: { delay?: number }) {
               onMouseEnter={() => setHoveredHash(c.hash)}
               onMouseLeave={() => setHoveredHash(null)}
             >
-              <motion.span
-                className="cursor-pointer select-none text-mono-sm"
+              <span
+                className="cursor-pointer select-none text-mono-sm text-muted-foreground"
                 style={{
-                  color: copiedText === c.hash ? "var(--accent)" : "var(--signal-yellow)",
                   opacity: hoveredHash === c.hash ? 0.9 : 0.6,
                   transition: "opacity 0.15s ease",
                 }}
                 onClick={() => copy(c.hash)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 title="Click to copy hash"
               >
                 {copiedText === c.hash ? "copied!" : c.hash}
-              </motion.span>
+              </span>
               {c.tag && (
-                <motion.span
-                  className="shrink-0 px-1.5 py-0 text-xs rounded-[3px] font-medium"
-                  style={{
-                    color: "var(--accent)",
-                    backgroundColor: "var(--accent-10)",
-                  }}
-                  whileHover={{ scale: 1.1 }}
+                <span
+                  className="shrink-0 px-1.5 py-0 text-xs rounded-[2px] font-medium text-muted-foreground"
+                  style={{ backgroundColor: "var(--muted)" }}
                 >
                   {c.tag}
-                </motion.span>
+                </span>
               )}
               <span className="text-foreground/75 flex-1">{c.msg}</span>
-              <span className="text-muted-foreground/25 shrink-0 text-label">
+              <span className="text-muted-foreground shrink-0 text-label">
                 {c.time}
               </span>
             </motion.div>

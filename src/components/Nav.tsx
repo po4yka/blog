@@ -94,7 +94,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         background: scrolled
           ? "var(--nav-glass)"
           : "var(--nav-glass-subtle)",
-        borderBottom: "1px solid var(--titlebar-border)",
+        borderBottom: "1px solid var(--rule)",
         paddingLeft: "env(safe-area-inset-left)",
         paddingRight: "env(safe-area-inset-right)",
       }}
@@ -112,9 +112,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             top: 0,
             left: 0,
             right: 0,
-            height: "2px",
-            background: "linear-gradient(to right, var(--accent), var(--signal-green), var(--info))",
-            opacity: 0.6,
+            height: "1px",
+            background: "var(--foreground)",
+            opacity: 0.2,
             zIndex: 10,
           }}
         />
@@ -122,23 +122,16 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
 
       <div className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
         {/* Logo / prefix */}
-        <motion.a
+        <a
           href="/"
-          className="flex items-center gap-2 text-mono text-foreground/70 hover:text-accent transition-colors duration-300 shrink-0"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
+          className="flex items-center gap-2 text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0"
         >
-          <motion.span
-            className="inline-block w-[10px] h-[10px] rounded-full"
-            style={{ backgroundColor: "var(--accent)", opacity: 0.7 }}
-            whileHover={{
-              scale: 1.3,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 400, damping: 12 },
-            }}
+          <span
+            className="inline-block w-[8px] h-[8px] rounded-[1px]"
+            style={{ backgroundColor: "var(--foreground)", opacity: 0.5 }}
           />
           po4yka
-        </motion.a>
+        </a>
 
         {/* Desktop tabs */}
         <div className="hidden md:flex items-center gap-0.5">
@@ -148,32 +141,13 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               <a
                 key={link.labelKey}
                 href={link.href}
-                className={`relative overflow-hidden px-3 py-1.5 text-mono-sm rounded-[6px] transition-colors duration-200 group ${
+                className={`relative px-3 py-1.5 text-mono-sm transition-colors duration-200 group ${
                   active
-                    ? "text-foreground"
-                    : "text-foreground/70 hover:text-foreground/80"
+                    ? "text-foreground font-medium border-b border-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {/* Sliding active background indicator */}
-                {active && (
-                  <motion.span
-                    layoutId={reduceMotion ? undefined : "nav-indicator"}
-                    className="absolute inset-0 rounded-[6px] bg-accent/8"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    aria-hidden
-                  />
-                )}
-                <span className="relative">
-                  {t(link.labelKey)}
-                </span>
-                {/* Animated underline */}
-                <span
-                  className="absolute bottom-0.5 left-3 right-3 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
-                  style={{
-                    backgroundColor: active ? "var(--accent)" : "var(--muted-foreground)",
-                    opacity: active ? 0.5 : 0.25,
-                  }}
-                />
+                {t(link.labelKey)}
               </a>
             );
           })}
@@ -186,10 +160,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           {/* Theme toggle */}
           <motion.button
             onClick={cycleTheme}
-            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs rounded-[5px] text-foreground/60 hover:text-accent transition-colors duration-200 cursor-pointer"
+            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
             title={switchThemeLabel}
             aria-label={switchThemeLabel}
-            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92, rotate: theme === "dark" ? 180 : -180 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
             data-umami-event="theme-toggle"
@@ -203,9 +176,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           <span className="flex items-center gap-1.5">
             <span
               className="w-[5px] h-[5px] rounded-full"
-              style={{ backgroundColor: "var(--signal-green)", animation: "pulse-scale 3s ease-in-out infinite" }}
+              style={{ backgroundColor: "var(--foreground)", opacity: 0.5, animation: "pulse-scale 3s ease-in-out infinite" }}
             />
-            <span className="text-3xs text-foreground/60">
+            <span className="text-3xs text-muted-foreground">
               {t("nav.online")}
             </span>
           </span>
@@ -246,7 +219,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             style={{
               background: "var(--mobile-menu-bg)",
               backdropFilter: "blur(20px)",
-              borderTop: "1px solid var(--titlebar-border)",
+              borderTop: "1px solid var(--rule)",
             }}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -260,19 +233,15 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   <motion.a
                     key={link.labelKey}
                     href={link.href}
-                    className={`py-3 px-3 text-mono rounded-[6px] transition-colors duration-200 ${
+                    className={`py-3 px-3 text-mono transition-colors duration-200 ${
                       active
-                        ? "text-foreground"
-                        : "text-foreground/70 hover:text-foreground/80"
+                        ? "text-foreground font-medium"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
-                    style={{
-                      backgroundColor: active ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "transparent",
-                    }}
                     onClick={() => setMenuOpen(false)}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2, delay: i * 0.03 }}
-                    whileTap={{ scale: 0.97, x: 4 }}
                   >
                     {t(link.labelKey)}
                   </motion.a>

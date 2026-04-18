@@ -27,14 +27,13 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
       delay={delay}
       command={<>git log <Accent>--oneline</Accent> --decorate -7</>}
       windowTitle="git — log"
-      dimLights
     >
       {() => (
         <div ref={ref} className="space-y-0">
           {commits.map((c, i) => (
             <motion.div
               key={c.hash}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[4px]"
+              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[2px]"
               style={{
                 lineHeight: 1.7,
                 transition: "background-color 0.15s ease",
@@ -42,11 +41,10 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
               initial={{ opacity: 0, x: -4 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.25, delay: delay + 0.08 + i * 0.04, ease }}
-              whileHover={{ backgroundColor: "var(--accent-4)" }}
+              whileHover={{ backgroundColor: "var(--muted)" }}
             >
-              <motion.span
-                className="text-accent/70 cursor-pointer shrink-0 text-mono-sm"
-                whileHover={{ color: "var(--accent)" }}
+              <span
+                className="text-muted-foreground cursor-pointer shrink-0 text-mono-sm"
                 onClick={() => {
                   copy(c.hash);
                   setCopiedHash(c.hash);
@@ -55,9 +53,9 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
                 title="Copy hash"
               >
                 {copiedHash === c.hash ? "copied!" : c.hash}
-              </motion.span>
+              </span>
               <span className="text-foreground/75 flex-1 truncate">{c.msg}</span>
-              <span className="text-muted-foreground/25 shrink-0 text-label">
+              <span className="text-muted-foreground shrink-0 text-label">
                 {c.date}
               </span>
             </motion.div>

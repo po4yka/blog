@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { SectionHeader } from "./SectionHeader";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
 import { ease } from "@/lib/motion";
@@ -22,7 +23,12 @@ export function Links() {
   return (
     <MotionProvider>
     <section aria-labelledby="links-heading" className="space-y-5">
-      <h2 id="links-heading" className="sr-only">{t("links.heading")}</h2>
+      <SectionHeader
+        number="03"
+        label="CONTACT"
+        heading={t("links.heading")}
+        id="links-heading"
+      />
       <Cmd>
         cat <Accent>~/.config/links.toml</Accent>
       </Cmd>
@@ -38,13 +44,13 @@ export function Links() {
           link.href === undefined ? (
             <span
               key={link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 font-mono text-mono rounded-[6px] opacity-30 cursor-default pointer-events-none"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
               style={{
                 border: "1px solid var(--border)",
               }}
               aria-label={`${link.label} (${t("links.comingSoon")})`}
             >
-              <span className="text-muted-foreground/50 text-mono-sm">
+              <span className="text-muted-foreground-dim text-mono-sm">
                 {link.icon}
               </span>
               {link.label}
@@ -56,29 +62,17 @@ export function Links() {
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
               aria-label={link.href.startsWith("http") ? `${link.label} (${t("links.opensNewWindow")})` : link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-foreground/60 hover:text-accent hover:bg-accent/5 transition-all duration-250 font-mono text-mono rounded-[6px]"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200 font-mono text-mono rounded-[2px]"
               style={{
                 border: "1px solid var(--border)",
               }}
               initial={{ opacity: 0, y: 6 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease }}
-              whileHover={{
-                y: -2,
-                borderColor: "var(--accent)",
-                transition: { type: "spring", stiffness: 400, damping: 20 },
-              }}
-              whileTap={{
-                scale: 0.95,
-                transition: { type: "spring", stiffness: 500, damping: 15 },
-              }}
             >
-              <motion.span
-                className="text-muted-foreground/50 text-mono-sm"
-                whileHover={{ scale: 1.2, rotate: 10 }}
-              >
+              <span className="text-muted-foreground-dim text-mono-sm">
                 {link.icon}
-              </motion.span>
+              </span>
               {link.label}
             </motion.a>
           )

@@ -20,8 +20,8 @@ function SparkBar({
         style={{
           width: "10px",
           borderRadius: "2px 2px 0 0",
-          backgroundColor: pct > 0 ? "var(--accent)" : "var(--border)",
-          opacity: pct > 0 ? 0.4 + pct * 0.004 : 0.2,
+          backgroundColor: pct > 0 ? "var(--foreground)" : "var(--border)",
+          opacity: pct > 0 ? 0.25 + pct * 0.004 : 0.15,
           minHeight: "2px",
         }}
         initial={{ height: 0 }}
@@ -64,16 +64,16 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
               />
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-muted-foreground/25 text-label">
+          <div className="flex justify-between mt-2 text-muted-foreground text-label">
             <span>13d ago</span>
             <span>today</span>
           </div>
         </div>
         <div
-          className="flex items-center px-5 py-2 text-muted-foreground/25 text-xs"
+          className="flex items-center px-5 py-2 text-muted-foreground text-xs"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <span>github.com/{"{"}po4yka{"}"}/events</span>
+          <span>github.com/{"{"}"po4yka{"}"}/events</span>
         </div>
       </PanelShell>
     </MotionProvider>

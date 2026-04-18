@@ -33,18 +33,18 @@ const neofetch: Command = {
 
     return (
       <div className="flex gap-4 items-start">
-        <pre className="text-accent/50 leading-tight shrink-0 hidden sm:block">
+        <pre className="text-muted-foreground-dim leading-tight shrink-0 hidden sm:block">
           {ASCII_ART.join("\n")}
         </pre>
         <div className="space-y-0.5">
-          <div className="text-foreground/70">
+          <div className="text-foreground/90">
             <Accent>po4yka</Accent>
-            <span className="text-muted-foreground/30">@ghostty</span>
+            <span className="text-muted-foreground-dim">@po4yka.dev</span>
           </div>
-          <div className="text-muted-foreground/20">--------------</div>
+          <div className="text-muted-foreground-dim">--------------</div>
           {renderInfoRow("OS", "macOS 15.2 arm64")}
           {renderInfoRow("Shell", "zsh 5.9")}
-          {renderInfoRow("Terminal", "Ghostty")}
+          {renderInfoRow("Terminal", "operator-console")}
           {renderInfoRow("Editor", "neovim")}
           {renderInfoRow("Theme", ctx.getTheme())}
           {renderInfoRow("Projects", String(projects.length))}

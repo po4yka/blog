@@ -50,8 +50,8 @@ export function AdminSetup() {
           <button
             type="button"
             onClick={handleRegister}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-background hover:bg-accent/90 transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
+            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
           >
             <Fingerprint size={16} />
             Register passkey
@@ -82,7 +82,7 @@ export function AdminSetup() {
             type="button"
             onClick={() => navigate("/admin/login")}
             className="px-6 py-2 border border-border/60 text-foreground/70 hover:bg-card transition-colors cursor-pointer font-mono"
-            style={{ fontSize: "0.75rem", borderRadius: "8px" }}
+            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             Go to login
           </button>
@@ -99,7 +99,7 @@ export function AdminSetup() {
             type="button"
             onClick={() => setState("ready")}
             className="px-6 py-2 border border-border/60 text-foreground/70 hover:bg-card transition-colors cursor-pointer font-mono"
-            style={{ fontSize: "0.75rem", borderRadius: "8px" }}
+            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             Try again
           </button>
@@ -113,7 +113,6 @@ function SetupShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="min-h-screen bg-background flex items-center justify-center px-6"
-      style={{ fontFamily: "'JetBrains Mono', monospace" }}
     >
       <motion.div
         className="w-full max-w-[340px]"
@@ -124,7 +123,7 @@ function SetupShell({ children }: { children: React.ReactNode }) {
         <div className="mb-10">
           <a
             href="/"
-            className="font-mono text-foreground/70 hover:text-accent transition-colors duration-300"
+            className="font-mono text-foreground/80 hover:text-foreground transition-colors duration-200"
             style={{ fontSize: "0.75rem", letterSpacing: "0.02em" }}
           >
             po4yka.dev

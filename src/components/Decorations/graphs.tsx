@@ -3,7 +3,7 @@ import { useInView } from "@/hooks/useInView";
 import { useState, useCallback, useEffect } from "react";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
-import { createSeededRng, barColor } from "./_utils";
+import { createSeededRng } from "./_utils";
 import { useActivityStore } from "@/stores/activityStore";
 import { useAnimationInterval } from "@/hooks/useAnimationInterval";
 
@@ -52,10 +52,6 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [points, setPoints] = useState(createNetworkGraphPoints);
 
-  // Sliding window driven by scroll velocity. Updates on a 3s cycle
-  // per Guidelines ("CPU/memory panels update on 3-10s cycles, not every
-  // frame") so the graph reads as an ambient atmospheric widget rather
-  // than continuous animation.
   useAnimationInterval(() => {
     const { scrollVelocity } = useActivityStore.getState();
     const newPoint = Math.max(5, Math.min(95,
@@ -99,12 +95,12 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
         >
           <defs>
             <linearGradient id="netFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--signal-green)" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="var(--signal-green)" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="var(--foreground)" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="var(--foreground)" stopOpacity="0.01" />
             </linearGradient>
           </defs>
           <path d={areaD} fill="url(#netFill)" />
-          <path d={pathD} fill="none" stroke="var(--signal-green)" strokeWidth="1.5" strokeOpacity="0.55" />
+          <path d={pathD} fill="none" stroke="var(--muted-foreground)" strokeWidth="1.5" strokeOpacity="0.55" />
 
           {/* Hover crosshair */}
           {hoverIdx !== null && (
@@ -114,26 +110,26 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
                 y1={0}
                 x2={hoverIdx * step}
                 y2={h}
-                stroke="var(--accent)"
+                stroke="var(--foreground)"
                 strokeWidth="1"
-                strokeOpacity="0.3"
+                strokeOpacity="0.25"
                 strokeDasharray="3,3"
               />
               <circle
                 cx={hoverIdx * step}
                 cy={h - ((points[hoverIdx] ?? 0) / 100) * h}
                 r="3"
-                fill="var(--accent)"
-                fillOpacity="0.7"
+                fill="var(--foreground)"
+                fillOpacity="0.6"
               />
               <text
                 x={hoverIdx * step + (hoverIdx > points.length / 2 ? -8 : 8)}
                 y={h - ((points[hoverIdx] ?? 0) / 100) * h - 8}
-                fill="var(--accent)"
+                fill="var(--foreground)"
                 fontSize="9"
                 className="font-mono"
                 textAnchor={hoverIdx > points.length / 2 ? "end" : "start"}
-                fillOpacity="0.8"
+                fillOpacity="0.7"
               >
                 {(((points[hoverIdx] ?? 0) / 100) * 8.5).toFixed(1)} MiB/s
               </text>
@@ -141,14 +137,14 @@ export function NetworkGraph({ delay = 0 }: { delay?: number }) {
           )}
         </svg>
         <div
-          className="flex items-center justify-between mt-3 text-muted-foreground/35 text-label"
+          className="flex items-center justify-between mt-3 text-muted-foreground text-label"
         >
           <span>
-            <span style={{ color: "var(--signal-green)", opacity: 0.7 }}>&#x25BC;</span>{" "}
+            <span style={{ color: "var(--foreground)", opacity: 0.5 }}>&#x25BC;</span>{" "}
             {(((points[points.length - 1] ?? 0) / 100) * 8.5).toFixed(2)} MiB/s
           </span>
           <span>
-            <span style={{ color: "var(--signal-red)", opacity: 0.6 }}>&#x25B2;</span>{" "}
+            <span style={{ color: "var(--muted-foreground)", opacity: 0.6 }}>&#x25B2;</span>{" "}
             {(((points[points.length - 1] ?? 0) / 100) * 2.1).toFixed(2)} MiB/s
           </span>
         </div>
@@ -174,7 +170,7 @@ const baseProcs: Proc[] = [
   { pid: 3904755, name: "kotlin-compile", args: "compileKotlin", threads: 12, cpu: 6.7, mem: 0.8 },
   { pid: 954079, name: "android-studio", args: "--ide", threads: 81, cpu: 2.7, mem: 3.2 },
   { pid: 3533263, name: "adb", args: "server fork", threads: 3, cpu: 0.1, mem: 0.4 },
-  { pid: 31968, name: "ghostty", args: "--config=default", threads: 4, cpu: 0.4, mem: 0.3 },
+  { pid: 31968, name: "terminal", args: "--config=default", threads: 4, cpu: 0.4, mem: 0.3 },
   { pid: 3904274, name: "node", args: "vite dev", threads: 8, cpu: 1.4, mem: 0.8 },
 ];
 
@@ -186,7 +182,6 @@ const sectionProcs: Record<string, { name: string; args: string; threads: number
   blog: { name: "blog-preview", args: "mdx --parse", threads: 5 },
 };
 
-/** Deterministic pid from section name */
 function sectionPid(name: string): number {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -200,7 +195,6 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
   const [hoveredPid, setHoveredPid] = useState<number | null>(null);
   const [procs, setProcs] = useState<Proc[]>(baseProcs);
 
-  // Update process list based on visible sections
   useAnimationInterval(() => {
     const { visibleSectionNames } = useActivityStore.getState();
     const sectionRows: Proc[] = visibleSectionNames
@@ -230,23 +224,21 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
       <div ref={ref}>
         {/* Options row */}
         <div
-          className="flex items-center justify-end gap-5 px-5 py-1.5 text-muted-foreground/25 text-xs"
+          className="flex items-center justify-end gap-5 px-5 py-1.5 text-muted-foreground text-xs"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
           {["filter", "tree", "per-core"].map((opt) => (
-            <motion.span
+            <span
               key={opt}
-              className="cursor-pointer hover:text-accent transition-colors duration-200"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="cursor-pointer hover:text-foreground hover:underline transition-colors duration-200"
             >
               {opt}
-            </motion.span>
+            </span>
           ))}
         </div>
         {/* Column headers */}
         <div
-          className="grid px-5 py-2 text-muted-foreground/35 text-label font-medium"
+          className="grid px-5 py-2 text-muted-foreground text-label font-medium"
           style={{
             gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
             borderBottom: "1px solid var(--border)",
@@ -266,10 +258,10 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
               <motion.div
                 key={p.pid}
                 layout
-                className="grid py-[5px] -mx-2 px-2 cursor-default text-label rounded-[3px]"
+                className="grid py-[5px] -mx-2 px-2 cursor-default text-label"
                 style={{
                   gridTemplateColumns: "80px 1fr 1fr 52px 52px 52px",
-                  backgroundColor: hoveredPid === p.pid ? "var(--accent-6)" : "transparent",
+                  backgroundColor: hoveredPid === p.pid ? "var(--muted)" : "transparent",
                   transition: "background-color 0.15s ease",
                 }}
                 initial={{ opacity: 0 }}
@@ -279,25 +271,25 @@ export function ProcessTable({ delay = 0 }: { delay?: number }) {
                 onMouseEnter={() => setHoveredPid(p.pid)}
                 onMouseLeave={() => setHoveredPid(null)}
               >
-                <span className="text-muted-foreground/25">{p.pid}</span>
+                <span className="text-muted-foreground-dim">{p.pid}</span>
                 <span
                   style={{
-                    color: p.cpu > 5 ? "var(--signal-green)" : "var(--foreground)",
-                    opacity: p.cpu > 5 ? 0.7 : 0.35,
+                    color: p.cpu > 5 ? "var(--foreground)" : "var(--muted-foreground)",
+                    opacity: p.cpu > 5 ? 0.85 : 0.6,
                     fontWeight: p.cpu > 5 ? 500 : 400,
                   }}
                 >
                   {p.name}
                 </span>
-                <span className="text-muted-foreground/25 truncate">{p.args}</span>
-                <span className="text-right text-muted-foreground/30">{p.threads}</span>
+                <span className="text-muted-foreground-dim truncate">{p.args}</span>
+                <span className="text-right text-muted-foreground">{p.threads}</span>
                 <span
-                  className="text-right font-medium"
-                  style={{ color: barColor(p.cpu * 10), opacity: 0.6 }}
+                  className="text-right font-medium text-muted-foreground"
+                  style={{ opacity: 0.8 }}
                 >
                   {p.cpu.toFixed(1)}
                 </span>
-                <span className="text-right text-muted-foreground/35">{p.mem.toFixed(1)}</span>
+                <span className="text-right text-muted-foreground-dim">{p.mem.toFixed(1)}</span>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -315,7 +307,6 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   const [hoveredCell, setHoveredCell] = useState<{ r: number; c: number } | null>(null);
   const [baseGrid] = useState(createCpuBaseGrid);
 
-  // Periodic wave: slightly shift opacity values every 12s
   const [waveOffsets, setWaveOffsets] = useState<number[][]>(() =>
     Array.from({ length: CPU_GRAPH_ROWS }, () =>
       Array.from({ length: CPU_GRAPH_COLS }, () => 0)
@@ -323,16 +314,11 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
   );
 
   useAnimationInterval(() => {
-    const { scrollProgress, scrollVelocity } = useActivityStore.getState();
-
-    const amplitude = 0.15 + scrollVelocity * 0.25;
-    const baseShift = scrollProgress * 0.1;
-
     setWaveOffsets(
       Array.from({ length: CPU_GRAPH_ROWS }, () =>
         Array.from(
           { length: CPU_GRAPH_COLS },
-          () => (Math.random() - 0.5) * amplitude + baseShift
+          () => (Math.random() - 0.5) * 0.15
         )
       )
     );
@@ -348,24 +334,19 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
               {row.map((val, c) => {
                 const baseOpacity = Math.max(0.06, val / 100) * 0.8;
                 const waveOpacity = Math.max(0.04, Math.min(0.9, baseOpacity + (waveOffsets[r]?.[c] ?? 0)));
-                const color =
-                  val > 75
-                    ? "var(--signal-red)"
-                    : val > 40
-                    ? "var(--signal-yellow)"
-                    : "var(--signal-green)";
+                // Grayscale ramp: high load = foreground, low = muted
+                const color = val > 60 ? "var(--foreground)" : val > 30 ? "var(--muted-foreground)" : "var(--muted-foreground-dim)";
                 const isHovered = hoveredCell?.r === r && hoveredCell?.c === c;
                 return (
                   <motion.span
                     key={c}
-                    className="inline-block cursor-crosshair rounded-sm"
+                    className="inline-block cursor-crosshair rounded-[2px]"
                     style={{
                       width: "10px",
                       height: "10px",
                       backgroundColor: color,
                       opacity: isHovered ? 1 : waveOpacity,
                       transition: "opacity 1.5s ease",
-                      boxShadow: isHovered ? `0 0 6px ${color}` : "none",
                     }}
                     initial={{ opacity: 0 }}
                     animate={inView ? { opacity: baseOpacity } : {}}
@@ -379,10 +360,9 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
             </div>
           ))}
         </div>
-        {/* Hover value display */}
         {hoveredCell && (
           <div
-            className="absolute top-2 right-5 text-muted-foreground/50 text-xs"
+            className="absolute top-2 right-5 text-muted-foreground text-xs"
           >
             Core {hoveredCell.r + 1} · {(baseGrid[hoveredCell.r]?.[hoveredCell.c] ?? 0).toFixed(0)}%
           </div>
@@ -394,11 +374,6 @@ export function CpuGraph({ delay = 0 }: { delay?: number }) {
 }
 
 // --- ConnectionPanel: real browser network data ---
-// Sparkline is built from actual resource timing entries captured at page
-// load (performance.getEntriesByType('resource')), so every visitor sees
-// their own real load profile rather than animated random values.
-// Connection stats use the Network Information API (Chrome/Edge/Android);
-// falls back to page load time on Safari/Firefox.
 
 interface ConnectionInfo {
   effectiveType: string;
@@ -458,24 +433,18 @@ function readPageLoad(): number | null {
 
 export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
   const { ref } = useInView(0.1);
-  // Start null/empty so SSR and initial client render match, then populate
-  // browser-only data in a single effect after hydration.
   const [conn, setConn] = useState<ConnectionInfo | null>(null);
   const [points, setPoints] = useState<number[]>([]);
   const [pageLoad, setPageLoad] = useState<number | null>(null);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   useEffect(() => {
-    // Read browser-only APIs once immediately after hydration. These values are
-    // intentionally absent during SSR (guards return null/[]), so a single
-    // cascading render here is the correct pattern for post-hydration init.
     /* eslint-disable react-hooks/set-state-in-effect */
     setConn(readConnection());
     setPoints(buildResourceSparkline());
     setPageLoad(readPageLoad());
     /* eslint-enable react-hooks/set-state-in-effect */
 
-    // Subscribe to connection changes
     const navConn = (navigator as unknown as { connection?: NetworkInformationLike }).connection;
     if (navConn) {
       const handler = () => setConn(readConnection());
@@ -531,15 +500,15 @@ export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
             >
               <defs>
                 <linearGradient id="connFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--signal-green)" stopOpacity="0.18" />
-                  <stop offset="100%" stopColor="var(--signal-green)" stopOpacity="0.02" />
+                  <stop offset="0%" stopColor="var(--foreground)" stopOpacity="0.12" />
+                  <stop offset="100%" stopColor="var(--foreground)" stopOpacity="0.01" />
                 </linearGradient>
               </defs>
               <path d={areaD} fill="url(#connFill)" />
               <path
                 d={pathD}
                 fill="none"
-                stroke="var(--signal-green)"
+                stroke="var(--muted-foreground)"
                 strokeWidth="1.5"
                 strokeOpacity="0.55"
               />
@@ -550,26 +519,26 @@ export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
                     y1={0}
                     x2={hoverIdx * step}
                     y2={h}
-                    stroke="var(--accent)"
+                    stroke="var(--foreground)"
                     strokeWidth="1"
-                    strokeOpacity="0.3"
+                    strokeOpacity="0.25"
                     strokeDasharray="3,3"
                   />
                   <circle
                     cx={hoverIdx * step}
                     cy={h - ((points[hoverIdx] ?? 0) / 100) * h}
                     r="3"
-                    fill="var(--accent)"
-                    fillOpacity="0.7"
+                    fill="var(--foreground)"
+                    fillOpacity="0.6"
                   />
                   <text
                     x={hoverIdx * step + (hoverIdx > points.length / 2 ? -8 : 8)}
                     y={h - ((points[hoverIdx] ?? 0) / 100) * h - 8}
-                    fill="var(--accent)"
+                    fill="var(--foreground)"
                     fontSize="9"
                     className="font-mono"
                     textAnchor={hoverIdx > points.length / 2 ? "end" : "start"}
-                    fillOpacity="0.8"
+                    fillOpacity="0.7"
                   >
                     {(points[hoverIdx] ?? 0).toFixed(0)}ms
                   </text>
@@ -581,10 +550,10 @@ export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
               className="flex items-center justify-center"
               style={{ height: "clamp(60px, 15vw, 90px)" }}
             >
-              <span className="text-muted-foreground/20 text-label">—</span>
+              <span className="text-muted-foreground text-label">—</span>
             </div>
           )}
-          <div className="flex items-center justify-between mt-3 text-muted-foreground/35 text-label">
+          <div className="flex items-center justify-between mt-3 text-muted-foreground text-label">
             {conn?.rtt != null ? (
               <>
                 <span>rtt {conn.rtt}ms</span>
@@ -593,7 +562,7 @@ export function ConnectionPanel({ delay = 0 }: { delay?: number }) {
             ) : pageLoad != null ? (
               <span>page loaded in {pageLoad}ms</span>
             ) : (
-              <span className="text-muted-foreground/20">—</span>
+              <span className="text-muted-foreground-dim">—</span>
             )}
           </div>
         </div>

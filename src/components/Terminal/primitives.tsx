@@ -9,9 +9,8 @@ import { useSettingsStore } from "@/stores/settingsStore";
 export { Accent, Tag } from "./ui";
 
 /**
- * Table-style rows with hover highlight.
- *
- * fieldCodes — renders IBM 3270-style field labels: [01] KEY......: value
+ * Key/value data rows. `fieldCodes` renders IBM 3270-style operator labels
+ * `[01] FIELD …………: value` — signature of the operator-console layer.
  */
 export function InfoTable({
   rows,
@@ -38,50 +37,57 @@ export function InfoTable({
       {rows.map((row, i) => (
         <motion.div
           key={row.label}
-          className="flex items-baseline py-1.5 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 rounded-[4px]"
-          style={{ lineHeight: 1.6, gap: fieldCodes ? "0.5rem" : "1.5rem" }}
-          initial={{ opacity: 0, x: -4 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.3, delay: delay + stagger.fast + i * stagger.fast }}
+          className="flex items-baseline py-1.5 -mx-2 px-2 transition-colors duration-150"
+          style={{
+            lineHeight: 1.6,
+            gap: fieldCodes ? "0.5rem" : "1.5rem",
+            borderBottom: i < rows.length - 1 ? "1px solid var(--border)" : undefined,
+          }}
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.25, delay: delay + stagger.fast + i * stagger.fast }}
         >
           {fieldCodes ? (
             <>
               <span
                 className="shrink-0 select-none text-mono-sm"
-                style={{ color: "var(--muted-foreground)", opacity: 0.30 }}
+                style={{ color: "var(--muted-foreground-dim)" }}
                 aria-hidden="true"
               >
                 [{String(i + 1).padStart(2, "0")}]
               </span>
               <span
                 className="shrink-0 text-mono-sm"
-                style={{ color: "var(--foreground)", opacity: 0.50 }}
+                style={{ color: "var(--muted-foreground)", letterSpacing: "0.04em" }}
               >
                 {row.label.toUpperCase()}
-                <span aria-hidden="true" style={{ opacity: 0.35 }}>
-                  {"".padEnd(maxLabelLen - row.label.length + 3, ".")}
+                <span
+                  aria-hidden="true"
+                  style={{ color: "var(--muted-foreground-dim)" }}
+                >
+                  {"".padEnd(Math.max(0, maxLabelLen - row.label.length + 3), ".")}
                 </span>
                 {":"}
               </span>
             </>
           ) : (
             <span
-              className="text-foreground/60 shrink-0 text-sm"
-              style={{ minWidth: "80px" }}
+              className="shrink-0 text-sm"
+              style={{ minWidth: "80px", color: "var(--muted-foreground)" }}
             >
               {row.label}
             </span>
           )}
-          <span className="text-foreground/80 text-sm min-w-0 flex-1">{row.value}</span>
+          <span className="text-foreground text-sm min-w-0 flex-1" style={{ opacity: 0.92 }}>
+            {row.value}
+          </span>
         </motion.div>
       ))}
     </motion.div>
   );
 }
 
-/**
- * Compute ghost-text suggestion from current input
- */
+/** Compute ghost-text suggestion from current input */
 function getSuggestion(input: string): string | null {
   if (!input) return null;
 
@@ -90,7 +96,6 @@ function getSuggestion(input: string): string | null {
   if (!first) return null;
   const cmdName = first.toLowerCase();
 
-  // No space yet: complete command name
   if (parts.length === 1) {
     const match = getCommandNames().find(
       (n) => n.startsWith(cmdName) && n !== cmdName,
@@ -98,7 +103,6 @@ function getSuggestion(input: string): string | null {
     return match ? match.slice(cmdName.length) : null;
   }
 
-  // Has command + partial arg: ask the command for completions
   const cmd = getCommand(cmdName);
   if (!cmd?.completions) return null;
 
@@ -109,7 +113,7 @@ function getSuggestion(input: string): string | null {
 }
 
 /**
- * Interactive terminal prompt with command registry, history navigation, and tab completion
+ * Interactive shell. Minimal `~$` prompt — no hostname theatre.
  */
 export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
@@ -117,15 +121,12 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   const [displayHistory, setDisplayHistory] = useState<{ cmd: string; output: ReactNode }[]>([]);
   const [focused, setFocused] = useState(false);
 
-  // Arrow-key history state
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const [savedInput, setSavedInput] = useState("");
 
-  // Ghost text
   const suggestion = useMemo(() => getSuggestion(input), [input]);
 
-  // Theme access
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
 
@@ -151,23 +152,20 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       const cmdName = (parts[0] ?? "").toLowerCase();
       const args = parts.slice(1);
 
-      // Update command history for arrow navigation
       setCommandHistory((h) => [...h, raw]);
       setHistoryIndex(null);
       setSavedInput("");
 
-      // Clear command
       if (cmdName === "clear") {
         setDisplayHistory([]);
         setInput("");
         return;
       }
 
-      // Look up and execute
       const cmd = getCommand(cmdName);
       const output = cmd
         ? cmd.execute(args, ctx)
-        : <span>zsh: command not found: {cmdName}</span>;
+        : <span>shell: command not found: {cmdName}</span>;
 
       if (output === "__CLEAR__") {
         setDisplayHistory([]);
@@ -183,7 +181,6 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      // Tab completion
       if (e.key === "Tab") {
         e.preventDefault();
         if (suggestion) {
@@ -192,7 +189,6 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
         return;
       }
 
-      // Arrow-key history navigation
       if (e.key === "ArrowUp") {
         e.preventDefault();
         if (commandHistory.length === 0) return;
@@ -241,31 +237,25 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.base, delay }}
     >
-      {/* Previous commands */}
       {displayHistory.map((h, i) => (
         <motion.div
           key={i}
           className="space-y-0.5"
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.15 }}
         >
-          <div className="flex items-center gap-1 text-muted-foreground/40">
-            <span style={{ color: "var(--accent)" }}>po4yka</span>
-            <span className="text-muted-foreground/35">@ghostty</span>
-            <span className="text-foreground/40">:~$</span>
-            <span className="ml-1 text-foreground/60">{h.cmd}</span>
+          <div className="flex items-center gap-2">
+            <span style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
+            <span className="text-foreground" style={{ opacity: 0.92 }}>{h.cmd}</span>
           </div>
-          <div className="text-muted-foreground/50 pl-2">{h.output}</div>
+          <div className="text-muted-foreground pl-5">{h.output}</div>
         </motion.div>
       ))}
 
-      {/* Active prompt */}
-      <form onSubmit={handleSubmit} className="flex items-center gap-1">
-        <span style={{ color: "var(--accent)" }}>po4yka</span>
-        <span className="text-muted-foreground/35">@ghostty</span>
-        <span className="text-foreground/40">:~$</span>
-        <div className="relative flex-1 ml-1">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2">
+        <span style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
+        <div className="relative flex-1">
           <input
             id="terminal-input"
             value={input}
@@ -273,23 +263,22 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            className="w-full bg-transparent outline-none text-foreground/70 placeholder:text-muted-foreground/20 text-mono font-mono"
-            style={{ caretColor: "var(--accent)" }}
-            placeholder={focused ? "" : "type a command..."}
+            className="w-full bg-transparent outline-none text-foreground text-mono font-mono"
+            style={{ caretColor: "var(--emphasis)" }}
+            placeholder={focused ? "" : "type a command"}
             autoComplete="off"
             spellCheck={false}
           />
-          {/* Ghost text suggestion */}
           {suggestion && input && (
             <span
-              className="pointer-events-none absolute top-0 left-0 text-mono font-mono text-muted-foreground/15 whitespace-pre"
+              className="pointer-events-none absolute top-0 left-0 text-mono font-mono whitespace-pre"
+              style={{ color: "var(--muted-foreground-dim)" }}
               aria-hidden="true"
             >
               <span className="invisible">{input}</span>
               {suggestion}
             </span>
           )}
-          {/* Focused blinking cursor — only when focused and input is empty */}
           {focused && !input && (
             <span
               className="pointer-events-none absolute top-0 left-0"
@@ -298,9 +287,8 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
                 display: "inline-block",
                 width: "0.5rem",
                 height: "1em",
-                backgroundColor: "var(--accent)",
-                opacity: 0.7,
-                borderRadius: "1px",
+                backgroundColor: "var(--emphasis)",
+                opacity: 0.8,
                 animation: "blink 1s step-end infinite",
               }}
             />
@@ -310,9 +298,8 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
           <span
             className="inline-block w-2 h-4"
             style={{
-              backgroundColor: "var(--accent)",
-              opacity: 0.6,
-              borderRadius: "1px",
+              backgroundColor: "var(--emphasis)",
+              opacity: 0.7,
               animation: "blink 1s steps(2, start) infinite",
             }}
           />
@@ -321,4 +308,3 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
     </motion.div>
   );
 }
-

@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { lazy, Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
+import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
 
@@ -8,14 +9,14 @@ const NetworkGraph = lazy(() => import("./Decorations").then(m => ({ default: m.
 const CpuGraph = lazy(() => import("./Decorations").then(m => ({ default: m.CpuGraph })));
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
-import { ease, spring } from "@/lib/motion";
+import { ease } from "@/lib/motion";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { animateNumbers } from "./_animatedNumber.utils";
 
 const TAG_HIGHLIGHT_STYLE = {
-  color: "var(--accent)",
-  backgroundColor: "var(--accent-8)",
+  color: "var(--foreground)",
+  backgroundColor: "var(--muted)",
 };
 
 function RoleEntry({
@@ -32,34 +33,29 @@ function RoleEntry({
   return (
     <motion.div
       ref={ref}
-      className="py-5 border-b border-border/40 last:border-b-0 -mx-2 px-2 group font-mono rounded-[6px]"
+      className="py-5 border-b border-border last:border-b-0 group"
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: 0.03, ease }}
-      whileHover={{
-        backgroundColor: "var(--accent-3)",
-        x: 2,
-        transition: { type: "spring", stiffness: 300, damping: 25 },
-      }}
     >
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
-          <span className="text-accent/50 text-label">
+          <span className="text-muted-foreground text-label font-mono">
             {role.period}
           </span>
-          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-200 text-mono-lg font-medium">
+          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-mono text-mono-lg font-medium">
             {role.title}
           </h3>
         </div>
-        <span className="text-muted-foreground/50 text-mono-sm">
+        <span className="text-muted-foreground font-mono text-mono-sm">
           {role.company}
           {role.location && (
-            <span className="text-muted-foreground/50 ml-2">{role.location}</span>
+            <span className="text-muted-foreground ml-2">{role.location}</span>
           )}
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/50 group-hover:text-foreground/60 transition-colors duration-200 pl-0 text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 font-mono text-mono" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
@@ -67,15 +63,13 @@ function RoleEntry({
       {role.highlights && (
         <ul className="mt-2 space-y-1 pl-4">
           {role.highlights.map((h, i) => (
-            <motion.li
+            <li
               key={i}
-              className="text-foreground/75 list-disc marker:text-accent/25 text-mono-sm"
+              className="text-foreground/80 list-disc font-mono text-mono-sm"
               style={{ lineHeight: 1.7 }}
-              whileHover={{ color: "var(--foreground)", opacity: 0.65 }}
-              transition={{ duration: 0.15 }}
             >
               {animateNumbers(h)}
-            </motion.li>
+            </li>
           ))}
         </ul>
       )}
@@ -87,23 +81,19 @@ function RoleEntry({
             const tagKey = tag.toLowerCase();
             const isHighlighted = hoveredTag === tagKey;
             return (
-              <motion.span
+              <span
                 key={tag}
                 data-tag={tagKey}
-                className="px-2 py-0.5 text-muted-foreground/50 bg-muted-foreground/5 cursor-default text-xs rounded-[4px] transition-colors duration-150"
-                style={isHighlighted ? TAG_HIGHLIGHT_STYLE : undefined}
-                whileHover={{
-                  scale: 1.08,
-                  y: -1,
-                  color: "var(--accent)",
-                  backgroundColor: "var(--accent-8)",
-                  transition: spring.snappy,
+                className="px-2 py-0.5 text-muted-foreground bg-muted cursor-default text-xs transition-colors duration-150"
+                style={{
+                  borderRadius: "2px",
+                  ...(isHighlighted ? TAG_HIGHLIGHT_STYLE : undefined),
                 }}
                 onMouseEnter={() => onTagHover(tagKey)}
                 onMouseLeave={() => onTagHover(null)}
               >
                 {tag}
-              </motion.span>
+              </span>
             );
           })}
         </div>
@@ -114,27 +104,19 @@ function RoleEntry({
 
 function SkillsSection({ group }: { group: SkillGroup }) {
   return (
-    <motion.div
-      className="flex gap-4 py-1 -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 font-mono text-mono-sm rounded-[4px]"
-    >
-      <span className="text-muted-foreground/50 shrink-0" style={{ minWidth: "100px" }}>
+    <div className="flex gap-4 py-1 font-mono text-mono-sm hover:bg-muted transition-colors duration-150">
+      <span className="text-muted-foreground shrink-0" style={{ minWidth: "100px" }}>
         {group.label}
       </span>
-      <span className="text-foreground/75">
+      <span className="text-foreground/80">
         {group.items.map((item, i) => (
           <span key={item}>
-            {i > 0 && <span className="text-muted-foreground/20"> · </span>}
-            <motion.span
-              className="cursor-default"
-              whileHover={{ color: "var(--accent)" }}
-              transition={{ duration: 0.15 }}
-            >
-              {item}
-            </motion.span>
+            {i > 0 && <span className="text-muted-foreground-dim" aria-hidden="true"> · </span>}
+            <span className="cursor-default">{item}</span>
           </span>
         ))}
       </span>
-    </motion.div>
+    </div>
   );
 }
 
@@ -189,38 +171,14 @@ function TagConnections({
       className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
       style={{ zIndex: 10 }}
     >
-      {!reduceMotion && (
-        <defs>
-          <filter id="tag-connection-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-          </filter>
-        </defs>
-      )}
       {paths.map((p, i) => (
         <g key={i}>
-          {!reduceMotion && (
-            <path
-              d={p.d}
-              fill="none"
-              stroke="var(--accent)"
-              strokeWidth="5"
-              strokeOpacity="0.12"
-              strokeLinecap="round"
-              strokeDasharray={p.length}
-              strokeDashoffset={p.length}
-              filter="url(#tag-connection-glow)"
-              style={{
-                animation: `draw-line 350ms ease forwards`,
-                animationDelay: `${i * 50}ms`,
-              }}
-            />
-          )}
           <path
             d={p.d}
             fill="none"
-            stroke="var(--accent)"
+            stroke="var(--foreground)"
             strokeWidth="1.5"
-            strokeOpacity="0.25"
+            strokeOpacity="0.2"
             strokeLinecap="round"
             strokeDasharray={p.length}
             strokeDashoffset={reduceMotion ? 0 : p.length}
@@ -254,6 +212,13 @@ export function ExperiencePage() {
     <ErrorBoundary>
     <MotionProvider>
     <div className="space-y-8">
+      <SectionHeader
+        number="05"
+        label="EXPERIENCE"
+        heading="Experience"
+        meta={`${roles.length} ${t("experiencePage.positionsIndexed") ?? "POSITIONS"}`}
+      />
+
       {/* Boot */}
       <BootBlock
         lines={[
@@ -275,7 +240,7 @@ export function ExperiencePage() {
         <Cmd>
           cat <Accent>resume.log</Accent>
         </Cmd>
-        <MacWindow title="resume.log" dimLights delay={0.05}>
+        <MacWindow label="resume.log" sectionNumber="05" delay={0.05}>
           <div ref={rolesContainerRef} className="relative">
             <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
             {roles.map((role) => (
@@ -290,7 +255,7 @@ export function ExperiencePage() {
         <Cmd>
           cat <Accent>/etc/skills.conf</Accent>
         </Cmd>
-        <MacWindow title="skills.conf" dimLights delay={0.05}>
+        <MacWindow label="skills.conf" sectionNumber="05" delay={0.05}>
           <motion.div
             ref={skillsRef}
             className="space-y-1"
@@ -306,15 +271,11 @@ export function ExperiencePage() {
       </div>
 
       {/* Download CV hint */}
-      <motion.div
-        className="font-mono text-mono-sm"
-        whileHover={{ x: 4 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      >
-        <span className="text-muted-foreground/30 cursor-default">
-          $ wget po4yka.dev/cv.pdf — <span className="text-muted-foreground/20">{t("experiencePage.comingSoon")}</span>
+      <div className="font-mono text-mono-sm">
+        <span className="text-muted-foreground cursor-default">
+          $ wget po4yka.dev/cv.pdf — <span className="text-muted-foreground-dim">{t("experiencePage.comingSoon")}</span>
         </span>
-      </motion.div>
+      </div>
 
       {/* Decorative system widgets */}
       <Suspense fallback={null}>

@@ -6,8 +6,7 @@ export function createSeededRng(seed: number) {
   };
 }
 
-export function barColor(pct: number): string {
-  if (pct >= 80) return "var(--signal-red)";
-  if (pct >= 50) return "var(--signal-yellow)";
-  return "var(--signal-green)";
+export function barColor(): string {
+  // Neutral grayscale — no chromatic signal colors
+  return "var(--muted-foreground)";
 }

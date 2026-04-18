@@ -5,10 +5,10 @@ import type { GitHubRepoSummary } from "@/types";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell, UsageBar } from "./_helpers";
 import { createSeededRng } from "./_utils";
-import { useActivityStore } from "@/stores/activityStore";
-import { useSettingsStore } from "@/stores/settingsStore";
 
-// ─── CPU Panel with live-updating values ───────────────────────────
+// ─── CPU Panel ─────────────────────────────────────────────────────
+// Fluctuates on a 3s interval; scroll-velocity link dropped per motion-
+// reduction pass (useActivityStore removed).
 
 export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
@@ -27,30 +27,18 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const [cores, setCores] = useState(initialCores);
-
-  // Slowly fluctuate values, biased by scroll activity
   const [loadAvg, setLoadAvg] = useState([1.47, 1.22, 0.98]);
+
   useEffect(() => {
     const id = setInterval(() => {
-      const { scrollProgress, scrollVelocity } = useActivityStore.getState();
-      const reduceMotion = useSettingsStore.getState().reduceMotion;
-      const bias = reduceMotion ? 0 : scrollProgress * 25 + scrollVelocity * 15;
-
       setCores((prev) =>
         prev.map((c) => ({
           ...c,
-          pct: Math.max(2, Math.min(95, c.pct + Math.round((Math.random() - 0.5) * 8 + bias * 0.3))),
-          temp: Math.max(30, Math.min(72, c.temp + Math.round((Math.random() - 0.5) * 3 + bias * 0.05))),
+          pct: Math.max(2, Math.min(95, c.pct + Math.round((Math.random() - 0.5) * 8))),
+          temp: Math.max(30, Math.min(72, c.temp + Math.round((Math.random() - 0.5) * 3))),
         }))
       );
-
-      // Interpolate load averages
-      const t = reduceMotion ? 0 : scrollProgress;
-      setLoadAvg([
-        +(1.47 + t * 1.65).toFixed(2),
-        +(1.22 + t * 1.62).toFixed(2),
-        +(0.98 + t * 1.43).toFixed(2),
-      ]);
+      setLoadAvg((prev) => prev.map((v) => +Math.max(0.1, Math.min(3.5, v + (Math.random() - 0.5) * 0.2)).toFixed(2)));
     }, 3000);
     return () => clearInterval(id);
   }, []);
@@ -64,23 +52,23 @@ export function CpuMonitor({ delay = 0 }: { delay?: number }) {
         {cores.map((core, i) => (
           <motion.div
             key={core.label}
-            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
+            className="flex items-center gap-3 -mx-1 px-1 py-[1px] transition-colors duration-150 text-label"
           >
-            <span className="text-muted-foreground/35 w-[42px] sm:w-[48px] shrink-0">{core.label}</span>
+            <span className="text-muted-foreground w-[42px] sm:w-[48px] shrink-0">{core.label}</span>
             <UsageBar pct={core.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
-            <span className="text-muted-foreground/45 w-[32px] text-right">{core.pct}%</span>
-            <span className="text-muted-foreground/20 w-[32px] text-right hidden sm:inline">{core.temp}°C</span>
+            <span className="text-muted-foreground w-[32px] text-right">{core.pct}%</span>
+            <span className="text-muted-foreground-dim w-[32px] text-right hidden sm:inline">{core.temp}°C</span>
           </motion.div>
         ))}
       </div>
       <div
-        className="flex items-center gap-5 px-5 py-2 text-muted-foreground/25 text-xs"
+        className="flex items-center gap-5 px-5 py-2 text-muted-foreground text-xs"
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <span>Load Average:</span>
-        <span className="text-foreground/35">{loadAvg[0]}</span>
-        <span className="text-foreground/30">{loadAvg[1]}</span>
-        <span className="text-foreground/25">{loadAvg[2]}</span>
+        <span className="text-foreground/60">{loadAvg[0]}</span>
+        <span className="text-muted-foreground">{loadAvg[1]}</span>
+        <span className="text-muted-foreground-dim">{loadAvg[2]}</span>
       </div>
     </PanelShell>
     </MotionProvider>
@@ -115,15 +103,10 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
 
   useEffect(() => {
     const id = setInterval(() => {
-      const sp = useSettingsStore.getState().reduceMotion
-        ? 0
-        : useActivityStore.getState().scrollProgress;
-
       setRows((prev) =>
         prev.map((row, i) => {
           const base = memBase[i]!;
-          const targetPct = Math.min(95, base.basePct + sp * base.scrollScale);
-          const pct = Math.round(lerp(row.pct, targetPct, 0.15));
+          const pct = Math.round(lerp(row.pct, base.basePct, 0.15));
           const used = ((base.total * pct) / 100).toFixed(base.total >= 100 ? 0 : 1);
           return { ...row, pct, used };
         }),
@@ -139,14 +122,14 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
         {rows.map((row, i) => (
           <motion.div
             key={row.label}
-            className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
+            className="flex items-center gap-3 -mx-1 px-1 py-[1px] transition-colors duration-150 text-label"
           >
-            <span className="text-muted-foreground/35 w-[42px] shrink-0">{row.label}</span>
+            <span className="text-muted-foreground w-[42px] shrink-0">{row.label}</span>
             <UsageBar pct={row.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
-            <span className="text-muted-foreground/40 w-[70px] sm:w-[90px] text-right">
+            <span className="text-muted-foreground w-[70px] sm:w-[90px] text-right">
               {row.used}<span className="hidden sm:inline"> / {row.total}</span>
             </span>
-            <span className="text-muted-foreground/25 w-[28px] text-right">{row.pct}%</span>
+            <span className="text-muted-foreground-dim w-[28px] text-right">{row.pct}%</span>
           </motion.div>
         ))}
       </div>
@@ -160,24 +143,10 @@ export function MemoryPanel({ delay = 0 }: { delay?: number }) {
 export function DiskBars({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
 
-  const [disks, setDisks] = useState([
+  const [disks] = useState([
     { label: "root", used: 15, total: 226, unit: "GiB" },
     { label: "media", used: 4.1, total: 7.21, unit: "TiB" },
   ]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      const sp = useSettingsStore.getState().reduceMotion
-        ? 0
-        : useActivityStore.getState().scrollProgress;
-      setDisks((prev) =>
-        prev.map((d, i) =>
-          i === 0 ? { ...d, used: +(15 + sp * 2).toFixed(1) } : d,
-        ),
-      );
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
 
   return (
     <MotionProvider>
@@ -188,12 +157,12 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
           return (
             <motion.div
               key={d.label}
-              className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
+              className="flex items-center gap-3 -mx-1 px-1 py-[1px] transition-colors duration-150 text-label"
             >
-              <span className="text-muted-foreground/35 w-[40px] sm:w-[46px] shrink-0">{d.label}</span>
-              <span className="text-muted-foreground/30 w-[48px] sm:w-[54px]">Used: {pct}%</span>
+              <span className="text-muted-foreground w-[40px] sm:w-[46px] shrink-0">{d.label}</span>
+              <span className="text-muted-foreground-dim w-[48px] sm:w-[54px]">Used: {pct}%</span>
               <UsageBar pct={pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
-              <span className="text-muted-foreground/30">
+              <span className="text-muted-foreground-dim">
                 {d.used} {d.unit}
               </span>
             </motion.div>
@@ -205,10 +174,7 @@ export function DiskBars({ delay = 0 }: { delay?: number }) {
   );
 }
 
-// --- LanguagePanel: real GitHub language distribution ---
-// Fetches /api/github/repos (cached 10 min server-side) and aggregates
-// the primary language field across all public non-forked repos.
-// Replaces the fake CPU core percentage bars with real tech stack data.
+// ─── LanguagePanel: real GitHub language distribution ─────────────
 
 interface LangStat {
   label: string;
@@ -256,23 +222,23 @@ export function LanguagePanel({ delay = 0 }: { delay?: number }) {
           {langs.map((lang, i) => (
             <motion.div
               key={lang.label}
-              className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
+              className="flex items-center gap-3 -mx-1 px-1 py-[1px] transition-colors duration-150 text-label"
             >
               <span
-                className="text-muted-foreground/35 shrink-0"
+                className="text-muted-foreground shrink-0"
                 style={{ minWidth: "80px" }}
               >
                 {lang.label}
               </span>
               <UsageBar pct={lang.pct} delay={delay + 0.06 + i * 0.04} inView={inView} />
-              <span className="text-muted-foreground/40 w-[32px] text-right">
+              <span className="text-muted-foreground w-[32px] text-right">
                 {lang.pct}%
               </span>
             </motion.div>
           ))}
         </div>
         <div
-          className="flex items-center px-5 py-2 text-muted-foreground/25 text-xs"
+          className="flex items-center px-5 py-2 text-muted-foreground text-xs"
           style={{ borderTop: "1px solid var(--border)" }}
         >
           <span>github.com/po4yka</span>

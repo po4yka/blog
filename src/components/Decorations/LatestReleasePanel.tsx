@@ -16,7 +16,7 @@ function relativeTime(iso: string): string {
 
 export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
   const [release, setRelease] = useState<GitHubLatestRelease | null | undefined>(
-    undefined, // undefined = loading, null = no release found
+    undefined,
   );
 
   useEffect(() => {
@@ -26,21 +26,16 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
       .catch(() => setRelease(null));
   }, []);
 
-  // Nothing to show: still loading, no releases found, or malformed response
   if (!release?.url) return null;
 
   const rows = [
-    { label: "repo", value: <span style={{ color: "var(--accent)", opacity: 0.8 }}>{release.repo}</span> },
+    { label: "repo", value: <span className="text-foreground">{release.repo}</span> },
     {
       label: "tag",
-      value: (
-        <span style={{ color: "var(--signal-yellow)", opacity: 0.8 }}>
-          {release.tagName}
-        </span>
-      ),
+      value: <span className="text-foreground">{release.tagName}</span>,
     },
     ...(release.name
-      ? [{ label: "name", value: <span style={{ opacity: 0.6 }}>{release.name}</span> }]
+      ? [{ label: "name", value: <span className="text-muted-foreground">{release.name}</span> }]
       : []),
     {
       label: "url",
@@ -49,8 +44,7 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
           href={release.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-2 block break-all"
-          style={{ color: "var(--muted-foreground)", opacity: 0.5 }}
+          className="text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2 block break-all transition-colors duration-150"
           title={release.url.replace("https://github.com/", "")}
         >
           {release.url.replace("https://github.com/", "")}

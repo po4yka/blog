@@ -17,26 +17,26 @@ export function TechTagHeatmap({ delay = 0 }: { delay?: number }) {
           {tags.map((tag, i) => (
             <motion.div
               key={tag.label}
-              className="flex items-center gap-3 -mx-1 px-1 py-[1px] hover:bg-accent/[0.04] transition-colors duration-150 text-label rounded-[3px]"
+              className="flex items-center gap-3 -mx-1 px-1 py-[1px] transition-colors duration-150 text-label"
               initial={{ opacity: 0, x: -4 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.25, delay: delay + 0.08 + i * 0.04 }}
             >
               <span
-                className="text-muted-foreground/40 shrink-0"
+                className="text-muted-foreground shrink-0"
                 style={{ minWidth: "110px" }}
               >
                 {tag.label}
               </span>
               <UsageBar pct={tag.pct} delay={delay + 0.1 + i * 0.04} inView={inView} />
-              <span className="text-muted-foreground/30 w-[20px] text-right shrink-0">
+              <span className="text-muted-foreground-dim w-[20px] text-right shrink-0">
                 {tag.count}
               </span>
             </motion.div>
           ))}
         </div>
         <div
-          className="flex items-center px-5 py-2 text-muted-foreground/25 text-xs"
+          className="flex items-center px-5 py-2 text-muted-foreground text-xs"
           style={{ borderTop: "1px solid var(--border)" }}
         >
           <span>across {projects.length} projects</span>

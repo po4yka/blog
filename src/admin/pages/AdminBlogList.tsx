@@ -74,7 +74,7 @@ export function AdminBlogList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts..."
-          className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
+          className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
           style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
         />
       </motion.div>
@@ -90,7 +90,7 @@ export function AdminBlogList() {
         {filtered.length === 0 && (
           <div className="p-8 text-center">
             <FileText size={24} className="mx-auto text-muted-foreground/20 mb-3" />
-            <p className="text-muted-foreground/40" style={{ fontSize: "0.8125rem" }}>
+            <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
               {search ? "No posts match your search" : "No blog posts yet"}
             </p>
           </div>
@@ -105,11 +105,11 @@ export function AdminBlogList() {
             {/* Featured toggle */}
             <button
               onClick={() => handleToggleFeatured(post.slug)}
-              className="shrink-0 text-muted-foreground/25 hover:text-accent transition-colors duration-200 cursor-pointer p-0.5"
+              className="shrink-0 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer p-0.5"
               title={post.featured ? "Remove from featured" : "Set as featured"}
             >
               {post.featured ? (
-                <Star size={14} className="text-accent fill-accent/20" />
+                <Star size={14} className="fill-foreground/20" />
               ) : (
                 <StarOff size={14} />
               )}
@@ -121,21 +121,21 @@ export function AdminBlogList() {
               className="flex-1 min-w-0 text-left cursor-pointer"
             >
               <h3
-                className="text-foreground truncate group-hover:text-accent transition-colors duration-200"
+                className="text-foreground truncate group-hover:text-foreground transition-colors duration-200"
                 style={{ fontSize: "0.8125rem", fontWeight: 500 }}
               >
                 {post.title}
               </h3>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-                <span className="font-mono text-muted-foreground/35" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
                   {post.date}
                 </span>
                 <span className="text-border/50">·</span>
-                <span className="font-mono text-accent/40" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
                   {post.category}
                 </span>
                 {post.tags.slice(0, 3).map((tag) => (
-                  <span key={tag} className="font-mono text-muted-foreground/25" style={{ fontSize: "0.5625rem" }}>
+                  <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
                     {tag}
                   </span>
                 ))}
@@ -148,7 +148,7 @@ export function AdminBlogList() {
               className={`shrink-0 p-1.5 transition-colors duration-200 cursor-pointer ${
                 confirmDelete === post.slug
                   ? "text-destructive"
-                  : "text-muted-foreground/20 hover:text-destructive/60"
+                  : "text-muted-foreground hover:text-destructive/80"
               }`}
               title={confirmDelete === post.slug ? "Click again to confirm" : "Delete post"}
             >

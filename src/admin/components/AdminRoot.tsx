@@ -7,8 +7,8 @@ export function AdminRoot() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-background">
           <span
-            className="text-muted-foreground/40"
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem" }}
+            className="text-muted-foreground/80"
+            style={{ fontSize: "0.75rem" }}
           >
             loading...
           </span>

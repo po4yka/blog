@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { Cmd, OutputBlock, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
 
 export function About() {
@@ -11,7 +12,13 @@ export function About() {
   return (
     <MotionProvider>
     <section id="about" aria-labelledby="about-heading" className="space-y-5">
-      <h2 id="about-heading" className="sr-only">{t("about.heading")}</h2>
+      <SectionHeader
+        number="02"
+        label="ABOUT"
+        heading={t("about.heading")}
+        meta="README.md"
+        id="about-heading"
+      />
       <Cmd>
         cat <Accent>README.md</Accent> | head -20
       </Cmd>
@@ -19,7 +26,7 @@ export function About() {
       <OutputBlock delay={0.05}>
         <div
           ref={ref}
-          className="space-y-5 font-mono text-sm text-foreground/70"
+          className="space-y-5 font-mono text-sm text-muted-foreground"
           style={{ lineHeight: 1.8 }}
         >
           <motion.p
@@ -35,16 +42,12 @@ export function About() {
             transition={{ duration: 0.4, delay: 0.12 }}
           >
             {t("about.p2prefix")}{" "}
-            <motion.span
-              style={{ color: "var(--accent)", cursor: "default" }}
-              whileHover={{ textShadow: "var(--phosphor-glow)" }}
-            >
+            <span className="text-foreground font-medium">
               {t("about.p2kmp")}
-            </motion.span>{" "}
+            </span>{" "}
             {t("about.p2suffix")}
           </motion.p>
           <motion.p
-            className="text-foreground/75"
             initial={{ opacity: 0, y: 6 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.4, delay: 0.19 }}

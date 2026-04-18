@@ -3,16 +3,16 @@ import { spring } from "@/lib/motion";
 import type { ReactNode } from "react";
 
 /**
- * Accent-colored text helper.
- * Applies phosphor glow by default to add ambient purple presence at rest.
- * Pass glow={false} for cases where the glow would fail contrast checks.
+ * Emphasis text helper. Neutral greyscale system — emphasis is full-luminance
+ * (`--emphasis`), not a chromatic accent. Kept as `Accent` for source
+ * compatibility with existing call sites.
  */
-export function Accent({ children, glow = true }: { children: ReactNode; glow?: boolean }) {
+export function Accent({ children }: { children: ReactNode; glow?: boolean }) {
   return (
     <span
       style={{
-        color: "var(--accent)",
-        textShadow: glow ? "var(--phosphor-glow)" : undefined,
+        color: "var(--emphasis)",
+        fontWeight: 500,
       }}
     >
       {children}
@@ -21,7 +21,7 @@ export function Accent({ children, glow = true }: { children: ReactNode; glow?: 
 }
 
 /**
- * Tag badge with hover scale
+ * Tag / metadata chip — flat, hairline, no hover lift.
  */
 export function Tag({
   children,
@@ -32,20 +32,18 @@ export function Tag({
 }) {
   return (
     <motion.span
-      className={`inline-block px-2 py-0.5 cursor-default font-mono text-xs uppercase rounded-[4px] ${
-        variant === "highlight"
-          ? "text-accent bg-accent/10"
-          : "text-muted-foreground/60 bg-muted-foreground/5"
-      }`}
+      className="inline-block px-2 py-0.5 cursor-default font-mono text-xs uppercase"
       style={{
-        letterSpacing: "0.06em",
+        letterSpacing: "0.08em",
+        color: variant === "highlight" ? "var(--emphasis)" : "var(--muted-foreground)",
+        background: "transparent",
+        border: `1px solid ${variant === "highlight" ? "var(--foreground)" : "var(--border)"}`,
+        borderRadius: 2,
       }}
       whileHover={{
-        scale: 1.08,
         y: -1,
         transition: spring.snappy,
       }}
-      whileTap={{ scale: 0.95 }}
     >
       {children}
     </motion.span>

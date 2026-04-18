@@ -5,7 +5,7 @@ export function FieldBlock({ label, required, children }: { label: string; requi
   return (
     <div>
       <label className="block font-mono text-muted-foreground/60 mb-1.5" style={{ fontSize: "0.6875rem", letterSpacing: "0.02em", fontWeight: 400, lineHeight: 1.5 }}>
-        {label}{required && <span className="text-accent ml-0.5">*</span>}
+        {label}{required && <span className="text-foreground ml-0.5">*</span>}
       </label>
       {children}
     </div>
@@ -38,7 +38,7 @@ export function TagsInput({ tags, onChange, placeholder, label = "Add tag" }: { 
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(); } }}
         placeholder={tags.length === 0 ? placeholder : ""}
         aria-label={label}
-        className="flex-1 min-w-[80px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/20 font-mono"
+        className="flex-1 min-w-[80px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/50 font-mono"
         style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
       />
     </div>
@@ -62,7 +62,7 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
           <select
             value={link.type}
             onChange={(e) => updateLink(i, "type", e.target.value)}
-            className="w-full sm:w-[130px] px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 shrink-0"
+            className="w-full sm:w-[130px] px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 shrink-0"
             style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5, cursor: "pointer" }}
           >
             <option>GitHub</option>
@@ -75,7 +75,7 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
             value={link.href}
             onChange={(e) => updateLink(i, "href", e.target.value)}
             placeholder="URL"
-            className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 flex-1"
+            className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 flex-1"
             style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
           />
           <button onClick={() => removeLink(i)} className="text-muted-foreground/20 hover:text-destructive transition-colors cursor-pointer p-1">
@@ -85,7 +85,7 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
       ))}
       <button
         onClick={addLink}
-        className="inline-flex items-center gap-1 font-mono text-muted-foreground/30 hover:text-accent transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         style={{ fontSize: "0.625rem" }}
       >
         <Plus size={11} />

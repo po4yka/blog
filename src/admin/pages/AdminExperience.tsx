@@ -68,7 +68,7 @@ export function AdminExperience() {
       <AnimatePresence>
         {editing && (
           <motion.div
-            className="mb-6 border border-accent/20 bg-card p-5"
+            className="mb-6 border border-border bg-card p-5"
             style={{ borderRadius: "4px" }}
             initial={{ opacity: 0, y: -8, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
@@ -95,7 +95,7 @@ export function AdminExperience() {
                     value={editing.title}
                     onChange={(e) => setEditing({ ...editing, title: e.target.value })}
                     placeholder="e.g. Senior Android Developer"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors"
+                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
@@ -105,7 +105,7 @@ export function AdminExperience() {
                     value={editing.company}
                     onChange={(e) => setEditing({ ...editing, company: e.target.value })}
                     placeholder="e.g. Tech Company"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors"
+                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
@@ -117,7 +117,7 @@ export function AdminExperience() {
                   value={editing.period}
                   onChange={(e) => setEditing({ ...editing, period: e.target.value })}
                   placeholder="2021 — 2023"
-                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors"
+                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </Field>
@@ -128,7 +128,7 @@ export function AdminExperience() {
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   placeholder="Brief description of the role"
                   rows={2}
-                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors resize-y"
+                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors resize-y"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
                 />
               </Field>
@@ -174,7 +174,7 @@ export function AdminExperience() {
       >
         {roles.length === 0 && (
           <div className="p-8 text-center">
-            <p className="text-muted-foreground/40" style={{ fontSize: "0.8125rem" }}>No experience entries yet</p>
+            <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>No experience entries yet</p>
           </div>
         )}
 
@@ -191,26 +191,26 @@ export function AdminExperience() {
                 <h3 className="text-foreground truncate" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
                   {role.title}
                 </h3>
-                <span className="text-muted-foreground/40" style={{ fontSize: "0.75rem" }}>
+                <span className="text-muted-foreground" style={{ fontSize: "0.75rem" }}>
                   {role.company}
                 </span>
               </div>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-mono text-muted-foreground/35" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
                   {role.period}
                 </span>
                 {role.tags && role.tags.length > 0 && (
                   <>
                     <span className="text-border/50">·</span>
                     {role.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="font-mono text-accent/35" style={{ fontSize: "0.5625rem" }}>
+                      <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
                         {tag}
                       </span>
                     ))}
                   </>
                 )}
               </div>
-              <p className="mt-1 text-foreground/35 line-clamp-1" style={{ fontSize: "0.75rem" }}>
+              <p className="mt-1 text-foreground/80 line-clamp-1" style={{ fontSize: "0.75rem" }}>
                 {role.description}
               </p>
             </div>
@@ -218,7 +218,7 @@ export function AdminExperience() {
             <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setEditing({ ...role })}
-                className="shrink-0 font-mono text-muted-foreground/30 hover:text-accent transition-colors cursor-pointer px-2 py-1"
+                className="shrink-0 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-1"
                 style={{ fontSize: "0.625rem" }}
               >
                 Edit
@@ -226,7 +226,7 @@ export function AdminExperience() {
               <button
                 onClick={() => handleDelete(role.id!)}
                 className={`shrink-0 p-1 transition-colors cursor-pointer ${
-                  confirmDelete === role.id ? "text-destructive" : "text-muted-foreground/20 hover:text-destructive/60"
+                  confirmDelete === role.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
                 <Trash2 size={13} />

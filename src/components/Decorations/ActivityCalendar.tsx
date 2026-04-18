@@ -27,10 +27,8 @@ function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
   }
 
   const cells: DayCell[] = [];
-  // Start from (TOTAL_DAYS - 1) days ago, ending today
-  // Align to start on a Sunday (day 0)
   const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dayOfWeek = endDate.getDay(); // 0=Sun
+  const dayOfWeek = endDate.getDay();
   const startOffset = TOTAL_DAYS - 1 + (DAYS_PER_WEEK - 1 - dayOfWeek);
 
   for (let i = startOffset; i >= 0; i--) {
@@ -41,10 +39,8 @@ function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
     cells.push({ date: key, count, level: 0 });
   }
 
-  // Trim to exact grid size (WEEKS * 7)
   const trimmed = cells.slice(cells.length - TOTAL_DAYS);
 
-  // Compute levels based on max
   const max = Math.max(1, ...trimmed.map((c) => c.count));
   for (const cell of trimmed) {
     if (cell.count === 0) cell.level = 0;
@@ -57,12 +53,13 @@ function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
   return trimmed;
 }
 
+// Grayscale ramp using foreground/muted-foreground tokens
 const LEVEL_COLORS = [
   "var(--border)",
-  "color-mix(in srgb, var(--accent) 20%, transparent)",
-  "color-mix(in srgb, var(--accent) 40%, transparent)",
-  "color-mix(in srgb, var(--accent) 65%, transparent)",
-  "var(--accent)",
+  "color-mix(in srgb, var(--muted-foreground) 20%, transparent)",
+  "color-mix(in srgb, var(--muted-foreground) 40%, transparent)",
+  "color-mix(in srgb, var(--foreground) 50%, transparent)",
+  "var(--foreground)",
 ];
 
 export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
@@ -75,8 +72,6 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
       .then((r) => r.json())
       .catch(() => [])
       .then((data) => {
-        // The events endpoint returns a summary, but we need raw events
-        // Fall back to fetching public events directly for the calendar
         if (Array.isArray(data)) {
           setEvents(data);
         }
@@ -87,13 +82,11 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   const cells = useMemo(() => buildCalendar(events), [events]);
   const totalContributions = cells.reduce((sum, c) => sum + c.count, 0);
 
-  // Group into columns (weeks)
   const weeks: DayCell[][] = [];
   for (let w = 0; w < WEEKS; w++) {
     weeks.push(cells.slice(w * DAYS_PER_WEEK, (w + 1) * DAYS_PER_WEEK));
   }
 
-  // Month labels for top row
   const monthLabels = useMemo(() => {
     const labels: { col: number; label: string }[] = [];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -127,7 +120,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
               return (
                 <span
                   key={w}
-                  className="text-muted-foreground/30 text-center"
+                  className="text-muted-foreground text-center"
                   style={{ width: 11, fontSize: "8px" }}
                 >
                   {label?.label ?? ""}
@@ -142,7 +135,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
               {DAY_LABELS.map((label, i) => (
                 <span
                   key={i}
-                  className="text-muted-foreground/25"
+                  className="text-muted-foreground-dim"
                   style={{ height: 11, lineHeight: "11px", fontSize: "8px", width: 20, textAlign: "right" }}
                 >
                   {label}
@@ -180,7 +173,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
 
           {/* Legend */}
           <div className="flex items-center justify-end gap-1.5 mt-2">
-            <span className="text-muted-foreground/25" style={{ fontSize: "8px" }}>Less</span>
+            <span className="text-muted-foreground-dim" style={{ fontSize: "8px" }}>Less</span>
             {LEVEL_COLORS.map((color, i) => (
               <div
                 key={i}
@@ -188,7 +181,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                 style={{ width: 9, height: 9, backgroundColor: color }}
               />
             ))}
-            <span className="text-muted-foreground/25" style={{ fontSize: "8px" }}>More</span>
+            <span className="text-muted-foreground-dim" style={{ fontSize: "8px" }}>More</span>
           </div>
         </div>
       </PanelShell>

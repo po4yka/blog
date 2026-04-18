@@ -30,35 +30,20 @@ const { pathname } = Astro.url;
     <ClientRouter />
   </head>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-accent-foreground focus:rounded-md focus:outline-none">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-[2px] focus:outline-none">
       Skip to main content
     </a>
-    <div
-      class="min-h-screen bg-background text-foreground transition-colors duration-300"
-      style="font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Monaco', 'Courier New', monospace;"
-    >
+    <div class="min-h-screen bg-background text-foreground transition-colors duration-300">
       <Nav client:load pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
       <main
         id="main-content"
-        class="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
+        class="max-w-[1160px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
         transition:animate={fade({ duration: '0.2s' })}
       >
         <slot />
       </main>
       <Footer client:idle transition:persist />
       <KeyboardShortcuts client:idle transition:persist />
-      <div
-        id="texture-overlay"
-        class="fixed inset-0 pointer-events-none select-none"
-        style="z-index:1;mix-blend-mode:normal;background-image:linear-gradient(rgba(0,0,0,0) 50%,rgba(0,0,0,var(--texture-opacity,0.03)) 50%),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.06) 100%),url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E\");background-size:100% 2px,100% 100%,200px 200px"
-        transition:persist
-      ></div>
-      <div
-        id="cursor-glow"
-        class="fixed inset-0 pointer-events-none"
-        style="z-index:40;opacity:0;transition:opacity 0.3s ease"
-        transition:persist
-      ></div>
     </div>
     <script>
       // Sync <html lang> with stored locale preference (for non-blog pages)
@@ -76,58 +61,6 @@ const { pathname } = Astro.url;
       }
       syncLang();
       document.addEventListener('astro:after-swap', syncLang);
-    </script>
-    <script>
-      function initCursorGlow() {
-        const el = document.getElementById('cursor-glow');
-        if (!el) return;
-        const stored = (() => { try { return JSON.parse(localStorage.getItem('site_preferences') || '{}'); } catch { return {}; } })();
-        const prefs = stored.state || stored;
-        if (prefs.reduceMotion) { el.style.display = 'none'; return; }
-
-        let targetX = -999, targetY = -999;
-        let currentX = -999, currentY = -999;
-        let targetRadius = 350;
-        let currentRadius = 350;
-        let visible = false;
-        let raf = 0;
-        const LERP = 0.12;
-        const RADIUS_LERP = 0.08;
-        const BASE_RADIUS = 350;
-        const HOVER_RADIUS = 500;
-        const INTERACTIVE = 'a,button,[role="button"],[tabindex]';
-
-        function render() {
-          currentX += (targetX - currentX) * LERP;
-          currentY += (targetY - currentY) * LERP;
-          currentRadius += (targetRadius - currentRadius) * RADIUS_LERP;
-          el.style.background = `radial-gradient(${Math.round(currentRadius)}px circle at ${currentX.toFixed(1)}px ${currentY.toFixed(1)}px, var(--cursor-glow) 0%, transparent 100%)`;
-          if (visible) raf = requestAnimationFrame(render);
-        }
-
-        document.addEventListener('mousemove', (e) => {
-          targetX = e.clientX;
-          targetY = e.clientY;
-          const t = e.target;
-          const hover = t && t.closest ? t.closest(INTERACTIVE) : null;
-          targetRadius = hover ? HOVER_RADIUS : BASE_RADIUS;
-          if (!visible) {
-            visible = true;
-            currentX = targetX;
-            currentY = targetY;
-            el.style.opacity = '1';
-            raf = requestAnimationFrame(render);
-          }
-        }, { passive: true });
-
-        document.addEventListener('mouseleave', () => {
-          visible = false;
-          cancelAnimationFrame(raf);
-          el.style.opacity = '0';
-        });
-      }
-      initCursorGlow();
-      document.addEventListener('astro:page-load', initCursorGlow);
     </script>
   </body>
 </html>

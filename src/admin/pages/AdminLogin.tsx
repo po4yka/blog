@@ -66,7 +66,6 @@ export function AdminLogin() {
   return (
     <div
       className="min-h-screen bg-background flex items-center justify-center px-6"
-      style={{ fontFamily: "'JetBrains Mono', monospace" }}
     >
       <motion.div
         className="w-full max-w-[340px]"
@@ -78,7 +77,7 @@ export function AdminLogin() {
         <div className="mb-10">
           <a
             href="/"
-            className="font-mono text-foreground/70 hover:text-accent transition-colors duration-300"
+            className="font-mono text-foreground/80 hover:text-foreground transition-colors duration-200"
             style={{ fontSize: "0.75rem", letterSpacing: "0.02em" }}
           >
             po4yka.dev
@@ -109,8 +108,8 @@ export function AdminLogin() {
             <button
               type="button"
               onClick={handlePasskeyLogin}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-background hover:bg-accent/90 transition-colors duration-200 cursor-pointer"
-              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
+              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
             >
               <Fingerprint size={16} />
               Sign in with passkey
@@ -142,19 +141,19 @@ export function AdminLogin() {
                 placeholder="Enter admin password"
                 aria-describedby={error ? "login-error" : undefined}
                 className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 outline-none ${
-                  error ? "border-destructive/50" : "border-border/60 focus:border-accent/40"
+                  error ? "border-destructive/50" : "border-border/60 focus:border-border"
                 }`}
-                style={{ fontSize: "0.875rem", borderRadius: "8px", fontWeight: 400, lineHeight: 1.5 }}
+                style={{ fontSize: "0.875rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                 autoFocus={!hasPasskey}
               />
               <button
                 type="submit"
                 className={`w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 transition-colors duration-200 cursor-pointer ${
                   hasPasskey
-                    ? "border border-border/60 text-foreground/70 hover:bg-card"
-                    : "bg-accent text-background hover:bg-accent/90"
+                    ? "border border-border/60 text-foreground/80 hover:bg-muted"
+                    : "bg-foreground text-background hover:bg-foreground/90"
                 }`}
-                style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "8px" }}
+                style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
               >
                 Sign in with password
                 <ArrowRight size={14} />
@@ -167,7 +166,7 @@ export function AdminLogin() {
             <button
               type="button"
               onClick={() => setShowPassword(true)}
-              className="w-full mt-3 font-mono text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
+              className="w-full mt-3 font-mono text-muted-foreground hover:text-foreground transition-colors"
               style={{ fontSize: "0.625rem" }}
             >
               Use password instead

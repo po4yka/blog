@@ -2,108 +2,100 @@ import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { type ReactNode } from "react";
 import { ease, duration, stagger } from "@/lib/motion";
-import { TrafficLights } from "./TrafficLights";
 
 /**
- * macOS window wrapper — hover elevation, traffic lights, title bar.
+ * Panel frame — operator-console minimal: hairline border, thin label row,
+ * no window chrome. Keeps prior props for back-compat.
  *
- * Density props (all opt-in, existing usages unchanged):
- *   lineNumbers  — number of line-number gutter rows to show, or true for decorative (10 rows)
- *   statusLine   — vim-style bottom status bar; true = default text, string/ReactNode = custom
- *   titleExt     — secondary metadata appended to title in titlebar (e.g. "~/po4yka | main")
- *   processDots  — render ●●○○ process indicator at titlebar right side
+ * Optional density props:
+ *   sectionNumber — `01`, `02`… for the operator-console left-label prefix
+ *   lineNumbers   — opt-in line-number gutter (count or `true` for 10 rows)
+ *   statusLine    — bottom meta line (true for default vim-style string)
+ *   titleExt      — right-side metadata (path, branch, mode)
  */
 export function MacWindow({
   title,
+  label,
+  sectionNumber,
   subtitle,
   children,
   delay = 0,
   className = "",
-  dimLights = false,
   lineNumbers,
   statusLine,
   titleExt,
-  processDots = false,
 }: {
   title?: string;
+  /** Preferred name for new call sites. Falls back to `title`. */
+  label?: string;
+  sectionNumber?: string;
   subtitle?: string;
   children: ReactNode;
   delay?: number;
   className?: string;
-  dimLights?: boolean;
   lineNumbers?: boolean | number;
   statusLine?: boolean | string | ReactNode;
   titleExt?: string;
-  processDots?: boolean;
 }) {
   const { ref, inView } = useInView(0.1);
   const lineCount = typeof lineNumbers === "number" ? lineNumbers : lineNumbers ? 10 : 0;
+  const resolvedLabel = (label ?? title ?? "").toString();
 
-  const defaultStatus = title
-    ? `-- NORMAL --  ${title}  |  ${lineCount || 1}:1  |  main`
-    : "-- NORMAL --  1:1  |  main";
-  const statusContent =
-    statusLine === true
-      ? defaultStatus
-      : statusLine || null;
+  const defaultStatus = resolvedLabel
+    ? `${resolvedLabel}  ·  ${lineCount || 1}:1  ·  main`
+    : `1:1  ·  main`;
+  const statusContent = statusLine === true ? defaultStatus : statusLine || null;
+
+  const hasHeader = resolvedLabel || sectionNumber || titleExt || subtitle;
 
   return (
     <motion.div
       ref={ref}
-      className={`overflow-hidden rounded-[10px] ${className}`}
+      className={`overflow-hidden ${className}`}
       style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
-        boxShadow: "var(--window-shadow-sm)",
+        borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
-      whileHover={{
-        boxShadow: "var(--window-shadow)",
-        y: -1,
-        transition: { duration: 0.25, ease: "easeOut" },
-      }}
     >
-      {/* Title bar */}
-      <div
-        className="flex items-center gap-3 px-4 py-[10px]"
-        style={{
-          background: "var(--titlebar)",
-          borderBottom: "1px solid var(--titlebar-border)",
-        }}
-      >
-        <TrafficLights dim={dimLights} />
-        <span className="flex-1 text-center font-mono text-label select-none">
-          {title && (
-            <span className="text-foreground/80 letter-wide">{title}</span>
-          )}
-          {title && titleExt && (
-            <span className="text-muted-foreground/30"> | {titleExt}</span>
-          )}
-        </span>
-        {processDots && (
-          <span
-            className="text-muted-foreground/30 select-none font-mono text-xs tracking-widest"
-            aria-hidden="true"
-          >
-            ●●○○
+      {hasHeader && (
+        <div
+          className="flex items-baseline justify-between gap-4 px-4 py-2"
+          style={{ borderBottom: "1px solid var(--rule)" }}
+        >
+          <span className="label-meta min-w-0 truncate">
+            {sectionNumber && (
+              <>
+                <span className="text-foreground">{sectionNumber}</span>
+                <span className="text-muted-foreground-dim"> / </span>
+              </>
+            )}
+            {resolvedLabel}
           </span>
-        )}
-        {!processDots && subtitle && (
-          <span className="text-muted-foreground/25 select-none font-mono text-3xs">
-            {subtitle}
-          </span>
-        )}
-      </div>
-      {/* Content — with optional line-number gutter */}
+          {(titleExt || subtitle) && (
+            <span
+              className="shrink-0 text-right font-mono"
+              style={{
+                fontSize: 11,
+                color: "var(--muted-foreground-dim)",
+                letterSpacing: "0.04em",
+              }}
+            >
+              {titleExt || subtitle}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className={`flex font-mono ${lineCount > 0 ? "gap-0" : ""}`}>
         {lineCount > 0 && (
           <div
             className="flex-none select-none py-5 pl-3 pr-2 text-right font-mono text-mono-sm"
             style={{
-              color: "var(--muted-foreground)",
-              opacity: 0.25,
+              color: "var(--muted-foreground-dim)",
               borderRight: "1px solid var(--border)",
               minWidth: "2.5rem",
               lineHeight: 1.75,
@@ -111,24 +103,20 @@ export function MacWindow({
             aria-hidden="true"
           >
             {Array.from({ length: lineCount }, (_, i) => (
-              <div key={i + 1}>{i + 1}</div>
+              <div key={i + 1}>{String(i + 1).padStart(2, "0")}</div>
             ))}
           </div>
         )}
-        <div className={`flex-1 min-w-0 p-5 md:p-6`}>
-          {children}
-        </div>
+        <div className="flex-1 min-w-0 p-5 md:p-6">{children}</div>
       </div>
-      {/* Optional vim-style status line */}
+
       {statusContent && (
         <div
-          className="px-3 py-[3px] font-mono text-xs select-none truncate"
+          className="px-4 py-1.5 font-mono text-xs select-none truncate"
           style={{
-            background: "color-mix(in srgb, var(--titlebar) 60%, transparent)",
-            borderTop: "1px solid var(--border)",
-            color: "var(--muted-foreground)",
-            opacity: 0.45,
-            letterSpacing: "0.02em",
+            borderTop: "1px solid var(--rule)",
+            color: "var(--muted-foreground-dim)",
+            letterSpacing: "0.06em",
           }}
           aria-hidden="true"
         >
@@ -140,7 +128,8 @@ export function MacWindow({
 }
 
 /**
- * Boot status block — [ OK ] / [ INFO ] messages with hover highlight
+ * Boot status block — neutral operator log, no colour-coded signals.
+ * Status is conveyed by the label token itself in mono caps.
  */
 export function BootBlock({
   lines,
@@ -154,62 +143,56 @@ export function BootBlock({
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden rounded-[10px] font-mono"
+      className="overflow-hidden font-mono"
       style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
-        boxShadow: "var(--window-shadow-sm)",
+        borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
-      whileHover={{
-        boxShadow: "var(--window-shadow)",
-        y: -1,
-        transition: { duration: 0.25 },
-      }}
     >
-      {/* Title bar */}
       <div
-        className="flex items-center gap-3 px-4 py-[10px]"
-        style={{
-          background: "var(--titlebar)",
-          borderBottom: "1px solid var(--titlebar-border)",
-        }}
+        className="flex items-baseline justify-between px-4 py-2"
+        style={{ borderBottom: "1px solid var(--rule)" }}
       >
-        <TrafficLights dim />
+        <span className="label-meta">System log</span>
         <span
-          className="flex-1 text-center text-muted-foreground/30 select-none text-xs"
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "var(--muted-foreground-dim)",
+            letterSpacing: "0.04em",
+          }}
         >
-          system output
+          {lines.length} lines
         </span>
-        <span style={{ width: 54 }} />
       </div>
-      {/* Lines */}
       <div className="px-5 py-4">
         {lines.map((line, i) => (
           <motion.div
             key={i}
-            className="flex gap-2 items-start py-[1px] -mx-2 px-2 hover:bg-accent/[0.03] transition-colors duration-150 text-mono rounded-[4px]"
+            className="flex gap-3 items-start py-[2px] text-mono"
             style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: delay + 0.08 + i * stagger.base }}
+            transition={{ duration: 0.25, delay: delay + 0.05 + i * stagger.base }}
           >
             <span
-              className="shrink-0 font-medium"
+              className="shrink-0 font-mono font-medium"
               style={{
-                color:
-                  line.status === "OK"
-                    ? "var(--ok)"
-                    : line.status === "WARN"
-                    ? "var(--signal-amber)"
-                    : "var(--info)",
+                color: "var(--muted-foreground)",
+                fontSize: 11,
+                letterSpacing: "0.10em",
+                textTransform: "uppercase",
+                minWidth: "3.5rem",
+                paddingTop: "2px",
               }}
             >
-              [ {line.status} ]
+              {line.status} ·
             </span>
-            <span className="text-foreground/70">{line.text}</span>
+            <span className="text-foreground/90">{line.text}</span>
           </motion.div>
         ))}
       </div>
@@ -218,7 +201,7 @@ export function BootBlock({
 }
 
 /**
- * "less" file viewer — macOS-style window with traffic lights
+ * File viewer — flat operator panel, hairline border.
  */
 export function LessViewer({
   filename,
@@ -233,46 +216,35 @@ export function LessViewer({
 }) {
   return (
     <motion.div
-      className="overflow-hidden rounded-[10px]"
+      className="overflow-hidden"
       style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
-        boxShadow: "var(--window-shadow)",
+        borderRadius: "2px",
       }}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: duration.slow, delay, ease }}
-      whileHover={{
-        y: -1,
-        transition: { duration: 0.25 },
-      }}
     >
-      {/* Title bar */}
       <div
-        className="flex items-center gap-3 px-4 py-[10px]"
-        style={{
-          background: "var(--titlebar)",
-          borderBottom: "1px solid var(--titlebar-border)",
-        }}
+        className="flex items-baseline justify-between gap-3 px-4 py-2"
+        style={{ borderBottom: "1px solid var(--rule)" }}
       >
-        <TrafficLights />
-        <span
-          className="flex-1 text-center text-muted-foreground/45 select-none font-mono text-label"
-        >
-          {filename}
-        </span>
+        <span className="label-meta truncate">{filename}</span>
         {meta && (
           <span
-            className="text-muted-foreground/25 select-none font-mono text-3xs"
+            className="shrink-0 font-mono"
+            style={{
+              fontSize: 11,
+              color: "var(--muted-foreground-dim)",
+              letterSpacing: "0.04em",
+            }}
           >
             {meta}
           </span>
         )}
       </div>
-      {/* Content */}
-      <div className="p-5 md:p-7 font-mono">
-        {children}
-      </div>
+      <div className="p-5 md:p-7 font-mono">{children}</div>
     </motion.div>
   );
 }

@@ -11,14 +11,14 @@ export function BlogPreviewPane({ form, readingTime }: BlogPreviewPaneProps) {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.date}</span>
         <span className="text-border">·</span>
-        <span className="font-mono text-accent/60" style={{ fontSize: "0.6875rem" }}>{form.category}</span>
+        <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.category}</span>
         <span className="text-border">·</span>
-        <span className="font-mono text-muted-foreground/40" style={{ fontSize: "0.6875rem" }}>{readingTime} min read</span>
+        <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{readingTime} min read</span>
       </div>
       <h2 className="text-foreground" style={{ fontSize: "1.5rem", fontWeight: 600, lineHeight: 1.25 }}>
         {form.title || "Untitled"}
       </h2>
-      <p className="mt-3 text-foreground/50" style={{ fontSize: "0.9375rem", lineHeight: 1.7 }}>
+      <p className="mt-3 text-foreground/80" style={{ fontSize: "0.9375rem", lineHeight: 1.7 }}>
         {form.summary}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -45,14 +45,14 @@ export function BlogPreviewPane({ form, readingTime }: BlogPreviewPaneProps) {
             return (
               <ul key={i} className="mb-3 ml-4 space-y-1">
                 {trimmed.split("\n").filter((l) => l.startsWith("- ")).map((l, j) => (
-                  <li key={j} className="text-foreground/60 list-disc" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
+                  <li key={j} className="text-foreground/80 list-disc" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
                     {l.replace("- ", "")}
                   </li>
                 ))}
               </ul>
             );
           return (
-            <p key={i} className="mb-3 text-foreground/60" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
+            <p key={i} className="mb-3 text-foreground/80" style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
               {trimmed}
             </p>
           );

@@ -9,19 +9,11 @@ import { ease, stagger } from "@/lib/motion";
 const MAX_REPOS = 6;
 
 function LanguageDot({ language }: { language: string | null }) {
-  const colors: Record<string, string> = {
-    Kotlin: "var(--accent)",
-    Python: "var(--signal-green)",
-    TypeScript: "var(--info)",
-    JavaScript: "var(--signal-amber)",
-    Rust: "var(--signal-red)",
-    Swift: "var(--signal-amber)",
-  };
-  const color = (language && colors[language]) ?? "var(--muted-foreground)";
+  // Neutral dot — no chromatic language colors
   return (
     <span
-      className="inline-block w-[7px] h-[7px] rounded-full shrink-0"
-      style={{ backgroundColor: color }}
+      className="inline-block w-[7px] h-[7px] rounded-[2px] shrink-0 bg-muted-foreground"
+      style={{ opacity: 0.5 }}
       title={language ?? "Unknown"}
     />
   );
@@ -50,7 +42,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
   return (
     <MotionProvider>
       <div ref={ref}>
-        <MacWindow title="open-source" subtitle={`${totalStars} stars`} delay={delay} dimLights>
+        <MacWindow title="open-source" subtitle={`${totalStars} stars`} delay={delay}>
           <div className="space-y-0">
             {repos.map((repo, i) => (
               <motion.a
@@ -58,30 +50,25 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline font-mono rounded-[6px] border-b border-border/30 last:border-b-0"
+                className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline font-mono rounded-[2px] border-b border-border/30 last:border-b-0"
                 initial={{ opacity: 0, y: 6 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.3, delay: delay + i * stagger.fast, ease }}
-                whileHover={{
-                  backgroundColor: "var(--accent-4)",
-                  x: 2,
-                  transition: { type: "spring", stiffness: 300, damping: 25 },
-                }}
               >
                 <LanguageDot language={repo.language} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-foreground/80 group-hover:text-accent transition-colors duration-200 text-mono-sm truncate">
+                    <span className="text-foreground/80 group-hover:text-foreground group-hover:underline transition-colors duration-200 text-mono-sm truncate">
                       {repo.name}
                     </span>
                     {repo.stars > 0 && (
-                      <span className="text-muted-foreground/40 text-label shrink-0">
+                      <span className="text-muted-foreground text-label shrink-0">
                         {repo.stars}
                       </span>
                     )}
                   </div>
                   {repo.description && (
-                    <p className="text-muted-foreground/50 text-label truncate mt-0.5">
+                    <p className="text-muted-foreground text-label truncate mt-0.5">
                       {repo.description}
                     </p>
                   )}

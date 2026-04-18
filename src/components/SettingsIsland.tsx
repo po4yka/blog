@@ -4,6 +4,7 @@ import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/
 import type { TranslationKey } from "@/lib/i18n";
 import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
+import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { ease } from "@/lib/motion";
 
@@ -47,6 +48,13 @@ export function Settings() {
   return (
     <MotionProvider>
     <div className="space-y-8 font-mono">
+      <SectionHeader
+        number="09"
+        label="SETTINGS"
+        heading={tt("settings.heading") ?? "Preferences"}
+        meta={tt("settings.storedLocally") ?? undefined}
+      />
+
       {/* Boot */}
       <BootBlock
         lines={[
@@ -67,7 +75,7 @@ export function Settings() {
         cat <Accent>/etc/preferences.conf</Accent>
       </Cmd>
 
-      <MacWindow title="preferences.conf" dimLights delay={0.05}>
+      <MacWindow label="preferences.conf" sectionNumber="09" delay={0.05}>
         <motion.div
           className="space-y-6"
           initial={{ opacity: 0, y: 8 }}
@@ -79,29 +87,30 @@ export function Settings() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {resolvedTheme === "dark" ? (
-                  <Moon size={14} className="text-accent/60" />
+                  <Moon size={14} className="text-muted-foreground" />
                 ) : (
-                  <Sun size={14} className="text-accent/60" />
+                  <Sun size={14} className="text-muted-foreground" />
                 )}
-                <span className="text-foreground/70 text-mono">
+                <span className="text-foreground/80 text-mono">
                   {tt("settings.theme")}
                 </span>
               </div>
-              <span className="text-muted-foreground/55 text-label">
+              <span className="text-muted-foreground text-label">
                 {theme === "system" ? `${tt("settings.system")} (${resolvedTheme})` : tt(themeLabelKeys[theme])}
               </span>
             </div>
-            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.themeDesc")}</p>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.themeDesc")}</p>
             <div className="flex gap-2">
               {themeOptions.map(({ value, icon: Icon, labelKey }) => (
                 <button
                   key={value}
                   onClick={() => setTheme(value)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     theme === value
-                      ? "text-accent bg-accent/10"
-                      : "text-muted-foreground/55 hover:text-foreground/60 bg-muted-foreground/5"
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
                   }`}
+                  style={{ borderRadius: "2px" }}
                 >
                   <Icon size={11} strokeWidth={2} />
                   {tt(labelKey)}
@@ -114,26 +123,27 @@ export function Settings() {
           <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {reduceMotion ? <ZapOff size={14} className="text-muted-foreground/55" /> : <Zap size={14} className="text-accent/60" />}
-                <span className="text-foreground/70 text-mono">
+                {reduceMotion ? <ZapOff size={14} className="text-muted-foreground" /> : <Zap size={14} className="text-muted-foreground" />}
+                <span className="text-foreground/80 text-mono">
                   {tt("settings.motion")}
                 </span>
               </div>
-              <span className="text-muted-foreground/55 text-label">
+              <span className="text-muted-foreground text-label">
                 {tt(reduceMotion ? "settings.motionReduced" : "settings.motionFull")}
               </span>
             </div>
-            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.motionDesc")}</p>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.motionDesc")}</p>
             <div className="flex gap-2">
               {[false, true].map((val) => (
                 <button
                   key={String(val)}
                   onClick={() => setReduceMotion(val)}
-                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
+                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     reduceMotion === val
-                      ? "text-accent bg-accent/10"
-                      : "text-muted-foreground/55 hover:text-foreground/60 bg-muted-foreground/5"
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
                   }`}
+                  style={{ borderRadius: "2px" }}
                 >
                   {val ? tt("settings.motionReduced") : tt("settings.motionFull")}
                 </button>
@@ -144,24 +154,25 @@ export function Settings() {
           {/* Font size */}
           <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
             <div className="flex items-center justify-between">
-              <span className="text-foreground/70 text-mono">
+              <span className="text-foreground/80 text-mono">
                 {tt("settings.fontSize")}
               </span>
-              <span className="text-muted-foreground/55 text-label">
+              <span className="text-muted-foreground text-label">
                 {fontSize}
               </span>
             </div>
-            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.fontSizeDesc")}</p>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.fontSizeDesc")}</p>
             <div className="flex gap-2">
               {(["compact", "default", "large"] as FontSize[]).map((size) => (
                 <button
                   key={size}
                   onClick={() => setFontSize(size)}
-                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
+                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     fontSize === size
-                      ? "text-accent bg-accent/10"
-                      : "text-muted-foreground/55 hover:text-foreground/60 bg-muted-foreground/5"
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
                   }`}
+                  style={{ borderRadius: "2px" }}
                 >
                   {tt(fontSizeLabelKeys[size])}
                 </button>
@@ -172,24 +183,25 @@ export function Settings() {
           {/* Language */}
           <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
             <div className="flex items-center justify-between">
-              <span className="text-foreground/70 text-mono">
+              <span className="text-foreground/80 text-mono">
                 {tt("settings.language")}
               </span>
-              <span className="text-muted-foreground/55 text-label">
+              <span className="text-muted-foreground text-label">
                 {locale}
               </span>
             </div>
-            <p className="text-muted-foreground/40 text-mono-sm">{tt("settings.languageDesc")}</p>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.languageDesc")}</p>
             <div className="flex gap-2">
               {(["en", "ru"] as const).map((loc) => (
                 <button
                   key={loc}
                   onClick={() => setLocale(loc)}
-                  className={`px-3 py-1.5 transition-all duration-200 cursor-pointer text-label rounded-[5px] ${
+                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     locale === loc
-                      ? "text-accent bg-accent/10"
-                      : "text-muted-foreground/55 hover:text-foreground/60 bg-muted-foreground/5"
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
                   }`}
+                  style={{ borderRadius: "2px" }}
                 >
                   {loc.toUpperCase()}
                 </button>
@@ -201,7 +213,7 @@ export function Settings() {
           <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-muted-foreground/55 hover:text-accent transition-colors duration-200 cursor-pointer text-mono-sm"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer text-mono-sm"
             >
               {resetDone ? <Check size={12} /> : <RotateCcw size={12} />}
               {resetDone ? tt("settings.defaultsRestored") : tt("settings.resetDefaults")}

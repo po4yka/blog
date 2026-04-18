@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
+import { BootBlock, Cmd, Accent } from "./Terminal";
+import { SectionHeader } from "./SectionHeader";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 
-import { ease, duration, stagger, spring } from "@/lib/motion";
+import { ease, duration, stagger } from "@/lib/motion";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
 export interface BlogPostMeta {
@@ -43,6 +44,18 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     <ErrorBoundary>
     <MotionProvider>
     <div className="space-y-8">
+      <SectionHeader
+        number="07"
+        label="WRITING"
+        heading="Posts"
+        meta={`${posts.length} POSTS`}
+        description={
+          featured
+            ? `${t("blog.reading")}: posts/${featured.slug}.txt`
+            : t("blog.browseAll") ?? undefined
+        }
+      />
+
       {/* Boot block */}
       <BootBlock
         lines={[
@@ -77,95 +90,93 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
           ls -lt <Accent>./posts/</Accent>
         </Cmd>
 
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2 pl-1">
-          {categories.map((cat) => (
-            <motion.button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-2.5 py-1 transition-all duration-200 cursor-pointer font-mono text-label rounded-[5px] ${
-                activeCategory === cat
-                  ? "text-accent bg-accent/10"
-                  : "text-muted-foreground/70 hover:text-foreground/80 hover:bg-muted-foreground/5"
-              }`}
-              whileHover={{ scale: 1.08, y: -1, transition: spring.snappy }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {cat === "All" ? t("blog.all") : cat}
-            </motion.button>
+        {/* Category filter — flat row separated by │ */}
+        <div className="flex flex-wrap items-center gap-0 pl-1">
+          {categories.map((cat, i) => (
+            <span key={cat} className="flex items-center">
+              {i > 0 && (
+                <span className="text-muted-foreground-dim px-2 select-none" aria-hidden="true">
+                  │
+                </span>
+              )}
+              <button
+                onClick={() => setActiveCategory(cat)}
+                className={`px-1.5 py-0.5 transition-colors duration-150 cursor-pointer text-label ${
+                  activeCategory === cat
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {cat === "All" ? t("blog.all") : cat}
+              </button>
+            </span>
           ))}
         </div>
 
-        {/* Posts */}
-        <MacWindow title={`${t("blog.postsTitle")} — ${activeCategory === "All" ? t("blog.all").toLowerCase() : activeCategory.toLowerCase()}`} dimLights delay={0.05}>
-          <div ref={ref}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCategory}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: duration.fast }}
-              >
-                {filtered.map((post, i) => (
-                  <motion.a
-                    key={post.slug}
+        {/* Posts list — flat, no MacWindow wrapping */}
+        <div ref={ref}>
+          <AnimatePresence mode="wait">
+            <motion.ul
+              key={activeCategory}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: duration.fast }}
+              className="list-none m-0 p-0"
+            >
+              {filtered.map((post, i) => (
+                <motion.li key={post.slug}>
+                  <a
                     href={blogUrl(lang, post.slug)}
-                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 no-underline font-mono rounded-[6px]"
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
-                    whileHover={{
-                      x: 4,
-                      backgroundColor: "var(--accent-4)",
-                      transition: { type: "spring", stiffness: 300, damping: 25 },
-                    }}
-                    whileTap={{ scale: 0.995 }}
+                    className="group w-full text-left flex items-start gap-3 py-3.5 border-b border-border last:border-b-0 no-underline"
+                    style={{ display: "flex" }}
                   >
                     {/* Marker */}
-                    <span
-                      className="text-muted-foreground/70 group-hover:text-accent/80 transition-colors duration-200 shrink-0 pt-0.5 text-mono-sm"
+                    <motion.span
+                      className="text-muted-foreground shrink-0 pt-0.5 text-mono-sm"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     >
                       ›
-                    </span>
+                    </motion.span>
 
                     {/* Title */}
-                    <div className="flex-1 min-w-0 relative">
-                      <span
-                        className="text-foreground/75 group-hover:text-foreground transition-colors duration-200 text-sm"
-                      >
+                    <motion.div
+                      className="flex-1 min-w-0 relative"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
+                    >
+                      <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-150 text-sm">
                         {post.title}
                       </span>
-                      <p
-                        className="mt-0.5 text-muted-foreground/50 group-hover:text-muted-foreground/65 transition-colors duration-200 truncate text-mono-sm"
-                      >
+                      <p className="mt-0.5 text-muted-foreground/80 truncate text-mono-sm">
                         {post.summary}
                       </p>
-                      {/* Hover underline -- clip-path line-draw with opacity fade */}
-                      <span
-                        className="blog-underline absolute top-[1.3em] left-0 right-0 h-[1px]"
-                      />
-                    </div>
+                      <span className="blog-underline absolute top-[1.3em] left-0 right-0 h-[1px]" />
+                    </motion.div>
 
                     {/* Date */}
-                    <span
-                      className="text-accent/40 shrink-0 text-label"
+                    <motion.span
+                      className="text-muted-foreground shrink-0 text-label"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                     >
                       {post.date}
-                    </span>
-                  </motion.a>
-                ))}
-                {filtered.length === 0 && (
-                  <p
-                    className="py-8 text-center text-muted-foreground/50 font-mono text-mono"
-                  >
-                    {t("blog.noPosts")}
-                  </p>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </MacWindow>
+                    </motion.span>
+                  </a>
+                </motion.li>
+              ))}
+              {filtered.length === 0 && (
+                <li className="py-8 text-center text-muted-foreground text-mono">
+                  {t("blog.noPosts")}
+                </li>
+              )}
+            </motion.ul>
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Blog stats */}
@@ -196,43 +207,36 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden rounded-[10px] font-mono"
       style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
-        boxShadow: "var(--window-shadow-sm)",
+        borderRadius: "2px",
       }}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay: 0.1, ease }}
-      whileHover={{
-        boxShadow: "var(--window-shadow)",
-        y: -1,
-        transition: { duration: 0.25 },
-      }}
     >
       <div
         className="flex items-center gap-3 px-4 py-[10px]"
         style={{
-          background: "var(--titlebar)",
-          borderBottom: "1px solid var(--titlebar-border)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
-        <span className="text-muted-foreground/30 select-none text-2xs">$ wc -l ./posts/*</span>
+        <span className="text-muted-foreground-dim select-none text-2xs label-meta">$ wc -l ./posts/*</span>
       </div>
       <div className="px-5 py-4 space-y-3 text-mono-sm">
         {/* Summary row */}
-        <div className="flex items-baseline gap-4 text-foreground/70">
+        <div className="flex items-baseline gap-4 text-foreground/80">
           <span>
-            <span className="text-accent/80">{posts.length}</span> posts
+            <span className="text-foreground font-medium">{posts.length}</span> posts
           </span>
-          <span className="text-muted-foreground/30">|</span>
+          <span className="text-muted-foreground-dim" aria-hidden="true">│</span>
           <span>
-            <span className="text-accent/80">{realCategories.length}</span> categories
+            <span className="text-foreground font-medium">{realCategories.length}</span> categories
           </span>
-          <span className="text-muted-foreground/30">|</span>
+          <span className="text-muted-foreground-dim" aria-hidden="true">│</span>
           <span>
-            <span className="text-accent/80">{stats.tagCount}</span> tags
+            <span className="text-foreground font-medium">{stats.tagCount}</span> tags
           </span>
         </div>
 
@@ -244,17 +248,17 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
               const pct = posts.length > 0 ? Math.round((count / posts.length) * 100) : 0;
               return (
                 <div key={cat} className="flex items-center gap-2">
-                  <span className="text-muted-foreground/50 w-24 text-right truncate text-label">{cat}</span>
-                  <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                  <span className="text-muted-foreground w-24 text-right truncate text-label">{cat}</span>
+                  <div className="flex-1 h-[2px] overflow-hidden" style={{ background: "var(--border)" }}>
                     <motion.div
-                      className="h-full rounded-full"
-                      style={{ background: "var(--accent)", opacity: 0.5 }}
+                      className="h-full"
+                      style={{ background: "var(--foreground)", opacity: 0.35 }}
                       initial={{ width: 0 }}
                       animate={inView ? { width: `${Math.max(pct, 4)}%` } : {}}
                       transition={{ duration: 0.6, delay: 0.3, ease }}
                     />
                   </div>
-                  <span className="text-muted-foreground/40 w-8 text-label">{count}</span>
+                  <span className="text-muted-foreground w-8 text-label">{count}</span>
                 </div>
               );
             })}
@@ -265,7 +269,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
         {stats.tags.length > 0 && (
           <div className="flex flex-wrap gap-x-2 gap-y-1 pt-1">
             {stats.tags.map((tag) => (
-              <span key={tag} className="text-muted-foreground/35 text-label">#{tag}</span>
+              <span key={tag} className="text-muted-foreground text-label">#{tag}</span>
             ))}
           </div>
         )}

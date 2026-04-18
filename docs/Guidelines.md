@@ -125,57 +125,53 @@ Copy should feel as if it was written by a real mobile engineer.
 
 # Visual direction
 
-Use a **terminal-native developer workstation aesthetic**.
+Use a **Swiss / International Typographic Style surface fused with an operator-console industrial layer**.
 
-The visual language is built on the metaphor of a developer's actual terminal session -- the site should feel like opening a well-configured Ghostty or Kitty terminal, not like browsing a startup landing page.
+The visual language combines Swiss grid discipline and neutral greyscale with the information density of a developer's terminal session. It should feel like a well-configured operator workstation, not a startup landing page and not a retro terminal emulator.
 
-The visual language should combine:
+The visual language combines:
 
 - terminal authenticity (real CLI patterns, not decorative approximations)
-- monospace-first typography with opacity-driven hierarchy
-- Catppuccin Mocha palette as the primary dark theme
-- calm whitespace between terminal blocks
-- refined micro-interactions within terminal chrome
+- Geist Sans as the primary type voice; Geist Mono demoted to code and operator labels
+- neutral greyscale palette — dark graphite (`#0b0b0c`) / warm paper (`#f5f3ee`)
+- numbered section labels (`01 / IDENTITY`, `04 / PROJECTS`) with hairline dividers
+- calm whitespace between operator panels
+- near-zero decorative motion; fade-in on mount and opacity shift on hover only
 - atmospheric system widgets that reinforce the workstation feel
 
 The terminal metaphor must stay grounded and credible:
 
 - Do not turn the website into a retro gimmick, sci-fi concept, or generic hacker/Matrix theme.
-- Terminal output should resemble real developer tools (adb, gradle, xcode, fastlane, git) -- not fictional commands.
+- Terminal output should resemble real developer tools (adb, gradle, xcode, fastlane, git, ktlint) -- not fictional commands.
 - The aesthetic should feel like a real mobile engineer's environment.
 
-## Terminal density and atmospheric layer
+## Terminal density and operator layer
 
-The site should feel like a **well-used terminal**, not a freshly opened one. Density, wear, and information packing are authentic to the aesthetic. The following patterns are explicitly permitted:
+The site should feel like a **well-used workstation**, not a freshly opened one. Density and information packing are authentic to the aesthetic. The following patterns are explicitly permitted:
 
-**Atmospheric texture (subtle, non-distracting):**
-- Scanlines via CSS pseudo-element at ≤ 4% opacity (2px repeating gradient)
-- Phosphor noise grain at ≤ 2% opacity (SVG noise data-URI)
-- Radial vignette darkening corners by ≤ 8% (CRT depth suggestion, no actual curvature)
-- Phosphor text-shadow glow on accent text only: `0 0 8–10px rgba(accent, 0.25–0.35)` — creates ambient purple presence without neon intensity
-
-**Information density inside MacWindow:**
+**Information density inside operator panels:**
 - IBM 3270-style field codes: `[01] FIELD ......: value` format in InfoTable (fieldCodes mode)
-- Vim/less-style line number gutter on the left of MacWindow content (lineNumbers prop)
-- Vim-style status bar at bottom of MacWindow: `-- NORMAL -- title | rows:col | branch` (statusLine prop)
-- Secondary metadata in MacWindow titlebar: `title | ~/path | branch` (titleExt prop)
+- Vim/less-style line number gutter on the left of panel content (lineNumbers prop)
+- Vim-style status bar at bottom of panel: `-- NORMAL -- title | rows:col | branch` (statusLine prop)
+- Secondary metadata in panel header right slot: `title | ~/path | branch` (titleExt prop)
 
 **List and content formatting:**
-- Tree-branch unicode (`├──` `└──` `│`) as list decoration in project and content lists
+- Tree-branch unicode (`├──` `└──` `│`) as list structure in project and content lists
 - Ranked index prefixes: `001 │ date │ [tag] │ title` for blog list items
 - Column dividers `│` in timeline/experience layouts
 - Status markers `●` (current) / `○` (past) in timeline rows
-- `[ OK ]` / `[ INFO ]` / `[ WARN ]` prefixes beyond just BootBlock — any status output
+- `OK ·` / `INFO ·` / `WARN ·` prefixes in status output (no brackets, no color coding)
 
-**Still forbidden (these remain Matrix/gimmick territory):**
-- Neon glow at alpha > 0.40 on any element
-- Green-on-black color scheme (the accent stays purple, not CRT green)
+**Still forbidden:**
+- Any chromatic accent color (purple, teal, amber, green — no accent family)
+- Neon glow, phosphor glow, or text-shadow decoration on any element
+- Scanlines, CRT noise grain, vignette, or any atmospheric texture overlay
+- Green-on-black or any non-neutral color scheme
 - CRT screen curvature, bezels, or screen-frame graphics
 - Retro power-on / boot-up intro animations
-- ASCII art illustrations (box-drawn frames and labels are fine; robot/character ASCII is not)
-- Matrix code-rain effects or green code waterfalls
-- Scanlines thick enough to be visually distracting (> 4% opacity)
-- Color palettes other than Catppuccin Mocha dark / lavender-editorial light
+- ASCII art illustrations (box-drawn frames and labels are fine; character art is not)
+- Matrix code-rain effects
+- Drop shadows on flat panels
 
 ---
 
@@ -223,46 +219,47 @@ The site should feel like a **well-used terminal**, not a freshly opened one. De
 
 Typography should carry the design.
 
-- **JetBrains Mono** is the primary font for all UI: headings, body text, labels, navigation, and terminal output.
-- **Inter** (`--font-sans`) is available as an optional contrast font for long-form blog prose where extended reading comfort matters.
-- Create a clear type hierarchy using **opacity, weight, and size** -- not font switching.
-- Headings should feel deliberate and confident within the monospace system.
-- Body text must remain highly readable despite being monospace -- use generous line-height (1.6-1.8) and comfortable font sizes.
+- **Geist Sans** (`--font-sans`) is the primary font for all UI: headings, body text, labels, navigation, and button text. It replaces the former monospace-everywhere approach.
+- **Geist Mono** (`--font-mono`) is demoted to code blocks, terminal output components (`Cmd`, `BootBlock`, `InfoTable`), and `.label-meta` metadata strips.
+- **Geist Pixel** (`--font-pixel`) is reserved for decorative numbered section prefixes only — maximum 6 uses per page.
+- Create a clear type hierarchy using **weight** (400→500), **opacity**, and **size** -- not font switching between families.
+- Headings should feel deliberate and confident; use `display-1` / `display-2` at display sizes with negative tracking.
+- Body prose (blog posts) uses Geist Sans at 17px, line-height 1.7, max-width 40rem.
 - Avoid too many font sizes and weights.
 - Use consistent line-height and spacing rhythm.
 
 ## Custom font size scale
 
-The project uses a compact font size scale designed for monospace:
-
-- `text-2xs` (8px), `text-3xs` (9px) -- decorative labels only
-- `text-xs` (10px), `text-label` (11px) -- metadata, small tags
-- `text-mono-sm` (12px), `text-mono` (13px) -- standard body and UI
-- `text-mono-lg` (15px) -- emphasized text
-- Standard Tailwind sizes for headings (h1: 1.5rem, h2: 1.125rem)
+| Class | Size | Use |
+|-------|------|-----|
+| `display-1` | clamp(40–64px), wt 500, tracking -0.028em | Hero name only |
+| `display-2` | clamp(28–40px), wt 500, tracking -0.020em | Post titles, major section heads |
+| `h1` | clamp(28–36px) | Page headings |
+| `h2` | 20px | Section headings (inside SectionHeader) |
+| `h3` | 17px | Sub-section headings |
+| body | 15–17px | UI copy, navigation |
+| `label-meta` | 11px Geist Mono, uppercase, tracking 0.12em | Metadata strips, section number labels |
 
 ## Typography tone
 
-- terminal
 - precise
 - technical
-- intelligent
-- warm despite being monospace
-- not cold
+- confident
+- readable — Geist Sans provides warmth that pure monospace did not
 - not decorative for decoration’s sake
 
 ---
 
 # Color guidelines
 
-Use a restrained color system.
+Use a strictly neutral color system. There is no chromatic accent color.
 
 ## Preferred palette structure
 
-- **Dark mode (primary):** Catppuccin Mocha-inspired palette with deep background, layered surface colors
-- **Light mode:** softly tinted background with charcoal/graphite text
-- muted secondary text via opacity layering
-- one controlled accent color only (purple/indigo family)
+- **Dark mode (primary):** near-black graphite canvas (`#0b0b0c`) with eggshell text (`#e9e8e4`)
+- **Light mode:** warm paper canvas (`#f5f3ee`) with ink text (`#101012`)
+- Secondary text via opacity and `--muted-foreground` / `--muted-foreground-dim` tokens
+- Emphasis via `--emphasis`: pure white on dark, pure black on light
 
 ## Opacity hierarchy
 
@@ -271,7 +268,7 @@ The design uses opacity layering for information depth:
 - **Primary text:** `/80` to `/100` -- names, roles, headings, active nav links
 - **Secondary text:** `/60` to `/70` -- body prose, focus areas, inactive nav links
 - **Tertiary text:** `/45` to `/55` -- supporting details, third-priority paragraphs
-- **Decorative text:** `/20` to `/35` -- window titles, ambient labels, hints
+- **Decorative text:** `/20` to `/35` -- panel header labels, ambient indicators
 
 ### WCAG contrast requirements
 
@@ -280,33 +277,25 @@ The design uses opacity layering for information depth:
 - Normal text (< 18px / < 14px bold): 4.5:1 minimum
 - Large text (>= 18px / >= 14px bold): 3:1 minimum
 
-Decorative-only text (window chrome titles, ambient status indicators) may fall below these thresholds but should remain perceptible.
+Both `--muted-foreground` tokens are verified to meet AA on their respective backgrounds. Decorative-only text may fall below these thresholds but should remain perceptible.
 
-## Accent color rules
+## Emphasis and the only non-neutral token
 
-Use only one accent family across the entire project.
+There is no accent color family. The only "accent" is `--emphasis` (pure white / pure black). Acceptable uses:
+- active navigation state (weight 500 + 1px underline)
+- inline link underline on hover
+- key identity display moment
+- focus ring: `outline: 2px solid var(--emphasis); outline-offset: 3px`
 
-Acceptable accent directions:
-
-- muted blue
-- teal
-- warm amber
-- restrained orange
-
-The accent should be used sparingly for:
-
-- links
-- active states
-- key highlights
-- small emphasis moments
+`--destructive` (`#e8634b` dark / `#b83a28` light) is the only non-neutral token. Reserve it strictly for destructive UI actions (delete, irreversible operations). Never use it as decoration.
 
 ## Avoid
 
-- multiple accent colors competing at once
+- any chromatic accent color (purple, teal, amber, blue, orange — all forbidden as accent)
+- multiple signal colors (no green/amber/red status coding — use muted-foreground for all status text)
 - loud gradients
-- neon tones
+- neon tones or glow effects
 - oversaturated palettes
-- pure black unless absolutely necessary
 - visually trendy colors with no relationship to the brand
 
 Contrast must remain excellent and the design must stay readable.
@@ -379,16 +368,17 @@ Cards may be used, but do not rely on them for every layout.
 
 ## Terminal components
 
-The project uses a terminal component kit as its primary design system:
+The project uses a flat operator-panel kit as its primary design system. All components use `1px solid var(--border)`, `border-radius: 2px`, no shadow, no traffic lights, no window chrome gradients.
 
-- **MacWindow** -- titled window chrome with traffic light dots; used to frame content sections
-- **BootBlock** -- system initialization status lines ([ OK ] / [ INFO ] prefixes)
-- **Cmd** -- `$ command` prompt display, introduces content sections
-- **OutputBlock** -- indented output wrapper with fade-in animation
-- **PanelShell** -- compact bordered panel for system widgets (CPU, memory, network)
-- **InfoTable** -- key-value table for structured data display (whois, project metadata)
+- **MacWindow** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `lineNumbers` and `statusLine` props; replaces former macOS window mockup
+- **SectionHeader** -- new shared component; numbered label row + `<h2>` heading + `border-bottom: 1px solid var(--rule)`; applied to every home section and primary page header
+- **BootBlock** -- status output lines prefixed with `OK ·` / `INFO ·` / `WARN ·` in `--muted-foreground`; no color coding; keep to 4–6 lines
+- **Cmd** -- `$ command` prompt line in `--font-mono`; prompt `$` at `--emphasis /70`; introduces content sections
+- **OutputBlock** -- indented output wrapper with fade-in stagger; `2px solid var(--rule)` left border
+- **PanelShell** -- compact bordered block for sidebar widgets; same flat border treatment as MacWindow
+- **InfoTable** -- two-column key-value table; `fieldCodes` mode renders IBM 3270 `[01] KEY ......: value`; key column `--font-mono` 11px, value column `--font-sans` 14px
 
-These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment, and background colors.
+These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment (`var(--border)`), and background (`var(--card)`).
 
 ---
 

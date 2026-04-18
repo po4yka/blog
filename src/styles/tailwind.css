@@ -4,8 +4,8 @@
 @import 'tw-animate-css';
 
 @theme inline {
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", "Fira Code", ui-monospace, monospace;
+  --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Custom font sizes matching the design system */
   --text-2xs: 0.5rem;       /* 8px  */
@@ -15,12 +15,6 @@
   --text-mono-sm: 0.75rem;  /* 12px */
   --text-mono: 0.8125rem;   /* 13px */
   --text-mono-lg: 0.9375rem; /* 15px */
-
-  /* Semantic opacity tiers — exposed as opacity-dim, opacity-muted, etc. */
-  --opacity-dim: 0.25;
-  --opacity-muted: 0.50;
-  --opacity-body: 0.80;
-  --opacity-bright: 1.00;
 }
 
 /* Corporate-monolith section label typography (Moebius influence).

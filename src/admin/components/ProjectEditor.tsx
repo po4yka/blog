@@ -16,7 +16,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
   return (
     <AnimatePresence>
       <motion.div
-        className="mb-6 border border-accent/20 bg-card p-5"
+        className="mb-6 border border-border bg-card p-5"
         style={{ borderRadius: "4px" }}
         initial={{ opacity: 0, y: -8, height: 0 }}
         animate={{ opacity: 1, y: 0, height: "auto" }}
@@ -43,7 +43,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
                 value={editing.name}
                 onChange={(e) => onChange({ ...editing, name: e.target.value })}
                 placeholder="Project name"
-                className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30"
+                className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/30"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
@@ -62,7 +62,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
               onChange={(e) => onChange({ ...editing, description: e.target.value })}
               placeholder="Short project description"
               rows={2}
-              className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-accent/40 transition-colors duration-200 placeholder:text-muted-foreground/30 resize-y"
+              className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/30 resize-y"
               style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
             />
           </FieldBlock>
@@ -87,12 +87,12 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
               onClick={() => onChange({ ...editing, featured: !editing.featured })}
               className={`inline-flex items-center gap-2 px-3 py-1.5 border transition-all duration-200 cursor-pointer ${
                 editing.featured
-                  ? "border-accent/30 text-accent bg-accent/[0.04]"
-                  : "border-border/50 text-muted-foreground/50 hover:border-border"
+                  ? "border-border text-foreground bg-muted"
+                  : "border-border/50 text-muted-foreground hover:border-border"
               }`}
-              style={{ fontSize: "0.75rem", borderRadius: "3px" }}
+              style={{ fontSize: "0.75rem", borderRadius: "2px" }}
             >
-              {editing.featured ? <Star size={13} className="fill-accent/20" /> : <StarOff size={13} />}
+              {editing.featured ? <Star size={13} className="fill-foreground/20" /> : <StarOff size={13} />}
               Featured
             </button>
           </div>

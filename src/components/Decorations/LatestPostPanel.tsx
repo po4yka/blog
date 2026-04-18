@@ -11,10 +11,10 @@ export function LatestPostPanel({ delay = 0 }: { delay?: number }) {
         href={`/blog/${latest.slug}`}
         className="block space-y-1 group px-5 py-3"
       >
-        <p className="text-foreground/75 text-mono-sm group-hover:text-accent transition-colors duration-200 line-clamp-2">
+        <p className="text-foreground/75 text-mono-sm group-hover:text-foreground group-hover:underline transition-colors duration-200 line-clamp-2">
           {latest.title}
         </p>
-        <p className="text-muted-foreground/80 text-label">
+        <p className="text-muted-foreground text-label">
           {latest.date}
         </p>
       </a>

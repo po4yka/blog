@@ -104,7 +104,7 @@ export function AdminBlogEdit() {
               {isNew ? "New Post" : "Edit Post"}
             </h1>
             {!isNew && (
-              <span className="font-mono text-muted-foreground/30" style={{ fontSize: "0.5625rem" }}>
+              <span className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
                 /{form.slug}
               </span>
             )}
@@ -148,7 +148,7 @@ export function AdminBlogEdit() {
                 value={form.title}
                 onChange={(e) => updateField("title", e.target.value)}
                 placeholder="Post title"
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
                 style={{ fontSize: "0.875rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
@@ -159,7 +159,7 @@ export function AdminBlogEdit() {
                 value={form.slug}
                 onChange={(e) => updateField("slug", e.target.value.replace(/[^a-z0-9-]/g, ""))}
                 placeholder="post-slug"
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
@@ -171,7 +171,7 @@ export function AdminBlogEdit() {
                   value={form.date}
                   onChange={(e) => updateField("date", e.target.value)}
                   placeholder="Mar 2026"
-                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200"
+                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </FieldBlock>
@@ -179,7 +179,7 @@ export function AdminBlogEdit() {
                 <select
                   value={form.category}
                   onChange={(e) => updateField("category", e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground outline-none focus:border-accent/30 transition-colors duration-200 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground outline-none focus:border-border transition-colors duration-200 cursor-pointer"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 >
                   {availableCategories.map((c) => (
@@ -194,12 +194,12 @@ export function AdminBlogEdit() {
                 onClick={() => updateField("featured", !form.featured)}
                 className={`inline-flex items-center gap-2 px-3 py-1.5 border transition-all duration-200 cursor-pointer ${
                   form.featured
-                    ? "border-accent/30 text-accent bg-accent/[0.04]"
-                    : "border-border/50 text-muted-foreground/50 hover:border-border"
+                    ? "border-border text-foreground bg-muted"
+                    : "border-border/50 text-muted-foreground hover:border-border"
                 }`}
                 style={{ fontSize: "0.75rem", borderRadius: "3px" }}
               >
-                {form.featured ? <Star size={13} className="fill-accent/20" /> : <StarOff size={13} />}
+                {form.featured ? <Star size={13} className="fill-foreground/20" /> : <StarOff size={13} />}
                 {form.featured ? "Featured" : "Not featured"}
               </button>
             </div>
@@ -210,7 +210,7 @@ export function AdminBlogEdit() {
                 onChange={(e) => updateField("summary", e.target.value)}
                 placeholder="Brief description of the post"
                 rows={2}
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-accent/30 transition-colors duration-200 resize-y"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200 resize-y"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
               />
             </FieldBlock>
@@ -230,14 +230,14 @@ export function AdminBlogEdit() {
                   onChange={(e) => updateField("content", e.target.value)}
                   placeholder="Write your post content here. Use ## for headings, - for lists, **bold** for emphasis..."
                   rows={18}
-                  className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 outline-none focus:border-accent/30 transition-colors duration-200 resize-y"
+                  className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 outline-none focus:border-border transition-colors duration-200 resize-y"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.7 }}
                 />
                 <div className="absolute bottom-2.5 right-3 flex items-center gap-3">
-                  <span className="font-mono text-muted-foreground/20" style={{ fontSize: "0.5625rem" }}>
+                  <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
                     {wordCount} words
                   </span>
-                  <span className="font-mono text-muted-foreground/20" style={{ fontSize: "0.5625rem" }}>
+                  <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
                     ~{readingTime} min
                   </span>
                 </div>

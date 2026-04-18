@@ -1,6 +1,6 @@
 export { CpuMonitor, MemoryPanel, LanguagePanel } from "./panels";
 export { NetworkGraph, CpuGraph, ProcessTable, ConnectionPanel } from "./graphs";
-export { UptimeStrip, SystemBottomBar } from "./strips";
+export { SystemBottomBar } from "./strips";
 export { MemoryGrid } from "./MemoryGrid";
 export { BlogStatsPanel } from "./BlogStatsPanel";
 export { TechTagHeatmap } from "./TechTagHeatmap";

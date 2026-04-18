@@ -6,7 +6,6 @@ interface ShellProps {
   delay?: number;
   command: React.ReactNode;
   windowTitle: string;
-  dimLights?: boolean;
   children: (props: { inView: boolean }) => React.ReactNode;
 }
 
@@ -19,7 +18,6 @@ export function Shell({
   delay = 0,
   command,
   windowTitle,
-  dimLights,
   children,
 }: ShellProps) {
   const { ref, inView } = useInView(0.1);
@@ -29,7 +27,7 @@ export function Shell({
       <section className="space-y-4">
         <Cmd delay={delay}>{command}</Cmd>
 
-        <MacWindow title={windowTitle} dimLights={dimLights} delay={delay + 0.05}>
+        <MacWindow title={windowTitle} delay={delay + 0.05}>
           <div ref={ref}>{children({ inView })}</div>
         </MacWindow>
       </section>

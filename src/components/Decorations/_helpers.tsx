@@ -3,7 +3,7 @@ import { useInView } from "@/hooks/useInView";
 import { ease } from "@/lib/motion";
 import { barColor } from "./_utils";
 
-/** Shared panel shell with hover lift */
+/** Shared panel shell — flat, hairline, operator-console header row. */
 export function PanelShell({
   label,
   labelRight,
@@ -20,31 +20,30 @@ export function PanelShell({
   return (
     <motion.div
       ref={ref}
-      className="overflow-hidden rounded-[10px] font-mono"
+      className="overflow-hidden font-mono"
       style={{
         border: "1px solid var(--border)",
+        borderRadius: 2,
         background: "var(--panel-bg)",
       }}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay, ease }}
-      whileHover={{
-        y: -1,
-        transition: { duration: 0.2 },
-      }}
+      transition={{ duration: 0.45, delay, ease }}
     >
       <div
-        className="flex items-center justify-between px-5 py-2.5"
-        style={{ borderBottom: "1px solid var(--border)" }}
+        className="flex items-baseline justify-between px-4 py-2"
+        style={{ borderBottom: "1px solid var(--rule)" }}
       >
-        <span
-          className="text-muted-foreground uppercase text-mono-sm font-medium"
-          style={{ letterSpacing: "0.12em" }}
-        >
-          {label}
-        </span>
+        <span className="label-meta">{label}</span>
         {labelRight && (
-          <span className="text-muted-foreground text-label">
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 11,
+              color: "var(--muted-foreground-dim)",
+              letterSpacing: "0.06em",
+            }}
+          >
             {labelRight}
           </span>
         )}
@@ -76,11 +75,9 @@ export function UsageBar({
       transition={{ duration: 0.4, delay }}
       title={`${pct}%`}
     >
-      {/* Empty (background) layer */}
       <span className="text-mono-sm" style={{ color: "var(--bar-empty)", letterSpacing: "-0.5px" }}>
         {allBlocks}
       </span>
-      {/* Filled layer with smooth width transition */}
       <motion.span
         className="absolute left-0 top-0 overflow-hidden"
         animate={{ width: `${pct}%` }}
