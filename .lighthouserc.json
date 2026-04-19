@@ -4,6 +4,7 @@
       "url": [
         "http://localhost:4321/",
         "http://localhost:4321/blog/",
+        "http://localhost:4321/blog/rag-breaks-earlier-than-people-think/",
         "http://localhost:4321/projects/"
       ],
       "startServerCommand": "npm run preview",
