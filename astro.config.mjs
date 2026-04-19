@@ -9,6 +9,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { rehypeBlogImageDimensions } from "./scripts/rehype-blog-image-dimensions.mjs";
 
 const isAstroDev = process.argv.includes("dev");
 
@@ -42,7 +43,7 @@ export default defineConfig({
     react(),
     mdx({
       remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
+      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig, rehypeBlogImageDimensions],
     }),
     sitemap(),
   ],
