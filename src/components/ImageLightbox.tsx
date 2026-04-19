@@ -70,10 +70,21 @@ function extractSources(img: HTMLImageElement): {
       if (!srcset) return;
       const media = sourceEl.getAttribute("media") ?? "";
       const type = sourceEl.getAttribute("type");
+      // BlogFigure tags sources with data-theme / data-viewport so the lightbox
+      // can pick the right variant regardless of how the runtime rewrites
+      // `media` to sync with the site's manual theme toggle.
+      const themeAttr = sourceEl.dataset.theme;
+      const viewportAttr = sourceEl.dataset.viewport;
+      const requiresDark =
+        themeAttr === "dark" ||
+        (themeAttr === undefined && /prefers-color-scheme:\s*dark/i.test(media));
+      const requiresMobile =
+        viewportAttr === "mobile" ||
+        (viewportAttr === undefined && /max-width:\s*640px/i.test(media));
       sources.push({
         srcset,
-        requiresDark: /prefers-color-scheme:\s*dark/i.test(media),
-        requiresMobile: /max-width:\s*640px/i.test(media),
+        requiresDark,
+        requiresMobile,
         mimeType: type,
       });
     });

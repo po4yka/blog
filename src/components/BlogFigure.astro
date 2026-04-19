@@ -25,10 +25,30 @@ const { variants, alt, caption } = Astro.props;
 
 const FORMATS = ["avif", "webp", "png"] as const;
 
-const ART_DIRECTIONS: Array<{ media: string; src: ImageMetadata }> = [
-  { media: "(prefers-color-scheme: dark) and (max-width: 640px)", src: variants.mobileDark },
-  { media: "(max-width: 640px)", src: variants.mobileLight },
-  { media: "(prefers-color-scheme: dark)", src: variants.desktopDark },
+const ART_DIRECTIONS: Array<{
+  media: string;
+  src: ImageMetadata;
+  theme: "dark" | "light";
+  viewport: "mobile" | "desktop";
+}> = [
+  {
+    media: "(prefers-color-scheme: dark) and (max-width: 640px)",
+    src: variants.mobileDark,
+    theme: "dark",
+    viewport: "mobile",
+  },
+  {
+    media: "(max-width: 640px)",
+    src: variants.mobileLight,
+    theme: "light",
+    viewport: "mobile",
+  },
+  {
+    media: "(prefers-color-scheme: dark)",
+    src: variants.desktopDark,
+    theme: "dark",
+    viewport: "desktop",
+  },
 ];
 
 const sources = await Promise.all(
@@ -43,6 +63,8 @@ const sources = await Promise.all(
         srcset: processed.src,
         type: `image/${format}` as const,
         media: direction.media,
+        theme: direction.theme,
+        viewport: direction.viewport,
       };
     }),
   ),
@@ -52,9 +74,15 @@ const fallback = await getImage({ src: variants.desktopLight, format: "png" });
 ---
 
 <figure class="blog-figure">
-  <picture>
+  <picture data-theme-aware>
     {sources.map((source) => (
-      <source srcset={source.srcset} type={source.type} media={source.media} />
+      <source
+        srcset={source.srcset}
+        type={source.type}
+        media={source.media}
+        data-theme={source.theme}
+        data-viewport={source.viewport}
+      />
     ))}
     <img
       src={fallback.src}
@@ -67,3 +95,38 @@ const fallback = await getImage({ src: variants.desktopLight, format: "png" });
   </picture>
   {caption && <figcaption><em>{caption}</em></figcaption>}
 </figure>
+
+<script>
+  // Picture sources normally react to prefers-color-scheme (OS-level), but the
+  // site has a manual theme toggle. Sync each tagged source's `media` to the
+  // resolved site theme (.dark/.light on <html>) so the browser selects the
+  // variant the reader actually sees.
+  function syncBlogFigures() {
+    const siteDark = document.documentElement.classList.contains("dark");
+    const pictures = document.querySelectorAll<HTMLPictureElement>(
+      "picture[data-theme-aware]",
+    );
+    pictures.forEach((picture) => {
+      picture.querySelectorAll<HTMLSourceElement>("source[data-theme]").forEach((src) => {
+        const theme = src.dataset.theme;
+        const viewport = src.dataset.viewport;
+        if (theme !== "dark" && theme !== "light") return;
+        const themeMatches = theme === "dark" ? siteDark : !siteDark;
+        if (!themeMatches) {
+          src.setAttribute("media", "not all");
+          return;
+        }
+        src.setAttribute("media", viewport === "mobile" ? "(max-width: 640px)" : "all");
+      });
+    });
+  }
+
+  syncBlogFigures();
+
+  new MutationObserver(syncBlogFigures).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+
+  document.addEventListener("astro:after-swap", syncBlogFigures);
+</script>
