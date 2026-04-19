@@ -16,6 +16,7 @@ interface VariantSource {
   srcset: string;
   requiresDark: boolean;
   requiresMobile: boolean;
+  mimeType: string | null;
 }
 
 interface Figure {
@@ -39,16 +40,20 @@ function getIsMobileViewport(): boolean {
   return window.matchMedia(MOBILE_QUERY).matches;
 }
 
+// Prefer PNG for the lightbox's single <img> render — broad decoder support
+// across browsers and image tooling. Fall back to the first format-agnostic
+// match (AVIF/WebP), then to the <img>'s fallback src.
 function pickVariant(
   figure: { sources: VariantSource[]; fallbackSrc: string },
   isDark: boolean,
   isMobile: boolean,
 ): string {
-  for (const source of figure.sources) {
-    if (source.requiresDark && !isDark) continue;
-    if (source.requiresMobile && !isMobile) continue;
-    if (source.srcset) return source.srcset;
-  }
+  const matches = figure.sources.filter(
+    (s) => !(s.requiresDark && !isDark) && !(s.requiresMobile && !isMobile) && s.srcset,
+  );
+  const png = matches.find((s) => s.mimeType === "image/png" || s.mimeType === null);
+  if (png) return png.srcset;
+  if (matches.length > 0) return matches[0].srcset;
   return figure.fallbackSrc;
 }
 
@@ -63,10 +68,12 @@ function extractSources(img: HTMLImageElement): {
       const srcset = sourceEl.getAttribute("srcset") ?? "";
       if (!srcset) return;
       const media = sourceEl.getAttribute("media") ?? "";
+      const type = sourceEl.getAttribute("type");
       sources.push({
         srcset,
         requiresDark: /prefers-color-scheme:\s*dark/i.test(media),
         requiresMobile: /max-width:\s*640px/i.test(media),
+        mimeType: type,
       });
     });
   }
@@ -152,21 +159,27 @@ export function ImageLightbox({ contentRef }: Props) {
     const picture = img.closest("picture");
     const alt = img.alt ?? "";
 
-    // Prefer the sibling caption paragraph (`*Figure N. ...*` in MDX) over alt.
-    // Walk up from <picture> to the direct child of the prose container, then
-    // peek at the next element sibling — matches both bare <picture> blocks
-    // and MDX's inline wrap in <p>.
+    // Prefer <figcaption> inside the enclosing <figure> (the BlogFigure
+    // component emits this). Fall back to the sibling caption paragraph
+    // pattern (`*Figure N. ...*` — raw-<picture> posts), then to alt.
     let caption = alt;
-    const root = contentRef.current;
-    if (picture && root) {
-      let block: Element = picture;
-      while (block.parentElement && block.parentElement !== root) {
-        block = block.parentElement;
-      }
-      const sibling = block.nextElementSibling;
-      if (sibling instanceof HTMLElement && sibling.tagName === "P") {
-        const text = sibling.textContent?.trim() ?? "";
-        if (text.length > 0) caption = text;
+    const figure = img.closest("figure");
+    const figcaption = figure?.querySelector("figcaption");
+    const captionFromFigure = figcaption?.textContent?.trim();
+    if (captionFromFigure && captionFromFigure.length > 0) {
+      caption = captionFromFigure;
+    } else {
+      const root = contentRef.current;
+      if (picture && root) {
+        let block: Element = picture;
+        while (block.parentElement && block.parentElement !== root) {
+          block = block.parentElement;
+        }
+        const sibling = block.nextElementSibling;
+        if (sibling instanceof HTMLElement && sibling.tagName === "P") {
+          const text = sibling.textContent?.trim() ?? "";
+          if (text.length > 0) caption = text;
+        }
       }
     }
 

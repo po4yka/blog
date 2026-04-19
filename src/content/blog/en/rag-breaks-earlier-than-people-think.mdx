@@ -7,6 +7,9 @@ category: "Architecture"
 featured: true
 ---
 
+import BlogFigure from "../../../components/BlogFigure.astro";
+import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-think/_figures";
+
 ## 1. RAG breaks earlier than people think
 
 You can feel the ceiling before you can measure it. At a few hundred thousand documents, a well-tuned vector index starts returning near-misses on queries it answered perfectly at a few thousand. You add a reranker and the top-1 moves back. You add hybrid search and the long tail gets better. Then you keep growing and the failures come back. Same kind, just harder to reproduce. Most teams read this as tuning work. Weller et al. (ICLR 2026) offer a different explanation: a single-vector retriever has a representational ceiling, and past it no amount of downstream cleverness compensates.
@@ -19,14 +22,11 @@ Weller et al. ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038), ICLR 2026) 
 
 The failures that follow cluster into three layers. Geometry (the ceiling above) is structural: no tuning moves it. Chunking and context utilisation are budget problems: careful preprocessing helps, but the budgets themselves are shrinking. Attention and hard negatives are generator failures: better prompts help, until the prompts stop mattering. Geometry can't be tuned away. The other two layers respond to engineering effort.
 
-<picture>
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.mobile.en.dark.png" media="(prefers-color-scheme: dark) and (max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.mobile.en.light.png" media="(max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.en.dark.png" media="(prefers-color-scheme: dark)" />
-  <img src="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.en.light.png" alt="Log-log chart plotting usable corpus size against embedding dimension. Weller et al. empirical fit (coral line) passes through two labeled anchor points: d=768 with n≈1.7M documents (open-weights default) and d=4096 with n≈250M (current frontier). Shaded unreachable region above the line. Formula at top: d ≥ log C(n,k) / log(1+1/γ). Benchmark strip reports LIMIT (50K docs, 1K queries) with E5-Mistral, GritLM, Qwen3 below 20% Recall@100 at d=4096 while BM25 hits 97.8% Recall@2; GTE-ModernColBERT (vector-per-token) recovers 54.8% on the same set." />
-</picture>
-
-*Figure 1. Weller et al.'s empirical fit across seven single-vector retrievers. The two anchor points -- d=768 and d=4096 -- trace the usable-corpus frontier. Above the curve, some top-k rankings cannot be represented at that dimension; reranking and hybrid search do not move it.*
+<BlogFigure
+  variants={figures["01-rag-failure-layers"].en}
+  alt="Log-log chart plotting usable corpus size against embedding dimension. Weller et al. empirical fit (coral line) passes through two labeled anchor points: d=768 with n≈1.7M documents (open-weights default) and d=4096 with n≈250M (current frontier). Shaded unreachable region above the line. Formula at top: d ≥ log C(n,k) / log(1+1/γ). Benchmark strip reports LIMIT (50K docs, 1K queries) with E5-Mistral, GritLM, Qwen3 below 20% Recall@100 at d=4096 while BM25 hits 97.8% Recall@2; GTE-ModernColBERT (vector-per-token) recovers 54.8% on the same set."
+  caption="Figure 1. Weller et al.'s empirical fit across seven single-vector retrievers. The two anchor points -- d=768 and d=4096 -- trace the usable-corpus frontier. Above the curve, some top-k rankings cannot be represented at that dimension; reranking and hybrid search do not move it."
+/>
 
 The empirical fit across seven models puts the usable corpus ceiling around 250 million documents at 4096 dimensions, and around 1.7 million at 768, still the common open-weights default. Above those sizes, some top-$k$ sets sit outside the span of any vector the retriever can produce.
 
@@ -60,14 +60,11 @@ The wiki has three layers.
 - **The wiki** in the middle: markdown pages the LLM writes, one per concept or decision, linked with wikilinks.
 - **The schema** on top: CLAUDE.md, AGENTS.md, whatever file states what the wiki is for. The LLM reads it before every action.
 
-<picture>
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.mobile.en.dark.png" media="(prefers-color-scheme: dark) and (max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.mobile.en.light.png" media="(max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.en.dark.png" media="(prefers-color-scheme: dark)" />
-  <img src="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.en.light.png" alt="Architecture diagram. Central three-layer wiki stack: L3 Schema (CLAUDE.md, AGENTS.md, frontmatter spec; human-authored, read before every action), L2 Wiki pages (coral focal; LLM-written markdown, wikilinks, compiled; ~10-15 pages edited per ingest), L1 Raw sources (PDFs, transcripts, clips; content-hashed, immutable). Four operations orbit the stack: Source drop on the left feeds L1 (labeled DROP), Ingest on top writes L2 (WRITES), Query on the right reads L2 (READS) with a dashed return arrow APPENDS, Lint at the bottom audits L2 (AUDITS)." />
-</picture>
-
-*Figure 2. The wiki with its four operations. Ingest writes the middle layer; Query reads it; Lint audits it. Source drops feed L1; Schema directs every action from above. The focal L2 is the only layer every operation touches.*
+<BlogFigure
+  variants={figures["02-wiki-three-layers"].en}
+  alt="Architecture diagram. Central three-layer wiki stack: L3 Schema (CLAUDE.md, AGENTS.md, frontmatter spec; human-authored, read before every action), L2 Wiki pages (coral focal; LLM-written markdown, wikilinks, compiled; ~10-15 pages edited per ingest), L1 Raw sources (PDFs, transcripts, clips; content-hashed, immutable). Four operations orbit the stack: Source drop on the left feeds L1 (labeled DROP), Ingest on top writes L2 (WRITES), Query on the right reads L2 (READS) with a dashed return arrow APPENDS, Lint at the bottom audits L2 (AUDITS)."
+  caption="Figure 2. The wiki with its four operations. Ingest writes the middle layer; Query reads it; Lint audits it. Source drops feed L1; Schema directs every action from above. The focal L2 is the only layer every operation touches."
+/>
 
 **Ingest** does the actual rewriting. A source comes in, the LLM reads it against the schema and the index, and edits whichever pages the source touches, often ten or fifteen at once.
 
@@ -121,14 +118,11 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest
 
 Letta, Mem0, Zep, and every graph system above store their artefact in a database or index the reader never opens. The wiki is just markdown files.
 
-<picture>
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.mobile.en.dark.png" media="(prefers-color-scheme: dark) and (max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.mobile.en.light.png" media="(max-width: 640px)" />
-  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.en.dark.png" media="(prefers-color-scheme: dark)" />
-  <img src="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.en.light.png" alt="Quadrant positioning eight systems on two axes: query-time to ingest-time compute (horizontal), opaque store to human-readable artifact (vertical). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti, and GraphRAG cluster in the bottom half (opaque stores). LLM Wiki sits alone in the top-right quadrant (heavy ingest, markdown artifact)." />
-</picture>
-
-*Figure 3. Where each system pays its compute. Seven shipped systems keep the artefact in an opaque store; only the wiki corner keeps the compiled output in files a reader can open.*
+<BlogFigure
+  variants={figures["03-compute-shift-quadrant"].en}
+  alt="Quadrant positioning eight systems on two axes: query-time to ingest-time compute (horizontal), opaque store to human-readable artifact (vertical). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti, and GraphRAG cluster in the bottom half (opaque stores). LLM Wiki sits alone in the top-right quadrant (heavy ingest, markdown artifact)."
+  caption="Figure 3. Where each system pays its compute. Seven shipped systems keep the artefact in an opaque store; only the wiki corner keeps the compiled output in files a reader can open."
+/>
 
 ## 4. When the wiki doesn't fit
 

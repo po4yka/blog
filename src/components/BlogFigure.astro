@@ -1,0 +1,69 @@
+---
+// Blog figure with art-direction variants (desktop/mobile × light/dark)
+// and per-variant format conversion (AVIF/WebP/PNG) via astro:assets.
+// Callers pass ImageMetadata directly (via a generated manifest module)
+// because import.meta.glob does not resolve when this component renders
+// as a slotted child of a React island in Astro 6.
+
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Variants {
+  desktopLight: ImageMetadata;
+  desktopDark: ImageMetadata;
+  mobileLight: ImageMetadata;
+  mobileDark: ImageMetadata;
+}
+
+interface Props {
+  variants: Variants;
+  alt: string;
+  caption?: string;
+}
+
+const { variants, alt, caption } = Astro.props;
+
+const FORMATS = ["avif", "webp", "png"] as const;
+
+const ART_DIRECTIONS: Array<{ media: string; src: ImageMetadata }> = [
+  { media: "(prefers-color-scheme: dark) and (max-width: 640px)", src: variants.mobileDark },
+  { media: "(max-width: 640px)", src: variants.mobileLight },
+  { media: "(prefers-color-scheme: dark)", src: variants.desktopDark },
+];
+
+const sources = await Promise.all(
+  ART_DIRECTIONS.flatMap((direction) =>
+    FORMATS.map(async (format) => {
+      const processed = await getImage({
+        src: direction.src,
+        format,
+        quality: 85,
+      });
+      return {
+        srcset: processed.src,
+        type: `image/${format}` as const,
+        media: direction.media,
+      };
+    }),
+  ),
+);
+
+const fallback = await getImage({ src: variants.desktopLight, format: "png" });
+---
+
+<figure class="blog-figure">
+  <picture>
+    {sources.map((source) => (
+      <source srcset={source.srcset} type={source.type} media={source.media} />
+    ))}
+    <img
+      src={fallback.src}
+      alt={alt}
+      width={fallback.attributes.width}
+      height={fallback.attributes.height}
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+  {caption && <figcaption><em>{caption}</em></figcaption>}
+</figure>
