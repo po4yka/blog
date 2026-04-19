@@ -53,7 +53,8 @@ function pickVariant(
   );
   const png = matches.find((s) => s.mimeType === "image/png" || s.mimeType === null);
   if (png) return png.srcset;
-  if (matches.length > 0) return matches[0].srcset;
+  const first = matches[0];
+  if (first) return first.srcset;
   return figure.fallbackSrc;
 }
 
@@ -331,7 +332,7 @@ export function ImageLightbox({ contentRef }: Props) {
       figure.naturalHeight > window.innerHeight * 0.85);
 
   const fadeDuration = reduceMotion ? 0 : duration.fast;
-  const fadeTransition = { duration: fadeDuration, ease: [...ease] };
+  const fadeTransition = { duration: fadeDuration, ease };
 
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={onOpenChange}>
