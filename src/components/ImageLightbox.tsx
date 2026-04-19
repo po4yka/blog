@@ -12,31 +12,60 @@ interface Props {
   contentRef: RefObject<HTMLDivElement | null>;
 }
 
+interface VariantSource {
+  srcset: string;
+  requiresDark: boolean;
+  requiresMobile: boolean;
+}
+
 interface Figure {
-  lightSrc: string;
-  darkSrc: string | null;
+  sources: VariantSource[];
+  fallbackSrc: string;
   alt: string;
   caption: string;
   naturalWidth: number;
   naturalHeight: number;
 }
 
+const MOBILE_QUERY = "(max-width: 640px)";
+
 function getSystemPrefersDark(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function getIsMobileViewport(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function pickVariant(figure: Figure, isDark: boolean, isMobile: boolean): string {
+  for (const source of figure.sources) {
+    if (source.requiresDark && !isDark) continue;
+    if (source.requiresMobile && !isMobile) continue;
+    if (source.srcset) return source.srcset;
+  }
+  return figure.fallbackSrc;
 }
 
 export function ImageLightbox({ contentRef }: Props) {
   const { t } = useLocale();
   const { reduceMotion, theme, resolvedTheme } = useSettings();
   const [systemDark, setSystemDark] = useState<boolean>(getSystemPrefersDark);
+  const [isMobile, setIsMobile] = useState<boolean>(getIsMobileViewport);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mm = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = (event: MediaQueryListEvent) => setSystemDark(event.matches);
-    mm.addEventListener("change", onChange);
-    return () => mm.removeEventListener("change", onChange);
+    const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const mobileQuery = window.matchMedia(MOBILE_QUERY);
+    const onDark = (event: MediaQueryListEvent) => setSystemDark(event.matches);
+    const onMobile = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    darkQuery.addEventListener("change", onDark);
+    mobileQuery.addEventListener("change", onMobile);
+    return () => {
+      darkQuery.removeEventListener("change", onDark);
+      mobileQuery.removeEventListener("change", onMobile);
+    };
   }, []);
 
   const effectiveDark = theme === "system" ? systemDark : resolvedTheme === "dark";
@@ -91,11 +120,20 @@ export function ImageLightbox({ contentRef }: Props) {
     if (!img) return;
     triggerRef.current = img;
     const picture = img.closest("picture");
-    const darkSource = picture?.querySelector<HTMLSourceElement>(
-      'source[media*="prefers-color-scheme: dark"]',
-    );
-    const darkSrc = darkSource?.getAttribute("srcset") ?? null;
-    const lightSrc = img.getAttribute("src") || img.currentSrc || "";
+    const sources: VariantSource[] = [];
+    if (picture) {
+      picture.querySelectorAll<HTMLSourceElement>("source").forEach((sourceEl) => {
+        const srcset = sourceEl.getAttribute("srcset") ?? "";
+        if (!srcset) return;
+        const media = sourceEl.getAttribute("media") ?? "";
+        sources.push({
+          srcset,
+          requiresDark: /prefers-color-scheme:\s*dark/i.test(media),
+          requiresMobile: /max-width:\s*640px/i.test(media),
+        });
+      });
+    }
+    const fallbackSrc = img.getAttribute("src") || img.currentSrc || "";
     const alt = img.alt ?? "";
 
     // Prefer the sibling caption paragraph (`*Figure N. ...*` in MDX) over alt.
@@ -117,8 +155,8 @@ export function ImageLightbox({ contentRef }: Props) {
     }
 
     setFigure({
-      lightSrc,
-      darkSrc,
+      sources,
+      fallbackSrc,
       alt,
       caption,
       naturalWidth: img.naturalWidth || 0,
@@ -322,7 +360,7 @@ export function ImageLightbox({ contentRef }: Props) {
                   }}
                 >
                   <img
-                    src={effectiveDark && figure.darkSrc ? figure.darkSrc : figure.lightSrc}
+                    src={pickVariant(figure, effectiveDark, isMobile)}
                     alt={figure.alt}
                     onClick={(event) => {
                       event.stopPropagation();
