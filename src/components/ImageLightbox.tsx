@@ -13,15 +13,32 @@ interface Props {
 }
 
 interface Figure {
-  src: string;
+  lightSrc: string;
+  darkSrc: string | null;
   alt: string;
   naturalWidth: number;
   naturalHeight: number;
 }
 
+function getSystemPrefersDark(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
 export function ImageLightbox({ contentRef }: Props) {
   const { t } = useLocale();
-  const { reduceMotion } = useSettings();
+  const { reduceMotion, theme, resolvedTheme } = useSettings();
+  const [systemDark, setSystemDark] = useState<boolean>(getSystemPrefersDark);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mm = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (event: MediaQueryListEvent) => setSystemDark(event.matches);
+    mm.addEventListener("change", onChange);
+    return () => mm.removeEventListener("change", onChange);
+  }, []);
+
+  const effectiveDark = theme === "system" ? systemDark : resolvedTheme === "dark";
 
   const imgsRef = useRef<HTMLImageElement[]>([]);
   const triggerRef = useRef<HTMLImageElement | null>(null);
@@ -62,8 +79,15 @@ export function ImageLightbox({ contentRef }: Props) {
     const img = imgsRef.current[i];
     if (!img) return;
     triggerRef.current = img;
+    const picture = img.closest("picture");
+    const darkSource = picture?.querySelector<HTMLSourceElement>(
+      'source[media*="prefers-color-scheme: dark"]',
+    );
+    const darkSrc = darkSource?.getAttribute("srcset") ?? null;
+    const lightSrc = img.getAttribute("src") || img.currentSrc || "";
     setFigure({
-      src: img.currentSrc || img.src,
+      lightSrc,
+      darkSrc,
       alt: img.alt ?? "",
       naturalWidth: img.naturalWidth || 0,
       naturalHeight: img.naturalHeight || 0,
@@ -222,7 +246,7 @@ export function ImageLightbox({ contentRef }: Props) {
                   }}
                 >
                   <img
-                    src={figure.src}
+                    src={effectiveDark && figure.darkSrc ? figure.darkSrc : figure.lightSrc}
                     alt={figure.alt}
                     onClick={(event) => {
                       event.stopPropagation();
