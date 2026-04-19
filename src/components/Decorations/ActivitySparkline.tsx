@@ -9,7 +9,7 @@ import type { GitHubActivitySummary } from "@/types";
 
 const GH_USER = "po4yka";
 const BUCKETS = 14;
-const BAR_MAX_PX = 36;
+const BAR_MAX_PX = 28;
 
 interface BucketMeta {
   count: number;
@@ -59,7 +59,7 @@ function SparkBar({
   onLeave: () => void;
 }) {
   const hasEvents = count > 0;
-  const opacity = hasEvents ? 0.32 + (normalizedHeight / BAR_MAX_PX) * 0.5 : 0.18;
+  const opacity = hasEvents ? 0.32 + (normalizedHeight / BAR_MAX_PX) * 0.5 : 0.35;
 
   return (
     <div
@@ -77,7 +77,7 @@ function SparkBar({
           style={{
             width: "10px",
             borderRadius: "2px 2px 0 0",
-            backgroundColor: hasEvents ? "var(--foreground)" : "var(--border)",
+            backgroundColor: hasEvents ? "var(--foreground)" : "var(--muted-foreground-dim)",
             opacity,
             minHeight: "2px",
           }}
@@ -159,7 +159,7 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
         }
         delay={delay}
       >
-        <div ref={ref} className="px-5 py-4">
+        <div ref={ref} className="px-5 py-3">
           {/* Tooltip overlay — anchored above bar row, revealed on hover */}
           <div
             className="relative"
