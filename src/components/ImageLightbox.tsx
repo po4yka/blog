@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 
@@ -176,7 +176,7 @@ export function ImageLightbox({ contentRef }: Props) {
                   {t("blogPost.imageLightbox.dialogLabel")}
                 </DialogPrimitive.Title>
 
-                <div
+                <motion.div
                   className="relative flex items-center justify-center"
                   style={{
                     maxWidth: "95vw",
@@ -185,6 +185,22 @@ export function ImageLightbox({ contentRef }: Props) {
                     height: naturalSize ? "85vh" : "auto",
                     overflow: naturalSize ? "auto" : "visible",
                     touchAction: "pinch-zoom",
+                  }}
+                  drag={count > 1 && !naturalSize ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.25}
+                  dragMomentum={false}
+                  onDragEnd={(_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+                    if (count <= 1 || naturalSize) return;
+                    const distance = info.offset.x;
+                    const velocity = info.velocity.x;
+                    const distanceThreshold = 80;
+                    const velocityThreshold = 500;
+                    if (distance < -distanceThreshold || velocity < -velocityThreshold) {
+                      nav(1);
+                    } else if (distance > distanceThreshold || velocity > velocityThreshold) {
+                      nav(-1);
+                    }
                   }}
                   onClick={(event) => {
                     if (event.target === event.currentTarget) onOpenChange(false);
@@ -210,7 +226,7 @@ export function ImageLightbox({ contentRef }: Props) {
                       userSelect: "none",
                     }}
                   />
-                </div>
+                </motion.div>
 
                 {figure.alt && (
                   <div
