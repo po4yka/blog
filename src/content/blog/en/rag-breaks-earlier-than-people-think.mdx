@@ -1,7 +1,6 @@
 ---
 title: "RAG breaks earlier than people think"
 date: "Apr 2026"
-publishedAt: "2026-04-01"
 summary: "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query -- here is what breaks when you build one."
 tags: ["RAG", "LLM", "Knowledge Management", "Architecture"]
 category: "Architecture"
@@ -12,7 +11,7 @@ featured: true
 
 You can feel the ceiling before you can measure it. At a few hundred thousand documents, a well-tuned vector index starts returning near-misses on queries it answered perfectly at a few thousand. You add a reranker and the top-1 moves back. You add hybrid search and the long tail gets better. Then you keep growing and the failures come back. Same kind, just harder to reproduce. Most teams read this as tuning work. Weller et al. (ICLR 2026) offer a different explanation: a single-vector retriever has a representational ceiling, and past it no amount of downstream cleverness compensates.
 
-Most RAG systems fail at a smaller corpus than their authors expect, and the failure is structural. There is a ceiling baked into single-vector retrieval, and above it no amount of rerankers, hybrid search, or larger context saves the query. The stack I had been shipping before rebuilding my knowledge base hit exactly that ceiling, and the wiki that replaced it started as a reaction.
+My own stack hit that ceiling before I could read the explanation for it, and the wiki that replaced it started as a reaction rather than a plan.
 
 Part 1 walks the places plain RAG breaks, with citations. Part 2 is the architectural alternative -- Karpathy's LLM Wiki -- and why it reframes the pipeline around compilation rather than retrieval. Part 3 is other systems doing the same move in different shapes (memory agents, graph RAG, HippoRAG). Part 4 is where the wiki is the wrong answer. Part 5 is what breaks first when you actually build one, from shipping a vault for an AI infrastructure team.
 
@@ -20,19 +19,26 @@ Weller et al. ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038), ICLR 2026) 
 
 The failures that follow cluster into three layers. Geometry (the ceiling above) is structural: no tuning moves it. Chunking and context utilisation are budget problems: careful preprocessing helps, but the budgets themselves are shrinking. Attention and hard negatives are generator failures: better prompts help, until the prompts stop mattering. Geometry can't be tuned away. The other two layers respond to engineering effort.
 
+<picture>
+  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.en.dark.png" media="(prefers-color-scheme: dark)">
+  <img src="/images/blog/rag-breaks-earlier-than-people-think/01-rag-failure-layers.en.light.png" alt="Log-log chart plotting usable corpus size against embedding dimension. Weller et al. empirical fit (coral line) passes through two labeled anchor points: d=768 with n≈1.7M documents (open-weights default) and d=4096 with n≈250M (current frontier). Shaded unreachable region above the line. Formula at top: d ≥ log C(n,k) / log(1+1/γ). Benchmark strip reports LIMIT (50K docs, 1K queries) with E5-Mistral, GritLM, Qwen3 below 20% Recall@100 at d=4096 while BM25 hits 97.8% Recall@2; GTE-ModernColBERT (vector-per-token) recovers 54.8% on the same set.">
+</picture>
+
+*Figure 1. Weller et al.'s empirical fit across seven single-vector retrievers. The two anchor points -- d=768 and d=4096 -- trace the usable-corpus frontier. Above the curve, some top-k rankings cannot be represented at that dimension; reranking and hybrid search do not move it.*
+
 The empirical fit across seven models puts the usable corpus ceiling around 250 million documents at 4096 dimensions, and around 1.7 million at 768, still the common open-weights default. Above those sizes, some top-$k$ sets sit outside the span of any vector the retriever can produce.
 
-Most benchmarks live inside those budgets and never probe the edge. LIMIT does. Fifty thousand documents, one thousand queries, sentences like "Jon likes apples". E5-Mistral, GritLM, Qwen3 (the 2025 state of the art) land below 20% Recall@100 at 4096 dimensions on that set. BM25 hits 97.8% Recall@2. ColBERT, which keeps a vector per token rather than one per document, hits 83.5%. The failure sits in the single-vector geometry. A training-time embedding represents only a finite number of distinct top-$k$ sets, and when a query lands outside that set, nothing further in the pipeline compensates.
+Most benchmarks live inside those budgets and never probe the edge. LIMIT does. Fifty thousand documents, one thousand queries, sentences like "Jon likes apples". E5-Mistral, GritLM, Qwen3 (the 2025 state of the art) land below 20% Recall@100 at 4096 dimensions on that set. BM25 hits 97.8% Recall@2. GTE-ModernColBERT, which keeps a vector per token rather than one per document, hits 54.8%. The failure sits in the single-vector geometry. A training-time embedding represents only a finite number of distinct top-$k$ sets, and when a query lands outside that set, nothing further in the pipeline compensates.
 
-Chunking matters about as much as the model choice. Vectara's 2025 study ([arXiv:2410.13070](https://arxiv.org/abs/2410.13070)) logged semantic chunking at 91.9% retrieval recall and 54% end-to-end accuracy. The chunks averaged 43 tokens. The generator didn't have enough local context to answer from the evidence the retriever returned. The retrieval hit; 43 tokens of context weren't enough for the generator to work from.
+Chunking matters about as much as the model choice. Vectara's 2025 study ([arXiv:2410.13070](https://arxiv.org/abs/2410.13070)) asks whether semantic chunking justifies its cost and finds that in most settings it doesn't beat fixed-size chunking on F1@5 -- the retrieval wins on recall, the generator loses on local context, and the two cancel. The failure is the common one: chunks small enough to retrieve precisely are too small for the generator to answer from.
 
-Over half the retrieved snippets can be dropped without harming answer quality ([arXiv:2511.17908](https://arxiv.org/abs/2511.17908)). The useful slice of a 128k-token context is 10-20% of what's nominally there. The model skims.
+Over half the retrieved snippets can be dropped without harming answer quality ([arXiv:2511.17908](https://arxiv.org/abs/2511.17908)). Prior work the paper builds on -- RULER and the Context Rot studies -- pegs the useful slice of a 128k-token context at 10-20% of what's nominally there. The model skims.
 
-Position bias is architectural. One mechanistic sketch: causal masking accumulates attention on early tokens through every layer, and rotary positional embeddings add a long-term decay to the score (consistent with the MIT analysis in [arXiv:2502.01951](https://arxiv.org/abs/2502.01951)). Move important evidence from the start of a 32k context to the middle and accuracy drops ~20%. Going from 32k to a million doesn't reduce the bias. It increases the amount of context the model is already ignoring. Longer windows don't buy more attention; the extra tokens land in the zone the model already skips.
+Position bias is architectural. The MIT analysis in [arXiv:2502.01951](https://arxiv.org/abs/2502.01951) sketches the mechanism: causal masking accumulates attention on early tokens through every layer, and rotary positional embeddings add a long-term decay to the score. Independent empirical work on long contexts (RULER, Context Rot) confirms the shape in practice -- middle-of-context evidence is under-weighted, and longer windows don't buy more attention; the extra tokens land in the zone the model already skips.
 
 Hard-negative documents (the near-miss cases a good retriever is designed to surface) degrade end-to-end accuracy; [arXiv:2401.14887](https://arxiv.org/abs/2401.14887) shows the mirror-image result, that random unrelated documents improve accuracy by up to 35%. The U-curve of answer quality against retrieved chunk count is OP-RAG's core finding ([arXiv:2409.01666](https://arxiv.org/abs/2409.01666)). Fixing one failure mode surfaces the next.
 
-Contextual Retrieval rewrites chunks with surrounding context before embedding: 35% failure reduction for embeddings alone, 49% when paired with BM25, 67% with a reranker on top. GraphRAG pushes multi-hop accuracy from 23% to 87% at indexing costs one to two orders of magnitude higher, and LazyGraphRAG recovers most of the quality at a fraction of the cost. Self-RAG and CRAG move retrieval policy into the model itself. None of them change the basic loop: embed, search, read, generate, repeat. Once per question, paying the full cost again.
+Contextual Retrieval rewrites chunks with surrounding context before embedding: 35% failure reduction for embeddings alone, 49% when paired with BM25, 67% with a reranker on top. GraphRAG prioritises query-focused summarisation at indexing costs high enough that Microsoft itself shipped LazyGraphRAG as a cheaper follow-up, matching quality at roughly 1/700 the per-query cost. Self-RAG and CRAG move retrieval policy into the model itself. None of them change the basic loop: embed, search, read, generate, repeat. Once per question, paying the full cost again.
 
 RAG is the correct first answer to "how do I ground an LLM in my data." For a prototype, a proof of concept, a first integration, it works cheaply and buys you the shape of the problem. It breaks once you try to run a product on it. The embed-search-read-generate loop pays the full retrieval cost on every question and caps out where the geometry does, so scaling the loop scales the bill without moving the ceiling.
 
@@ -52,6 +58,13 @@ The wiki has three layers.
 - **The wiki** in the middle: markdown pages the LLM writes, one per concept or decision, linked with wikilinks.
 - **The schema** on top: CLAUDE.md, AGENTS.md, whatever file states what the wiki is for. The LLM reads it before every action.
 
+<picture>
+  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.en.dark.png" media="(prefers-color-scheme: dark)">
+  <img src="/images/blog/rag-breaks-earlier-than-people-think/02-wiki-three-layers.en.light.png" alt="Architecture diagram. Central three-layer wiki stack: L3 Schema (CLAUDE.md, AGENTS.md, frontmatter spec; human-authored, read before every action), L2 Wiki pages (coral focal; LLM-written markdown, wikilinks, compiled; ~10-15 pages edited per ingest), L1 Raw sources (PDFs, transcripts, clips; content-hashed, immutable). Four operations orbit the stack: Source drop on the left feeds L1 (labeled DROP), Ingest on top writes L2 (WRITES), Query on the right reads L2 (READS) with a dashed return arrow APPENDS, Lint at the bottom audits L2 (AUDITS).">
+</picture>
+
+*Figure 2. The wiki with its four operations. Ingest writes the middle layer; Query reads it; Lint audits it. Source drops feed L1; Schema directs every action from above. The focal L2 is the only layer every operation touches.*
+
 **Ingest** does the actual rewriting. A source comes in, the LLM reads it against the schema and the index, and edits whichever pages the source touches, often ten or fifteen at once.
 
 Query looks lighter on paper: read the index, drill into a few pages, answer with citations. In practice query also writes back, because an answer worth keeping turns into a new page, and a query can kick off a small secondary ingest to save it.
@@ -60,7 +73,7 @@ Query looks lighter on paper: read the index, drill into a few pages, answer wit
 
 Retrieval is incidental in this model. `index.md`, a plain markdown catalogue maintained by the LLM itself, works at the scale most projects actually live at (hundreds of sources, a few hundred pages) and removes the need for an embedding stack entirely. You can add vectors later if the catalogue stops scaling. You start without them.
 
-**Compilation** is the analogy. Each ingest is an incremental build over the previous artefact rather than a fresh pass. A single source typically touches several pages, and a page integrates evidence from several sources. At query time the generator reads compiled pages instead of raw text. Two lines in the gist carry most of the argument: "The human's job is curate sources, direct analysis, ask good questions. The LLM's job is everything else," and "Most people abandon wikis because maintenance burden grows faster than value. LLMs don't get bored."
+**Compilation** is the analogy. Each ingest is an incremental build over the previous artefact rather than a fresh pass. A single source typically touches several pages, and a page integrates evidence from several sources. At query time the generator reads compiled pages instead of raw text. Two lines in the gist carry most of the argument: "The human's job is to curate sources, direct the analysis, ask good questions, and think about what it all means. The LLM's job is everything else," and "Most people abandon wikis because maintenance burden grows faster than value. LLMs don't get bored."
 
 The first operation I tried to think through was lint, because I knew the first wiki I'd write would be wrong in ways I wouldn't notice. Karpathy's version is informal: run it periodically, read the report. He cites Vannevar Bush's Memex (1945) as prior art for the whole pattern: a private, curated knowledge store with associative trails between documents, maintained by the person who used it.
 
@@ -88,7 +101,7 @@ The three systems in Part 2 all commit to the wiki shape: compile the corpus int
 
 ### Memory agents: Letta and Mem0
 
-Letta (formerly MemGPT, [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) pages between main context, recall, and archival tiers by function call. Mem0 extracts entity-and-relation facts from every message, resolves conflicts, and writes to a hybrid vector-plus-graph backend; on LOCOMO ([arXiv:2504.19413](https://arxiv.org/abs/2504.19413)) it reports 66.9% accuracy against OpenAI memory's 52%, with a six-point gap against a full-context baseline at 2,000 turns.
+Letta (formerly MemGPT, [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) pages between main context, recall, and archival tiers by function call. Mem0 extracts entity-and-relation facts from every message, resolves conflicts, and writes to a hybrid vector-plus-graph backend; on LOCOMO it reports 66.9% accuracy against OpenAI memory's 52.9% (Mem0 paper, [arXiv:2504.19413](https://arxiv.org/abs/2504.19413)), closing the gap to a full-context baseline to about six points.
 
 ### Temporal graphs: Zep
 
@@ -96,13 +109,20 @@ Zep does the most interesting thing in this group. Its graph layer, Graphiti ([a
 
 ### Graph RAG: Microsoft's line
 
-Graph-RAG starts expensive. Microsoft's GraphRAG ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) extracts an entity graph, runs Leiden clustering, pre-writes community summaries at every level. Community estimates put indexing at roughly $20-$50 per million tokens, and global-search queries can easily top half a million tokens each. Then Microsoft published LazyGraphRAG (November 2024), which drops the pre-summarisation and matches quality at roughly 1/700 the per-query cost. That's Microsoft Research admitting its own indexing pipeline was wasteful. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) arrives nearby: lazy entity extraction at ingest, dual-level retrieval, lightweight per-query profile by design.
+Graph-RAG starts expensive. Microsoft's GraphRAG ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) extracts an entity graph, runs Leiden clustering, and pre-writes community summaries at every level -- indexing cost that becomes prohibitive on anything larger than a single book. Microsoft's own follow-up, LazyGraphRAG (Microsoft Research blog, November 2024), drops the pre-summarisation and matches quality at more than 700 times lower per-query cost. That's Microsoft Research admitting its own indexing pipeline was wasteful. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) arrives nearby: entity-and-relation extraction at ingest, dual-level retrieval, lightweight per-query profile by design.
 
 ### Concept graphs: HippoRAG
 
-HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest. It turns the corpus into a concept graph of noun phrases and answers queries by running Personalized PageRank. Single-step multi-hop reasoning. The v1 failure was sparsity: the concept graph missed too many noun phrases for plain factual recall. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) targets that gap.
+HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest. It turns the corpus into a concept graph of noun phrases and answers queries by running Personalized PageRank. Single-step multi-hop reasoning. The v1 failure was entity-centric indexing: the concept graph stripped surrounding context at both ingest and inference, which hurt plain factual recall. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) targets that gap.
 
 Letta, Mem0, Zep, and every graph system above store their artefact in a database or index the reader never opens. The wiki is just markdown files.
+
+<picture>
+  <source srcset="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.en.dark.png" media="(prefers-color-scheme: dark)">
+  <img src="/images/blog/rag-breaks-earlier-than-people-think/03-compute-shift-quadrant.en.light.png" alt="Quadrant positioning eight systems on two axes: query-time to ingest-time compute (horizontal), opaque store to human-readable artifact (vertical). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti, and GraphRAG cluster in the bottom half (opaque stores). LLM Wiki sits alone in the top-right quadrant (heavy ingest, markdown artifact).">
+</picture>
+
+*Figure 3. Where each system pays its compute. Seven shipped systems keep the artefact in an opaque store; only the wiki corner keeps the compiled output in files a reader can open.*
 
 ## 4. When the wiki doesn't fit
 
@@ -114,9 +134,9 @@ A wiki isn't always the right answer. Four places it loses: three concrete, one 
 
 Lint is the prescribed fix. It catches contradictions and orphan pages cheaply. What it can't see is a quietly wrong summary that nothing downstream notices. Two shipped systems have already corrected for this in public. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) explicitly rewrites v1's entity-centric indexing because it lost context during both ingest and inference. LazyGraphRAG is Microsoft Research admitting, in a product blog, that GraphRAG's upfront summarisation was prohibitive and wasted compute on documents the queries never touched.
 
-**Specific wording and multi-author corpora.** Regulated content that relies on specific wording loses when the wiki paraphrases it. Plain vector RAG over the originals preserves the phrase the wiki dropped. Multi-author coordination breaks things differently. Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) layers typed read/write permissions and provenance tracking over shared memory to keep per-user views isolated, machinery a single-author wiki doesn't need.
+**Specific wording and multi-author corpora.** Regulated content that relies on specific wording loses when the wiki paraphrases it. Plain vector RAG over the originals preserves the phrase the wiki dropped. Multi-author coordination breaks things differently. Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) layers typed read/write permissions over shared memory to keep per-user views isolated, machinery a single-author wiki doesn't need.
 
-**Silent rot (suspicion, not diagnosis).** Without a `last_verified` timestamp on each fact, the wiki can't tell which claims still hold and which have quietly gone stale. Zep's bi-temporal edges partly solve it for supersession, but nobody has a general answer for facts that nothing in the system is actively rechecking. A wiki that stops being maintained doesn't fail loudly. It starts lying, and you find out the next time you read the page.
+**Silent rot (suspicion, not diagnosis).** Without a `last_verified` timestamp on each fact, the wiki can't tell which claims still hold and which have quietly gone stale. Zep's bi-temporal edges handle supersession cleanly -- a new fact replaces an old one and the edge carries the expiry -- but the harder case is the fact nothing in the system actively rechecks. No general answer exists for that. A wiki that stops being maintained doesn't fail loudly. It starts lying, and you find out the next time you read the page.
 
 ## 5. What breaks first when you build a wiki
 
@@ -138,9 +158,9 @@ During the hardening phase, metadata iterates faster than content. The rule file
 
 The uncomfortable part of this approach is that it sounds like overhead. The maintenance cost is paid upfront in templates, schema, hook chains, and the shape of the append-only log, and the per-commit cost afterwards is close to zero. A long meeting becomes a dozen pre-linked decision pages in the time it takes to run the ingest pass, because the graph walkers and the schema do the work the author would otherwise do by hand. Not every edit, though. Irreversible ones still require a timestamped log entry that names me. The `decided_by` field in a decision's frontmatter is always a human name; the agents never fill it. Contested claims stay in place with counter-evidence added below them, never silently overwritten.
 
-I don't have a good way to tell whether the wiki is improving. Add-rate is easy to measure and doesn't mean what I'd like it to mean. The public benchmarks (LongMemEval [arXiv:2410.10813](https://arxiv.org/abs/2410.10813), LOCOMO [arXiv:2504.19413](https://arxiv.org/abs/2504.19413), DMR from MemGPT [arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) test single-turn factual retrieval and little else, and Zep's paper reporting on DMR ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)) admits the questions are ambiguous enough that a high score can reflect LLM inference skill rather than memory fidelity.
+I don't have a good way to tell whether the wiki is improving. Add-rate is easy to measure and doesn't mean what I'd like it to mean. The public benchmarks ask a different question than I want answered: LongMemEval ([arXiv:2410.10813](https://arxiv.org/abs/2410.10813)) covers five memory abilities across long chat histories, LOCOMO ([arXiv:2402.17753](https://arxiv.org/abs/2402.17753)) tests multi-session conversational memory, and DMR from MemGPT ([arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) scores multi-session recall. None of them asks the question I care about -- whether the same query asked six months apart on the same evolving corpus returns a consistent answer -- and Zep's paper reporting on DMR ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)) admits the questions are ambiguous enough that a high score can reflect LLM inference skill rather than memory fidelity.
 
-No published benchmark measures time-travel consistency: the same question asked at different points as the corpus evolves. Summarisation-fidelity metrics like F-Fidelity and FaithEval exist. No memory system paper reports using them.
+No published benchmark measures time-travel consistency: the same question asked at different points as the corpus evolves. Summarisation-fidelity metrics like FaithEval exist. No memory system paper reports using them.
 
 What the commit hooks catch is mechanical: schema violations, broken wikilinks, contradictions flagged by the narrative-schema linter. Silent regression, a quietly wrong summary that nothing in the system notices, shows up the next time I open the page. Or it doesn't.
 
@@ -150,4 +170,4 @@ The choice between RAG and a wiki is a choice about where to pay. RAG stands up 
 
 What the failure modes in this piece share is where compute gets paid. The move from query time to ingest time is the underlying bet. Whether the output lands as markdown pages, typed edges in a temporal graph, or pre-computed community summaries depends on what the artefact is for. A wiki is read by humans; a graph is queried by systems. Both sit downstream of the same decision: compile once, read many.
 
-I don't have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That's the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open.
+I don't have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That's the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I'd want -- same query, same corpus, six months apart, do the answers agree -- isn't something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.
