@@ -39,13 +39,39 @@ function getIsMobileViewport(): boolean {
   return window.matchMedia(MOBILE_QUERY).matches;
 }
 
-function pickVariant(figure: Figure, isDark: boolean, isMobile: boolean): string {
+function pickVariant(
+  figure: { sources: VariantSource[]; fallbackSrc: string },
+  isDark: boolean,
+  isMobile: boolean,
+): string {
   for (const source of figure.sources) {
     if (source.requiresDark && !isDark) continue;
     if (source.requiresMobile && !isMobile) continue;
     if (source.srcset) return source.srcset;
   }
   return figure.fallbackSrc;
+}
+
+function extractSources(img: HTMLImageElement): {
+  sources: VariantSource[];
+  fallbackSrc: string;
+} {
+  const picture = img.closest("picture");
+  const sources: VariantSource[] = [];
+  if (picture) {
+    picture.querySelectorAll<HTMLSourceElement>("source").forEach((sourceEl) => {
+      const srcset = sourceEl.getAttribute("srcset") ?? "";
+      if (!srcset) return;
+      const media = sourceEl.getAttribute("media") ?? "";
+      sources.push({
+        srcset,
+        requiresDark: /prefers-color-scheme:\s*dark/i.test(media),
+        requiresMobile: /max-width:\s*640px/i.test(media),
+      });
+    });
+  }
+  const fallbackSrc = img.getAttribute("src") || img.currentSrc || "";
+  return { sources, fallbackSrc };
 }
 
 export function ImageLightbox({ contentRef }: Props) {
@@ -119,21 +145,8 @@ export function ImageLightbox({ contentRef }: Props) {
     const img = imgsRef.current[i];
     if (!img) return;
     triggerRef.current = img;
+    const { sources, fallbackSrc } = extractSources(img);
     const picture = img.closest("picture");
-    const sources: VariantSource[] = [];
-    if (picture) {
-      picture.querySelectorAll<HTMLSourceElement>("source").forEach((sourceEl) => {
-        const srcset = sourceEl.getAttribute("srcset") ?? "";
-        if (!srcset) return;
-        const media = sourceEl.getAttribute("media") ?? "";
-        sources.push({
-          srcset,
-          requiresDark: /prefers-color-scheme:\s*dark/i.test(media),
-          requiresMobile: /max-width:\s*640px/i.test(media),
-        });
-      });
-    }
-    const fallbackSrc = img.getAttribute("src") || img.currentSrc || "";
     const alt = img.alt ?? "";
 
     // Prefer the sibling caption paragraph (`*Figure N. ...*` in MDX) over alt.
@@ -213,6 +226,33 @@ export function ImageLightbox({ contentRef }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [index, count, openAt]);
+
+  // Preload the previous and next figures' active variants so arrow/swipe
+  // navigation feels instant.
+  useEffect(() => {
+    if (index === null || count <= 1 || typeof window === "undefined") return;
+    const neighbourIndexes = new Set<number>([
+      (index - 1 + count) % count,
+      (index + 1) % count,
+    ]);
+    neighbourIndexes.delete(index);
+    const preloaders: HTMLImageElement[] = [];
+    for (const i of neighbourIndexes) {
+      const img = imgsRef.current[i];
+      if (!img) continue;
+      const src = pickVariant(extractSources(img), effectiveDark, isMobile);
+      if (!src) continue;
+      const preloader = new Image();
+      preloader.decoding = "async";
+      preloader.src = src;
+      preloaders.push(preloader);
+    }
+    return () => {
+      // Let the browser keep the fetched bytes in its HTTP/image cache;
+      // just release our references.
+      preloaders.length = 0;
+    };
+  }, [index, count, effectiveDark, isMobile]);
 
   const onOpenChange = useCallback((open: boolean) => {
     if (!open) {
