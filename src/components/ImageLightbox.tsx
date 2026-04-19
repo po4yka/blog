@@ -16,6 +16,7 @@ interface Figure {
   lightSrc: string;
   darkSrc: string | null;
   alt: string;
+  caption: string;
   naturalWidth: number;
   naturalHeight: number;
 }
@@ -95,16 +96,37 @@ export function ImageLightbox({ contentRef }: Props) {
     );
     const darkSrc = darkSource?.getAttribute("srcset") ?? null;
     const lightSrc = img.getAttribute("src") || img.currentSrc || "";
+    const alt = img.alt ?? "";
+
+    // Prefer the sibling caption paragraph (`*Figure N. ...*` in MDX) over alt.
+    // Walk up from <picture> to the direct child of the prose container, then
+    // peek at the next element sibling — matches both bare <picture> blocks
+    // and MDX's inline wrap in <p>.
+    let caption = alt;
+    const root = contentRef.current;
+    if (picture && root) {
+      let block: Element = picture;
+      while (block.parentElement && block.parentElement !== root) {
+        block = block.parentElement;
+      }
+      const sibling = block.nextElementSibling;
+      if (sibling instanceof HTMLElement && sibling.tagName === "P") {
+        const text = sibling.textContent?.trim() ?? "";
+        if (text.length > 0) caption = text;
+      }
+    }
+
     setFigure({
       lightSrc,
       darkSrc,
-      alt: img.alt ?? "",
+      alt,
+      caption,
       naturalWidth: img.naturalWidth || 0,
       naturalHeight: img.naturalHeight || 0,
     });
     setIndex(i);
     setNaturalSize(false);
-  }, []);
+  }, [contentRef]);
 
   useEffect(() => {
     const root = contentRef.current;
@@ -329,11 +351,11 @@ export function ImageLightbox({ contentRef }: Props) {
                   />
                 </motion.div>
 
-                {figure.alt && (
+                {figure.caption && (
                   <div
                     className="pointer-events-none mt-4 max-w-[70ch] px-4 text-center font-sans text-[13px] leading-snug text-muted-foreground"
                   >
-                    {figure.alt}
+                    {figure.caption}
                   </div>
                 )}
 
