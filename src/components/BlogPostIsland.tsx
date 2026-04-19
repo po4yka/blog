@@ -8,6 +8,7 @@ declare global {
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, ChevronUp, ArrowUp, FileCode2 } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
+import { ImageLightbox } from "./ImageLightbox";
 import { MotionProvider } from "./MotionProvider";
 import { duration } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
@@ -415,6 +416,8 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
             >
               {children}
             </div>
+            <ImageLightbox contentRef={contentRef} />
+
 
             {/* Footer — author micro-block + related posts */}
             <div className="mt-8 pt-4 border-t border-border space-y-6" style={{ maxWidth: "46rem" }}>

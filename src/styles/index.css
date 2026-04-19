@@ -225,6 +225,11 @@
   height: auto;
   border-radius: 2px;
   margin: 1.25rem 0;
+  cursor: zoom-in;
+}
+.prose-blog img:focus-visible {
+  outline: 2px solid var(--emphasis);
+  outline-offset: 3px;
 }
 
 /* Mobile font size floor */

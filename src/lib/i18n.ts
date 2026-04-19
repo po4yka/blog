@@ -112,6 +112,11 @@ const en = {
   "blogPost.previous": "PREVIOUS",
   "blogPost.next": "NEXT",
   "blogPost.toc": "CONTENTS",
+  "blogPost.imageLightbox.dialogLabel": "Image viewer",
+  "blogPost.imageLightbox.openImage": "Open image",
+  "blogPost.imageLightbox.close": "Close",
+  "blogPost.imageLightbox.previous": "Previous image",
+  "blogPost.imageLightbox.next": "Next image",
 
   // settings
   "settings.heading": "Settings",
@@ -282,6 +287,11 @@ const ru: TranslationKeys = {
   "blogPost.previous": "\u041f\u0420\u0415\u0414\u042b\u0414\u0423\u0429\u0415\u0415",
   "blogPost.next": "\u0421\u041b\u0415\u0414\u0423\u042e\u0429\u0415\u0415",
   "blogPost.toc": "\u0421\u041e\u0414\u0415\u0420\u0416\u0410\u041d\u0418\u0415",
+  "blogPost.imageLightbox.dialogLabel": "\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f",
+  "blogPost.imageLightbox.openImage": "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435",
+  "blogPost.imageLightbox.close": "\u0417\u0430\u043a\u0440\u044b\u0442\u044c",
+  "blogPost.imageLightbox.previous": "\u041f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0435\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435",
+  "blogPost.imageLightbox.next": "\u0421\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435",
 
   // settings
   "settings.heading": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
