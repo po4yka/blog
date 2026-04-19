@@ -93,40 +93,64 @@ const fallback = await getImage({ src: variants.desktopLight, format: "png" });
       decoding="async"
     />
   </picture>
+  <script is:inline>
+    {
+      // Runs synchronously as the parser hits it — before the browser resolves
+      // the preceding picture's sources against media queries. Eliminates the
+      // wrong-theme flash the hoisted module script caused on first paint.
+      const script = document.currentScript;
+      let picture = script ? script.previousElementSibling : null;
+      while (picture && picture.tagName !== "PICTURE") {
+        picture = picture.previousElementSibling;
+      }
+      if (picture && picture.dataset.themeSynced !== "1") {
+        const siteDark = document.documentElement.classList.contains("dark");
+        picture.querySelectorAll("source[data-theme]").forEach((src) => {
+          const theme = src.dataset.theme;
+          const viewport = src.dataset.viewport;
+          if (theme !== "dark" && theme !== "light") return;
+          const matches = theme === "dark" ? siteDark : !siteDark;
+          src.setAttribute(
+            "media",
+            matches ? (viewport === "mobile" ? "(max-width: 640px)" : "all") : "not all",
+          );
+        });
+        picture.dataset.themeSynced = "1";
+      }
+    }
+  </script>
   {caption && <figcaption><em>{caption}</em></figcaption>}
 </figure>
 
-<script>
-  // Picture sources normally react to prefers-color-scheme (OS-level), but the
-  // site has a manual theme toggle. Sync each tagged source's `media` to the
-  // resolved site theme (.dark/.light on <html>) so the browser selects the
-  // variant the reader actually sees.
-  function syncBlogFigures() {
-    const siteDark = document.documentElement.classList.contains("dark");
-    const pictures = document.querySelectorAll<HTMLPictureElement>(
-      "picture[data-theme-aware]",
-    );
-    pictures.forEach((picture) => {
-      picture.querySelectorAll<HTMLSourceElement>("source[data-theme]").forEach((src) => {
-        const theme = src.dataset.theme;
-        const viewport = src.dataset.viewport;
-        if (theme !== "dark" && theme !== "light") return;
-        const themeMatches = theme === "dark" ? siteDark : !siteDark;
-        if (!themeMatches) {
-          src.setAttribute("media", "not all");
-          return;
-        }
-        src.setAttribute("media", viewport === "mobile" ? "(max-width: 640px)" : "all");
+<script is:inline>
+  {
+    // Runs once per page (same inline body on every figure is fine — it only
+    // installs observers behind a window sentinel and then re-runs sync).
+    const syncBlogFigures = () => {
+      const siteDark = document.documentElement.classList.contains("dark");
+      document.querySelectorAll("picture[data-theme-aware]").forEach((picture) => {
+        picture.querySelectorAll("source[data-theme]").forEach((src) => {
+          const theme = src.dataset.theme;
+          const viewport = src.dataset.viewport;
+          if (theme !== "dark" && theme !== "light") return;
+          const matches = theme === "dark" ? siteDark : !siteDark;
+          src.setAttribute(
+            "media",
+            matches ? (viewport === "mobile" ? "(max-width: 640px)" : "all") : "not all",
+          );
+        });
+        picture.dataset.themeSynced = "1";
       });
-    });
+    };
+
+    if (!window.__blogFigureSyncInstalled) {
+      window.__blogFigureSyncInstalled = true;
+      new MutationObserver(syncBlogFigures).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+      document.addEventListener("astro:after-swap", syncBlogFigures);
+    }
+    syncBlogFigures();
   }
-
-  syncBlogFigures();
-
-  new MutationObserver(syncBlogFigures).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
-
-  document.addEventListener("astro:after-swap", syncBlogFigures);
 </script>

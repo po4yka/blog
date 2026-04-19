@@ -36,7 +36,7 @@ export function Cmd({
   return (
     <motion.div
       ref={ref}
-      className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg"
+      className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg min-w-0"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.fast, delay, ease }}
@@ -51,7 +51,7 @@ export function Cmd({
       </span>
       <span
         data-cmd-text
-        className="text-foreground whitespace-nowrap group-hover:opacity-100 transition-opacity duration-200"
+        className="text-foreground min-w-0 break-all group-hover:opacity-100 transition-opacity duration-200"
         style={{ opacity: 0.92 }}
       >
         {children}
