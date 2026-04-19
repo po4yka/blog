@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
@@ -96,7 +96,8 @@ export function ImageLightbox({ contentRef }: Props) {
 
   const effectiveDark = theme === "system" ? systemDark : resolvedTheme === "dark";
 
-  const imgsRef = useRef<HTMLImageElement[]>([]);
+  const [imgs, setImgs] = useState<HTMLImageElement[]>([]);
+  const count = imgs.length;
   const triggerRef = useRef<HTMLImageElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const panStateRef = useRef<{
@@ -108,21 +109,22 @@ export function ImageLightbox({ contentRef }: Props) {
   } | null>(null);
   const suppressClickRef = useRef(false);
   const [isPanning, setIsPanning] = useState(false);
-  const [count, setCount] = useState(0);
   const [index, setIndex] = useState<number | null>(null);
   const [naturalSize, setNaturalSize] = useState(false);
   const [figure, setFigure] = useState<Figure | null>(null);
+
+  const thumbSrcs = useMemo(
+    () => imgs.map((img) => pickVariant(extractSources(img), effectiveDark, isMobile)),
+    [imgs, effectiveDark, isMobile],
+  );
 
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
 
-    const imgs = Array.from(root.querySelectorAll<HTMLImageElement>("img"));
-    imgsRef.current = imgs;
-    setCount(imgs.length);
-
+    const list = Array.from(root.querySelectorAll<HTMLImageElement>("img"));
     const openLabel = t("blogPost.imageLightbox.openImage");
-    imgs.forEach((img, i) => {
+    list.forEach((img, i) => {
       img.setAttribute("role", "button");
       img.setAttribute("tabindex", "0");
       img.dataset.lightboxIndex = String(i);
@@ -130,9 +132,10 @@ export function ImageLightbox({ contentRef }: Props) {
         img.setAttribute("aria-label", img.alt ? `${openLabel}: ${img.alt}` : openLabel);
       }
     });
+    setImgs(list);
 
     return () => {
-      imgs.forEach((img) => {
+      list.forEach((img) => {
         img.removeAttribute("role");
         img.removeAttribute("tabindex");
         img.removeAttribute("aria-label");
@@ -142,7 +145,7 @@ export function ImageLightbox({ contentRef }: Props) {
   }, [contentRef, t]);
 
   const openAt = useCallback((i: number) => {
-    const img = imgsRef.current[i];
+    const img = imgs[i];
     if (!img) return;
     triggerRef.current = img;
     const { sources, fallbackSrc } = extractSources(img);
@@ -177,7 +180,7 @@ export function ImageLightbox({ contentRef }: Props) {
     });
     setIndex(i);
     setNaturalSize(false);
-  }, [contentRef]);
+  }, [contentRef, imgs]);
 
   useEffect(() => {
     const root = contentRef.current;
@@ -227,6 +230,42 @@ export function ImageLightbox({ contentRef }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [index, count, openAt]);
 
+  // Keep the URL in sync with the lightbox state (?fig=N, 1-indexed)
+  // so readers can share direct links and page refresh reopens the same
+  // figure. Uses replaceState — back button goes to the previous page,
+  // not out of the lightbox; dismissal stays on Escape / close button.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const currentFig = url.searchParams.get("fig");
+    const desiredFig = index !== null ? String(index + 1) : null;
+    if (currentFig === desiredFig) return;
+    if (desiredFig !== null) {
+      url.searchParams.set("fig", desiredFig);
+    } else {
+      url.searchParams.delete("fig");
+    }
+    window.history.replaceState(null, "", url.toString());
+  }, [index]);
+
+  // On first render with a non-empty image list, honour ?fig=N in the URL.
+  const didInitialURLCheckRef = useRef(false);
+  useEffect(() => {
+    if (didInitialURLCheckRef.current) return;
+    if (count === 0) return;
+    if (typeof window === "undefined") return;
+    didInitialURLCheckRef.current = true;
+    const fig = new URL(window.location.href).searchParams.get("fig");
+    if (fig === null) return;
+    const n = parseInt(fig, 10) - 1;
+    if (Number.isFinite(n) && n >= 0 && n < count) {
+      // Legit external→React sync on mount (URL is the external state);
+      // not a "derived state" case the rule is meant to prevent.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      openAt(n);
+    }
+  }, [count, openAt]);
+
   // Preload the previous and next figures' active variants so arrow/swipe
   // navigation feels instant.
   useEffect(() => {
@@ -238,7 +277,7 @@ export function ImageLightbox({ contentRef }: Props) {
     neighbourIndexes.delete(index);
     const preloaders: HTMLImageElement[] = [];
     for (const i of neighbourIndexes) {
-      const img = imgsRef.current[i];
+      const img = imgs[i];
       if (!img) continue;
       const src = pickVariant(extractSources(img), effectiveDark, isMobile);
       if (!src) continue;
@@ -252,7 +291,7 @@ export function ImageLightbox({ contentRef }: Props) {
       // just release our references.
       preloaders.length = 0;
     };
-  }, [index, count, effectiveDark, isMobile]);
+  }, [index, count, effectiveDark, isMobile, imgs]);
 
   const onOpenChange = useCallback((open: boolean) => {
     if (!open) {
@@ -330,9 +369,9 @@ export function ImageLightbox({ contentRef }: Props) {
                   className="relative flex items-center justify-center"
                   style={{
                     maxWidth: "95vw",
-                    maxHeight: "85vh",
+                    maxHeight: count > 1 ? "72vh" : "85vh",
                     width: naturalSize ? "95vw" : "auto",
-                    height: naturalSize ? "85vh" : "auto",
+                    height: naturalSize ? (count > 1 ? "72vh" : "85vh") : "auto",
                     overflow: naturalSize ? "auto" : "visible",
                     touchAction: "pinch-zoom",
                     cursor: naturalSize ? (isPanning ? "grabbing" : "grab") : undefined,
@@ -414,7 +453,7 @@ export function ImageLightbox({ contentRef }: Props) {
                     style={{
                       display: "block",
                       maxWidth: naturalSize ? "none" : "95vw",
-                      maxHeight: naturalSize ? "none" : "85vh",
+                      maxHeight: naturalSize ? "none" : count > 1 ? "72vh" : "85vh",
                       width: naturalSize ? "auto" : "auto",
                       height: "auto",
                       objectFit: "contain",
@@ -440,6 +479,47 @@ export function ImageLightbox({ contentRef }: Props) {
                 {count > 1 && (
                   <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground tabular-nums">
                     {String((index ?? 0) + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+                  </div>
+                )}
+
+                {count > 1 && (
+                  <div
+                    role="tablist"
+                    aria-label={t("blogPost.imageLightbox.thumbnailsLabel")}
+                    className="mt-3 flex max-w-[90vw] flex-wrap items-center justify-center gap-1.5"
+                  >
+                    {Array.from({ length: count }).map((_, i) => {
+                      const src = thumbSrcs[i];
+                      if (!src) return null;
+                      const isActive = i === index;
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          role="tab"
+                          aria-selected={isActive}
+                          aria-label={`${t("blogPost.imageLightbox.goToFigure")} ${i + 1}`}
+                          onClick={() => openAt(i)}
+                          className="relative h-10 w-14 overflow-hidden rounded-[2px] border transition-opacity duration-150 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
+                          style={{
+                            borderColor: isActive ? "var(--emphasis)" : "var(--border)",
+                            opacity: isActive ? 1 : 0.55,
+                            outlineColor: "var(--emphasis)",
+                            background: "var(--card)",
+                          }}
+                        >
+                          {src && (
+                            <img
+                              src={src}
+                              alt=""
+                              aria-hidden="true"
+                              draggable={false}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 

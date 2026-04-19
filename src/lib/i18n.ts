@@ -117,6 +117,8 @@ const en = {
   "blogPost.imageLightbox.close": "Close",
   "blogPost.imageLightbox.previous": "Previous image",
   "blogPost.imageLightbox.next": "Next image",
+  "blogPost.imageLightbox.thumbnailsLabel": "Figures",
+  "blogPost.imageLightbox.goToFigure": "Go to figure",
 
   // settings
   "settings.heading": "Settings",
@@ -292,6 +294,8 @@ const ru: TranslationKeys = {
   "blogPost.imageLightbox.close": "\u0417\u0430\u043a\u0440\u044b\u0442\u044c",
   "blogPost.imageLightbox.previous": "\u041f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0435\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435",
   "blogPost.imageLightbox.next": "\u0421\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435",
+  "blogPost.imageLightbox.thumbnailsLabel": "\u0420\u0438\u0441\u0443\u043d\u043a\u0438",
+  "blogPost.imageLightbox.goToFigure": "\u041f\u0435\u0440\u0435\u0439\u0442\u0438 \u043a \u0440\u0438\u0441\u0443\u043d\u043a\u0443",
 
   // settings
   "settings.heading": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
