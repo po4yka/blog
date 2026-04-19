@@ -24,6 +24,7 @@ export function ImageLightbox({ contentRef }: Props) {
   const { reduceMotion } = useSettings();
 
   const imgsRef = useRef<HTMLImageElement[]>([]);
+  const triggerRef = useRef<HTMLImageElement | null>(null);
   const [count, setCount] = useState(0);
   const [index, setIndex] = useState<number | null>(null);
   const [naturalSize, setNaturalSize] = useState(false);
@@ -60,6 +61,7 @@ export function ImageLightbox({ contentRef }: Props) {
   const openAt = useCallback((i: number) => {
     const img = imgsRef.current[i];
     if (!img) return;
+    triggerRef.current = img;
     setFigure({
       src: img.currentSrc || img.src,
       alt: img.alt ?? "",
@@ -161,7 +163,20 @@ export function ImageLightbox({ contentRef }: Props) {
               />
             </DialogPrimitive.Overlay>
 
-            <DialogPrimitive.Content asChild forceMount>
+            <DialogPrimitive.Content
+              asChild
+              forceMount
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                const trigger = triggerRef.current;
+                if (!trigger) return;
+                trigger.focus({ preventScroll: true });
+                trigger.scrollIntoView({
+                  block: "nearest",
+                  behavior: reduceMotion ? "auto" : "smooth",
+                });
+              }}
+            >
               <motion.div
                 className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4 py-10 sm:px-12"
                 initial={{ opacity: 0 }}
