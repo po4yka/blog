@@ -42,6 +42,16 @@ export function ImageLightbox({ contentRef }: Props) {
 
   const imgsRef = useRef<HTMLImageElement[]>([]);
   const triggerRef = useRef<HTMLImageElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const panStateRef = useRef<{
+    startX: number;
+    startY: number;
+    scrollLeft: number;
+    scrollTop: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
+  const [isPanning, setIsPanning] = useState(false);
   const [count, setCount] = useState(0);
   const [index, setIndex] = useState<number | null>(null);
   const [naturalSize, setNaturalSize] = useState(false);
@@ -216,6 +226,7 @@ export function ImageLightbox({ contentRef }: Props) {
                 </DialogPrimitive.Title>
 
                 <motion.div
+                  ref={wrapperRef}
                   className="relative flex items-center justify-center"
                   style={{
                     maxWidth: "95vw",
@@ -224,6 +235,49 @@ export function ImageLightbox({ contentRef }: Props) {
                     height: naturalSize ? "85vh" : "auto",
                     overflow: naturalSize ? "auto" : "visible",
                     touchAction: "pinch-zoom",
+                    cursor: naturalSize ? (isPanning ? "grabbing" : "grab") : undefined,
+                  }}
+                  onPointerDown={(event) => {
+                    if (!naturalSize) return;
+                    if (event.pointerType !== "mouse") return;
+                    const wrapper = wrapperRef.current;
+                    if (!wrapper) return;
+                    wrapper.setPointerCapture(event.pointerId);
+                    panStateRef.current = {
+                      startX: event.clientX,
+                      startY: event.clientY,
+                      scrollLeft: wrapper.scrollLeft,
+                      scrollTop: wrapper.scrollTop,
+                      moved: false,
+                    };
+                    setIsPanning(true);
+                  }}
+                  onPointerMove={(event) => {
+                    const state = panStateRef.current;
+                    const wrapper = wrapperRef.current;
+                    if (!state || !wrapper) return;
+                    const dx = event.clientX - state.startX;
+                    const dy = event.clientY - state.startY;
+                    if (!state.moved && Math.abs(dx) + Math.abs(dy) > 3) {
+                      state.moved = true;
+                    }
+                    wrapper.scrollLeft = state.scrollLeft - dx;
+                    wrapper.scrollTop = state.scrollTop - dy;
+                  }}
+                  onPointerUp={(event) => {
+                    const state = panStateRef.current;
+                    if (!state) return;
+                    wrapperRef.current?.releasePointerCapture(event.pointerId);
+                    const moved = state.moved;
+                    panStateRef.current = null;
+                    setIsPanning(false);
+                    if (moved) {
+                      suppressClickRef.current = true;
+                    }
+                  }}
+                  onPointerCancel={() => {
+                    panStateRef.current = null;
+                    setIsPanning(false);
                   }}
                   drag={count > 1 && !naturalSize ? "x" : false}
                   dragConstraints={{ left: 0, right: 0 }}
@@ -250,6 +304,10 @@ export function ImageLightbox({ contentRef }: Props) {
                     alt={figure.alt}
                     onClick={(event) => {
                       event.stopPropagation();
+                      if (suppressClickRef.current) {
+                        suppressClickRef.current = false;
+                        return;
+                      }
                       if (canZoom) setNaturalSize((v) => !v);
                     }}
                     draggable={false}
@@ -260,7 +318,11 @@ export function ImageLightbox({ contentRef }: Props) {
                       width: naturalSize ? "auto" : "auto",
                       height: "auto",
                       objectFit: "contain",
-                      cursor: canZoom ? (naturalSize ? "zoom-out" : "zoom-in") : "default",
+                      cursor: naturalSize
+                        ? (isPanning ? "grabbing" : "grab")
+                        : canZoom
+                          ? "zoom-in"
+                          : "default",
                       borderRadius: 2,
                       userSelect: "none",
                     }}
