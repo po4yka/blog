@@ -74,6 +74,7 @@ export function AdminBlogList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts..."
+          aria-label="Search posts"
           className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
           style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
         />
@@ -105,7 +106,8 @@ export function AdminBlogList() {
             {/* Featured toggle */}
             <button
               onClick={() => handleToggleFeatured(post.slug)}
-              className="shrink-0 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer p-0.5"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
+              aria-label={post.featured ? `Remove ${post.title} from featured` : `Set ${post.title} as featured`}
               title={post.featured ? "Remove from featured" : "Set as featured"}
             >
               {post.featured ? (
@@ -145,11 +147,12 @@ export function AdminBlogList() {
             {/* Delete */}
             <button
               onClick={() => handleDelete(post.slug)}
-              className={`shrink-0 p-1.5 transition-colors duration-200 cursor-pointer ${
+              className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors duration-200 cursor-pointer ${
                 confirmDelete === post.slug
                   ? "text-destructive"
                   : "text-muted-foreground hover:text-destructive/80"
               }`}
+              aria-label={confirmDelete === post.slug ? `Confirm delete ${post.title}` : `Delete ${post.title}`}
               title={confirmDelete === post.slug ? "Click again to confirm" : "Delete post"}
             >
               <Trash2 size={14} />

@@ -9,6 +9,7 @@ import {
   useAddCategory,
   useRemoveCategory,
 } from "@/admin/hooks/useAdminQueries";
+import { FieldBlock } from "@/admin/components/FormPrimitives";
 
 const defaultSettings: SiteSettings = {
   name: "", handle: "", role: "", bio: "", github: "", email: "", telegram: "", linkedin: "",
@@ -91,85 +92,85 @@ export function AdminSettings() {
         <Section title="Profile">
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Display Name">
+              <FieldBlock label="Display Name">
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
                 />
-              </Field>
-              <Field label="Handle">
+              </FieldBlock>
+              <FieldBlock label="Handle">
                 <input
                   type="text"
                   value={form.handle}
                   onChange={(e) => updateField("handle", e.target.value)}
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
-              </Field>
+              </FieldBlock>
             </div>
 
-            <Field label="Role / Tagline">
+            <FieldBlock label="Role / Tagline">
               <input
                 type="text"
                 value={form.role}
                 onChange={(e) => updateField("role", e.target.value)}
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
               />
-            </Field>
+            </FieldBlock>
 
-            <Field label="Bio">
+            <FieldBlock label="Bio">
               <textarea
                 value={form.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent resize-y"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 resize-y"
                 style={{ lineHeight: 1.6 }}
               />
-            </Field>
+            </FieldBlock>
           </div>
         </Section>
 
         {/* Links section */}
         <Section title="Social Links">
           <div className="space-y-4">
-            <Field label="GitHub">
+            <FieldBlock label="GitHub">
               <input
                 type="text"
                 value={form.github}
                 onChange={(e) => updateField("github", e.target.value)}
                 placeholder="https://github.com/..."
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
               />
-            </Field>
-            <Field label="Email">
+            </FieldBlock>
+            <FieldBlock label="Email">
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
                 placeholder="hello@example.dev"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
               />
-            </Field>
+            </FieldBlock>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Telegram">
+              <FieldBlock label="Telegram">
                 <input
                   type="text"
                   value={form.telegram}
                   onChange={(e) => updateField("telegram", e.target.value)}
                   placeholder="https://t.me/..."
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
-              </Field>
-              <Field label="LinkedIn">
+              </FieldBlock>
+              <FieldBlock label="LinkedIn">
                 <input
                   type="text"
                   value={form.linkedin}
                   onChange={(e) => updateField("linkedin", e.target.value)}
                   placeholder="https://linkedin.com/in/..."
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent font-mono"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
-              </Field>
+              </FieldBlock>
             </div>
           </div>
         </Section>
@@ -186,7 +187,8 @@ export function AdminSettings() {
                 {cat}
                 <button
                   onClick={() => removeCategoryMutation.mutate(cat)}
-                  className="text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer"
+                  aria-label={`Remove ${cat} category`}
+                  className="inline-flex h-11 w-11 -my-3 -ml-2 -mr-3 items-center justify-center text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer"
                   style={{ fontSize: "0.75rem", lineHeight: 1 }}
                 >
                   &times;
@@ -201,7 +203,8 @@ export function AdminSettings() {
               onChange={(e) => setNewCat(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCategory(); } }}
               placeholder="New category"
-              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-accent flex-1"
+              aria-label="New category"
+              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 flex-1"
               style={{ maxWidth: "200px" }}
             />
             <button
@@ -263,17 +266,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h2 className="text-foreground mb-4" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
         {title}
       </h2>
-      {children}
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="block font-mono text-muted-foreground/60 mb-1.5" style={{ fontSize: "0.6875rem", letterSpacing: "0.02em", fontWeight: 400, lineHeight: 1.5 }}>
-        {label}
-      </label>
       {children}
     </div>
   );

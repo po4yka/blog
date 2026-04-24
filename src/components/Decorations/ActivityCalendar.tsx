@@ -96,10 +96,13 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   const totalEvents = cells.reduce((sum, c) => sum + c.count, 0);
   const activeDays = cells.filter((c) => c.count > 0).length;
 
-  const weeks: DayCell[][] = [];
-  for (let w = 0; w < WEEKS; w++) {
-    weeks.push(cells.slice(w * DAYS_PER_WEEK, (w + 1) * DAYS_PER_WEEK));
-  }
+  const weeks = useMemo(() => {
+    const nextWeeks: DayCell[][] = [];
+    for (let w = 0; w < WEEKS; w++) {
+      nextWeeks.push(cells.slice(w * DAYS_PER_WEEK, (w + 1) * DAYS_PER_WEEK));
+    }
+    return nextWeeks;
+  }, [cells]);
 
   const monthLabels = useMemo(() => {
     const labels: { col: number; label: string }[] = [];

@@ -123,7 +123,8 @@ export function AdminLayout() {
           </div>
           <button
             onClick={() => { logout(); navigate("/admin/login"); }}
-            className="text-muted-foreground/50 hover:text-foreground transition-colors p-1"
+            aria-label="Sign out"
+            className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
           >
             <LogOut size={16} />
           </button>

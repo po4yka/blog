@@ -68,24 +68,26 @@ export function AdminExperience() {
       <AnimatePresence>
         {editing && (
           <motion.div
-            className="mb-6 border border-border bg-card p-5"
+            className="mb-6 grid overflow-hidden border border-border bg-card"
             style={{ borderRadius: "4px" }}
-            initial={{ opacity: 0, y: -8, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: -8, height: 0 }}
+            initial={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
+            animate={{ opacity: 1, y: 0, gridTemplateRows: "1fr" }}
+            exit={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
             transition={{ duration: 0.3 }}
           >
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
-                {roles.find((r) => r.id === editing.id) ? "Edit Role" : "New Role"}
-              </h2>
-              <button
-                onClick={() => setEditing(null)}
-                className="text-muted-foreground/30 hover:text-foreground transition-colors cursor-pointer p-1"
-              >
-                <X size={16} />
-              </button>
-            </div>
+            <div className="min-h-0 overflow-hidden p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
+                  {roles.find((r) => r.id === editing.id) ? "Edit Role" : "New Role"}
+                </h2>
+                <button
+                  onClick={() => setEditing(null)}
+                  aria-label="Close role editor"
+                  className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/30 hover:text-foreground transition-colors cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -159,6 +161,7 @@ export function AdminExperience() {
                   {saveRoleMutation.isPending ? "Saving..." : "Save"}
                 </button>
               </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -225,7 +228,8 @@ export function AdminExperience() {
               </button>
               <button
                 onClick={() => handleDelete(role.id!)}
-                className={`shrink-0 p-1 transition-colors cursor-pointer ${
+                aria-label={confirmDelete === role.id ? `Confirm delete ${role.title}` : `Delete ${role.title}`}
+                className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors cursor-pointer ${
                   confirmDelete === role.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
@@ -238,4 +242,3 @@ export function AdminExperience() {
     </div>
   );
 }
-

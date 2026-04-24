@@ -9,11 +9,67 @@ export interface StoredCredential {
 
 // --- Challenges ---
 
+const CHALLENGE_MAX_AGE_MINUTES = 5;
+const AUTH_OPTIONS_RATE_LIMIT_TYPE = "authentication-options-rate-limit";
+const AUTH_OPTIONS_RATE_LIMIT_PREFIX = "auth-options:";
+const AUTH_OPTIONS_RATE_LIMIT_MAX = 10;
+
+async function hashRateLimitKey(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(value),
+  );
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+}
+
+export async function pruneStaleChallenges(db: D1Database): Promise<void> {
+  await db
+    .prepare(
+      `DELETE FROM auth_challenges WHERE created_at < datetime('now', '-${CHALLENGE_MAX_AGE_MINUTES} minutes')`,
+    )
+    .run();
+}
+
+export async function checkAuthenticationOptionsRateLimit(
+  db: D1Database,
+  ip: string,
+): Promise<boolean> {
+  const key = await hashRateLimitKey(ip);
+  const row = await db
+    .prepare(
+      `SELECT COUNT(*) as cnt FROM auth_challenges WHERE type = ? AND challenge LIKE ? AND created_at > datetime('now', '-${CHALLENGE_MAX_AGE_MINUTES} minutes')`,
+    )
+    .bind(AUTH_OPTIONS_RATE_LIMIT_TYPE, `${AUTH_OPTIONS_RATE_LIMIT_PREFIX}${key}:%`)
+    .first<{ cnt: number }>();
+
+  return (row?.cnt ?? 0) < AUTH_OPTIONS_RATE_LIMIT_MAX;
+}
+
+export async function recordAuthenticationOptionsRequest(
+  db: D1Database,
+  ip: string,
+): Promise<void> {
+  await pruneStaleChallenges(db);
+
+  const key = await hashRateLimitKey(ip);
+  await db
+    .prepare("INSERT INTO auth_challenges (challenge, type) VALUES (?, ?)")
+    .bind(
+      `${AUTH_OPTIONS_RATE_LIMIT_PREFIX}${key}:${crypto.randomUUID()}`,
+      AUTH_OPTIONS_RATE_LIMIT_TYPE,
+    )
+    .run();
+}
+
 export async function storeChallenge(
   db: D1Database,
   challenge: string,
   type: string,
 ): Promise<void> {
+  await pruneStaleChallenges(db);
+
   await db
     .prepare("INSERT INTO auth_challenges (challenge, type) VALUES (?, ?)")
     .bind(challenge, type)

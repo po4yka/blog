@@ -1,7 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import {
+  checkAuthenticationOptionsRateLimit,
   storeChallenge,
   consumeChallenge,
+  pruneStaleChallenges,
+  recordAuthenticationOptionsRequest,
   validateChallenge,
   storeCredential,
   getCredentials,
@@ -13,11 +16,90 @@ import {
 import { createMockDb, createWriteMockDb } from "../helpers";
 
 describe("storeChallenge", () => {
-  it("inserts challenge with type", async () => {
-    const db = createWriteMockDb();
+  it("prunes stale challenges before inserting challenge with type", async () => {
+    const run = vi.fn().mockResolvedValue({ success: true });
+    const bind = vi.fn().mockReturnValue({ run });
+    const prepare = vi.fn((query: string) => {
+      if (query.startsWith("INSERT")) return { bind };
+      return { run };
+    });
+    const db = { prepare } as unknown as D1Database;
+
     await storeChallenge(db, "challenge-abc", "authentication");
-    expect(db._bind).toHaveBeenCalledWith("challenge-abc", "authentication");
-    expect(db._run).toHaveBeenCalled();
+
+    expect(prepare).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining("DELETE FROM auth_challenges"),
+    );
+    expect(prepare).toHaveBeenNthCalledWith(
+      2,
+      "INSERT INTO auth_challenges (challenge, type) VALUES (?, ?)",
+    );
+    expect(bind).toHaveBeenCalledWith("challenge-abc", "authentication");
+    expect(run).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("pruneStaleChallenges", () => {
+  it("deletes challenges older than the challenge window", async () => {
+    const run = vi.fn().mockResolvedValue({ success: true });
+    const prepare = vi.fn().mockReturnValue({ run });
+    const db = { prepare } as unknown as D1Database;
+
+    await pruneStaleChallenges(db);
+
+    expect(prepare).toHaveBeenCalledWith(
+      expect.stringContaining("created_at < datetime('now', '-5 minutes')"),
+    );
+    expect(run).toHaveBeenCalled();
+  });
+});
+
+describe("checkAuthenticationOptionsRateLimit", () => {
+  it("returns true when under the per-IP options limit", async () => {
+    const first = vi.fn().mockResolvedValue({ cnt: 9 });
+    const bind = vi.fn().mockReturnValue({ first });
+    const prepare = vi.fn().mockReturnValue({ bind });
+    const db = { prepare } as unknown as D1Database;
+
+    await expect(checkAuthenticationOptionsRateLimit(db, "1.2.3.4")).resolves.toBe(true);
+    expect(bind).toHaveBeenCalledWith(
+      "authentication-options-rate-limit",
+      expect.stringMatching(/^auth-options:[0-9a-f]{64}:%$/),
+    );
+  });
+
+  it("returns false when at the per-IP options limit", async () => {
+    const first = vi.fn().mockResolvedValue({ cnt: 10 });
+    const bind = vi.fn().mockReturnValue({ first });
+    const prepare = vi.fn().mockReturnValue({ bind });
+    const db = { prepare } as unknown as D1Database;
+
+    await expect(checkAuthenticationOptionsRateLimit(db, "1.2.3.4")).resolves.toBe(false);
+  });
+});
+
+describe("recordAuthenticationOptionsRequest", () => {
+  it("prunes stale challenges before inserting a hashed IP rate-limit marker", async () => {
+    const run = vi.fn().mockResolvedValue({ success: true });
+    const bind = vi.fn().mockReturnValue({ run });
+    const prepare = vi.fn((query: string) => {
+      if (query.startsWith("INSERT")) return { bind };
+      return { run };
+    });
+    const db = { prepare } as unknown as D1Database;
+
+    await recordAuthenticationOptionsRequest(db, "1.2.3.4");
+
+    expect(prepare).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining("DELETE FROM auth_challenges"),
+    );
+    expect(bind).toHaveBeenCalledWith(
+      expect.stringMatching(/^auth-options:[0-9a-f]{64}:[0-9a-f-]+$/),
+      "authentication-options-rate-limit",
+    );
+    expect(run).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -76,13 +76,14 @@ function SparkBar({
         <motion.div
           style={{
             width: "10px",
+            height: `${Math.max(2, normalizedHeight)}px`,
             borderRadius: "2px 2px 0 0",
             backgroundColor: hasEvents ? "var(--foreground)" : "var(--muted-foreground-dim)",
             opacity,
-            minHeight: "2px",
+            transformOrigin: "bottom center",
           }}
-          initial={{ height: 0 }}
-          animate={inView ? { height: `${Math.max(2, normalizedHeight)}px` } : { height: 0 }}
+          initial={{ scaleY: 0 }}
+          animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
           transition={{ duration: 0.4, delay, ease: easeStep8 }}
         />
       </div>

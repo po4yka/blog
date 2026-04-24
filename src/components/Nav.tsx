@@ -217,40 +217,42 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         {menuOpen && (
           <motion.div
             id="mobile-menu"
-            className="md:hidden"
+            className="md:hidden grid overflow-hidden"
             style={{
               background: "var(--mobile-menu-bg)",
               backdropFilter: "blur(20px)",
               borderTop: "1px solid var(--rule)",
             }}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, gridTemplateRows: "0fr" }}
+            animate={{ opacity: 1, gridTemplateRows: "1fr" }}
+            exit={{ opacity: 0, gridTemplateRows: "0fr" }}
             transition={{ duration: 0.2 }}
           >
-            <div className="max-w-[1080px] mx-auto px-6 py-3 flex flex-col gap-0.5">
-              {navLinks.map((link, i) => {
-                const active = isActive(link);
-                return (
-                  <motion.a
-                    key={link.labelKey}
-                    href={link.href}
-                    className={`py-3 px-3 text-mono transition-colors duration-200 ${
-                      active
-                        ? "text-foreground font-medium"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                    onClick={() => setMenuOpen(false)}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: i * 0.03 }}
-                  >
-                    {t(link.labelKey)}
-                  </motion.a>
-                );
-              })}
-              <div className="py-3 px-3">
-                <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
+            <div className="min-h-0">
+              <div className="max-w-[1080px] mx-auto px-6 py-3 flex flex-col gap-0.5">
+                {navLinks.map((link, i) => {
+                  const active = isActive(link);
+                  return (
+                    <motion.a
+                      key={link.labelKey}
+                      href={link.href}
+                      className={`py-3 px-3 text-mono transition-colors duration-200 ${
+                        active
+                          ? "text-foreground font-medium"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      onClick={() => setMenuOpen(false)}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2, delay: i * 0.03 }}
+                    >
+                      {t(link.labelKey)}
+                    </motion.a>
+                  );
+                })}
+                <div className="py-3 px-3">
+                  <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
+                </div>
               </div>
             </div>
           </motion.div>

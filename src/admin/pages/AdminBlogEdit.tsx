@@ -95,7 +95,8 @@ export function AdminBlogEdit() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate("/admin/blog")}
-            className="text-muted-foreground/40 hover:text-foreground transition-colors duration-200 cursor-pointer p-1"
+            aria-label="Back to blog posts"
+            className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/40 hover:text-foreground transition-colors duration-200 cursor-pointer"
           >
             <ArrowLeft size={18} />
           </button>
@@ -224,24 +225,27 @@ export function AdminBlogEdit() {
             </FieldBlock>
 
             <FieldBlock label="Content">
-              <div className="relative">
-                <textarea
-                  value={form.content}
-                  onChange={(e) => updateField("content", e.target.value)}
-                  placeholder="Write your post content here. Use ## for headings, - for lists, **bold** for emphasis..."
-                  rows={18}
-                  className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 outline-none focus:border-border transition-colors duration-200 resize-y"
-                  style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.7 }}
-                />
-                <div className="absolute bottom-2.5 right-3 flex items-center gap-3">
-                  <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
-                    {wordCount} words
-                  </span>
-                  <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
-                    ~{readingTime} min
-                  </span>
+              {({ id }) => (
+                <div className="relative">
+                  <textarea
+                    id={id}
+                    value={form.content}
+                    onChange={(e) => updateField("content", e.target.value)}
+                    placeholder="Write your post content here. Use ## for headings, - for lists, **bold** for emphasis..."
+                    rows={18}
+                    className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 outline-none focus:border-border transition-colors duration-200 resize-y"
+                    style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.7 }}
+                  />
+                  <div className="absolute bottom-2.5 right-3 flex items-center gap-3">
+                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
+                      {wordCount} words
+                    </span>
+                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
+                      ~{readingTime} min
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </FieldBlock>
 
             <div className="flex items-center justify-between pt-4">

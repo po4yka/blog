@@ -275,9 +275,14 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
                   <div className="flex-1 h-[2px] overflow-hidden" style={{ background: "var(--border)" }}>
                     <motion.div
                       className="h-full"
-                      style={{ background: "var(--foreground)", opacity: 0.35 }}
-                      initial={{ width: 0 }}
-                      animate={inView ? { width: `${Math.max(pct, 4)}%` } : {}}
+                      style={{
+                        background: "var(--foreground)",
+                        opacity: 0.35,
+                        transformOrigin: "left center",
+                        width: `${Math.max(pct, 4)}%`,
+                      }}
+                      initial={{ scaleX: 0 }}
+                      animate={inView ? { scaleX: 1 } : {}}
                       transition={{ duration: 0.6, delay: 0.3, ease: easeStep8 }}
                     />
                   </div>

@@ -101,7 +101,10 @@ export function AdminProjects() {
             <div className="flex items-center gap-3 px-4 py-3.5">
               <button
                 onClick={() => setExpanded(expanded === project.id ? null : project.id ?? null)}
-                className="shrink-0 text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5"
+                aria-label={expanded === project.id ? `Collapse ${project.name}` : `Expand ${project.name}`}
+                aria-expanded={expanded === project.id}
+                aria-controls={project.id ? `project-detail-${project.id}` : undefined}
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {expanded === project.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </button>
@@ -132,7 +135,8 @@ export function AdminProjects() {
               </button>
               <button
                 onClick={() => handleDelete(project.id!)}
-                className={`shrink-0 p-1 transition-colors cursor-pointer ${
+                aria-label={confirmingId === project.id ? `Confirm delete ${project.name}` : `Delete ${project.name}`}
+                className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors cursor-pointer ${
                   confirmingId === project.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
@@ -144,28 +148,31 @@ export function AdminProjects() {
             <AnimatePresence>
               {expanded === project.id && (
                 <motion.div
-                  className="px-4 pb-4 pl-12"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
+                  id={project.id ? `project-detail-${project.id}` : undefined}
+                  className="grid overflow-hidden"
+                  initial={{ opacity: 0, gridTemplateRows: "0fr" }}
+                  animate={{ opacity: 1, gridTemplateRows: "1fr" }}
+                  exit={{ opacity: 0, gridTemplateRows: "0fr" }}
                   transition={{ duration: 0.2 }}
                 >
-                  <p className="text-foreground/80 mb-2" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/80 border border-border/60" style={{ fontSize: "0.5625rem", borderRadius: "2px" }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {project.links.map((link) => (
-                      <span key={link.href} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
-                        {link.type}: {link.href}
-                      </span>
-                    ))}
+                  <div className="min-h-0 overflow-hidden px-4 pb-4 pl-12">
+                    <p className="text-foreground/80 mb-2" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/80 border border-border/60" style={{ fontSize: "0.5625rem", borderRadius: "2px" }}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {project.links.map((link) => (
+                        <span key={link.href} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                          {link.type}: {link.href}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}
