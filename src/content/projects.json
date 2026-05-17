@@ -41,6 +41,20 @@
     "status": "Active"
   },
   {
+    "id": "heimdall",
+    "name": "Heimdall",
+    "slug": "heimdall",
+    "description": "Local-first analytics dashboard for AI-assisted engineering. Unified cost, burn-rate, cache efficiency, and waste-detection across 9 coding assistants.",
+    "longDescription": "A Rust toolchain that reads transcripts from Claude Code, Codex, Cursor, OpenCode, Pi, Copilot, Xcode CodingAssistant, Cowork, and Amp, then surfaces an interactive dashboard with cost estimates, 5-hour billing-block burn-rate projection, cache efficiency, task categorization, waste-detection grade, context-window tracking, and rate-limit tracking — all running entirely on the user's machine. Three surfaces ship together: a `heimdall` CLI with embedded web dashboard, a `heimdall-hook` sub-second real-time ingest writing per-tool cost on every PreToolUse (~50 ms p99), and an MCP server exposing 9 analytics tools over stdio + HTTP. A native macOS menu-bar app (Swift) bundles the CLI with browser-session import. Storage is local SQLite; no telemetry, no network egress.",
+    "platforms": ["Tooling", "macOS"],
+    "tags": ["Rust", "Swift", "TypeScript", "MCP", "SQLite", "FinOps", "Observability"],
+    "links": [{ "type": "GitHub", "href": "https://github.com/po4yka/heimdall" }],
+    "featured": true,
+    "previewLabel": "heimdall",
+    "year": "2026",
+    "status": "Active"
+  },
+  {
     "id": "kotlin-ci-toolchain",
     "name": "Kotlin CI Toolchain",
     "slug": "kotlin-ci-toolchain",
