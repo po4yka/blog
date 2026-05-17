@@ -277,5 +277,4 @@ When adding a new content surface (a new page type, collection, route), consider
 - Path alias: `@` maps to `src/`
 - No emoji in code or documentation
 
-@DESIGN.md
-@docs/Guidelines.md
+@DESIGN.md @docs/Guidelines.md

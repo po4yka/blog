@@ -14,20 +14,8 @@ The site should communicate the following clearly:
 
 - Nikita Pochaev is an **AI Engineer & Senior Mobile Developer**
 - Main focus: **Android**, **Kotlin Multiplatform**, **MobileOps**, **AI/ML integration**
-- The site should showcase:
-  - selected apps and projects
-  - links to **GitHub**
-  - links to **Google Play**
-  - links to **App Store**
-  - a separate **blog / writing** section
-- The overall impression should be:
-  - thoughtful
-  - minimal
-  - technical
-  - precise
-  - modern
-  - credible
-  - memorable without being loud
+- The site should showcase: - selected apps and projects - links to **GitHub** - links to **Google Play** - links to **App Store** - a separate **blog / writing** section
+- The overall impression should be: - thoughtful - minimal - technical - precise - modern - credible - memorable without being loud
 
 The site should not feel corporate, over-marketed, gimmicky, or visually overdesigned.
 
@@ -181,9 +169,7 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 - Prefer slightly asymmetric or editorial compositions over overly centered and overly balanced template layouts.
 - Use whitespace deliberately.
 - Create strong section rhythm.
-- Use content width intelligently:
-  - tighter width for text-heavy sections
-  - wider width for project showcases and visual sections
+- Use content width intelligently: - tighter width for text-heavy sections - wider width for project showcases and visual sections
 - Avoid “3 equal cards in a row” as the default solution.
 - Avoid making every section visually identical.
 - Prefer layout variation across sections while keeping the same design language.
@@ -313,14 +299,9 @@ Buttons should be clear, minimal, and functional.
 
 ### Variants
 
-- Primary button
-  - used for main CTA
-  - visually strongest action in a section
-- Secondary button
-  - used for supporting actions
-  - lower emphasis
-- Tertiary / text button
-  - used for subtle navigation or inline actions
+- Primary button - used for main CTA - visually strongest action in a section
+- Secondary button - used for supporting actions - lower emphasis
+- Tertiary / text button - used for subtle navigation or inline actions
 
 ### Rules
 
@@ -437,14 +418,8 @@ Each project/app entry should be able to show:
 - short summary
 - role or focus
 - platform metadata
-- links to:
-  - GitHub
-  - Google Play
-  - App Store
-- optional visual support:
-  - app screenshot
-  - device frame
-  - abstract project visual
+- links to: - GitHub - Google Play - App Store
+- optional visual support: - app screenshot - device frame - abstract project visual
 
 ### Project section rules
 

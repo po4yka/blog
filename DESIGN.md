@@ -325,8 +325,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | Blog post body | Full width, prose capped at 46rem | Article + 14rem sticky TOC; prose capped at 46rem |
 | Font size | `14px` compact (user default) | `15px` default |
 
-**Touch targets:** minimum `44×44px` for all interactive elements on mobile.
-**Mobile-first rule:** design both intentionally — do not collapse desktop into mobile.
+**Touch targets:** minimum `44×44px` for all interactive elements on mobile. **Mobile-first rule:** design both intentionally — do not collapse desktop into mobile.
 
 ---
 

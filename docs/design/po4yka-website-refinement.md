@@ -1,7 +1,6 @@
 Refine and art-direct the current personal website design for @po4yka / Nikita Pochaev.
 
-Do not redesign from scratch.
-Preserve the current foundation:
+Do not redesign from scratch. Preserve the current foundation:
 - minimal editorial aesthetic
 - light neutral background
 - restrained palette
@@ -11,8 +10,7 @@ Preserve the current foundation:
 
 But significantly improve the design quality, composition, hierarchy, and distinctiveness so the result feels less sparse, less generic, and less AI-generated.
 
-Main goal:
-Turn the current website into a more intentional, high-taste personal website for a mobile engineer:
+Main goal: Turn the current website into a more intentional, high-taste personal website for a mobile engineer:
 - more authored
 - more composed
 - more premium
@@ -37,8 +35,7 @@ Use the current design as a base, but improve it in the following ways:
 - Introduce subtle editorial and technical character through composition, spacing, typography, dividers, metadata treatment, and interaction details
 - Keep the identity restrained and intelligent
 
-2. Hero section improvement
-Current issues:
+2. Hero section improvement Current issues:
 - too much dead space around the content
 - the composition feels under-art-directed
 - strong typography is present, but the section lacks tension, structure, and a memorable visual idea
@@ -59,8 +56,7 @@ Improve the hero by:
 - Strengthen the relationship between navbar and page content
 - Keep it minimal and mono-led, but slightly sharper and more intentional
 
-4. Selected projects section improvement
-Current issues:
+4. Selected projects section improvement Current issues:
 - project modules are structurally clear, but the preview blocks feel empty and placeholder-like
 - the layout is clean but too generic and slightly lifeless
 - project rows need stronger hierarchy and more art direction
@@ -69,18 +65,13 @@ Current issues:
 Improve this section by:
 - refining the alternating project layout so it feels more editorial and less template-like
 - redesigning the preview areas so they feel like intentional project showcases, not empty boxes
-- using project visuals more meaningfully:
-  - device frames
-  - cropped app screens
-  - abstract but restrained UI fragments
-  - motion-aware preview areas
+- using project visuals more meaningfully: - device frames - cropped app screens - abstract but restrained UI fragments - motion-aware preview areas
 - improving spacing between title, platform labels, summary, tags, and links
 - making platform metadata and tags feel more technical and elegant
 - adding subtle structure through divider logic, alignment rhythm, and internal hierarchy
 - ensuring each project block feels part of one system, but not mechanically identical
 
-5. Experience section improvement
-Current issues:
+5. Experience section improvement Current issues:
 - the experience timeline is readable but too plain
 - entries feel like generic CV rows
 - hierarchy between year, role, company, summary, and tags can be stronger
@@ -110,17 +101,11 @@ Improve this section by:
 - Use whitespace as a structural tool, not just blank space
 
 8. Visual system enhancement
-- Add subtle design-system-level refinements across the whole site:
-  - more intentional hairline borders or dividers
-  - better accent usage
-  - stronger metadata styling
-  - refined chip / tag treatment
-  - better state design for links and buttons
+- Add subtle design-system-level refinements across the whole site: - more intentional hairline borders or dividers - better accent usage - stronger metadata styling - refined chip / tag treatment - better state design for links and buttons
 - Keep everything understated
 - The site should feel crafted, not decorated
 
-9. Motion and interaction design
-Add tasteful interaction and animation concepts for the whole website.
+9. Motion and interaction design Add tasteful interaction and animation concepts for the whole website.
 
 Desired motion quality:
 - subtle
@@ -153,16 +138,14 @@ Avoid:
 - Preserve hierarchy, spacing, and interaction logic across breakpoints
 - Keep project modules and experience entries readable and elegant on smaller screens
 
-11. Anti-AI-slop refinement
-Throughout the entire refactor:
+11. Anti-AI-slop refinement Throughout the entire refactor:
 - remove anything that feels overly generic, templated, or statistically generated
 - prefer specific composition over default layout solutions
 - prefer visual restraint over trendy effects
 - prefer real structure over decorative polish
 - prefer authored details over generic “premium” styling
 
-Target outcome:
-A refined personal website for Nikita Pochaev / @po4yka that feels like a real high-taste developer portfolio:
+Target outcome: A refined personal website for Nikita Pochaev / @po4yka that feels like a real high-taste developer portfolio:
 - minimal but not empty
 - technical but not cold
 - premium but not flashy

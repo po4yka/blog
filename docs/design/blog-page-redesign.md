@@ -9,9 +9,7 @@ Current issues to solve:
 - navigation and content feel visually disconnected
 - overall result is clean, but too plain and slightly template-like
 
-Design goal:
-Refine this page into a more intentional, high-taste blog experience for a mobile developer personal website.
-The result should feel:
+Design goal: Refine this page into a more intentional, high-taste blog experience for a mobile developer personal website. The result should feel:
 - minimal
 - editorial
 - technical
@@ -20,8 +18,7 @@ The result should feel:
 - calm
 - premium but understated
 
-Do NOT turn it into a startup landing page, SaaS dashboard, or overly decorative concept.
-Do NOT add generic AI-looking gradients, glassmorphism, glowing effects, oversized rounded cards, or fake visual complexity.
+Do NOT turn it into a startup landing page, SaaS dashboard, or overly decorative concept. Do NOT add generic AI-looking gradients, glassmorphism, glowing effects, oversized rounded cards, or fake visual complexity.
 
 Keep:
 - the overall minimal direction
@@ -76,23 +73,13 @@ Improve the page in the following ways:
 
 7. Visual identity
 - Add subtle developer / engineering / editorial character
-- Possible cues:
-  - refined mono metadata
-  - hairline dividers
-  - subtle accent color for taxonomy or active states
-  - technical labels
-  - structured spacing rhythm
+- Possible cues: - refined mono metadata - hairline dividers - subtle accent color for taxonomy or active states - technical labels - structured spacing rhythm
 - Keep these cues subtle and sophisticated
 - Do not make it look retro, gimmicky, or terminal-themed
 
 8. Interaction and motion
 - Add tasteful motion ideas for this page
-- Suggested interactions:
-  - subtle chip hover transitions
-  - refined article row hover states
-  - delicate reveal of featured content
-  - smooth underline or divider animations
-  - gentle opacity / translate transitions
+- Suggested interactions: - subtle chip hover transitions - refined article row hover states - delicate reveal of featured content - smooth underline or divider animations - gentle opacity / translate transitions
 - Motion should feel intelligent and premium, never noisy
 
 9. Consistency and responsiveness
@@ -110,8 +97,7 @@ Important style constraints:
 - no meaningless visuals
 - no overdesigned blog cards
 
-Target outcome:
-A refined blog page for @po4yka / Nikita Pochaev that feels like a real, high-taste developer website:
+Target outcome: A refined blog page for @po4yka / Nikita Pochaev that feels like a real, high-taste developer website:
 - more composed
 - more editorial
 - more distinctive
