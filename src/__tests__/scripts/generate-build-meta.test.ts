@@ -39,6 +39,12 @@ function restoreEnv(): void {
   }
 }
 
+function clearBuildMetaRefreshEnv(): void {
+  for (const key of envKeys) {
+    delete process.env[key];
+  }
+}
+
 function createProjectFixture(): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "blog-build-meta-"));
   tempDirs.push(dir);
@@ -74,6 +80,7 @@ afterEach(() => {
 
 describe("generateBuildMetaSource", () => {
   it("reuses existing commit hash and deploy date during local generation", () => {
+    clearBuildMetaRefreshEnv();
     process.chdir(createProjectFixture());
 
     const output = generateBuildMetaSource();
