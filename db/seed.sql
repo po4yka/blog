@@ -36,10 +36,10 @@ INSERT INTO projects (id, name, description, platforms, tags, links, featured, s
  'Android app for network connectivity optimization with local SOCKS5 proxy, adaptive DPI evasion, and encrypted DNS support.',
  '["Android"]', '["Kotlin","Rust","JNI","SOCKS5","DNS","VPN","NDK"]',
  '[{"type":"GitHub","href":"https://github.com/po4yka/RIPDPI"}]', 0, 6),
-('bite-size-reader', 'Bite-Size Reader',
- 'Telegram bot + KMP mobile client for AI-powered article and YouTube video summarization with offline reading.',
- '["Android","iOS","Backend"]', '["KMP","Compose Multiplatform","Python","FastAPI","Telegram Bot","Ktor","SQLDelight"]',
- '[{"type":"GitHub","href":"https://github.com/po4yka/bite-size-reader"},{"type":"GitHub","href":"https://github.com/po4yka/bite-size-reader-client"}]', 1, 7);
+('ratatoskr', 'Ratatoskr',
+ 'Self-hosted messenger between you and the internet. Pulls articles, videos, and feeds, summarizes with LLMs, delivers signal — not feed. KMP, web, and Telegram clients.',
+ '["Android","iOS","Backend","Web"]', '["KMP","Compose Multiplatform","Python","FastAPI","Telegram Bot","React","Ktor","SQLDelight"]',
+ '[{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr"},{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr-client"},{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr-web"}]', 1, 7);
 
 -- Roles
 INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
