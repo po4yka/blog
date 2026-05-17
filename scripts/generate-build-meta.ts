@@ -5,9 +5,44 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+interface BuildMetaIdentity {
+  commitHash?: string;
+  deployDate?: string;
+}
+
+function isEnabled(value: string | undefined): boolean {
+  return value === "true" || value === "1";
+}
+
+function shouldRefreshBuildIdentity(): boolean {
+  return isEnabled(process.env.CI) || isEnabled(process.env.CF_PAGES) || process.env.BLOG_REFRESH_BUILD_META === "1";
+}
+
+function readExistingBuildIdentity(): BuildMetaIdentity {
+  const buildMetaFile = path.resolve("src/data/buildMeta.ts");
+
+  if (shouldRefreshBuildIdentity() || !fs.existsSync(buildMetaFile)) {
+    return {};
+  }
+
+  const source = fs.readFileSync(buildMetaFile, "utf-8");
+  const commitHash = source.match(/\bcommitHash:\s*"([^"]+)"/)?.[1];
+  const deployDate = source.match(/\bdeployDate:\s*"([^"]+)"/)?.[1];
+
+  return {
+    commitHash,
+    deployDate,
+  };
+}
+
+function getCurrentCommitHash(): string {
+  return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+}
+
 export function generateBuildMetaSource(): string {
-  const commitHash = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-  const deployDate = new Date().toISOString();
+  const existingIdentity = readExistingBuildIdentity();
+  const commitHash = existingIdentity.commitHash ?? getCurrentCommitHash();
+  const deployDate = existingIdentity.deployDate ?? new Date().toISOString();
 
   const pkg = JSON.parse(fs.readFileSync(path.resolve("package.json"), "utf-8")) as {
     dependencies?: Record<string, string>;

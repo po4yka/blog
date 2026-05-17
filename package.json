@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "generate:blog": "tsx scripts/generate-blog-data.ts",
     "generate:all": "tsx scripts/generate-all-data.ts",
+    "scan:complexity": "tsx scripts/scan-complexity.ts",
     "validate:blog": "tsx scripts/validate-blog-sync.ts",
     "validate:skills": "bash scripts/validate-codex-skills.sh",
     "validate:all": "tsx scripts/validate-all-sync.ts",

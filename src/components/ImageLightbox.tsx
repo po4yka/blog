@@ -265,6 +265,9 @@ export function ImageLightbox({ contentRef }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [index, count, openAt]);
 
+  // On first render with a non-empty image list, honour ?fig=N in the URL.
+  const didInitialURLCheckRef = useRef(false);
+
   // Keep the URL in sync with the lightbox state (?fig=N, 1-indexed)
   // so readers can share direct links and page refresh reopens the same
   // figure. Uses replaceState — back button goes to the previous page,
@@ -275,6 +278,7 @@ export function ImageLightbox({ contentRef }: Props) {
     const currentFig = url.searchParams.get("fig");
     const desiredFig = index !== null ? String(index + 1) : null;
     if (currentFig === desiredFig) return;
+    if (!didInitialURLCheckRef.current && currentFig !== null && desiredFig === null) return;
     if (desiredFig !== null) {
       url.searchParams.set("fig", desiredFig);
     } else {
@@ -283,8 +287,6 @@ export function ImageLightbox({ contentRef }: Props) {
     window.history.replaceState(null, "", url.toString());
   }, [index]);
 
-  // On first render with a non-empty image list, honour ?fig=N in the URL.
-  const didInitialURLCheckRef = useRef(false);
   useEffect(() => {
     if (didInitialURLCheckRef.current) return;
     if (count === 0) return;
