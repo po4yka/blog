@@ -154,6 +154,59 @@ describe("GET /api/github/latest-release", () => {
     expect(data.tagName).toBe("v1.0.0");
   });
 
+  it("preserves repo priority when multiple release fetches succeed", async () => {
+    mockFetch.mockImplementation((input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url.includes("/users/")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [{ name: "my-app" }, { name: "my-lib" }],
+        });
+      }
+
+      if (url.includes("/my-app/releases/latest")) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              ok: true,
+              status: 200,
+              json: async () => ({
+                tag_name: "v2.0.0",
+                name: "Higher Priority Release",
+                published_at: "2025-02-15T00:00:00Z",
+                html_url: "https://github.com/test/my-app/releases/v2.0.0",
+              }),
+            });
+          }, 20);
+        });
+      }
+
+      if (url.includes("/my-lib/releases/latest")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            tag_name: "v1.0.0",
+            name: "Lower Priority Release",
+            published_at: "2025-01-15T00:00:00Z",
+            html_url: "https://github.com/test/my-lib/releases/v1.0.0",
+          }),
+        });
+      }
+
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    const data = await response.json();
+
+    expect(data.repo).toBe("my-app");
+    expect(data.tagName).toBe("v2.0.0");
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+
   it("returns null when no repos have releases", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,

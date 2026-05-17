@@ -28,6 +28,10 @@ interface Figure {
   naturalHeight: number;
 }
 
+interface IndexedFigure extends Figure {
+  img: HTMLImageElement;
+}
+
 const MOBILE_QUERY = "(max-width: 640px)";
 
 function getSystemPrefersDark(): boolean {
@@ -93,6 +97,43 @@ function extractSources(img: HTMLImageElement): {
   return { sources, fallbackSrc };
 }
 
+function readFigure(img: HTMLImageElement, root: HTMLDivElement): IndexedFigure {
+  const { sources, fallbackSrc } = extractSources(img);
+  const picture = img.closest("picture");
+  const alt = img.alt ?? "";
+
+  // Prefer <figcaption> inside the enclosing <figure> (the BlogFigure
+  // component emits this). Fall back to the sibling caption paragraph
+  // pattern (`*Figure N. ...*` — raw-<picture> posts), then to alt.
+  let caption = alt;
+  const figure = img.closest("figure");
+  const figcaption = figure?.querySelector("figcaption");
+  const captionFromFigure = figcaption?.textContent?.trim();
+  if (captionFromFigure && captionFromFigure.length > 0) {
+    caption = captionFromFigure;
+  } else if (picture) {
+    let block: Element = picture;
+    while (block.parentElement && block.parentElement !== root) {
+      block = block.parentElement;
+    }
+    const sibling = block.nextElementSibling;
+    if (sibling instanceof HTMLElement && sibling.tagName === "P") {
+      const text = sibling.textContent?.trim() ?? "";
+      if (text.length > 0) caption = text;
+    }
+  }
+
+  return {
+    img,
+    sources,
+    fallbackSrc,
+    alt,
+    caption,
+    naturalWidth: img.naturalWidth || 0,
+    naturalHeight: img.naturalHeight || 0,
+  };
+}
+
 export function ImageLightbox({ contentRef }: Props) {
   const { t } = useLocale();
   const { reduceMotion, theme, resolvedTheme } = useSettings();
@@ -115,8 +156,8 @@ export function ImageLightbox({ contentRef }: Props) {
 
   const effectiveDark = theme === "system" ? systemDark : resolvedTheme === "dark";
 
-  const [imgs, setImgs] = useState<HTMLImageElement[]>([]);
-  const count = imgs.length;
+  const [figures, setFigures] = useState<IndexedFigure[]>([]);
+  const count = figures.length;
   const triggerRef = useRef<HTMLImageElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const panStateRef = useRef<{
@@ -133,8 +174,8 @@ export function ImageLightbox({ contentRef }: Props) {
   const [figure, setFigure] = useState<Figure | null>(null);
 
   const thumbSrcs = useMemo(
-    () => imgs.map((img) => pickVariant(extractSources(img), effectiveDark, isMobile)),
-    [imgs, effectiveDark, isMobile],
+    () => figures.map((item) => pickVariant(item, effectiveDark, isMobile)),
+    [figures, effectiveDark, isMobile],
   );
 
   useEffect(() => {
@@ -151,7 +192,7 @@ export function ImageLightbox({ contentRef }: Props) {
         img.setAttribute("aria-label", img.alt ? `${openLabel}: ${img.alt}` : openLabel);
       }
     });
-    setImgs(list);
+    setFigures(list.map((img) => readFigure(img, root)));
 
     return () => {
       list.forEach((img) => {
@@ -164,48 +205,17 @@ export function ImageLightbox({ contentRef }: Props) {
   }, [contentRef, t]);
 
   const openAt = useCallback((i: number) => {
-    const img = imgs[i];
-    if (!img) return;
-    triggerRef.current = img;
-    const { sources, fallbackSrc } = extractSources(img);
-    const picture = img.closest("picture");
-    const alt = img.alt ?? "";
-
-    // Prefer <figcaption> inside the enclosing <figure> (the BlogFigure
-    // component emits this). Fall back to the sibling caption paragraph
-    // pattern (`*Figure N. ...*` — raw-<picture> posts), then to alt.
-    let caption = alt;
-    const figure = img.closest("figure");
-    const figcaption = figure?.querySelector("figcaption");
-    const captionFromFigure = figcaption?.textContent?.trim();
-    if (captionFromFigure && captionFromFigure.length > 0) {
-      caption = captionFromFigure;
-    } else {
-      const root = contentRef.current;
-      if (picture && root) {
-        let block: Element = picture;
-        while (block.parentElement && block.parentElement !== root) {
-          block = block.parentElement;
-        }
-        const sibling = block.nextElementSibling;
-        if (sibling instanceof HTMLElement && sibling.tagName === "P") {
-          const text = sibling.textContent?.trim() ?? "";
-          if (text.length > 0) caption = text;
-        }
-      }
-    }
-
+    const nextFigure = figures[i];
+    if (!nextFigure) return;
+    triggerRef.current = nextFigure.img;
     setFigure({
-      sources,
-      fallbackSrc,
-      alt,
-      caption,
-      naturalWidth: img.naturalWidth || 0,
-      naturalHeight: img.naturalHeight || 0,
+      ...nextFigure,
+      naturalWidth: nextFigure.img.naturalWidth || nextFigure.naturalWidth,
+      naturalHeight: nextFigure.img.naturalHeight || nextFigure.naturalHeight,
     });
     setIndex(i);
     setNaturalSize(false);
-  }, [contentRef, imgs]);
+  }, [figures]);
 
   useEffect(() => {
     const root = contentRef.current;
@@ -302,9 +312,9 @@ export function ImageLightbox({ contentRef }: Props) {
     neighbourIndexes.delete(index);
     const preloaders: HTMLImageElement[] = [];
     for (const i of neighbourIndexes) {
-      const img = imgs[i];
-      if (!img) continue;
-      const src = pickVariant(extractSources(img), effectiveDark, isMobile);
+      const nextFigure = figures[i];
+      if (!nextFigure) continue;
+      const src = pickVariant(nextFigure, effectiveDark, isMobile);
       if (!src) continue;
       const preloader = new Image();
       preloader.decoding = "async";
@@ -316,7 +326,7 @@ export function ImageLightbox({ contentRef }: Props) {
       // just release our references.
       preloaders.length = 0;
     };
-  }, [index, count, effectiveDark, isMobile, imgs]);
+  }, [index, count, effectiveDark, isMobile, figures]);
 
   const onOpenChange = useCallback((open: boolean) => {
     if (!open) {

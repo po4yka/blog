@@ -8,6 +8,17 @@ function setupConsoleCapture(page: import("@playwright/test").Page) {
   return errors;
 }
 
+function expectNoRelevantConsoleErrors(errors: string[]): void {
+  const nonCspErrors = errors.join("\n").replace(/^.*Content Security Policy.*$/gim, "").trim();
+  expect(nonCspErrors).toBe("");
+}
+
+function expectNoHydrationErrors(errors: string[]): void {
+  expect(errors.join("\n").toLowerCase()).not.toMatch(
+    /hydration|did not match|text content mismatch/,
+  );
+}
+
 test.describe("React island hydration", () => {
   test("homepage loads without console errors", async ({ page }) => {
     const errors = setupConsoleCapture(page);
@@ -16,11 +27,7 @@ test.describe("React island hydration", () => {
     // Wait for page to fully settle
     await page.waitForLoadState("networkidle");
 
-    // Filter out CSP violations from analytics scripts (not hydration issues)
-    const relevant = errors.filter(
-      (e) => !e.includes("Content Security Policy"),
-    );
-    expect(relevant).toHaveLength(0);
+    expectNoRelevantConsoleErrors(errors);
   });
 
   test("no hydration mismatch errors on homepage", async ({ page }) => {
@@ -29,13 +36,7 @@ test.describe("React island hydration", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const hydrationErrors = errors.filter(
-      (e) =>
-        e.toLowerCase().includes("hydration") ||
-        e.toLowerCase().includes("did not match") ||
-        e.toLowerCase().includes("text content mismatch"),
-    );
-    expect(hydrationErrors).toHaveLength(0);
+    expectNoHydrationErrors(errors);
   });
 
   test("blog list island becomes interactive", async ({ page }) => {
@@ -50,13 +51,7 @@ test.describe("React island hydration", () => {
     // Clicking "All" should work without errors (verifies island hydration)
     await allBtn.click();
 
-    // No hydration errors during interaction
-    const hydrationErrors = errors.filter(
-      (e) =>
-        e.toLowerCase().includes("hydration") ||
-        e.toLowerCase().includes("did not match"),
-    );
-    expect(hydrationErrors).toHaveLength(0);
+    expectNoHydrationErrors(errors);
   });
 
   test("settings island becomes interactive", async ({ page }) => {
@@ -73,13 +68,7 @@ test.describe("React island hydration", () => {
     // Verify it responded -- html should have "light" class
     await expect(page.locator("html")).toHaveClass(/\blight\b/);
 
-    // No hydration errors during interaction
-    const hydrationErrors = errors.filter(
-      (e) =>
-        e.toLowerCase().includes("hydration") ||
-        e.toLowerCase().includes("did not match"),
-    );
-    expect(hydrationErrors).toHaveLength(0);
+    expectNoHydrationErrors(errors);
   });
 
 });

@@ -23,26 +23,36 @@ const MAX_REPOS_TO_CHECK = 5;
 async function findLatestRelease(
   repos: GitHubRepo[],
 ): Promise<GitHubLatestRelease | null> {
-  for (const repo of repos.slice(0, MAX_REPOS_TO_CHECK)) {
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/releases/latest`,
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          "User-Agent": `${GITHUB_USERNAME}-blog`,
+  const releaseResults = await Promise.allSettled(
+    repos.slice(0, MAX_REPOS_TO_CHECK).map(async (repo) => {
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/releases/latest`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "User-Agent": `${GITHUB_USERNAME}-blog`,
+          },
         },
-      },
-    );
+      );
 
-    if (res.status === 200) {
-      const release = (await res.json()) as GitHubRelease;
-      return {
-        repo: repo.name,
-        tagName: release.tag_name,
-        name: release.name,
-        publishedAt: release.published_at,
-        url: release.html_url,
-      };
+      if (res.status === 200) {
+        const release = (await res.json()) as GitHubRelease;
+        return {
+          repo: repo.name,
+          tagName: release.tag_name,
+          name: release.name,
+          publishedAt: release.published_at,
+          url: release.html_url,
+        };
+      }
+
+      return null;
+    }),
+  );
+
+  for (const result of releaseResults) {
+    if (result.status === "fulfilled" && result.value) {
+      return result.value;
     }
   }
 

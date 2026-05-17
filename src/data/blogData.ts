@@ -18,8 +18,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
     category: "Architecture",
     featured: true,
-    content: `import BlogFigure from "../../../components/BlogFigure.astro";
-import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-think/_figures";
+    content: `import BlogFigure from "../../../components/BlogFigure.astro"; import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-think/_figures";
 
 ## 1. RAG breaks earlier than people think
 
@@ -196,8 +195,7 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
     category: "Architecture",
     featured: true,
-    content: `import BlogFigure from "../../../components/BlogFigure.astro";
-import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-think/_figures";
+    content: `import BlogFigure from "../../../components/BlogFigure.astro"; import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-think/_figures";
 
 ## 1. RAG ломается раньше, чем кажется
 

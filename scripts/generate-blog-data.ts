@@ -104,63 +104,67 @@ interface BlogEntry {
   isoDate: string;
   isoDateModified: string;
   wordCount: number;
+  sortKey: number;
+}
+
+function readEntry(filePath: string, slug: string, lang: string): BlogEntry {
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { data, content } = matter(raw);
+  const fm = data as FrontMatter;
+  const body = decodeHtmlEntities(content.trim());
+  const isoDate = toIsoDateString(fm.publishedAt, fm.date);
+  const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
+  return {
+    slug,
+    lang,
+    frontmatter: fm,
+    content: body,
+    isoDate,
+    isoDateModified,
+    wordCount: countWords(body),
+    sortKey: parseDateForSort(fm.date, filePath),
+  };
+}
+
+function listMdxFiles(dir: string): string[] {
+  const files: string[] = [];
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+  for (const item of items) {
+    if (item.isFile() && item.name.endsWith(".mdx")) files.push(item.name);
+  }
+  files.sort();
+  return files;
+}
+
+function listBlogLangDirs(): string[] {
+  const dirs: string[] = [];
+  const items = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+  for (const item of items) {
+    if (item.isDirectory() && (item.name === "en" || item.name === "ru")) dirs.push(item.name);
+  }
+  dirs.sort();
+  return dirs;
+}
+
+function appendEntriesForDir(entries: BlogEntry[], dir: string, lang: string): void {
+  const files = listMdxFiles(dir);
+  for (const file of files) {
+    const slug = file.replace(/\.mdx$/, "");
+    entries.push(readEntry(path.join(dir, file), slug, lang));
+  }
 }
 
 function readBlogPosts(): BlogEntry[] {
   const entries: BlogEntry[] = [];
 
-  // Read from lang subdirectories (en/, ru/) or root
-  const topItems = fs.readdirSync(BLOG_DIR);
-  const langDirs = topItems.filter((d) =>
-    fs.statSync(path.join(BLOG_DIR, d)).isDirectory() && (d === "en" || d === "ru"),
-  );
-  // Also handle any root-level MDX files (backward compat)
-  const rootFiles = topItems.filter((f) => f.endsWith(".mdx"));
+  appendEntriesForDir(entries, BLOG_DIR, "en");
 
-  for (const file of rootFiles) {
-    const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf-8");
-    const { data, content } = matter(raw);
-    const fm = data as FrontMatter;
-    const slug = file.replace(/\.mdx$/, "");
-    const body = decodeHtmlEntities(content.trim());
-    const isoDate = toIsoDateString(fm.publishedAt, fm.date);
-    const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
-    entries.push({
-      slug,
-      lang: "en",
-      frontmatter: fm,
-      content: body,
-      isoDate,
-      isoDateModified,
-      wordCount: countWords(body),
-    });
-  }
-
+  const langDirs = listBlogLangDirs();
   for (const lang of langDirs) {
-    const langPath = path.join(BLOG_DIR, lang);
-    const files = fs.readdirSync(langPath).filter((f) => f.endsWith(".mdx")).sort();
-    for (const file of files) {
-      const raw = fs.readFileSync(path.join(langPath, file), "utf-8");
-      const { data, content } = matter(raw);
-      const fm = data as FrontMatter;
-      const slug = file.replace(/\.mdx$/, "");
-      const body = decodeHtmlEntities(content.trim());
-      const isoDate = toIsoDateString(fm.publishedAt, fm.date);
-      const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
-      entries.push({
-        slug,
-        lang,
-        frontmatter: fm,
-        content: body,
-        isoDate,
-        isoDateModified,
-        wordCount: countWords(body),
-      });
-    }
+    appendEntriesForDir(entries, path.join(BLOG_DIR, lang), lang);
   }
 
-  // Sort by date descending
-  entries.sort((a, b) => parseDateForSort(b.frontmatter.date) - parseDateForSort(a.frontmatter.date));
+  entries.sort((a, b) => b.sortKey - a.sortKey);
 
   return entries;
 }

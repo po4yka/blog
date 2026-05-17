@@ -47,13 +47,17 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     }
   };
 
-  const filtered = posts.filter((p) => {
-    if (activeCategory !== "All" && p.category !== activeCategory) return false;
-    if (activeTag && !p.tags.includes(activeTag)) return false;
-    return true;
-  });
+  const filtered = useMemo(
+    () =>
+      posts.filter((p) => {
+        if (activeCategory !== "All" && p.category !== activeCategory) return false;
+        if (activeTag && !p.tags.includes(activeTag)) return false;
+        return true;
+      }),
+    [activeCategory, activeTag, posts],
+  );
 
-  const featured = posts.find((p) => p.featured);
+  const featured = useMemo(() => posts.find((p) => p.featured), [posts]);
 
   return (
     <ErrorBoundary>
@@ -230,7 +234,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
     return { tagCount: allTags.size, tags: [...allTags], catCounts };
   }, [posts]);
 
-  const realCategories = categories.filter((c) => c !== "All");
+  const realCategories = useMemo(() => categories.filter((c) => c !== "All"), [categories]);
 
   return (
     <motion.div

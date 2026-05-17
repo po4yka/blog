@@ -41,6 +41,12 @@ function stringifyStringArray(arr: string[]): string {
   return `[${arr.map((s) => `"${escapeDoubleQuoted(s)}"`).join(", ")}]`;
 }
 
+function appendStringArrayBlock(lines: string[], label: string, values: string[]): void {
+  lines.push(`${indent(2)}${label}: [`);
+  lines.push(...values.map((value) => `${indent(3)}"${escapeDoubleQuoted(value)}",`));
+  lines.push(`${indent(2)}],`);
+}
+
 function generateRoleEntry(r: RoleJSON): string {
   const lines: string[] = [];
   lines.push(`${indent(1)}{`);
@@ -54,11 +60,7 @@ function generateRoleEntry(r: RoleJSON): string {
     lines.push(`${indent(2)}tags: ${stringifyStringArray(r.tags)},`);
   }
   if (r.highlights !== undefined) {
-    lines.push(`${indent(2)}highlights: [`);
-    for (const h of r.highlights) {
-      lines.push(`${indent(3)}"${escapeDoubleQuoted(h)}",`);
-    }
-    lines.push(`${indent(2)}],`);
+    appendStringArrayBlock(lines, "highlights", r.highlights);
   }
   if (r.location !== undefined) {
     lines.push(`${indent(2)}location: "${escapeDoubleQuoted(r.location)}",`);
