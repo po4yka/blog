@@ -1,7 +1,4 @@
 export { BlogStatsPanel } from "./BlogStatsPanel";
-export { ActivitySparkline } from "./ActivitySparkline";
-export { LatestReleasePanel } from "./LatestReleasePanel";
-export { VisitorContext } from "./VisitorContext";
 export { BuildStats } from "./BuildStats";
 export { LatestPostPanel } from "./LatestPostPanel";
 export { OpenSourcePanel } from "./OpenSourcePanel";

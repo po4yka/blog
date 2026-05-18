@@ -7,13 +7,13 @@ import { useLocale } from "@/stores/settingsStore";
 
 // Build-time-static panels — imported eagerly so Astro SSR can paint their
 // content into the initial HTML response (no FOUC, no lazy fallback).
-import { BuildStats } from "./Decorations";
-import { LatestPostPanel } from "./Decorations";
+import { BuildStats } from "./Decorations/BuildStats";
+import { LatestPostPanel } from "./Decorations/LatestPostPanel";
 
 // Async-data panels — keep lazy so their code only loads when Hero hydrates.
-const VisitorContext = lazy(() => import("./Decorations").then(m => ({ default: m.VisitorContext })));
-const ActivitySparkline = lazy(() => import("./Decorations").then(m => ({ default: m.ActivitySparkline })));
-const LatestReleasePanel = lazy(() => import("./Decorations").then(m => ({ default: m.LatestReleasePanel })));
+const VisitorContext = lazy(() => import("./Decorations/VisitorContext").then(m => ({ default: m.VisitorContext })));
+const ActivitySparkline = lazy(() => import("./Decorations/ActivitySparkline").then(m => ({ default: m.ActivitySparkline })));
+const LatestReleasePanel = lazy(() => import("./Decorations/LatestReleasePanel").then(m => ({ default: m.LatestReleasePanel })));
 
 export function Hero() {
   const { t } = useLocale();

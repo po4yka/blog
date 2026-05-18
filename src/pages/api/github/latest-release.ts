@@ -50,13 +50,19 @@ async function findLatestRelease(
     }),
   );
 
-  for (const result of releaseResults) {
-    if (result.status === "fulfilled" && result.value) {
+  return releaseResults.reduce<GitHubLatestRelease | null>((latest, result) => {
+    if (result.status !== "fulfilled" || !result.value) {
+      return latest;
+    }
+
+    if (!latest) {
       return result.value;
     }
-  }
 
-  return null;
+    return Date.parse(result.value.publishedAt) > Date.parse(latest.publishedAt)
+      ? result.value
+      : latest;
+  }, null);
 }
 
 export const GET: APIRoute = async () => {

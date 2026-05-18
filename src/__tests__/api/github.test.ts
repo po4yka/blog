@@ -154,7 +154,7 @@ describe("GET /api/github/latest-release", () => {
     expect(data.tagName).toBe("v1.0.0");
   });
 
-  it("preserves repo priority when multiple release fetches succeed", async () => {
+  it("returns newest published release when multiple release fetches succeed", async () => {
     mockFetch.mockImplementation((input: RequestInfo | URL) => {
       const url = String(input);
 
@@ -172,10 +172,10 @@ describe("GET /api/github/latest-release", () => {
               ok: true,
               status: 200,
               json: async () => ({
-                tag_name: "v2.0.0",
-                name: "Higher Priority Release",
-                published_at: "2025-02-15T00:00:00Z",
-                html_url: "https://github.com/test/my-app/releases/v2.0.0",
+                tag_name: "v1.0.0",
+                name: "Older Release",
+                published_at: "2025-01-15T00:00:00Z",
+                html_url: "https://github.com/test/my-app/releases/v1.0.0",
               }),
             });
           }, 20);
@@ -187,10 +187,10 @@ describe("GET /api/github/latest-release", () => {
           ok: true,
           status: 200,
           json: async () => ({
-            tag_name: "v1.0.0",
-            name: "Lower Priority Release",
-            published_at: "2025-01-15T00:00:00Z",
-            html_url: "https://github.com/test/my-lib/releases/v1.0.0",
+            tag_name: "v2.0.0",
+            name: "Newer Release",
+            published_at: "2025-02-15T00:00:00Z",
+            html_url: "https://github.com/test/my-lib/releases/v2.0.0",
           }),
         });
       }
@@ -202,7 +202,7 @@ describe("GET /api/github/latest-release", () => {
     const response = await GET(ctx);
     const data = await response.json();
 
-    expect(data.repo).toBe("my-app");
+    expect(data.repo).toBe("my-lib");
     expect(data.tagName).toBe("v2.0.0");
     expect(mockFetch).toHaveBeenCalledTimes(3);
   });
