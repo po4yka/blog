@@ -63,7 +63,8 @@
     "vite": "$vite",
     "tmp": ">=0.2.4",
     "defu": ">=6.1.5",
-    "basic-ftp": "6.0.1"
+    "basic-ftp": "6.0.1",
+    "ws": ">=8.20.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
