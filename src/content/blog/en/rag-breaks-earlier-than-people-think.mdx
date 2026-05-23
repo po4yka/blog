@@ -22,6 +22,7 @@ Weller et al. ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038), ICLR 2026) 
 The failures that follow cluster into three layers. Geometry (the ceiling above) is structural: no tuning moves it. Chunking and context utilisation are budget problems: careful preprocessing helps, but the budgets themselves are shrinking. Attention and hard negatives are generator failures: better prompts help, until the prompts stop mattering. Geometry can't be tuned away. The other two layers respond to engineering effort.
 
 <BlogFigure
+  eager={true}
   variants={figures["01-rag-failure-layers"].en}
   alt="Log-log chart plotting usable corpus size against embedding dimension. Weller et al. empirical fit (coral line) passes through two labeled anchor points: d=768 with n≈1.7M documents (open-weights default) and d=4096 with n≈250M (current frontier). Shaded unreachable region above the line. Formula at top: d ≥ log C(n,k) / log(1+1/γ). Benchmark strip reports LIMIT (50K docs, 1K queries) with E5-Mistral, GritLM, Qwen3 below 20% Recall@100 at d=4096 while BM25 hits 97.8% Recall@2; GTE-ModernColBERT (vector-per-token) recovers 54.8% on the same set."
   caption="Figure 1. Weller et al.'s empirical fit across seven single-vector retrievers. The two anchor points -- d=768 and d=4096 -- trace the usable-corpus frontier. Above the curve, some top-k rankings cannot be represented at that dimension; reranking and hybrid search do not move it."

@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { isHomePage = false, blogPost, slug, lang = "en" } = Astro.props;
+const { nonce } = Astro.locals;
 
 const SITE_URL = "https://po4yka.dev";
 
@@ -105,12 +106,14 @@ const blogPostingSchema = blogPost && blogPostUrl
 
 <script
   type="application/ld+json"
+  nonce={nonce}
   set:html={JSON.stringify(personSchema)}
 />
 {
   websiteSchema && (
     <script
       type="application/ld+json"
+      nonce={nonce}
       set:html={JSON.stringify(websiteSchema)}
     />
   )
@@ -119,6 +122,7 @@ const blogPostingSchema = blogPost && blogPostUrl
   blogPostingSchema && (
     <script
       type="application/ld+json"
+      nonce={nonce}
       set:html={JSON.stringify(blogPostingSchema)}
     />
   )

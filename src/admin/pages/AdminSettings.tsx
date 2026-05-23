@@ -156,7 +156,8 @@ export function AdminSettings() {
                 placeholder="hello@example.dev"
                 autoComplete="email"
                 inputMode="email"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                required
+                className="admin-input w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
               />
             </FieldBlock>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

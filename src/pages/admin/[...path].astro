@@ -13,6 +13,7 @@ import "@/styles/index.css";
 // here restores HMR / Fast Refresh on /admin/* in dev. In production the path
 // `/@react-refresh` does not exist, so the block is omitted entirely.
 const isDev = import.meta.env.DEV;
+const { nonce } = Astro.locals;
 const reactRefreshPreamble = `
 import RefreshRuntime from '/@react-refresh';
 RefreshRuntime.injectIntoGlobalHook(window);
@@ -31,9 +32,9 @@ window.__vite_plugin_react_preamble_installed__ = true;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Admin — po4yka.dev</title>
     {isDev && (
-      <script type="module" is:inline set:html={reactRefreshPreamble} />
+      <script type="module" is:inline nonce={nonce} set:html={reactRefreshPreamble} />
     )}
-    <script is:inline>
+    <script is:inline nonce={nonce}>
     (function() {
       try {
         var raw = localStorage.getItem('site_preferences');

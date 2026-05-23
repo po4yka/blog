@@ -1,8 +1,9 @@
 ---
 // Inline script that runs synchronously before paint to prevent FOUC.
 // Reads theme preference from localStorage and applies .dark/.light to <html>.
+const { nonce } = Astro.locals;
 ---
-<script is:inline>
+<script is:inline nonce={nonce}>
 (function() {
   try {
     var raw = localStorage.getItem('site_preferences');

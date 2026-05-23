@@ -98,7 +98,8 @@ export function AdminExperience() {
                     onChange={(e) => setEditing({ ...editing, title: e.target.value })}
                     placeholder="e.g. Senior Android Developer"
                     autoComplete="off"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
+                    required
+                    className="admin-input w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
@@ -109,7 +110,8 @@ export function AdminExperience() {
                     onChange={(e) => setEditing({ ...editing, company: e.target.value })}
                     placeholder="e.g. Tech Company"
                     autoComplete="off"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
+                    required
+                    className="admin-input w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>

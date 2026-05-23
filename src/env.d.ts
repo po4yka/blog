@@ -11,3 +11,10 @@ interface CloudflareEnv {
 declare module "cloudflare:workers" {
   const env: CloudflareEnv;
 }
+
+declare namespace App {
+  interface Locals {
+    runtime?: { ctx?: { waitUntil?: (p: Promise<unknown>) => void } };
+    nonce?: string;
+  }
+}

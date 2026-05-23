@@ -340,6 +340,20 @@ body, .bg-background, .bg-card, [class*="bg-"] {
   animation: form-flash 0.45s ease-out forwards;
 }
 
+/* Admin form fields — native :user-invalid for client-side validity styling.
+   :user-invalid only fires after the user has interacted with the field,
+   so empty required inputs don't flash red on page load.
+   [aria-invalid="true"] covers server-validated failures (wrong password,
+   network error) that React sets explicitly. */
+.admin-input:user-invalid,
+.admin-input[aria-invalid="true"] {
+  border-color: color-mix(in oklab, var(--destructive) 50%, transparent);
+}
+.admin-input:user-invalid:focus-visible,
+.admin-input[aria-invalid="true"]:focus-visible {
+  outline-color: var(--destructive);
+}
+
 /* Selection */
 ::selection {
   background: var(--selection-bg);

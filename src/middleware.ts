@@ -13,12 +13,41 @@ const UMAMI_WEBSITE_ID = "00b2d486-bc06-431f-b5cf-80dce36ab698";
 const BOT_UA =
   /bot|crawler|spider|crawling|facebookexternalhit|slackbot|linkedinbot|whatsapp|telegrambot|twitterbot|preview|prerender|headlesschrome|lighthouse/i;
 
-type RuntimeLocals = {
-  runtime?: { ctx?: { waitUntil?: (p: Promise<unknown>) => void } };
-};
-
 export const onRequest: MiddlewareHandler = async (context, next) => {
+  // Generate a per-request nonce, expose to Astro.locals so components
+  // can attach it to inline <script>/<style> tags, and surface it on the
+  // response Content-Security-Policy header.
+  const nonceBytes = new Uint8Array(16);
+  crypto.getRandomValues(nonceBytes);
+  const nonce = btoa(String.fromCharCode(...nonceBytes));
+  context.locals.nonce = nonce;
+
   const response = await next();
+
+  // Inject the per-request nonce into the enforced CSP. We replace the
+  // 'unsafe-inline' source-list entry under script-src with the nonce
+  // reference so inline <script nonce={...}> tags are allowed and any
+  // other inline content is blocked. Style-src keeps 'unsafe-inline'
+  // because Astro emits inline component styles we don't control yet.
+  // 'strict-dynamic' ensures scripts loaded by a nonce-bearing inline
+  // script inherit trust, which keeps Astro's hydration module scripts
+  // working without needing individual nonces.
+  const existing = response.headers.get("Content-Security-Policy");
+  if (existing) {
+    const tightened = existing
+      .replace(/script-src 'self' 'unsafe-inline'/, `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`)
+      .replace(/style-src 'self' 'unsafe-inline'/, `style-src 'self' 'unsafe-inline' 'nonce-${nonce}'`);
+    response.headers.set("Content-Security-Policy", tightened);
+  }
+  // Update the Report-Only too so the shadow signal stays consistent.
+  const reportOnly = response.headers.get("Content-Security-Policy-Report-Only");
+  if (reportOnly) {
+    const tightenedRO = reportOnly.replace(
+      /script-src 'self'(?!\s+'unsafe-inline')/,
+      `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    );
+    response.headers.set("Content-Security-Policy-Report-Only", tightenedRO);
+  }
 
   if (!import.meta.env.PROD) return response;
 
@@ -63,7 +92,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     }),
   }).catch(() => { /* fire-and-forget */ });
 
-  const runtime = (context.locals as RuntimeLocals).runtime;
+  const runtime = context.locals.runtime;
   runtime?.ctx?.waitUntil?.(beacon);
 
   return response;
