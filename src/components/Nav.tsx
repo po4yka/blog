@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
-import { useSettings, useLocale } from "@/stores/settingsStore";
+import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
 import { MotionProvider } from "./MotionProvider";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { blogUrl, type Locale, type TranslationKey } from "@/lib/i18n";
@@ -44,15 +44,6 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     return () => document.removeEventListener("astro:after-swap", onSwap);
   }, []);
 
-  // Scroll progress — 24 discrete segments, lit in sequence as page scrolls.
-  // Segmented readout reads as LED meter, not smooth loading bar.
-  const { scrollYProgress } = useScroll();
-  const [litSegments, setLitSegments] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = Math.min(24, Math.max(0, Math.floor(v * 24)));
-    setLitSegments((prev) => (prev === next ? prev : next));
-  });
-
   const onScroll = useThrottledCallback(
     () => setScrolled(window.scrollY > 20),
     100
@@ -68,19 +59,22 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     return currentPathname.startsWith(link.href);
   };
 
-  const switchThemeLabel = `${t("nav.switchTheme")} (${theme})`;
+  const nextThemeFor = (m: ThemeMode): ThemeMode =>
+    m === "system" ? "dark" : m === "dark" ? "light" : "system";
+  const switchThemeLabel = `${t("nav.switchTheme")} (${nextThemeFor(theme)})`;
   const themeLabel = theme;
 
   const cycleTheme = (e: React.MouseEvent) => {
-    const newTheme = theme === "dark" ? "light" : "dark";
+    const newTheme: ThemeMode =
+      theme === "system" ? "dark" :
+      theme === "dark"   ? "light" :
+                            "system";
     const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
     if (!reduceMotion && doc.startViewTransition) {
       const { clientX: x, clientY: y } = e;
       document.documentElement.style.setProperty("--tx", `${x}px`);
       document.documentElement.style.setProperty("--ty", `${y}px`);
-      doc.startViewTransition(() => {
-        setTheme(newTheme);
-      });
+      doc.startViewTransition(() => { setTheme(newTheme); });
     } else {
       setTheme(newTheme);
     }
@@ -91,6 +85,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
   return (
     <MotionProvider>
     <motion.nav
+      aria-label={t("nav.primary")}
       className={`sticky top-0 z-50 font-mono transition-all duration-300 ${
         scrolled ? "backdrop-blur-sm" : ""
       }`}
@@ -106,20 +101,20 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Scroll progress — 24 discrete segments, lit sequentially. LED-meter readout. */}
+      {/* Scroll progress — 24 discrete segments, lit sequentially. CSS scroll-driven, no JS. */}
       {mounted && !reduceMotion && (
         <div
           aria-hidden="true"
-          className="absolute top-0 left-0 right-0 flex gap-[1px] pointer-events-none"
+          className="nav-led-meter absolute top-0 left-0 right-0 flex gap-[1px] pointer-events-none"
           style={{ height: "1px", zIndex: 10 }}
         >
           {Array.from({ length: 24 }, (_, i) => (
             <span
               key={i}
-              className="flex-1"
+              className="flex-1 nav-led-seg"
               style={{
                 background: "var(--foreground)",
-                opacity: i < litSegments ? 0.55 : 0.06,
+                ['--i' as string]: i,
               }}
             />
           ))}
@@ -182,10 +177,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             <button
               onClick={cycleTheme}
               className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
-              title={switchThemeLabel}
               aria-label={switchThemeLabel}
               data-umami-event="theme-toggle"
-              data-umami-event-next={theme === "dark" ? "light" : "dark"}
+              data-umami-event-next={nextThemeFor(theme)}
             >
               <ThemeIcon size={13} strokeWidth={1.8} />
               <span className="hidden lg:inline">{themeLabel}</span>
@@ -211,7 +205,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               className="flex items-center justify-center text-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
               aria-label={switchThemeLabel}
               data-umami-event="theme-toggle"
-              data-umami-event-next={theme === "dark" ? "light" : "dark"}
+              data-umami-event-next={nextThemeFor(theme)}
             >
               <ThemeIcon size={18} strokeWidth={1.8} />
             </button>

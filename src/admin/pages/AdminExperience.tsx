@@ -97,7 +97,8 @@ export function AdminExperience() {
                     value={editing.title}
                     onChange={(e) => setEditing({ ...editing, title: e.target.value })}
                     placeholder="e.g. Senior Android Developer"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
+                    autoComplete="off"
+                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
@@ -107,7 +108,8 @@ export function AdminExperience() {
                     value={editing.company}
                     onChange={(e) => setEditing({ ...editing, company: e.target.value })}
                     placeholder="e.g. Tech Company"
-                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
+                    autoComplete="off"
+                    className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
@@ -119,7 +121,8 @@ export function AdminExperience() {
                   value={editing.period}
                   onChange={(e) => setEditing({ ...editing, period: e.target.value })}
                   placeholder="2021 — 2023"
-                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </Field>
@@ -130,7 +133,8 @@ export function AdminExperience() {
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   placeholder="Brief description of the role"
                   rows={2}
-                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-border transition-colors resize-y"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors resize-y"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
                 />
               </Field>

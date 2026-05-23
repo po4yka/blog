@@ -101,7 +101,8 @@ export function TagsInput({ id, tags, onChange, placeholder, label = "Add tag" }
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(); } }}
         placeholder={tags.length === 0 ? placeholder : ""}
         aria-label={id ? undefined : label}
-        className="flex-1 min-w-[80px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground/50 font-mono"
+        className="flex-1 min-w-[80px] bg-transparent focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none text-foreground placeholder:text-muted-foreground/50 font-mono"
+        autoComplete="off"
         style={{ fontSize: "0.75rem", fontWeight: 400, lineHeight: 1.5 }}
       />
     </div>
@@ -140,7 +141,8 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
             onChange={(e) => updateLink(i, "href", e.target.value)}
             placeholder="URL"
             aria-label={`Link ${i + 1} URL`}
-            className="w-full px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 flex-1"
+            autoComplete="off"
+            className="w-full px-3 py-2 bg-card border border-border text-foreground focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 flex-1"
             style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
           />
           <button

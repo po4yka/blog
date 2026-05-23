@@ -25,6 +25,7 @@ export function blogUrl(locale: Locale, slug?: string): string {
 
 const en = {
   // nav
+  "nav.primary": "Primary",
   "nav.home": "home",
   "nav.projects": "projects",
   "nav.experience": "experience",
@@ -202,6 +203,7 @@ type TranslationKeys = Record<keyof typeof en, string>;
 
 const ru: TranslationKeys = {
   // nav
+  "nav.primary": "\u041e\u0441\u043d\u043e\u0432\u043d\u0430\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f",
   "nav.home": "\u0433\u043b\u0430\u0432\u043d\u0430\u044f",
   "nav.projects": "\u043f\u0440\u043e\u0435\u043a\u0442\u044b",
   "nav.experience": "\u043e\u043f\u044b\u0442",

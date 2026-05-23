@@ -14,6 +14,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
+  color-scheme: light;
   --font-size: 15px;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -28,6 +29,7 @@
 
 /* ─── DARK THEME — graphite + eggshell ────────────────────────────── */
 .dark {
+  color-scheme: dark;
   --background: #0b0b0c;
   --foreground: #e9e8e4;
   --card: #141416;
@@ -76,6 +78,7 @@
 
 /* ─── LIGHT THEME — paper + ink (default) ─────────────────────────── */
 .light, :root:not(.dark) {
+  color-scheme: light;
   --background: #f5f3ee;
   --foreground: #101012;
   --card: #fbfaf6;
@@ -385,14 +388,17 @@ body, .bg-background, .bg-card, [class*="bg-"] {
 }
 
 /* Reduced motion */
+@property --animation-reduced {
+  syntax: "*";
+  inherits: false;
+  initial-value: none;
+}
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation: var(--animation-reduced) !important;
   }
 }
 
@@ -405,4 +411,54 @@ body, .bg-background, .bg-card, [class*="bg-"] {
 [data-slot="dialog-overlay"],
 [data-slot="dialog-content"] {
   overscroll-behavior: contain;
+}
+
+/* Reading progress bar — CSS scroll-driven, no JS scroll listener.
+   `animation-timeline: scroll(root)` ties scaleX progression directly to
+   document scroll, runs on compositor. Falls back to a static 0% bar in
+   browsers without scroll-timeline (Firefox <127 / Safari pre-2026) — that
+   degrades gracefully because the fill is invisible at scaleX(0). */
+@keyframes reading-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.reading-progress-fill {
+  background: var(--foreground);
+  opacity: 0.4;
+  transform: scaleX(0);
+  animation: reading-progress linear both;
+  animation-timeline: scroll(root);
+  --animation-reduced: reading-progress linear both;
+  animation-range: 0% 100%;
+}
+
+/* Nav scroll-progress LED meter — 24 segments lit in sequence based on
+   document scroll position. CSS scroll-driven, no JS. Each segment runs
+   its own keyframe with a stagger threshold derived from --i / 24. */
+.nav-led-seg {
+  opacity: 0.06;
+  animation: nav-led-light steps(1, end) both;
+  animation-timeline: scroll(root);
+  --animation-reduced: nav-led-light steps(1, end) both;
+  /* Light the segment when scroll progress reaches (i + 1) / 24 of the page. */
+  animation-range: calc(var(--i) / 24 * 100%) calc((var(--i) + 1) / 24 * 100%);
+}
+@keyframes nav-led-light {
+  from { opacity: 0.06; }
+  to   { opacity: 0.55; }
+}
+
+/* Off-screen blog prose sections skip layout/paint until they approach the
+   viewport. `auto` keeps content in the a11y tree (find-in-page still works,
+   screen-readers still see headings). Intrinsic-size estimate prevents
+   scrollbar jumping. Apply to <h2>-rooted sections inside MDX prose only —
+   short content like h3 sub-sections and inline code blocks don't earn the
+   tradeoff. */
+.prose-blog > h2 {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 1lh;
+}
+.prose-blog > pre {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 12lh;
 }

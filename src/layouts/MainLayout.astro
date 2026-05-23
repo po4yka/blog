@@ -37,6 +37,7 @@ const { pathname } = Astro.url;
       <Nav client:load pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
       <main
         id="main-content"
+        tabindex="-1"
         class="max-w-[1160px] mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
         transition:animate={fade({ duration: '0.2s' })}
       >

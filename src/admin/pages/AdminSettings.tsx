@@ -97,7 +97,8 @@ export function AdminSettings() {
                   type="text"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
                 />
               </FieldBlock>
               <FieldBlock label="Handle">
@@ -105,7 +106,8 @@ export function AdminSettings() {
                   type="text"
                   value={form.handle}
                   onChange={(e) => updateField("handle", e.target.value)}
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
               </FieldBlock>
             </div>
@@ -115,7 +117,8 @@ export function AdminSettings() {
                 type="text"
                 value={form.role}
                 onChange={(e) => updateField("role", e.target.value)}
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
+                autoComplete="off"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
               />
             </FieldBlock>
 
@@ -124,7 +127,8 @@ export function AdminSettings() {
                 value={form.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 resize-y"
+                autoComplete="off"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 resize-y"
                 style={{ lineHeight: 1.6 }}
               />
             </FieldBlock>
@@ -140,7 +144,8 @@ export function AdminSettings() {
                 value={form.github}
                 onChange={(e) => updateField("github", e.target.value)}
                 placeholder="https://github.com/..."
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                autoComplete="off"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
               />
             </FieldBlock>
             <FieldBlock label="Email">
@@ -149,7 +154,9 @@ export function AdminSettings() {
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
                 placeholder="hello@example.dev"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                autoComplete="email"
+                inputMode="email"
+                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
               />
             </FieldBlock>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -159,7 +166,8 @@ export function AdminSettings() {
                   value={form.telegram}
                   onChange={(e) => updateField("telegram", e.target.value)}
                   placeholder="https://t.me/..."
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
               </FieldBlock>
               <FieldBlock label="LinkedIn">
@@ -168,7 +176,8 @@ export function AdminSettings() {
                   value={form.linkedin}
                   onChange={(e) => updateField("linkedin", e.target.value)}
                   placeholder="https://linkedin.com/in/..."
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  autoComplete="off"
+                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
                 />
               </FieldBlock>
             </div>
@@ -204,7 +213,8 @@ export function AdminSettings() {
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCategory(); } }}
               placeholder="New category"
               aria-label="New category"
-              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 flex-1"
+              autoComplete="off"
+              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 flex-1"
               style={{ maxWidth: "200px" }}
             />
             <button

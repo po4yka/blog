@@ -19,9 +19,13 @@ interface Props {
   variants: Variants;
   alt: string;
   caption?: string;
+  /** Mark the first figure in a post as the LCP candidate.
+   *  Outputs loading="eager" decoding="sync" fetchpriority="high".
+   *  Pass eager={true} on the first <BlogFigure> in each MDX post. */
+  eager?: boolean;
 }
 
-const { variants, alt, caption } = Astro.props;
+const { variants, alt, caption, eager = false } = Astro.props;
 
 const FORMATS = ["avif", "webp", "png"] as const;
 
@@ -89,8 +93,9 @@ const fallback = await getImage({ src: variants.desktopLight, format: "png" });
       alt={alt}
       width={fallback.attributes.width}
       height={fallback.attributes.height}
-      loading="lazy"
-      decoding="async"
+      loading={eager ? "eager" : "lazy"}
+      decoding={eager ? "sync" : "async"}
+      {...(eager ? { fetchpriority: "high" } : {})}
     />
   </picture>
   <script is:inline>

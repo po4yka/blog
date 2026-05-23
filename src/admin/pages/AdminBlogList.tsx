@@ -70,12 +70,12 @@ export function AdminBlogList() {
       >
         <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/30" />
         <input
-          type="text"
+          type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts..."
           aria-label="Search posts"
-          className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
+          className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
           style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
         />
       </motion.div>

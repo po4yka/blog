@@ -149,7 +149,8 @@ export function AdminBlogEdit() {
                 value={form.title}
                 onChange={(e) => updateField("title", e.target.value)}
                 placeholder="Post title"
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
+                autoComplete="off"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
                 style={{ fontSize: "0.875rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
@@ -160,7 +161,8 @@ export function AdminBlogEdit() {
                 value={form.slug}
                 onChange={(e) => updateField("slug", e.target.value.replace(/[^a-z0-9-]/g, ""))}
                 placeholder="post-slug"
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
+                autoComplete="off"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
@@ -172,7 +174,8 @@ export function AdminBlogEdit() {
                   value={form.date}
                   onChange={(e) => updateField("date", e.target.value)}
                   placeholder="Mar 2026"
-                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200"
+                  autoComplete="off"
+                  className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
                   style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </FieldBlock>
@@ -211,7 +214,8 @@ export function AdminBlogEdit() {
                 onChange={(e) => updateField("summary", e.target.value)}
                 placeholder="Brief description of the post"
                 rows={2}
-                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 outline-none focus:border-border transition-colors duration-200 resize-y"
+                autoComplete="off"
+                className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 resize-y"
                 style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
               />
             </FieldBlock>
@@ -233,7 +237,8 @@ export function AdminBlogEdit() {
                     onChange={(e) => updateField("content", e.target.value)}
                     placeholder="Write your post content here. Use ## for headings, - for lists, **bold** for emphasis..."
                     rows={18}
-                    className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 outline-none focus:border-border transition-colors duration-200 resize-y"
+                    autoComplete="off"
+                    className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/20 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 resize-y"
                     style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.7 }}
                   />
                   <div className="absolute bottom-2.5 right-3 flex items-center gap-3">

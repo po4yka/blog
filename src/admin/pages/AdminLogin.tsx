@@ -143,7 +143,8 @@ export function AdminLogin() {
                 onChange={(e) => { setPassword(e.target.value); setError(null); }}
                 placeholder="Enter admin password"
                 aria-describedby={error ? "login-error" : undefined}
-                className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 outline-none ${
+                autoComplete="current-password"
+                className={`w-full px-3.5 py-2.5 bg-card border transition-colors duration-200 text-foreground placeholder:text-muted-foreground/30 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none ${
                   error ? "border-destructive/50" : "border-border/60 focus:border-border"
                 }`}
                 style={{ fontSize: "0.875rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}

@@ -73,40 +73,18 @@ function formatIsoDate(iso: string): string {
 
 // --- Reading progress ---
 
+// CSS scroll-driven animation — zero JS, runs on the compositor.
+// Falls back to a static 0% bar in browsers without scroll-timeline
+// (Firefox <127 / Safari pre-2026) — invisible at scaleX(0), degrades gracefully.
+// aria-hidden: WAI-ARIA scroll-progress visual is decorative; AT users get
+// document position from the scroll bar already.
 function ReadingProgress() {
-  const [progress, setProgress] = useState(0);
-  const rafId = useRef<number | null>(null);
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (rafId.current !== null) return;
-      rafId.current = requestAnimationFrame(() => {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        setProgress(docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0);
-        rafId.current = null;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafId.current !== null) cancelAnimationFrame(rafId.current);
-    };
-  }, []);
-
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-transparent"
-      role="progressbar"
-      aria-valuenow={Math.round(progress)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label="Reading progress"
+      className="reading-progress-track fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none"
+      aria-hidden="true"
     >
-      <motion.div
-        className="h-full"
-        style={{ width: `${progress}%`, background: "var(--foreground)", opacity: 0.4 }}
-      />
+      <div className="reading-progress-fill h-full origin-left" />
     </div>
   );
 }
