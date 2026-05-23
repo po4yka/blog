@@ -5,6 +5,7 @@ import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
+import { useInView } from "@/hooks/useInView";
 
 import { ease, duration, easeStep8 } from "@/lib/motion";
 import { blogUrl, type Locale } from "@/lib/i18n";

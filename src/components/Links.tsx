@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Mail, Play, Apple, Linkedin, Github, Send } from "lucide-react";
+import { Mail, Play, Apple, Briefcase, FolderGit2, Send } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
 import { Cmd, Accent } from "./Terminal";
@@ -13,8 +13,8 @@ const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
   { Icon: Mail, label: "email", href: "mailto:hello@po4yka.dev" },
   { Icon: Play, label: "google play", href: undefined },
   { Icon: Apple, label: "app store", href: undefined },
-  { Icon: Linkedin, label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
-  { Icon: Github, label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
+  { Icon: Briefcase, label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
+  { Icon: FolderGit2, label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
   { Icon: Send, label: "telegram", href: "https://t.me/po4yka" },
 ];
 
