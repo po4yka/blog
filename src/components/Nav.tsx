@@ -92,7 +92,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     <MotionProvider>
     <motion.nav
       className={`sticky top-0 z-50 font-mono transition-all duration-300 ${
-        scrolled ? "backdrop-blur-xl" : ""
+        scrolled ? "backdrop-blur-sm" : ""
       }`}
       style={{
         background: scrolled
@@ -127,88 +127,104 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       )}
 
       <div className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
-        {/* Logo / prefix */}
-        <a
-          href="/"
-          className="flex items-center gap-2 text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0"
-        >
-          <span
-            className="inline-block w-[8px] h-[8px] rounded-[1px]"
-            style={{ backgroundColor: "var(--foreground)", opacity: 0.5 }}
-          />
-          po4yka
-        </a>
-
-        {/* Desktop tabs */}
-        <div className="hidden md:flex items-center gap-0.5">
-          {navLinks.map((link) => {
-            const active = isActive(link);
-            return (
-              <a
-                key={link.labelKey}
-                href={link.href}
-                className={`relative px-3 py-1.5 text-mono-sm transition-colors duration-200 group ${
-                  active
-                    ? "text-foreground font-medium border-b border-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t(link.labelKey)}
-              </a>
-            );
-          })}
-        </div>
-
-        {/* Desktop right: lang switch + theme toggle + status */}
-        <div className="hidden md:flex items-center gap-3">
-          <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
-
-          {/* Theme toggle */}
-          <button
-            onClick={cycleTheme}
-            className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
-            title={switchThemeLabel}
-            aria-label={switchThemeLabel}
-            data-umami-event="theme-toggle"
-            data-umami-event-next={theme === "dark" ? "light" : "dark"}
+        {/* Left group: wordmark + divider + desktop tabs */}
+        <div className="flex items-center gap-0 min-w-0 shrink">
+          {/* Logo / prefix */}
+          <a
+            href="/"
+            className="flex items-center gap-2 text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
           >
-            <ThemeIcon size={13} strokeWidth={1.8} />
-            <span className="hidden lg:inline">{themeLabel}</span>
-          </button>
-
-          {/* Online dot */}
-          <span className="flex items-center gap-1.5">
             <span
-              aria-hidden="true"
-              className="w-[5px] h-[5px]"
-              style={{ backgroundColor: "var(--foreground)", opacity: 0.5, borderRadius: 1 }}
+              className="inline-block w-[8px] h-[8px] rounded-[1px]"
+              style={{ backgroundColor: "var(--foreground)", opacity: 0.5 }}
             />
-            <span className="text-3xs text-muted-foreground">
-              {t("nav.online")}
-            </span>
-          </span>
+            po4yka
+          </a>
+
+          {/* Hairline divider between wordmark and tabs */}
+          <span aria-hidden="true" className="hidden md:inline-block w-px h-4 bg-rule mx-3" />
+
+          {/* Desktop tabs */}
+          <div className="hidden md:flex items-center gap-0.5">
+            {navLinks.map((link) => {
+              const active = isActive(link);
+              return (
+                <a
+                  key={link.labelKey}
+                  href={link.href}
+                  className={`relative px-3 py-1.5 text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
+                    active
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {active && (
+                    <span
+                      aria-hidden="true"
+                      className="inline-block w-1 h-1 bg-foreground mr-1.5 align-middle"
+                      style={{ borderRadius: 1 }}
+                    />
+                  )}
+                  {t(link.labelKey)}
+                </a>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Mobile: theme toggle + hamburger */}
-        <div className="md:hidden flex items-center gap-1">
-          <button
-            onClick={cycleTheme}
-            className="flex items-center justify-center text-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
-            aria-label={switchThemeLabel}
-            data-umami-event="theme-toggle"
-            data-umami-event-next={theme === "dark" ? "light" : "dark"}
-          >
-            <ThemeIcon size={18} strokeWidth={1.8} />
-          </button>
-          <button
-            className="flex items-center justify-center text-muted-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={t("nav.toggleMenu")}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-          >
-            {menuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+        {/* Right group: lang switch + theme toggle + status (desktop) + mobile controls */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Desktop right controls */}
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
+
+            {/* Theme toggle */}
+            <button
+              onClick={cycleTheme}
+              className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
+              title={switchThemeLabel}
+              aria-label={switchThemeLabel}
+              data-umami-event="theme-toggle"
+              data-umami-event-next={theme === "dark" ? "light" : "dark"}
+            >
+              <ThemeIcon size={13} strokeWidth={1.8} />
+              <span className="hidden lg:inline">{themeLabel}</span>
+            </button>
+
+            {/* Online dot */}
+            <span className="flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className="w-[5px] h-[5px]"
+                style={{ backgroundColor: "var(--foreground)", opacity: 0.5, borderRadius: 1 }}
+              />
+              <span className="text-3xs text-muted-foreground">
+                {t("nav.online")}
+              </span>
+            </span>
+          </div>
+
+          {/* Mobile: theme toggle + hamburger */}
+          <div className="md:hidden flex items-center gap-1">
+            <button
+              onClick={cycleTheme}
+              className="flex items-center justify-center text-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
+              aria-label={switchThemeLabel}
+              data-umami-event="theme-toggle"
+              data-umami-event-next={theme === "dark" ? "light" : "dark"}
+            >
+              <ThemeIcon size={18} strokeWidth={1.8} />
+            </button>
+            <button
+              className="flex items-center justify-center text-muted-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={t("nav.toggleMenu")}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+            >
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -236,7 +252,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                     <motion.a
                       key={link.labelKey}
                       href={link.href}
-                      className={`py-3 px-3 text-mono transition-colors duration-200 ${
+                      className={`py-3 px-3 text-mono transition-colors duration-200 whitespace-nowrap ${
                         active
                           ? "text-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground"

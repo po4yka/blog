@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { ExternalLink } from "lucide-react";
 
 function GithubIcon({ size = 16 }: { size?: number }) {
@@ -11,25 +10,16 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { useInView } from "@/hooks/useInView";
 
 import { projects, type Project } from "@/data/projectsData";
 import { MotionProvider } from "./MotionProvider";
-import { ease } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
 
 function ProjectEntry({ project }: { project: Project }) {
-  const { ref, inView } = useInView(0.08);
   const { t } = useLocale();
 
   return (
-    <motion.div
-      ref={ref}
-      className="py-5 border-b border-border last:border-b-0 group"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.4, delay: 0.03, ease }}
-    >
+    <div className="py-5 border-b border-border last:border-b-0 group">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
@@ -106,7 +96,7 @@ function ProjectEntry({ project }: { project: Project }) {
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

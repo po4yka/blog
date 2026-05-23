@@ -1,13 +1,10 @@
 import { useMemo } from "react";
-import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
 import { blogPosts } from "@/data/blogData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
 import { blogUrl, type Locale } from "@/lib/i18n";
-import { ease } from "@/lib/motion";
 
 interface GroupedPost {
   slug: string;
@@ -17,7 +14,6 @@ interface GroupedPost {
 }
 
 export function BlogPreview() {
-  const { ref, inView } = useInView(0.1);
   const { locale, t } = useLocale();
 
   const previewPosts = useMemo(() => {
@@ -50,20 +46,17 @@ export function BlogPreview() {
       </Cmd>
 
       <MacWindow title="recent posts" sectionNumber="06" delay={0.05}>
-        <div ref={ref} className="space-y-0">
+        <div className="space-y-0">
           {previewPosts.map((post, i) => {
             const displayLang = post.langs[locale] ? locale : "en";
             const title = post.langs[displayLang]?.title ?? post.langs.en?.title ?? post.slug;
             const availLangs = Object.keys(post.langs) as Locale[];
 
             return (
-              <motion.a
+              <a
                 key={post.slug}
                 href={blogUrl(displayLang as Locale, post.slug)}
                 className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono"
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.35, delay: 0.04 + i * 0.06, ease }}
               >
                 <div className="flex-1 min-w-0">
                   {/* Rank line: 001 │ date │ [tag] │ title │ langs */}
@@ -104,17 +97,13 @@ export function BlogPreview() {
                     )}
                   </div>
                 </div>
-              </motion.a>
+              </a>
             );
           })}
         </div>
       </MacWindow>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.3, delay: 0.3 }}
-      >
+      <div>
         <a
           href="/blog"
           aria-label={t("blogPreview.viewAllLabel")}
@@ -122,7 +111,7 @@ export function BlogPreview() {
         >
           {t("blogPreview.viewAll")}
         </a>
-      </motion.div>
+      </div>
     </section>
     </MotionProvider>
   );

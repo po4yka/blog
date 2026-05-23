@@ -194,11 +194,9 @@ function ScrollToTop() {
 
   return (
     <motion.button
-      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-2.5 bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer"
+      className="fixed z-50 p-2.5 bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
       style={{
         borderRadius: "2px",
-        marginBottom: "env(safe-area-inset-bottom)",
-        marginRight: "env(safe-area-inset-right)",
       }}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       initial={{ opacity: 0 }}
@@ -453,26 +451,22 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
               {relatedPosts.length >= 2 && (
                 <div className="space-y-3">
                   <div className="label-meta">{t("blogPost.related")}</div>
-                  <ul className="grid grid-cols-1 md:grid-cols-3 gap-4 list-none m-0 p-0">
+                  <ul className="list-none m-0 p-0 divide-y divide-rule border-t border-b border-rule">
                     {relatedPosts.slice(0, 3).map((rp) => (
                       <li key={rp.slug}>
                         <a
                           href={blogUrl(lang, rp.slug)}
-                          className="group block no-underline"
+                          className="group flex flex-col gap-1 py-3 no-underline sm:flex-row sm:items-baseline sm:gap-4"
                         >
-                          <div className="label-meta text-muted-foreground-dim">
+                          <span className="label-meta text-muted-foreground-dim shrink-0 sm:w-24 truncate">
                             {rp.category}
-                          </div>
-                          <div className="mt-1 font-sans text-[17px] leading-snug font-medium text-foreground/80 group-hover:text-foreground transition-colors duration-150">
+                          </span>
+                          <span className="flex-1 font-sans text-[15px] leading-snug text-foreground/80 group-hover:text-foreground transition-colors duration-150 min-w-0 sm:truncate">
                             {rp.title}
-                          </div>
-                          <div className="mt-1 label-meta opacity-70">
-                            {rp.isoDate ? (
-                              <time dateTime={rp.isoDate}>{rp.date}</time>
-                            ) : (
-                              <span>{rp.date}</span>
-                            )}
-                          </div>
+                          </span>
+                          <span className="label-meta text-muted-foreground-dim opacity-70 shrink-0 tabular-nums">
+                            {rp.isoDate ? <time dateTime={rp.isoDate}>{rp.date}</time> : <span>{rp.date}</span>}
+                          </span>
                         </a>
                       </li>
                     ))}

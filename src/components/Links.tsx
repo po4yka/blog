@@ -1,4 +1,6 @@
 import { motion } from "motion/react";
+import { Mail, Play, Apple, Linkedin, Github, Send } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
 import { Cmd, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
@@ -7,13 +9,13 @@ import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
 import { ease } from "@/lib/motion";
 
-const links = [
-  { icon: "✉", label: "email", href: "mailto:hello@po4yka.dev" },
-  { icon: "⊞", label: "google play", href: undefined },
-  { icon: "◎", label: "app store", href: undefined },
-  { icon: "◉", label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
-  { icon: "⌘", label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
-  { icon: "✈", label: "telegram", href: "https://t.me/po4yka" },
+const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
+  { Icon: Mail, label: "email", href: "mailto:hello@po4yka.dev" },
+  { Icon: Play, label: "google play", href: undefined },
+  { Icon: Apple, label: "app store", href: undefined },
+  { Icon: Linkedin, label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
+  { Icon: Github, label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
+  { Icon: Send, label: "telegram", href: "https://t.me/po4yka" },
 ];
 
 export function Links() {
@@ -50,9 +52,7 @@ export function Links() {
               }}
               aria-label={`${link.label} (${t("links.comingSoon")})`}
             >
-              <span className="text-muted-foreground-dim text-mono-sm">
-                {link.icon}
-              </span>
+              <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground-dim shrink-0" />
               {link.label}
             </span>
           ) : (
@@ -70,9 +70,7 @@ export function Links() {
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease }}
             >
-              <span className="text-muted-foreground-dim text-mono-sm">
-                {link.icon}
-              </span>
+              <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground-dim shrink-0" />
               {link.label}
             </motion.a>
           )

@@ -32,7 +32,7 @@ export function Footer() {
           className="pt-5"
           style={{ borderTop: "1px solid var(--rule)" }}
         >
-          <p className="text-center font-mono text-label text-muted-foreground">
+          <p className="text-left font-mono text-label text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </p>
         </div>

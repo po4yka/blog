@@ -85,6 +85,7 @@ There is no chromatic accent. The only "accent" is `--emphasis` — pure white o
 
 - **`--font-sans`** — headings (including inside blog prose), navigation, labels, button text, UI copy, site chrome
 - **`--font-mono`** — code blocks, terminal output (`Cmd`, `BootBlock`, `InfoTable`), `.label-meta` metadata strips
+  - Exception: the single-line role subtitle directly beneath the hero `display-1` name may use `--font-mono` (`text-mono-lg`). It's load-bearing terminal voice — not body copy — and rendering it in sans dilutes the identity. Cap at one line. No other prose surface uses mono.
 - **`--font-pixel`** — decorative counters and numbered section prefixes only; maximum 6 uses per page
 - **`--font-serif`** — blog post body prose only (`.prose-blog` block-level text). Variable wght 100–900. Latin + Latin-Ext + Cyrillic + Cyrillic-Ext subsets self-hosted in `public/fonts/piazzolla-*.woff2`. Never ship on non-post surfaces.
 

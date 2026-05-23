@@ -1,3 +1,9 @@
+/* Hallmark · design-system: DESIGN.md · stack: Astro 6 + React 19 + Tailwind v4
+ * type: Geist Sans + Geist Mono + Piazzolla (blog prose only)
+ * accent: emphasis-only (no chromatic accent — pure white on dark / pure black on light)
+ * macrostructure: long-document + operator-panel kit (SectionHeader + MacWindow + Cmd + BootBlock)
+ * radius: 2px · motion: cut to fade-in mount + opacity on hover · prefers-reduced-motion respected
+ */
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -72,9 +78,9 @@
 .light, :root:not(.dark) {
   --background: #f5f3ee;
   --foreground: #101012;
-  --card: #ffffff;
+  --card: #fbfaf6;
   --card-foreground: #101012;
-  --popover: #ffffff;
+  --popover: #fbfaf6;
   --popover-foreground: #101012;
   --primary: #101012;
   --primary-foreground: #f5f3ee;

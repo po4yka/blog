@@ -25,16 +25,8 @@ function RoleEntry({
   hoveredTag: string | null;
   onTagHover: (tag: string | null) => void;
 }) {
-  const { ref, inView } = useInView(0.08);
-
   return (
-    <motion.div
-      ref={ref}
-      className="py-5 border-b border-border last:border-b-0 group"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.4, delay: 0.03, ease }}
-    >
+    <div className="py-5 border-b border-border last:border-b-0 group">
       <div className="flex items-baseline justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
           <span className="text-muted-foreground text-label font-mono">
@@ -95,7 +87,7 @@ function RoleEntry({
           })}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -265,13 +257,6 @@ export function ExperiencePage() {
             ))}
           </motion.div>
         </MacWindow>
-      </div>
-
-      {/* Download CV hint */}
-      <div className="font-mono text-mono-sm">
-        <span className="text-muted-foreground cursor-default">
-          $ wget po4yka.dev/cv.pdf — <span className="text-muted-foreground-dim">{t("experiencePage.comingSoon")}</span>
-        </span>
       </div>
 
     </div>

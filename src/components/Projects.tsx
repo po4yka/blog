@@ -1,14 +1,10 @@
-import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
 import { projects } from "@/data/projectsData";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
-import { ease } from "@/lib/motion";
 
 export function Projects() {
-  const { ref, inView } = useInView(0.05);
   const { t } = useLocale();
   const homeProjects = projects.slice(0, 4);
 
@@ -27,19 +23,16 @@ export function Projects() {
       </Cmd>
 
       <MacWindow title="projects" sectionNumber="04" delay={0.05}>
-        <div ref={ref} className="space-y-0">
+        <div className="space-y-0">
           {homeProjects.map((project, i) => {
             const isLast = i === homeProjects.length - 1;
             const branch = isLast ? "└──" : "├──";
             const cont = isLast ? "   " : "│  ";
             return (
-            <motion.a
+            <a
               key={project.slug}
               href="/projects"
               className="group flex items-start gap-2 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
             >
               {/* Tree branch prefix */}
               <span
@@ -81,18 +74,14 @@ export function Projects() {
                   </p>
                 </div>
               </div>
-            </motion.a>
+            </a>
             );
           })}
         </div>
       </MacWindow>
 
       {/* View all link */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.3, delay: 0.3 }}
-      >
+      <div>
         <a
           href="/projects"
           aria-label={t("projects.viewAllLabel")}
@@ -100,7 +89,7 @@ export function Projects() {
         >
           {t("projects.viewAll")}
         </a>
-      </motion.div>
+      </div>
     </section>
     </MotionProvider>
   );

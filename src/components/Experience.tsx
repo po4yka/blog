@@ -1,14 +1,10 @@
-import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
 import { roles } from "@/data/experienceData";
 import { Cmd, Accent, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
-import { ease } from "@/lib/motion";
 
 export function Experience() {
-  const { ref, inView } = useInView(0.05);
   const { t } = useLocale();
 
   return (
@@ -25,14 +21,11 @@ export function Experience() {
       </Cmd>
 
       <MacWindow title="resume.log" sectionNumber="05" delay={0.05}>
-        <div ref={ref} className="space-y-0">
+        <div className="space-y-0">
           {roles.slice(0, 3).map((role, i) => (
-            <motion.div
+            <div
               key={role.period}
               className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group font-mono"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.35, delay: 0.04 + i * 0.05, ease }}
             >
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div className="flex items-baseline gap-2">
@@ -87,23 +80,19 @@ export function Experience() {
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
       </MacWindow>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.3, delay: 0.25 }}
-      >
+      <div>
         <a
           href="/experience"
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
         >
           {t("experience.viewAll")}
         </a>
-      </motion.div>
+      </div>
     </section>
     </MotionProvider>
   );

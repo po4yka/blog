@@ -2,12 +2,11 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Accent } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
-import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 
-import { ease, duration, stagger, easeStep8 } from "@/lib/motion";
+import { ease, duration, easeStep8 } from "@/lib/motion";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
 export interface BlogPostMeta {
@@ -35,7 +34,6 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     if (typeof window === "undefined") return null;
     return new URLSearchParams(window.location.search).get("tag");
   });
-  const { ref } = useInView(0.05);
   const lang = (langProp ?? "en") as Locale;
 
   const clearTag = () => {
@@ -145,7 +143,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         )}
 
         {/* Posts list — flat, no MacWindow wrapping */}
-        <div ref={ref}>
+        <div>
           <AnimatePresence mode="wait">
             <motion.ul
               key={`${activeCategory}|${activeTag ?? ""}`}
@@ -155,31 +153,23 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
               transition={{ duration: duration.fast }}
               className="list-none m-0 p-0"
             >
-              {filtered.map((post, i) => (
-                <motion.li key={post.slug}>
+              {filtered.map((post) => (
+                <li key={post.slug}>
                   <a
                     href={blogUrl(lang, post.slug)}
                     className="group w-full text-left flex items-start gap-4 py-6 border-b border-rule last:border-b-0 no-underline"
                     style={{ display: "flex" }}
                   >
                     {/* Marker */}
-                    <motion.span
+                    <span
                       className="text-muted-foreground-dim shrink-0 pt-3 text-label"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
                       aria-hidden="true"
                     >
                       ›
-                    </motion.span>
+                    </span>
 
                     {/* Title + summary */}
-                    <motion.div
-                      className="flex-1 min-w-0 relative"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
-                    >
+                    <div className="flex-1 min-w-0 relative">
                       <h3 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
                         {post.title}
                         <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
@@ -187,19 +177,14 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                       <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
                         {post.summary}
                       </p>
-                    </motion.div>
+                    </div>
 
                     {/* Date */}
-                    <motion.span
-                      className="text-muted-foreground-dim shrink-0 pt-3 text-label"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: i * stagger.fast, ease }}
-                    >
+                    <span className="text-muted-foreground-dim shrink-0 pt-3 text-label">
                       {post.date}
-                    </motion.span>
+                    </span>
                   </a>
-                </motion.li>
+                </li>
               ))}
               {filtered.length === 0 && (
                 <li className="py-8 text-center text-muted-foreground text-mono">
