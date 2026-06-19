@@ -74,6 +74,7 @@ const en = {
   // experience (home section)
   "experience.heading": "Experience",
   "experience.viewAll": "$ git log --author=po4yka \u2014 full history \u2192",
+  "experience.viewAllLabel": "View all experience",
 
   // blog preview (home section)
   "blogPreview.heading": "Latest Posts",
@@ -252,6 +253,7 @@ const ru: TranslationKeys = {
   // experience (home section)
   "experience.heading": "\u041e\u043f\u044b\u0442",
   "experience.viewAll": "$ git log --author=po4yka \u2014 \u043f\u043e\u043b\u043d\u0430\u044f \u0438\u0441\u0442\u043e\u0440\u0438\u044f \u2192",
+  "experience.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0435\u0441\u044c \u043e\u043f\u044b\u0442",
 
   // blog preview (home section)
   "blogPreview.heading": "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043f\u043e\u0441\u0442\u044b",

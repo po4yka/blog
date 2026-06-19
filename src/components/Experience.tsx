@@ -88,9 +88,12 @@ export function Experience() {
       <div>
         <a
           href="/experience"
+          aria-label={t("experience.viewAllLabel")}
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
         >
-          {t("experience.viewAll")}
+          {/* Visible label is decorative shell chrome (`$ git log … →`); the
+              aria-label carries the accessible name (WCAG 2.4.6 / 2.5.3). */}
+          <span aria-hidden="true">{t("experience.viewAll")}</span>
         </a>
       </div>
     </section>
