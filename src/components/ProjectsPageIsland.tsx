@@ -29,11 +29,11 @@ function ProjectEntry({ project }: { project: Project }) {
           >
             ├──
           </span>
-          <h3
+          <h2
             className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 text-mono-lg font-medium"
           >
             {project.name}
-          </h3>
+          </h2>
           {project.featured && <Tag variant="highlight">{t("projects.featured")}</Tag>}
           {project.status && (
             <span className="text-muted-foreground text-label">
@@ -107,6 +107,7 @@ export function ProjectsPage() {
     <MotionProvider>
     <div className="space-y-8">
       <SectionHeader
+        level={1}
         number="04"
         label="PROJECTS"
         heading="Projects"

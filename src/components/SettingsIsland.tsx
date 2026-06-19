@@ -49,6 +49,7 @@ export function Settings() {
     <MotionProvider>
     <div className="space-y-8">
       <SectionHeader
+        level={1}
         number="09"
         label="SETTINGS"
         heading={tt("settings.heading") ?? "Preferences"}

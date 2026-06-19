@@ -70,7 +70,10 @@ export function SectionHeader({
           id={id}
           className="text-foreground"
           style={{
-            fontSize: level === 1 ? undefined : "1.375rem",
+            // Page titles (level 1) share the section-header size so promoting
+            // the element to <h1> for a correct document outline does not alter
+            // the operator-console visual hierarchy.
+            fontSize: "1.375rem",
             fontWeight: 500,
             letterSpacing: "-0.012em",
             lineHeight: 1.2,

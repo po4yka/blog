@@ -73,6 +73,7 @@ export function NotFound() {
           style={{ borderBottom: "1px solid var(--border)" }}
         >
           <SectionHeader
+            level={1}
             number="!!"
             label="NOT FOUND"
             heading={t("notFound.windowTitle")}

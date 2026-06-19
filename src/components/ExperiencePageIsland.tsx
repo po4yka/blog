@@ -32,9 +32,9 @@ function RoleEntry({
           <span className="text-muted-foreground text-label font-mono">
             {role.period}
           </span>
-          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
+          <h2 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
             {role.title}
-          </h3>
+          </h2>
         </div>
         <span className="text-muted-foreground font-mono text-mono-sm">
           {role.company}
@@ -202,6 +202,7 @@ export function ExperiencePage() {
     <MotionProvider>
     <div className="space-y-8">
       <SectionHeader
+        level={1}
         number="05"
         label="EXPERIENCE"
         heading="Experience"

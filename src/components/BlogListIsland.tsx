@@ -63,6 +63,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     <MotionProvider>
     <div className="space-y-12 md:space-y-14">
       <SectionHeader
+        level={1}
         number="07"
         label="WRITING"
         heading="Posts"
@@ -172,10 +173,10 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
 
                     {/* Title + summary */}
                     <div className="flex-1 min-w-0 relative">
-                      <h3 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
+                      <h2 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
                         {post.title}
                         <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
-                      </h3>
+                      </h2>
                       <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
                         {post.summary}
                       </p>
