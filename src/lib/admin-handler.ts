@@ -92,7 +92,14 @@ export function withAdmin<S extends z.ZodType>(
         data = parsed.data;
       }
 
-      return await handler({ request, params, db, data });
+      const response = await handler({ request, params, db, data });
+
+      // Harden every admin API response: prevent MIME sniffing and ensure
+      // browsers never cache authenticated responses.
+      response.headers.set("X-Content-Type-Options", "nosniff");
+      response.headers.set("Cache-Control", "no-store");
+
+      return response;
     } catch (err) {
       // Re-throw Response errors (401 from requireAuth, 403 from
       // validateOrigin) so Astro can return them directly.

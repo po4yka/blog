@@ -9,7 +9,7 @@ import {
   consumeChallenge,
   storeCredential,
 } from "@/lib/webauthn";
-import { validateOrigin, checkRateLimit } from "@/lib/auth";
+import { validateOrigin, checkRateLimit, getClientIp } from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
@@ -17,10 +17,7 @@ export const POST: APIRoute = async ({ request }) => {
   validateOrigin(request);
   const db = env.DB;
 
-  const ip =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for") ??
-    (import.meta.env.PROD ? null : "127.0.0.1");
+  const ip = getClientIp(request);
   if (!ip) return jsonError("Unable to determine client IP", 400);
 
   const allowed = await checkRateLimit(db, ip);

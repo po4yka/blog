@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubActivitySummary } from "@/types";
 
@@ -40,14 +41,15 @@ export const GET: APIRoute = async () => {
     });
   }
 
+  const requestHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": `${GITHUB_USERNAME}-blog`,
+  };
+  if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
+
   const res = await fetch(
     `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "User-Agent": `${GITHUB_USERNAME}-blog`,
-      },
-    },
+    { headers: requestHeaders },
   );
 
   if (!res.ok) {

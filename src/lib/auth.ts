@@ -1,11 +1,31 @@
 // Simple token-based auth for the admin API.
 // Sessions are stored in D1 with a 24-hour expiry.
+// Session tokens are stored as SHA-256 hashes; the raw UUID lives only in the
+// cookie/header. Existing sessions created before this change will be
+// invalidated (acceptable one-time migration cost).
 
 const PROD_ORIGINS = ["https://po4yka.dev"];
 const DEV_ORIGINS = ["https://po4yka.dev", "http://localhost:4321", "http://localhost:3000"];
 
 function getAllowedOrigins(): string[] {
   return import.meta.env.PROD ? PROD_ORIGINS : DEV_ORIGINS;
+}
+
+/**
+ * Derive the client IP from request headers. Uses cf-connecting-ip (set by
+ * Cloudflare and not spoofable) when present. In development falls back to
+ * 127.0.0.1. Never uses the client-supplied x-forwarded-for header.
+ */
+export function getClientIp(request: Request): string | null {
+  const cfIp = request.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp;
+  if (!import.meta.env.PROD) return "127.0.0.1";
+  return null;
+}
+
+async function hashToken(token: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
@@ -48,17 +68,18 @@ export function validateOrigin(request: Request): void {
 
   const origin = request.headers.get("Origin");
 
-  // If no Origin header, require X-Requested-With as CSRF defense-in-depth.
-  // Simple HTML forms cannot set custom headers, so this blocks CSRF from
-  // non-browser clients that omit Origin.
+  // If no Origin header, accept X-Requested-With as a CSRF defense-in-depth
+  // fallback, but only in development. In production every same-origin browser
+  // request includes an Origin header; accepting X-Requested-With in prod would
+  // allow requests from non-browser clients that can set arbitrary headers.
   if (!origin) {
-    if (!request.headers.get("X-Requested-With")) {
-      throw new Response(JSON.stringify({ error: "Missing origin or X-Requested-With header" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!import.meta.env.PROD && request.headers.get("X-Requested-With")) {
+      return;
     }
-    return;
+    throw new Response(JSON.stringify({ error: "Missing origin or X-Requested-With header" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   if (!getAllowedOrigins().includes(origin)) {
@@ -80,6 +101,7 @@ export async function createSession(
   capabilities?: readonly string[],
 ): Promise<string> {
   const token = crypto.randomUUID();
+  const tokenHash = await hashToken(token);
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   const capsJson = capabilities ? JSON.stringify(capabilities) : null;
 
@@ -90,16 +112,19 @@ export async function createSession(
     db.prepare("DELETE FROM auth_challenges WHERE created_at < datetime('now', '-5 minutes')"),
   ]);
 
+  // Store the hash, not the raw token, so a D1 breach cannot replay sessions.
   await db
     .prepare("INSERT INTO admin_sessions (token, expires_at, capabilities) VALUES (?, ?, ?)")
-    .bind(token, expiresAt, capsJson)
+    .bind(tokenHash, expiresAt, capsJson)
     .run();
 
+  // Return the raw token; the caller puts it in the cookie/header.
   return token;
 }
 
 export async function deleteSession(db: D1Database, token: string): Promise<void> {
-  await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(token).run();
+  const tokenHash = await hashToken(token);
+  await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(tokenHash).run();
 }
 
 // --- Session cookie helpers ---
@@ -159,11 +184,13 @@ export async function requireAuth(request: Request, db: D1Database): Promise<Ses
     });
   }
 
+  const tokenHash = await hashToken(token);
+
   const row = await db
     .prepare(
       "SELECT token, capabilities FROM admin_sessions WHERE token = ? AND expires_at > datetime('now')",
     )
-    .bind(token)
+    .bind(tokenHash)
     .first<{ token: string; capabilities: string | null }>();
 
   if (!row) {
@@ -175,7 +202,7 @@ export async function requireAuth(request: Request, db: D1Database): Promise<Ses
 
   await db
     .prepare("UPDATE admin_sessions SET last_used = datetime('now') WHERE token = ?")
-    .bind(token)
+    .bind(tokenHash)
     .run();
 
   let capabilities: readonly string[] | null = null;

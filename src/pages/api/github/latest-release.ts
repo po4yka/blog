@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubLatestRelease } from "@/types";
 
@@ -22,17 +23,19 @@ const MAX_REPOS_TO_CHECK = 5;
 
 async function findLatestRelease(
   repos: GitHubRepo[],
+  authHeader: string | undefined,
 ): Promise<GitHubLatestRelease | null> {
+  const requestHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": `${GITHUB_USERNAME}-blog`,
+  };
+  if (authHeader) requestHeaders["Authorization"] = authHeader;
+
   const releaseResults = await Promise.allSettled(
     repos.slice(0, MAX_REPOS_TO_CHECK).map(async (repo) => {
       const res = await fetch(
         `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/releases/latest`,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            "User-Agent": `${GITHUB_USERNAME}-blog`,
-          },
-        },
+        { headers: requestHeaders },
       );
 
       if (res.status === 200) {
@@ -72,14 +75,17 @@ export const GET: APIRoute = async () => {
     });
   }
 
+  const authHeader = env.GITHUB_TOKEN ? `Bearer ${env.GITHUB_TOKEN}` : undefined;
+
+  const requestHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": `${GITHUB_USERNAME}-blog`,
+  };
+  if (authHeader) requestHeaders["Authorization"] = authHeader;
+
   const reposRes = await fetch(
     `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=10`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "User-Agent": `${GITHUB_USERNAME}-blog`,
-      },
-    },
+    { headers: requestHeaders },
   );
 
   if (!reposRes.ok) {
@@ -94,7 +100,7 @@ export const GET: APIRoute = async () => {
   }
 
   const repos = (await reposRes.json()) as GitHubRepo[];
-  const release = await findLatestRelease(repos);
+  const release = await findLatestRelease(repos, authHeader);
 
   cache = { data: release, expiresAt: Date.now() + CACHE_TTL_MS };
 

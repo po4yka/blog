@@ -6,6 +6,7 @@ interface CloudflareEnv {
   DB: D1Database;
   ADMIN_PASSWORD: string;
   ALLOW_PASSWORD_LOGIN?: string;
+  GITHUB_TOKEN?: string;
 }
 
 declare module "cloudflare:workers" {

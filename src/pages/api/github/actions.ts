@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 
 interface GitHubWorkflowRun {
@@ -39,14 +40,15 @@ export const GET: APIRoute = async () => {
     });
   }
 
+  const requestHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": `${GITHUB_USERNAME}-blog`,
+  };
+  if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
+
   const res = await fetch(
     `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/actions/runs?per_page=${MAX_RUNS}`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "User-Agent": `${GITHUB_USERNAME}-blog`,
-      },
-    },
+    { headers: requestHeaders },
   );
 
   if (!res.ok) {

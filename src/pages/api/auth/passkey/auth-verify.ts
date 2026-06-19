@@ -10,17 +10,23 @@ import {
   getCredentialById,
   updateCredentialCounter,
 } from "@/lib/webauthn";
-import { createSession, makeSessionCookie, checkRateLimit, recordLoginAttempt } from "@/lib/auth";
+import {
+  createSession,
+  makeSessionCookie,
+  checkRateLimit,
+  recordLoginAttempt,
+  clearLoginAttempts,
+  validateOrigin,
+  getClientIp,
+} from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
 export const POST: APIRoute = async ({ request }) => {
+  validateOrigin(request);
   const db = env.DB;
 
-  const ip =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for") ??
-    (import.meta.env.PROD ? null : "127.0.0.1");
+  const ip = getClientIp(request);
   if (!ip) return jsonError("Unable to determine client IP", 400);
 
   const allowed = await checkRateLimit(db, ip);
@@ -102,6 +108,9 @@ export const POST: APIRoute = async ({ request }) => {
     credential.credentialID,
     verification.authenticationInfo.newCounter,
   );
+
+  // Clear rate-limit records on successful authentication.
+  await clearLoginAttempts(db, ip);
 
   const token = await createSession(db);
   const isSecure = new URL(request.url).protocol === "https:";

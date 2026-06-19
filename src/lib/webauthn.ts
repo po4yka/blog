@@ -9,7 +9,6 @@ export interface StoredCredential {
 
 // --- Challenges ---
 
-const CHALLENGE_MAX_AGE_MINUTES = 5;
 const AUTH_OPTIONS_RATE_LIMIT_TYPE = "authentication-options-rate-limit";
 const AUTH_OPTIONS_RATE_LIMIT_PREFIX = "auth-options:";
 const AUTH_OPTIONS_RATE_LIMIT_MAX = 10;
@@ -27,7 +26,7 @@ async function hashRateLimitKey(value: string): Promise<string> {
 export async function pruneStaleChallenges(db: D1Database): Promise<void> {
   await db
     .prepare(
-      `DELETE FROM auth_challenges WHERE created_at < datetime('now', '-${CHALLENGE_MAX_AGE_MINUTES} minutes')`,
+      "DELETE FROM auth_challenges WHERE created_at < datetime('now', '-5 minutes')",
     )
     .run();
 }
@@ -39,7 +38,7 @@ export async function checkAuthenticationOptionsRateLimit(
   const key = await hashRateLimitKey(ip);
   const row = await db
     .prepare(
-      `SELECT COUNT(*) as cnt FROM auth_challenges WHERE type = ? AND challenge LIKE ? AND created_at > datetime('now', '-${CHALLENGE_MAX_AGE_MINUTES} minutes')`,
+      "SELECT COUNT(*) as cnt FROM auth_challenges WHERE type = ? AND challenge LIKE ? AND created_at > datetime('now', '-5 minutes')",
     )
     .bind(AUTH_OPTIONS_RATE_LIMIT_TYPE, `${AUTH_OPTIONS_RATE_LIMIT_PREFIX}${key}:%`)
     .first<{ cnt: number }>();
@@ -81,21 +80,17 @@ export async function consumeChallenge(
   challenge: string,
   type: string,
 ): Promise<boolean> {
-  const row = await db
+  // Atomic DELETE: combines the SELECT and DELETE into one statement to
+  // eliminate the TOCTOU race where two concurrent requests could both read
+  // the same row before either deletes it.
+  const result = await db
     .prepare(
-      "SELECT challenge FROM auth_challenges WHERE challenge = ? AND type = ? AND created_at > datetime('now', '-5 minutes')",
+      "DELETE FROM auth_challenges WHERE challenge = ? AND type = ? AND created_at > datetime('now', '-5 minutes')",
     )
     .bind(challenge, type)
-    .first();
-
-  if (!row) return false;
-
-  await db
-    .prepare("DELETE FROM auth_challenges WHERE challenge = ?")
-    .bind(challenge)
     .run();
 
-  return true;
+  return (result.meta?.changes ?? 0) > 0;
 }
 
 /**

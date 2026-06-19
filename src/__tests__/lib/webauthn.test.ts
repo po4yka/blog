@@ -104,23 +104,30 @@ describe("recordAuthenticationOptionsRequest", () => {
 });
 
 describe("consumeChallenge", () => {
-  it("returns true and deletes for valid challenge", async () => {
-    const db = createMockDb();
-    // First call: SELECT finds the challenge
-    db.first.mockResolvedValueOnce({ challenge: "valid-challenge" });
+  it("returns true when atomic DELETE removes exactly one row", async () => {
+    // consumeChallenge now uses a single atomic DELETE ... WHERE challenge=?
+    // and reads result.meta.changes to determine success (no SELECT first).
+    const run = vi.fn().mockResolvedValueOnce({ success: true, meta: { changes: 1 } });
+    const bind = vi.fn().mockReturnValue({ run });
+    const prepare = vi.fn().mockReturnValue({ bind });
+    const db = { prepare } as unknown as D1Database;
 
     const result = await consumeChallenge(db, "valid-challenge", "registration");
     expect(result).toBe(true);
 
-    // Should have called DELETE after finding the challenge
-    expect(db.prepare).toHaveBeenCalledWith(
+    // Single prepare call: the atomic DELETE (no preceding SELECT)
+    expect(prepare).toHaveBeenCalledTimes(1);
+    expect(prepare).toHaveBeenCalledWith(
       expect.stringContaining("DELETE FROM auth_challenges"),
     );
+    expect(bind).toHaveBeenCalledWith("valid-challenge", "registration");
   });
 
-  it("returns false for missing/expired challenge", async () => {
-    const db = createMockDb();
-    db.first.mockResolvedValueOnce(null);
+  it("returns false when atomic DELETE matches no rows (missing/expired)", async () => {
+    const run = vi.fn().mockResolvedValueOnce({ success: true, meta: { changes: 0 } });
+    const bind = vi.fn().mockReturnValue({ run });
+    const prepare = vi.fn().mockReturnValue({ bind });
+    const db = { prepare } as unknown as D1Database;
 
     const result = await consumeChallenge(db, "invalid", "registration");
     expect(result).toBe(false);

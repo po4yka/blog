@@ -7,8 +7,28 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 
 const UPSTREAM = "https://analytics.po4yka.dev/api/send";
+const SITE_ORIGIN = "https://po4yka.dev";
+const MAX_BODY_BYTES = 64 * 1024; // 64 KB
 
 export const POST: APIRoute = async ({ request }) => {
+  // Reject non-JSON content types early to avoid unnecessary processing.
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return new Response(JSON.stringify({ error: "Content-Type must be application/json" }), {
+      status: 415,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    });
+  }
+
+  // Cap incoming body to 64 KB to bound memory usage and prevent DoS.
+  const rawBody = await request.arrayBuffer();
+  if (rawBody.byteLength > MAX_BODY_BYTES) {
+    return new Response(JSON.stringify({ error: "Request body too large" }), {
+      status: 413,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    });
+  }
+
   const clientIp =
     request.headers.get("cf-connecting-ip") ??
     request.headers.get("x-forwarded-for") ??
@@ -25,8 +45,17 @@ export const POST: APIRoute = async ({ request }) => {
   const upstream = await fetch(UPSTREAM, {
     method: "POST",
     headers: forwardHeaders,
-    body: await request.text(),
+    body: rawBody,
   });
+
+  // Do not forward upstream error bodies verbatim — they may leak internal
+  // details about the analytics backend. Return a generic status instead.
+  if (!upstream.ok) {
+    return new Response(JSON.stringify({ error: "Upstream error" }), {
+      status: upstream.status,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    });
+  }
 
   const body = await upstream.text();
 
@@ -43,7 +72,9 @@ export const OPTIONS: APIRoute = () =>
   new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // Restrict to the site origin rather than wildcard so that the
+      // preflight only passes for first-party requests.
+      "Access-Control-Allow-Origin": SITE_ORIGIN,
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, x-umami-cache",
       "Access-Control-Max-Age": "86400",

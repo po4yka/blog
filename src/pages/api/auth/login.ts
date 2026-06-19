@@ -10,6 +10,7 @@ import {
   timingSafeEqual,
   recordLoginAttempt,
   clearLoginAttempts,
+  getClientIp,
 } from "@/lib/auth";
 import { loginSchema, validationError, jsonError } from "@/lib/validation";
 
@@ -34,10 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
   const { password } = parsed.data;
   const db = env.DB;
 
-  const ip =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for") ??
-    (import.meta.env.PROD ? null : "127.0.0.1");
+  const ip = getClientIp(request);
 
   if (!ip) {
     return jsonError("Unable to determine client IP", 400);

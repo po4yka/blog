@@ -11,17 +11,7 @@ import {
   storeChallenge,
 } from "@/lib/webauthn";
 import { jsonError } from "@/lib/validation";
-
-function getClientIp(request: Request): string | null {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const forwardedIp = forwardedFor?.split(",")[0]?.trim();
-
-  return (
-    request.headers.get("cf-connecting-ip") ??
-    forwardedIp ??
-    (import.meta.env.PROD ? null : "127.0.0.1")
-  );
-}
+import { getClientIp } from "@/lib/auth";
 
 export const GET: APIRoute = async ({ request }) => {
   const db = env.DB;
