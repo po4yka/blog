@@ -19,7 +19,7 @@ export function useThrottledCallback<T extends (...args: unknown[]) => void>(
     callbackRef.current = callback;
   });
 
-  /* eslint-disable react-hooks/use-memo */
+  /* eslint-disable react-hooks/use-memo -- throttle logic is complex enough that useMemo would obscure intent; useCallback is correct here */
   return useCallback(
     ((...args: unknown[]) => {
       const now = Date.now();

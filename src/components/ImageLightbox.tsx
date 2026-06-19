@@ -298,7 +298,7 @@ export function ImageLightbox({ contentRef }: Props) {
     if (Number.isFinite(n) && n >= 0 && n < count) {
       // Legit external→React sync on mount (URL is the external state);
       // not a "derived state" case the rule is meant to prevent.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL ?fig param is external state, not derived from component state
       openAt(n);
     }
   }, [count, openAt]);

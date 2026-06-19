@@ -48,7 +48,7 @@ export function AdminBlogEdit() {
   // Sync form when existing post loads from server (external data source)
   useEffect(() => {
     if (existing) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional sync from server data; existing is external state, not derived
       setForm(existing);
     }
   }, [existing]);

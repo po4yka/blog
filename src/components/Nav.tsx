@@ -31,7 +31,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
   const { theme, setTheme, reduceMotion } = useSettings();
   const { t } = useLocale();
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-mount flag; no external state involved
   useEffect(() => setMounted(true), []);
 
   // Update pathname on View Transition navigation (Nav is persisted)

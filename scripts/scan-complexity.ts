@@ -58,7 +58,7 @@ function parseArgs(argv: string[]): Options {
   let root = process.cwd();
 
   for (let index = 0; index < argv.length; index++) {
-    const arg = argv[index];
+    const arg = argv[index]!; // loop guard `index < argv.length` guarantees this is defined
 
     if (arg === "--json") {
       format = "json";

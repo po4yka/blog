@@ -4,8 +4,16 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import satori from "satori";
+import satori, { type SatoriOptions } from "satori";
 import { Resvg } from "@resvg/resvg-js";
+
+// Satori accepts plain VDOM objects `{ type, props }` at runtime, but its
+// TypeScript signature uses `ReactNode` which includes `ReactPortal`
+// (requiring `children`+`key`). This wrapper restores the intended flexibility
+// without scattering `as unknown as ReactNode` at every call site.
+function renderSvg(element: unknown, options: SatoriOptions): Promise<string> {
+  return satori(element as Parameters<typeof satori>[0], options);
+}
 
 // Dynamic import keeps tsx from choking on the @ alias — blogData is TS ESM.
 async function loadBlogPosts(): Promise<
@@ -53,7 +61,7 @@ async function renderCard(post: {
 }): Promise<Buffer> {
   const { regular: fontRegular, medium: fontMedium } = loadFonts();
 
-  const svg = await satori(
+  const svg = await renderSvg(
     {
       type: "div",
       props: {
@@ -154,7 +162,7 @@ async function renderCard(post: {
 async function renderDefaultCard(): Promise<Buffer> {
   const { regular: fontRegular, medium: fontMedium } = loadFonts();
 
-  const svg = await satori(
+  const svg = await renderSvg(
     {
       type: "div",
       props: {

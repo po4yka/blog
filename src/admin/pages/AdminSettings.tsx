@@ -35,7 +35,7 @@ export function AdminSettings() {
   const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional sync from server data; settings is external state loaded async
     if (settings) setForm(settings);
   }, [settings]);
 

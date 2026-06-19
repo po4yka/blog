@@ -47,7 +47,7 @@ export async function removeCategory(db: D1Database, name: string): Promise<void
 export async function getSettings(db: D1Database): Promise<SiteSettings | null> {
   const row = await db.prepare("SELECT * FROM site_settings WHERE id = 1").first<SiteSettings & { id: number }>();
   if (!row) return null;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- _id is intentionally discarded; the _ prefix alone is insufficient with this tseslint config
   const { id: _id, ...settings } = row;
   return settings;
 }
