@@ -8,7 +8,6 @@ import {
   verifyPasskeyAuth,
 } from "@/admin/api";
 import { startAuthentication } from "@simplewebauthn/browser";
-import type { PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(checkAuth);
@@ -25,7 +24,7 @@ export function useAuth() {
 
   const loginWithPasskey = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      const options = await getPasskeyAuthOptions() as PublicKeyCredentialRequestOptionsJSON;
+      const options = await getPasskeyAuthOptions();
       const assertion = await startAuthentication({ optionsJSON: options });
       await verifyPasskeyAuth(assertion);
       setIsAuthenticated(true);

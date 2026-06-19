@@ -3,6 +3,11 @@
 // Client tracks auth state via a lightweight sessionStorage flag.
 
 import type { BlogPost, Project, Role, SiteSettings } from "@/types";
+import type {
+  PublicKeyCredentialRequestOptionsJSON,
+  PublicKeyCredentialCreationOptionsJSON,
+  AuthenticationResponseJSON,
+} from "@simplewebauthn/browser";
 
 export type { BlogPost, Project, Role, SiteSettings };
 
@@ -114,13 +119,13 @@ export async function getPasskeyStatus(): Promise<{ hasPasskey: boolean; allowPa
   return res.json();
 }
 
-export async function getPasskeyAuthOptions(): Promise<unknown> {
+export async function getPasskeyAuthOptions(): Promise<PublicKeyCredentialRequestOptionsJSON> {
   const res = await fetch("/api/auth/passkey/auth-options");
   if (!res.ok) throw new ApiError(res.status, "Failed to get auth options");
-  return res.json();
+  return res.json() as Promise<PublicKeyCredentialRequestOptionsJSON>;
 }
 
-export async function verifyPasskeyAuth(assertion: unknown): Promise<void> {
+export async function verifyPasskeyAuth(assertion: AuthenticationResponseJSON): Promise<void> {
   const res = await fetch("/api/auth/passkey/auth-verify", {
     method: "POST",
     credentials: "same-origin",
@@ -131,14 +136,14 @@ export async function verifyPasskeyAuth(assertion: unknown): Promise<void> {
   setAuthFlag(true);
 }
 
-export async function getPasskeyRegisterOptions(setupToken: string): Promise<unknown> {
+export async function getPasskeyRegisterOptions(setupToken: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
   const res = await fetch("/api/auth/passkey/register-options", {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Requested-With": "AdminPanel" },
     body: JSON.stringify({ setupToken }),
   });
   if (!res.ok) throw new ApiError(res.status, "Failed to get registration options");
-  return res.json();
+  return res.json() as Promise<PublicKeyCredentialCreationOptionsJSON>;
 }
 
 export async function verifyPasskeyRegister(

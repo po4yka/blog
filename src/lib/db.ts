@@ -12,22 +12,19 @@ export { parseJson };
 
 export const getAllPosts = (db: D1Database) => posts.getAll(db);
 export const getPostBySlug = (db: D1Database, slug: string) => posts.getByPk(db, slug);
-export const upsertPost = (db: D1Database, post: BlogPost) =>
-  posts.upsert(db, post as unknown as Record<string, unknown>);
+export const upsertPost = (db: D1Database, post: BlogPost) => posts.upsert(db, post);
 export const deletePost = (db: D1Database, slug: string) => posts.remove(db, slug);
 
 // --- Projects (delegated to collection) ---
 
 export const getAllProjects = (db: D1Database) => projects.getAll(db);
-export const upsertProject = (db: D1Database, project: Project) =>
-  projects.upsert(db, project as unknown as Record<string, unknown>);
+export const upsertProject = (db: D1Database, project: Project) => projects.upsert(db, project);
 export const deleteProject = (db: D1Database, id: string) => projects.remove(db, id);
 
 // --- Roles (delegated to collection) ---
 
 export const getAllRoles = (db: D1Database) => roles.getAll(db);
-export const upsertRole = (db: D1Database, role: Role) =>
-  roles.upsert(db, role as unknown as Record<string, unknown>);
+export const upsertRole = (db: D1Database, role: Role) => roles.upsert(db, role);
 export const deleteRole = (db: D1Database, id: string) => roles.remove(db, id);
 
 // --- Categories (non-standard CRUD, stays hand-written) ---

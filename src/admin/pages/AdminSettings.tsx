@@ -15,6 +15,13 @@ const defaultSettings: SiteSettings = {
   name: "", handle: "", role: "", bio: "", github: "", email: "", telegram: "", linkedin: "",
 };
 
+/**
+ * Shared className for all settings text inputs. Uses design-system outline
+ * (`focus-visible:outline-*`) rather than a box-shadow ring.
+ */
+const adminInputCn =
+  "w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40";
+
 export function AdminSettings() {
   const { data: settings } = useAdminSettings();
   const { data: categories = [] } = useCategories();
@@ -98,7 +105,7 @@ export function AdminSettings() {
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
                   autoComplete="off"
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
+                  className={adminInputCn}
                 />
               </FieldBlock>
               <FieldBlock label="Handle">
@@ -107,7 +114,7 @@ export function AdminSettings() {
                   value={form.handle}
                   onChange={(e) => updateField("handle", e.target.value)}
                   autoComplete="off"
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  className={`${adminInputCn} font-mono`}
                 />
               </FieldBlock>
             </div>
@@ -118,7 +125,7 @@ export function AdminSettings() {
                 value={form.role}
                 onChange={(e) => updateField("role", e.target.value)}
                 autoComplete="off"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60"
+                className={adminInputCn}
               />
             </FieldBlock>
 
@@ -128,7 +135,7 @@ export function AdminSettings() {
                 onChange={(e) => updateField("bio", e.target.value)}
                 rows={3}
                 autoComplete="off"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 resize-y"
+                className={`${adminInputCn} resize-y`}
                 style={{ lineHeight: 1.6 }}
               />
             </FieldBlock>
@@ -145,7 +152,7 @@ export function AdminSettings() {
                 onChange={(e) => updateField("github", e.target.value)}
                 placeholder="https://github.com/..."
                 autoComplete="off"
-                className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                className={`${adminInputCn} font-mono`}
               />
             </FieldBlock>
             <FieldBlock label="Email">
@@ -157,7 +164,7 @@ export function AdminSettings() {
                 autoComplete="email"
                 inputMode="email"
                 required
-                className="admin-input w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                className={`${adminInputCn} font-mono`}
               />
             </FieldBlock>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -168,7 +175,7 @@ export function AdminSettings() {
                   onChange={(e) => updateField("telegram", e.target.value)}
                   placeholder="https://t.me/..."
                   autoComplete="off"
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  className={`${adminInputCn} font-mono`}
                 />
               </FieldBlock>
               <FieldBlock label="LinkedIn">
@@ -178,7 +185,7 @@ export function AdminSettings() {
                   onChange={(e) => updateField("linkedin", e.target.value)}
                   placeholder="https://linkedin.com/in/..."
                   autoComplete="off"
-                  className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 font-mono"
+                  className={`${adminInputCn} font-mono`}
                 />
               </FieldBlock>
             </div>
@@ -215,7 +222,7 @@ export function AdminSettings() {
               placeholder="New category"
               aria-label="New category"
               autoComplete="off"
-              className="w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40 focus:ring-2 focus:ring-border/60 flex-1"
+              className={`${adminInputCn} flex-1`}
               style={{ maxWidth: "200px" }}
             />
             <button

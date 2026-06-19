@@ -39,8 +39,32 @@ export function parseJson<T>(raw: string | null, fallback: T): T {
   if (!raw) return fallback;
   try {
     return JSON.parse(raw) as T;
-  } catch {
+  } catch (err) {
+    console.error("[db] parseJson: corrupt JSON in DB field, returning fallback.", err);
     return fallback;
+  }
+}
+
+/** Regex for a bare SQL identifier: letters, digits, underscores (no spaces). */
+const IDENTIFIER_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+/**
+ * Regex for an ORDER BY expression: one or more comma-separated terms of the
+ * form `identifier` or `identifier ASC|DESC` (case-insensitive).
+ * Intentionally does not allow arbitrary SQL — only the safe subset used by
+ * collection definitions (e.g. "sort_order ASC", "date DESC", "slug").
+ */
+const ORDER_BY_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(?:\s+(?:ASC|DESC))?(?:,\s*[a-zA-Z_][a-zA-Z0-9_]*(?:\s+(?:ASC|DESC))?)*$/i;
+
+function assertIdentifier(value: string, role: string): void {
+  if (!IDENTIFIER_RE.test(value)) {
+    throw new Error(`[defineCollection] Unsafe SQL identifier for ${role}: "${value}"`);
+  }
+}
+
+function assertOrderBy(value: string): void {
+  if (!ORDER_BY_RE.test(value)) {
+    throw new Error(`[defineCollection] Unsafe ORDER BY expression: "${value}"`);
   }
 }
 
@@ -122,7 +146,8 @@ export interface Collection<T> {
   schema: z.ZodObject<Record<string, z.ZodType>>;
   getAll(db: D1Database): Promise<T[]>;
   getByPk(db: D1Database, pk: string): Promise<T | null>;
-  upsert(db: D1Database, input: Record<string, unknown>): Promise<void>;
+  /** Accept the domain type directly — avoids `as unknown as Record<string,unknown>` at every call site. */
+  upsert(db: D1Database, input: T): Promise<void>;
   remove(db: D1Database, pk: string): Promise<void>;
   routes: {
     list: ReturnType<typeof withAdmin>;
@@ -135,6 +160,15 @@ export interface Collection<T> {
 
 export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> {
   const { name, table, primaryKey, conflictColumns, paramName, orderBy, idGeneration, capabilities, fields } = config;
+
+  // Validate SQL identifiers at definition time so a misconfiguration fails
+  // loudly at startup rather than producing a runtime SQL injection vector.
+  assertIdentifier(table, "table");
+  assertOrderBy(orderBy);
+  for (const [domainKey, field] of Object.entries(fields)) {
+    assertIdentifier(field.column, `fields.${domainKey}.column`);
+  }
+
   const pkColumn = fields[primaryKey]!.column;
   const mapRow = buildRowMapper<T>(fields);
   const upsertSQL = buildUpsertSQL(table, fields, primaryKey, conflictColumns);
@@ -161,10 +195,11 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
       return row ? mapRow(row) : null;
     },
 
-    async upsert(db: D1Database, input: Record<string, unknown>): Promise<void> {
-      const data = idGeneration === "uuid" && !input[primaryKey]
-        ? { ...input, [primaryKey]: crypto.randomUUID() }
-        : input;
+    async upsert(db: D1Database, input: T): Promise<void> {
+      const record = input as Record<string, unknown>;
+      const data = idGeneration === "uuid" && !record[primaryKey]
+        ? { ...record, [primaryKey]: crypto.randomUUID() }
+        : record;
       const params = buildBindParams(fields, data);
       await db.prepare(upsertSQL).bind(...params).run();
     },
@@ -185,7 +220,7 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
       create: withAdmin(
         { capability: capabilities.write, schema },
         async ({ db, data }) => {
-          await collection.upsert(db, data as Record<string, unknown>);
+          await collection.upsert(db, data as T);
           return Response.json({ ok: true });
         },
       ),
@@ -204,7 +239,7 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
       update: withAdmin(
         { capability: capabilities.write, schema },
         async ({ db, data }) => {
-          await collection.upsert(db, data as Record<string, unknown>);
+          await collection.upsert(db, data as T);
           return Response.json({ ok: true });
         },
       ),

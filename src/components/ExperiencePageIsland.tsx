@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -149,7 +149,7 @@ function TagConnections({
   const { reduceMotion } = useSettings();
   const [paths, setPaths] = useState<{ d: string; length: number }[]>([]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setPaths(computePaths(containerRef.current, hoveredTag));
   }, [hoveredTag, containerRef]);
 

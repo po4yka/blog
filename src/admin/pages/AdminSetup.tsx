@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { Fingerprint, CheckCircle, AlertCircle } from "lucide-react";
 import { getPasskeyRegisterOptions, verifyPasskeyRegister } from "@/admin/api";
 import { startRegistration } from "@simplewebauthn/browser";
-import type { PublicKeyCredentialCreationOptionsJSON } from "@simplewebauthn/browser";
 
 type SetupState = "ready" | "registering" | "success" | "error";
 
@@ -30,7 +29,7 @@ export function AdminSetup() {
     setError(null);
 
     try {
-      const options = await getPasskeyRegisterOptions(setupToken) as PublicKeyCredentialCreationOptionsJSON;
+      const options = await getPasskeyRegisterOptions(setupToken);
       const credential = await startRegistration({ optionsJSON: options });
       await verifyPasskeyRegister(setupToken, credential);
       setState("success");

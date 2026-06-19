@@ -10,17 +10,24 @@ import { ease } from "@/lib/motion";
 export function RealGitLog({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [commits, setCommits] = useState<CommitSummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const { copy } = useCopy();
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/github/commits")
       .then((r) => r.json())
-      .then((data: CommitSummary[]) => setCommits(data))
-      .catch(() => {});
+      .then((data: CommitSummary[]) => {
+        setCommits(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn("[RealGitLog] Failed to fetch commits:", err);
+        setLoading(false);
+      });
   }, []);
 
-  if (commits.length === 0) return null;
+  if (loading || commits.length === 0) return null;
 
   return (
     <Shell

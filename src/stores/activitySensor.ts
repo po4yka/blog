@@ -130,6 +130,19 @@ if (typeof window !== "undefined") {
     },
   );
 
+  // Disconnect the observer before Astro swaps the DOM so stale element
+  // references in the IntersectionObserver callback cannot fire after the old
+  // nodes are removed.
+  document.addEventListener("astro:before-swap", () => {
+    observer?.disconnect();
+    observer = null;
+    visibleSections.clear();
+    useActivityStore.setState({
+      visibleSectionCount: 1,
+      visibleSectionNames: [],
+    });
+  });
+
   // Re-observe sections after Astro View Transitions
   document.addEventListener("astro:page-load", () => {
     if (!useSettingsStore.getState().reduceMotion) {

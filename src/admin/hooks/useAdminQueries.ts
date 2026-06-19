@@ -22,7 +22,14 @@ function createCollectionHooks<T>(config: {
   getAll: () => Promise<T[]>;
   save: (item: T) => Promise<unknown>;
   remove: (id: string) => Promise<unknown>;
-  idField: keyof T;
+  /**
+   * The field on T used as the primary key for optimistic deletes.
+   * CONTRACT: The value at this field must be a string — it is compared with
+   * the string `id` arg passed to `remove` and to the `mutationFn`. A non-string
+   * PK (e.g. number) would silently fail the `!== id` filter and never optimistically
+   * remove the row. All current collections (slug, id) are string PKs.
+   */
+  idField: keyof T & string;
   entityName: string;
 }) {
   function useList() {

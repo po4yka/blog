@@ -35,6 +35,7 @@ function getSystemTheme(): "light" | "dark" {
 }
 
 function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fontSize">) {
+  if (typeof document === "undefined") return;
   const root = document.documentElement;
 
   const resolved = prefs.theme === "system" ? getSystemTheme() : prefs.theme;
