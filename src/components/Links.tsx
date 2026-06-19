@@ -46,7 +46,7 @@ export function Links() {
           link.href === undefined ? (
             <span
               key={link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
               style={{
                 border: "1px solid var(--border)",
               }}
@@ -62,7 +62,7 @@ export function Links() {
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
               aria-label={link.href.startsWith("http") ? `${link.label} (${t("links.opensNewWindow")})` : link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200 font-mono text-mono rounded-[2px]"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200 font-mono text-mono rounded-[2px]"
               style={{
                 border: "1px solid var(--border)",
               }}
