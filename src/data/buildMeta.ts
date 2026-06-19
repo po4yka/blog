@@ -4,7 +4,7 @@
 export const buildMeta = {
   commitHash: "80913a0",
   deployDate: "2026-05-17T14:44:51.984Z",
-  astroVersion: "6.4.2",
+  astroVersion: "6.4.7",
   postCount: 1,
   projectCount: 9,
   roleCount: 7,
