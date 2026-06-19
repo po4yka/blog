@@ -37,9 +37,9 @@ const UPSTREAM_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAM
 export const GET: APIRoute = async () => {
   const cached = await cfCacheGet(UPSTREAM_URL);
   if (cached) {
-    return new Response(cached.body, {
-      headers: { ...Object.fromEntries(cached.headers), "X-Cache": "HIT" },
-    });
+    const headers = new Headers(cached.headers);
+    headers.set("X-Cache", "HIT");
+    return new Response(cached.body, { headers });
   }
 
   const requestHeaders: Record<string, string> = {

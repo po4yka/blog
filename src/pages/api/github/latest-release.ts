@@ -74,9 +74,9 @@ async function findLatestRelease(
 export const GET: APIRoute = async () => {
   const cached = await cfCacheGet(CACHE_KEY);
   if (cached) {
-    return new Response(cached.body, {
-      headers: { ...Object.fromEntries(cached.headers), "X-Cache": "HIT" },
-    });
+    const headers = new Headers(cached.headers);
+    headers.set("X-Cache", "HIT");
+    return new Response(cached.body, { headers });
   }
 
   const authHeader = env.GITHUB_TOKEN ? `Bearer ${env.GITHUB_TOKEN}` : undefined;

@@ -1,13 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// GitHub routes use module-level cache and global fetch.
-// We stub fetch and re-import each route fresh per test to reset cache.
+// GitHub routes cache via the Cloudflare Workers Cache API (caches.default)
+// and global fetch. We stub both: fetch is mocked per test, and caches.default
+// is backed by an in-memory Map so the HIT path is exercised. Routes are
+// re-imported fresh per test; the cache store is cleared between tests.
 
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
+// Minimal in-memory CacheStorage standing in for caches.default. Keyed by URL.
+const cacheStore = new Map<string, Response>();
+const mockCache = {
+  match: vi.fn(async (req: Request) => {
+    const hit = cacheStore.get(req.url);
+    return hit ? hit.clone() : undefined;
+  }),
+  put: vi.fn(async (req: Request, res: Response) => {
+    cacheStore.set(req.url, res.clone());
+  }),
+};
+vi.stubGlobal("caches", { default: mockCache });
+
 beforeEach(() => {
   mockFetch.mockReset();
+  cacheStore.clear();
   vi.resetModules();
 });
 
@@ -38,8 +54,8 @@ describe("GET /api/github/repos", () => {
     expect(response.headers.get("X-Cache")).toBe("MISS");
   });
 
-  it("serves stale cache when GitHub API fails", async () => {
-    // First call: populate cache
+  it("serves cached repos on the second call without re-fetching", async () => {
+    // First call: populate the Cache API entry.
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => [
@@ -48,19 +64,14 @@ describe("GET /api/github/repos", () => {
     });
 
     const GET = await getHandler();
-    await GET(ctx);
+    const first = await GET(ctx);
+    expect(first.headers.get("X-Cache")).toBe("MISS");
 
-    // Expire cache by manipulating time
-    vi.useFakeTimers();
-    vi.advanceTimersByTime(11 * 60 * 1000); // 11 minutes, past 10-min TTL
-
-    // Second call: GitHub fails
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 503 });
+    // Second call: served from cache, no upstream request.
     const response = await GET(ctx);
     expect(response.status).toBe(200);
-    expect(response.headers.get("X-Cache")).toBe("STALE");
-
-    vi.useRealTimers();
+    expect(response.headers.get("X-Cache")).toBe("HIT");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it("returns empty array when API fails with no cache", async () => {
@@ -332,23 +343,20 @@ describe("GET /api/github/calendar", () => {
     expect(await response.json()).toEqual(events);
   });
 
-  it("serves stale cache when GitHub API fails after a prior success", async () => {
+  it("serves cached calendar data on the second call without re-fetching", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => [{ created_at: "2026-04-10T12:00:00Z" }],
     });
     const GET = await getHandler();
-    await GET(ctx);
+    const first = await GET(ctx);
+    expect(first.headers.get("X-Cache")).toBe("MISS");
 
-    // Expire cache (15-min TTL)
-    vi.useFakeTimers();
-    vi.advanceTimersByTime(16 * 60 * 1000);
-
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 503 });
+    // Second call: served from the Cache API entry, no upstream request.
     const response = await GET(ctx);
     expect(response.status).toBe(200);
-    expect(response.headers.get("X-Cache")).toBe("STALE");
-    vi.useRealTimers();
+    expect(response.headers.get("X-Cache")).toBe("HIT");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it("returns empty array on first-time failure", async () => {
