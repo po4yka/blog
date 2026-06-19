@@ -42,7 +42,7 @@ export function LanguageSwitcher({ translationUrl, activeLang, className = "" }:
               fontWeight: displayLang === lang ? 500 : 400,
               background: displayLang === lang ? "var(--muted)" : "transparent",
             }}
-            aria-current={displayLang === lang ? "true" : undefined}
+            aria-pressed={displayLang === lang}
             data-umami-event="lang-switch"
             data-umami-event-target={lang}
           >

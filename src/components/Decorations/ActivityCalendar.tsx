@@ -172,8 +172,13 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
             )}
           </div>
 
+          {/* Calendar grid — presented as a single image to screen readers; summary announced via aria-live region above */}
+          <div
+            role="img"
+            aria-label={`Activity calendar: ${totalEvents} event${totalEvents === 1 ? "" : "s"} across ${activeDays} active day${activeDays === 1 ? "" : "s"} in the past ${WEEKS} weeks`}
+          >
           {/* Month labels */}
-          <div className="flex gap-[3px] mb-1 ml-[28px]">
+          <div className="flex gap-[3px] mb-1 ml-[28px]" aria-hidden="true">
             {Array.from({ length: WEEKS }).map((_, w) => {
               const label = monthLabels.find((m) => m.col === w);
               return (
@@ -190,7 +195,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
 
           <div className="flex gap-0">
             {/* Day labels */}
-            <div className="flex flex-col gap-[3px] mr-1.5 shrink-0">
+            <div aria-hidden="true" className="flex flex-col gap-[3px] mr-1.5 shrink-0">
               {DAY_LABELS.map((label, i) => (
                 <span
                   key={i}
@@ -211,6 +216,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                     return (
                       <motion.div
                         key={day.date}
+                        aria-hidden="true"
                         className="rounded-[2px] cursor-default"
                         style={{
                           width: 11,
@@ -225,7 +231,6 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                           ease: easeStep8,
                         }}
                         title={`${day.date}: ${day.count} event${day.count === 1 ? "" : "s"}`}
-                        aria-label={day.ariaLabel}
                         onMouseEnter={() => setHoveredIdx(cellIdx)}
                         onMouseLeave={() => setHoveredIdx((cur) => (cur === cellIdx ? null : cur))}
                       />
@@ -234,6 +239,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                 </div>
               ))}
             </div>
+          </div>
           </div>
 
           {/* Legend */}

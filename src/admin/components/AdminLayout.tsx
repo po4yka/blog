@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useLocation } from "react-router";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import { useEffect, Suspense } from "react";
 import { useAuthContext } from "@/admin/contexts/AuthContext";
 import {
@@ -19,11 +19,6 @@ const sidebarLinks = [
   { label: "Settings", path: "/admin/settings", icon: Settings },
 ];
 
-function isLinkActive(linkPath: string, currentPath: string): boolean {
-  return linkPath === "/admin"
-    ? currentPath === "/admin"
-    : currentPath.startsWith(linkPath);
-}
 
 export function AdminLayout() {
   const { isAuthenticated, logout } = useAuthContext();
@@ -46,8 +41,15 @@ export function AdminLayout() {
     <div
       className="min-h-screen bg-background text-foreground flex"
     >
+      {/* Skip link */}
+      <a
+        href="#admin-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-[2px] focus:outline-none"
+      >
+        Skip to main content
+      </a>
       {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-[220px] min-h-screen bg-card/50 border-r border-border/60 sticky top-0 h-screen">
+      <aside aria-label="Admin sidebar" className="hidden md:flex flex-col w-[220px] min-h-screen bg-card/50 border-r border-border/60 sticky top-0 h-screen">
         {/* Brand */}
         <div className="px-5 pt-6 pb-5 border-b border-border/40">
           <a
@@ -66,27 +68,38 @@ export function AdminLayout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav aria-label="Admin navigation" className="flex-1 px-3 py-4 space-y-0.5">
           {sidebarLinks.map((link) => {
-            const isActive = isLinkActive(link.path, location.pathname);
             const Icon = link.icon;
             return (
-              <button
+              <NavLink
                 key={link.path}
-                onClick={() => navigate(link.path)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 transition-all duration-200 cursor-pointer text-left ${
-                  isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-                style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: isActive ? 500 : 400 }}
+                to={link.path}
+                end={link.path === "/admin"}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-2.5 px-3 py-2 transition-all duration-200 text-left ${
+                    isActive
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`
+                }
+                style={({ isActive }) => ({
+                  fontSize: "0.8125rem",
+                  borderRadius: "2px",
+                  fontWeight: isActive ? 500 : 400,
+                })}
               >
-                <Icon size={15} className={isActive ? "text-foreground" : ""} />
-                {link.label}
-                {isActive && (
-                  <ChevronRight size={11} className="ml-auto text-muted-foreground/50" />
+                {({ isActive }) => (
+                  <>
+                    {isActive && <span className="sr-only">(current page)</span>}
+                    <Icon size={15} className={isActive ? "text-foreground" : ""} aria-hidden="true" />
+                    {link.label}
+                    {isActive && (
+                      <ChevronRight size={11} className="ml-auto text-muted-foreground/50" aria-hidden="true" />
+                    )}
+                  </>
                 )}
-              </button>
+              </NavLink>
             );
           })}
         </nav>
@@ -130,29 +143,34 @@ export function AdminLayout() {
           </button>
         </div>
         {/* Mobile nav tabs */}
-        <div className="flex gap-1 mt-2 overflow-x-auto pb-1 -mx-1 px-1">
-          {sidebarLinks.map((link) => {
-            const isActive = isLinkActive(link.path, location.pathname);
-            return (
-              <button
-                key={link.path}
-                onClick={() => navigate(link.path)}
-                className={`shrink-0 px-2.5 py-1 font-mono transition-colors duration-200 ${
+        <nav aria-label="Admin navigation" className="flex gap-1 mt-2 overflow-x-auto pb-1 -mx-1 px-1">
+          {sidebarLinks.map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              end={link.path === "/admin"}
+              className={({ isActive }) =>
+                `shrink-0 px-2.5 py-1 font-mono transition-colors duration-200 ${
                   isActive
                     ? "bg-foreground text-background"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
-                style={{ fontSize: "0.625rem", borderRadius: "2px" }}
-              >
-                {link.label}
-              </button>
-            );
-          })}
-        </div>
+                }`
+              }
+              style={{ fontSize: "0.625rem", borderRadius: "2px" }}
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && <span className="sr-only">(current page)</span>}
+                  {link.label}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
       </div>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 md:p-0 pt-[72px] md:pt-0">
+      <main id="admin-main" className="flex-1 min-w-0 md:p-0 pt-[72px] md:pt-0">
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-32">

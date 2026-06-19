@@ -106,7 +106,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         </Cmd>
 
         {/* Category filter — flat row separated by │ */}
-        <div className="flex flex-wrap items-center gap-0 pl-1">
+        <div role="group" aria-label="Filter by category" className="flex flex-wrap items-center gap-0 pl-1">
           {categories.map((cat, i) => (
             <span key={cat} className="flex items-center">
               {i > 0 && (
@@ -116,6 +116,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
               )}
               <button
                 onClick={() => setActiveCategory(cat)}
+                aria-pressed={activeCategory === cat}
                 className={`px-1.5 py-0.5 transition-colors duration-150 cursor-pointer text-label ${
                   activeCategory === cat
                     ? "text-foreground font-medium"
@@ -262,7 +263,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
               return (
                 <div key={cat} className="flex items-center gap-2">
                   <span className="text-muted-foreground w-24 text-right truncate text-label">{cat}</span>
-                  <div className="flex-1 h-[2px] overflow-hidden" style={{ background: "var(--border)" }}>
+                  <div aria-hidden="true" className="flex-1 h-[2px] overflow-hidden" style={{ background: "var(--border)" }}>
                     <motion.div
                       className="h-full"
                       style={{

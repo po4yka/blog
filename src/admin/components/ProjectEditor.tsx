@@ -1,7 +1,10 @@
+import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Save, Star, StarOff } from "lucide-react";
 import type { Project } from "@/admin/api";
 import { FieldBlock, TagsInput, LinksEditor } from "@/admin/components/FormPrimitives";
+
+const EDITOR_TITLE_ID = "project-editor-title";
 
 interface ProjectEditorProps {
   editing: Project;
@@ -13,9 +16,28 @@ interface ProjectEditorProps {
 }
 
 export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose, onChange }: ProjectEditorProps) {
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+
+  // Move focus to first field on open
+  useEffect(() => {
+    setTimeout(() => firstFieldRef.current?.focus(), 50);
+  }, [editing.id]);
+
+  // Escape key closes the editor
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
   return (
     <AnimatePresence>
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={EDITOR_TITLE_ID}
         className="mb-6 grid overflow-hidden border border-border bg-card"
         style={{ borderRadius: "4px" }}
         initial={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
@@ -25,7 +47,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
       >
         <div className="min-h-0 overflow-hidden p-5">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
+            <h2 id={EDITOR_TITLE_ID} className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
               {isExisting ? "Edit Project" : "New Project"}
             </h2>
             <button
@@ -41,6 +63,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FieldBlock label="Name" required>
               <input
+                ref={firstFieldRef}
                 type="text"
                 value={editing.name}
                 onChange={(e) => onChange({ ...editing, name: e.target.value })}

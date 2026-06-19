@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
@@ -53,6 +53,21 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [onScroll]);
+
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+
+  // Escape key closes mobile menu and returns focus to hamburger
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        hamburgerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   const isActive = (link: (typeof navLinks)[number]) => {
     if (link.exact) return currentPathname === link.href;
@@ -147,6 +162,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                 <a
                   key={link.labelKey}
                   href={link.href}
+                  aria-current={active ? "page" : undefined}
                   className={`relative px-3 py-1.5 text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
                     active
                       ? "text-foreground font-medium"
@@ -210,6 +226,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               <ThemeIcon size={18} strokeWidth={1.8} />
             </button>
             <button
+              ref={hamburgerRef}
               className="flex items-center justify-center text-muted-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={t("nav.toggleMenu")}
@@ -246,6 +263,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                     <motion.a
                       key={link.labelKey}
                       href={link.href}
+                      aria-current={active ? "page" : undefined}
                       className={`py-3 px-3 text-mono transition-colors duration-200 whitespace-nowrap ${
                         active
                           ? "text-foreground font-medium"

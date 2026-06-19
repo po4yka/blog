@@ -258,8 +258,8 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
         </motion.div>
       ))}
 
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <span style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
+      <form onSubmit={handleSubmit} role="group" aria-label="Terminal command input" className="flex items-center gap-2">
+        <span aria-hidden="true" style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
         <div className="relative flex-1">
           <input
             id="terminal-input"
@@ -268,6 +268,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            aria-label="Terminal command input"
             className="w-full bg-transparent outline-none text-foreground text-mono font-mono"
             style={{ caretColor: "var(--emphasis)" }}
             placeholder={focused ? "" : "type a command"}

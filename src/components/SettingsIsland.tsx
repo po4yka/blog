@@ -100,11 +100,12 @@ export function Settings() {
               </span>
             </div>
             <p className="text-muted-foreground text-mono-sm">{tt("settings.themeDesc")}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2" role="group" aria-label={tt("settings.theme")}>
               {themeOptions.map(({ value, icon: Icon, labelKey }) => (
                 <button
                   key={value}
                   onClick={() => setTheme(value)}
+                  aria-pressed={theme === value}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     theme === value
                       ? "text-foreground font-medium border-border bg-muted"
@@ -133,11 +134,12 @@ export function Settings() {
               </span>
             </div>
             <p className="text-muted-foreground text-mono-sm">{tt("settings.motionDesc")}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2" role="group" aria-label={tt("settings.motion")}>
               {[false, true].map((val) => (
                 <button
                   key={String(val)}
                   onClick={() => setReduceMotion(val)}
+                  aria-pressed={reduceMotion === val}
                   className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     reduceMotion === val
                       ? "text-foreground font-medium border-border bg-muted"
@@ -162,11 +164,12 @@ export function Settings() {
               </span>
             </div>
             <p className="text-muted-foreground text-mono-sm">{tt("settings.fontSizeDesc")}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2" role="group" aria-label={tt("settings.fontSize")}>
               {(["compact", "default", "large"] as FontSize[]).map((size) => (
                 <button
                   key={size}
                   onClick={() => setFontSize(size)}
+                  aria-pressed={fontSize === size}
                   className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     fontSize === size
                       ? "text-foreground font-medium border-border bg-muted"
@@ -191,11 +194,12 @@ export function Settings() {
               </span>
             </div>
             <p className="text-muted-foreground text-mono-sm">{tt("settings.languageDesc")}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2" role="group" aria-label={tt("settings.language")}>
               {(["en", "ru"] as const).map((loc) => (
                 <button
                   key={loc}
                   onClick={() => setLocale(loc)}
+                  aria-pressed={locale === loc}
                   className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
                     locale === loc
                       ? "text-foreground font-medium border-border bg-muted"

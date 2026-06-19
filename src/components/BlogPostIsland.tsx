@@ -242,6 +242,7 @@ function TableOfContents({
             <li key={id} className={level === 3 ? "pl-3" : ""}>
               <a
                 href={`#${id}`}
+                aria-current={activeId === id ? "true" : undefined}
                 className={cn(
                   "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
                   activeId === id

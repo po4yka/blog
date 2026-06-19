@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
 import type { Role } from "@/admin/api";
@@ -24,16 +24,46 @@ export function AdminExperience() {
   const deleteRoleMutation = useDeleteRole();
   const [editing, setEditing] = useState<Role | null>(null);
   const { confirmingId: confirmDelete, requestDelete } = useConfirmDelete();
+  const editorTitleId = "role-editor-title";
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const editingId = editing?.id ?? null;
+
+  // Move focus into the editor when it opens
+  useEffect(() => {
+    if (editingId) {
+      setTimeout(() => firstFieldRef.current?.focus(), 50);
+    }
+  }, [editingId]);
+
+  // Escape key closes the editor
+  useEffect(() => {
+    if (!editing) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setEditing(null);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [editing]);
+
+  const closeEditor = () => {
+    setEditing(null);
+    triggerRef.current?.focus();
+  };
 
   const handleSave = () => {
     if (!editing || !editing.title.trim()) return;
-    saveRoleMutation.mutate(editing, { onSuccess: () => setEditing(null) });
+    saveRoleMutation.mutate(editing, { onSuccess: () => closeEditor() });
   };
 
   const handleDelete = (id: string) => {
     requestDelete(id, () => {
       deleteRoleMutation.mutate(id);
-      if (editing?.id === id) setEditing(null);
+      if (editing?.id === id) closeEditor();
     });
   };
 
@@ -55,6 +85,7 @@ export function AdminExperience() {
           </p>
         </div>
         <button
+          ref={triggerRef}
           onClick={() => setEditing(newRole())}
           className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
           style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
@@ -68,6 +99,9 @@ export function AdminExperience() {
       <AnimatePresence>
         {editing && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={editorTitleId}
             className="mb-6 grid overflow-hidden border border-border bg-card"
             style={{ borderRadius: "4px" }}
             initial={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
@@ -77,11 +111,11 @@ export function AdminExperience() {
           >
             <div className="min-h-0 overflow-hidden p-5">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
+                <h2 id={editorTitleId} className="text-foreground" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
                   {roles.find((r) => r.id === editing.id) ? "Edit Role" : "New Role"}
                 </h2>
                 <button
-                  onClick={() => setEditing(null)}
+                  onClick={closeEditor}
                   aria-label="Close role editor"
                   className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/30 hover:text-foreground transition-colors cursor-pointer"
                 >
@@ -93,6 +127,7 @@ export function AdminExperience() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Title" required>
                   <input
+                    ref={firstFieldRef}
                     type="text"
                     value={editing.title}
                     onChange={(e) => setEditing({ ...editing, title: e.target.value })}
@@ -151,7 +186,7 @@ export function AdminExperience() {
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/30">
                 <button
-                  onClick={() => setEditing(null)}
+                  onClick={closeEditor}
                   className="font-mono text-muted-foreground/40 hover:text-foreground transition-colors cursor-pointer"
                   style={{ fontSize: "0.75rem" }}
                 >

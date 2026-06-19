@@ -104,9 +104,10 @@ export function Hero() {
                 <a
                   key={link.label}
                   href={link.href}
+                  aria-label={link.label}
                   className="text-mono-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 min-h-[44px] flex items-center"
                 >
-                  <span className="text-muted-foreground-dim">$</span>&nbsp;open --{link.label}
+                  <span aria-hidden="true" className="text-muted-foreground-dim">$</span><span aria-hidden="true">&nbsp;open --{link.label}</span>
                 </a>
               ))}
             </div>
