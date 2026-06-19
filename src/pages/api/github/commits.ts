@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
 export interface CommitSummary {
   hash: string;
@@ -11,9 +12,17 @@ export interface CommitSummary {
   url: string;
 }
 
-let cache: { data: CommitSummary[]; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 10 * 60 * 1000;
+const CACHE_TTL_S = 600; // 10 minutes
 const MAX_COMMITS = 7;
+// Shared with calendar.ts and events.ts — one upstream call fills all three.
+const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
+
+type GitHubPushEvent = {
+  type: string;
+  payload?: { commits?: Array<{ sha: string; message: string }> };
+  created_at: string;
+  repo?: { name: string };
+};
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -27,43 +36,7 @@ function relativeTime(iso: string): string {
   return `${months}mo ago`;
 }
 
-export const GET: APIRoute = async () => {
-  if (cache && Date.now() < cache.expiresAt) {
-    return Response.json(cache.data, {
-      headers: { "Cache-Control": "public, max-age=600", "X-Cache": "HIT" },
-    });
-  }
-
-  const requestHeaders: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "User-Agent": `${GITHUB_USERNAME}-blog`,
-  };
-  if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
-
-  const res = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`,
-    { headers: requestHeaders },
-  );
-
-  if (!res.ok) {
-    if (cache) {
-      return Response.json(cache.data, {
-        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
-      });
-    }
-    return Response.json([], {
-      headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
-    });
-  }
-
-  const events = (await res.json()) as Array<{
-    type: string;
-    payload?: { commits?: Array<{ sha: string; message: string }> };
-    created_at: string;
-    repo?: { name: string };
-  }>;
-
-  // Extract push event commits
+function extractCommits(events: GitHubPushEvent[]): CommitSummary[] {
   const commits: CommitSummary[] = [];
   for (const event of events) {
     if (event.type !== "PushEvent" || !event.payload?.commits) continue;
@@ -78,10 +51,42 @@ export const GET: APIRoute = async () => {
     }
     if (commits.length >= MAX_COMMITS) break;
   }
+  return commits;
+}
 
-  cache = { data: commits, expiresAt: Date.now() + CACHE_TTL_MS };
+export const GET: APIRoute = async () => {
+  const cached = await cfCacheGet(UPSTREAM_URL);
+  if (cached) {
+    const events = (await cached.json()) as GitHubPushEvent[];
+    const commits = extractCommits(events);
+    return Response.json(commits, {
+      headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "HIT" },
+    });
+  }
 
+  const requestHeaders: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": `${GITHUB_USERNAME}-blog`,
+  };
+  if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
+
+  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
+
+  if (!res.ok) {
+    return Response.json([], {
+      headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
+    });
+  }
+
+  const events = (await res.json()) as GitHubPushEvent[];
+
+  await cfCachePut(
+    UPSTREAM_URL,
+    Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
+  );
+
+  const commits = extractCommits(events);
   return Response.json(commits, {
-    headers: { "Cache-Control": "public, max-age=600", "X-Cache": "MISS" },
+    headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
 };

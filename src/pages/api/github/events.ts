@@ -4,15 +4,16 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubActivitySummary } from "@/types";
+import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
 interface GitHubEvent {
   created_at: string;
 }
 
-// In-memory cache with 15-minute TTL
-let cache: { data: GitHubActivitySummary; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_S = 900; // 15 minutes
 const BUCKET_DAYS = 14;
+// Shared with calendar.ts and commits.ts — one upstream call fills all three.
+const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
 
 function buildBuckets(events: GitHubEvent[]): GitHubActivitySummary {
   const now = Date.now();
@@ -35,9 +36,12 @@ function buildBuckets(events: GitHubEvent[]): GitHubActivitySummary {
 }
 
 export const GET: APIRoute = async () => {
-  if (cache && Date.now() < cache.expiresAt) {
-    return Response.json(cache.data, {
-      headers: { "Cache-Control": "public, max-age=900", "X-Cache": "HIT" },
+  const cached = await cfCacheGet(UPSTREAM_URL);
+  if (cached) {
+    const events = (await cached.json()) as GitHubEvent[];
+    const summary = buildBuckets(events);
+    return Response.json(summary, {
+      headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "HIT" },
     });
   }
 
@@ -47,28 +51,23 @@ export const GET: APIRoute = async () => {
   };
   if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
 
-  const res = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`,
-    { headers: requestHeaders },
-  );
+  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
 
   if (!res.ok) {
-    if (cache) {
-      return Response.json(cache.data, {
-        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
-      });
-    }
     return Response.json(null, {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
   }
 
   const events = (await res.json()) as GitHubEvent[];
+
+  await cfCachePut(
+    UPSTREAM_URL,
+    Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
+  );
+
   const summary = buildBuckets(events);
-
-  cache = { data: summary, expiresAt: Date.now() + CACHE_TTL_MS };
-
   return Response.json(summary, {
-    headers: { "Cache-Control": "public, max-age=900", "X-Cache": "MISS" },
+    headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
 };

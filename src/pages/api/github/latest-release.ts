@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubLatestRelease } from "@/types";
+import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
 interface GitHubRepo {
   name: string;
@@ -16,10 +17,12 @@ interface GitHubRelease {
   html_url: string;
 }
 
-// In-memory cache with 30-minute TTL
-let cache: { data: GitHubLatestRelease | null; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 30 * 60 * 1000;
-const MAX_REPOS_TO_CHECK = 5;
+const CACHE_TTL_S = 1800; // 30 minutes
+// Reduced from 5 to limit N+1 fan-out on each cache miss.
+const MAX_REPOS_TO_CHECK = 3;
+const REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=10`;
+// Distinct cache key so it doesn't collide with the repos.ts cache entry.
+const CACHE_KEY = REPOS_URL + ":latest-release";
 
 async function findLatestRelease(
   repos: GitHubRepo[],
@@ -69,9 +72,10 @@ async function findLatestRelease(
 }
 
 export const GET: APIRoute = async () => {
-  if (cache && Date.now() < cache.expiresAt) {
-    return Response.json(cache.data, {
-      headers: { "Cache-Control": "public, max-age=1800", "X-Cache": "HIT" },
+  const cached = await cfCacheGet(CACHE_KEY);
+  if (cached) {
+    return new Response(cached.body, {
+      headers: { ...Object.fromEntries(cached.headers), "X-Cache": "HIT" },
     });
   }
 
@@ -83,17 +87,9 @@ export const GET: APIRoute = async () => {
   };
   if (authHeader) requestHeaders["Authorization"] = authHeader;
 
-  const reposRes = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=10`,
-    { headers: requestHeaders },
-  );
+  const reposRes = await fetch(REPOS_URL, { headers: requestHeaders });
 
   if (!reposRes.ok) {
-    if (cache) {
-      return Response.json(cache.data, {
-        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
-      });
-    }
     return Response.json(null, {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
@@ -102,9 +98,11 @@ export const GET: APIRoute = async () => {
   const repos = (await reposRes.json()) as GitHubRepo[];
   const release = await findLatestRelease(repos, authHeader);
 
-  cache = { data: release, expiresAt: Date.now() + CACHE_TTL_MS };
-
-  return Response.json(release, {
-    headers: { "Cache-Control": "public, max-age=1800", "X-Cache": "MISS" },
+  const response = Response.json(release, {
+    headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
+
+  await cfCachePut(CACHE_KEY, response.clone());
+
+  return response;
 };

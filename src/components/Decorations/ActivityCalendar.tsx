@@ -5,6 +5,26 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
 import { easeStep8 } from "@/lib/motion";
 
+// Variants for the grid wrapper — one animation registration drives all cells
+// via staggerChildren instead of 91 individual motion.div registrations.
+const gridVariants = {
+  hidden: {},
+  visible: (baseDelay: number) => ({
+    transition: {
+      delayChildren: baseDelay + 0.05,
+      staggerChildren: 0.002,
+    },
+  }),
+};
+
+const cellVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.15, ease: easeStep8 },
+  },
+};
+
 const WEEKS = 13; // ~3 months
 const DAYS_PER_WEEK = 7;
 const TOTAL_DAYS = WEEKS * DAYS_PER_WEEK;
@@ -207,8 +227,14 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
               ))}
             </div>
 
-            {/* Grid */}
-            <div className="flex gap-[3px]">
+            {/* Grid — one motion wrapper drives all cells via staggerChildren */}
+            <motion.div
+              className="flex gap-[3px]"
+              variants={gridVariants}
+              custom={delay}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+            >
               {weeks.map((week, w) => (
                 <div key={w} className="flex flex-col gap-[3px]">
                   {week.map((day, d) => {
@@ -223,13 +249,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                           height: 11,
                           backgroundColor: LEVEL_COLORS[day.level],
                         }}
-                        initial={{ opacity: 0 }}
-                        animate={inView ? { opacity: 1 } : {}}
-                        transition={{
-                          duration: 0.15,
-                          delay: delay + 0.05 + (w * 7 + d) * 0.002,
-                          ease: easeStep8,
-                        }}
+                        variants={cellVariants}
                         title={`${day.date}: ${day.count} event${day.count === 1 ? "" : "s"}`}
                         onMouseEnter={() => setHoveredIdx(cellIdx)}
                         onMouseLeave={() => setHoveredIdx((cur) => (cur === cellIdx ? null : cur))}
@@ -238,7 +258,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                   })}
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
           </div>
 

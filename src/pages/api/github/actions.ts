@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
 interface GitHubWorkflowRun {
   name: string;
@@ -28,15 +29,16 @@ export interface ActionsSummary {
   durationSec: number | null;
 }
 
-let cache: { data: ActionsSummary[]; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_S = 300; // 5 minutes
 const REPO_NAME = "blog";
 const MAX_RUNS = 5;
+const UPSTREAM_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/actions/runs?per_page=${MAX_RUNS}`;
 
 export const GET: APIRoute = async () => {
-  if (cache && Date.now() < cache.expiresAt) {
-    return Response.json(cache.data, {
-      headers: { "Cache-Control": "public, max-age=300", "X-Cache": "HIT" },
+  const cached = await cfCacheGet(UPSTREAM_URL);
+  if (cached) {
+    return new Response(cached.body, {
+      headers: { ...Object.fromEntries(cached.headers), "X-Cache": "HIT" },
     });
   }
 
@@ -46,17 +48,9 @@ export const GET: APIRoute = async () => {
   };
   if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
 
-  const res = await fetch(
-    `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/actions/runs?per_page=${MAX_RUNS}`,
-    { headers: requestHeaders },
-  );
+  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
 
   if (!res.ok) {
-    if (cache) {
-      return Response.json(cache.data, {
-        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
-      });
-    }
     return Response.json([], {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
@@ -82,9 +76,11 @@ export const GET: APIRoute = async () => {
     };
   });
 
-  cache = { data: runs, expiresAt: Date.now() + CACHE_TTL_MS };
-
-  return Response.json(runs, {
-    headers: { "Cache-Control": "public, max-age=300", "X-Cache": "MISS" },
+  const response = Response.json(runs, {
+    headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
+
+  await cfCachePut(UPSTREAM_URL, response.clone());
+
+  return response;
 };

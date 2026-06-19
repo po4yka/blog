@@ -66,6 +66,13 @@ import {
        would otherwise reserve a 300px placeholder that collapses to
        0px once the component hydrates and returns null, producing a
        visible gap while the user is scrolling. */
+    [data-section-name="about"],
+    [data-section-name="links"],
+    [data-section-name="projects"] {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 400px;
+    }
+
     [data-section-name="experience"],
     [data-section-name="blog"],
     [data-section-name="blog-stats"] {

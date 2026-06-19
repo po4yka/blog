@@ -3,19 +3,24 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
+import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
 interface GitHubEvent {
   created_at: string;
 }
 
-// In-memory cache with 15-minute TTL
-let cache: { data: { created_at: string }[]; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_S = 900; // 15 minutes
+// Shared Cache API key for the GitHub events endpoint — calendar, events, and
+// commits all hit the same upstream URL so they share a single cached response.
+const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
 
 export const GET: APIRoute = async () => {
-  if (cache && Date.now() < cache.expiresAt) {
-    return Response.json(cache.data, {
-      headers: { "Cache-Control": "public, max-age=900", "X-Cache": "HIT" },
+  const cached = await cfCacheGet(UPSTREAM_URL);
+  if (cached) {
+    const events = (await cached.json()) as GitHubEvent[];
+    const dates = events.map((e) => ({ created_at: e.created_at }));
+    return Response.json(dates, {
+      headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "HIT" },
     });
   }
 
@@ -25,28 +30,25 @@ export const GET: APIRoute = async () => {
   };
   if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
 
-  const res = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`,
-    { headers: requestHeaders },
-  );
+  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
 
   if (!res.ok) {
-    if (cache) {
-      return Response.json(cache.data, {
-        headers: { "Cache-Control": "public, max-age=60", "X-Cache": "STALE" },
-      });
-    }
     return Response.json([], {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
   }
 
   const events = (await res.json()) as GitHubEvent[];
+
+  // Store the raw events array under the shared cache key so events.ts and
+  // commits.ts can reuse the same upstream response without a second fetch.
+  await cfCachePut(
+    UPSTREAM_URL,
+    Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
+  );
+
   const dates = events.map((e) => ({ created_at: e.created_at }));
-
-  cache = { data: dates, expiresAt: Date.now() + CACHE_TTL_MS };
-
   return Response.json(dates, {
-    headers: { "Cache-Control": "public, max-age=900", "X-Cache": "MISS" },
+    headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
 };

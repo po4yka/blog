@@ -71,7 +71,7 @@ const { nonce } = Astro.locals;
       Skip to main content
     </a>
     <div class="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Nav client:load pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
+      <Nav client:idle pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
       <main
         id="main-content"
         tabindex="-1"
