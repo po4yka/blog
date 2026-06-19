@@ -66,6 +66,7 @@ const websiteSchema = isHomePage
   ? {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
       name: "Nikita Pochaev",
       url: SITE_URL,
       description:
@@ -86,13 +87,22 @@ const blogPostingSchema = blogPost && blogPostUrl
       "@type": "BlogPosting",
       headline: blogPost.title,
       description: blogPost.summary,
-      datePublished: blogPost.isoDate ?? blogPost.date,
-      dateModified: blogPost.isoDateModified ?? blogPost.isoDate ?? blogPost.date,
+      ...(blogPost.isoDate ? { datePublished: blogPost.isoDate } : {}),
+      ...(blogPost.isoDateModified ?? blogPost.isoDate
+        ? { dateModified: blogPost.isoDateModified ?? blogPost.isoDate }
+        : {}),
       inLanguage: lang === "ru" ? "ru-RU" : "en-US",
+      image: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/og/${lang}-${slug}.png`,
+        width: 1200,
+        height: 630,
+      },
       ...(typeof blogPost.wordCount === "number" && blogPost.wordCount > 0
         ? { wordCount: blogPost.wordCount }
         : {}),
       author: { "@id": `${SITE_URL}/#person` },
+      isPartOf: { "@id": `${SITE_URL}/#website` },
       keywords: blogPost.tags,
       articleSection: blogPost.category,
       url: blogPostUrl,

@@ -25,7 +25,12 @@ const categories = [
   "All",
   ...new Set(posts.map((p) => p.data.category)),
 ];
+const blogIndexHreflang = [
+  { hreflang: "en", href: "https://po4yka.dev/blog" },
+  { hreflang: "ru", href: "https://po4yka.dev/blog/ru" },
+  { hreflang: "x-default", href: "https://po4yka.dev/blog" },
+];
 ---
-<MainLayout title="Blog — Nikita Pochaev">
+<MainLayout title="Blog — Nikita Pochaev" hreflangAlternates={blogIndexHreflang}>
   <BlogListIsland client:load posts={serializedPosts} categories={categories} />
 </MainLayout>

@@ -20,6 +20,7 @@ export async function GET(context: APIContext) {
       pubDate: new Date(post.date),
       link: `/blog/${post.slug}`,
       categories: post.tags,
+      customData: `<author>nikkipochaev@gmail.com (Nikita Pochaev)</author><guid isPermaLink="true">${SITE_URL}/blog/${post.slug}</guid>`,
     })),
     customData: "<language>en-us</language>",
   });

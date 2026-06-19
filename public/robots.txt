@@ -89,4 +89,3 @@ Allow: /
 Disallow: /admin/
 
 Sitemap: https://po4yka.dev/sitemap-index.xml
-Sitemap: https://po4yka.dev/llms.txt

@@ -1,6 +1,20 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 import { blogPosts } from "@/data/blogData";
 
+/**
+ * Strip MDX-specific syntax so LLM consumers get clean prose.
+ * Removes import/export lines, self-closing and paired JSX component tags.
+ */
+function stripMdxSyntax(content: string): string {
+  return content
+    .replace(/^(import |export (?:const|type|default|function|class)\b).+(\n|$)/gm, "")
+    .replace(/<[A-Z][A-Za-z0-9]*(?:\s[^>]*)?\s*\/>/gs, "")
+    .replace(/<[A-Z][A-Za-z0-9]*(?:\s[^>]*)?\s*>/gs, "")
+    .replace(/<\/[A-Z][A-Za-z0-9]*>/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export const prerender = true;
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -22,7 +36,7 @@ export const GET: APIRoute = ({ props }) => {
     "",
     `Published: ${post.date} | Category: ${post.category} | Tags: ${post.tags.join(", ")}`,
     "",
-    post.content,
+    stripMdxSyntax(post.content),
   ];
 
   return new Response(lines.join("\n"), {

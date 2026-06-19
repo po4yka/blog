@@ -29,6 +29,7 @@ const autolinkConfig = [
 export default defineConfig({
   site: "https://po4yka.dev",
   output: "static",
+  trailingSlash: "never",
   prefetch: {
     prefetchAll: false,
     defaultStrategy: "viewport",
@@ -51,7 +52,16 @@ export default defineConfig({
       remarkPlugins: [remarkGfm, remarkMath],
       rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
     }),
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes("/admin/"),
+      i18n: {
+        defaultLocale: "en",
+        locales: {
+          en: "en-US",
+          ru: "ru-RU",
+        },
+      },
+    }),
   ],
   vite: {
     plugins: [tailwindcss()],

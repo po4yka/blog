@@ -3,6 +3,28 @@ import { blogPosts } from "@/data/blogData";
 import { projects } from "@/data/projectsData";
 import { roles, skills } from "@/data/experienceData";
 
+/**
+ * Strip MDX-specific syntax from a content string so LLM consumers receive
+ * clean prose. Removes:
+ *  - ES import/export declaration lines (import ... from ...; export const ...)
+ *  - Self-closing JSX tags spanning one or more lines (<Component ... />)
+ *  - Opening/closing JSX tags for known component names (<Component>, </Component>)
+ */
+function stripMdxSyntax(content: string): string {
+  return content
+    // Remove lines that are ES import or export statements
+    .replace(/^(import |export (?:const|type|default|function|class)\b).+(\n|$)/gm, "")
+    // Remove self-closing JSX tags (possibly multi-line)
+    .replace(/<[A-Z][A-Za-z0-9]*(?:\s[^>]*)?\s*\/>/gs, "")
+    // Remove opening JSX tags (possibly multi-line)
+    .replace(/<[A-Z][A-Za-z0-9]*(?:\s[^>]*)?\s*>/gs, "")
+    // Remove closing JSX tags
+    .replace(/<\/[A-Z][A-Za-z0-9]*>/g, "")
+    // Collapse runs of blank lines left by removals (max two consecutive)
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export const prerender = true;
 
 export const GET: APIRoute = () => {
@@ -71,7 +93,7 @@ export const GET: APIRoute = () => {
       `Published: ${post.date} | Category: ${post.category} | Tags: ${post.tags.join(", ")}`,
     );
     sections.push("");
-    sections.push(post.content);
+    sections.push(stripMdxSyntax(post.content));
     sections.push("");
     sections.push("---");
     sections.push("");
