@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { t, defaultLocale, type Locale, type TranslationKey } from "@/lib/i18n";
@@ -126,6 +127,11 @@ export function useSettings() {
 export function useLocale() {
   const locale = useSettingsStore((s) => s.locale);
   const setLocale = useSettingsStore((s) => s.setLocale);
-  const tt = (key: TranslationKey) => t(locale, key);
+  // Memoize the bound t() so its reference is stable across renders (changes
+  // only when locale changes). Without this, every consumer that lists t in a
+  // useEffect/useMemo dependency array re-runs on every render — which made
+  // ImageLightbox's setFigures effect loop infinitely ("Maximum update depth
+  // exceeded") on posts containing images.
+  const tt = useCallback((key: TranslationKey) => t(locale, key), [locale]);
   return { locale, setLocale, t: tt };
 }
