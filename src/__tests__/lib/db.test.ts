@@ -44,6 +44,7 @@ describe("getAllPosts (row mapping)", () => {
   it("maps D1 rows to BlogPost objects with parsed JSON fields", async () => {
     const mockRow = {
       slug: "test-post",
+      lang: "en",
       title: "Test Post",
       date: "2025-01-01",
       summary: "A test",
@@ -64,6 +65,7 @@ describe("getAllPosts (row mapping)", () => {
     expect(posts).toHaveLength(1);
     expect(posts[0]).toEqual({
       slug: "test-post",
+      lang: "en",
       title: "Test Post",
       date: "2025-01-01",
       summary: "A test",
@@ -152,6 +154,7 @@ describe("upsertPost", () => {
       content: "# Hello",
       featured: true,
       readingTime: 3,
+      lang: "en",
     };
 
     await upsertPost(mock, post);
@@ -167,6 +170,7 @@ describe("upsertPost", () => {
       "# Hello",
       1,
       3,
+      "en",
     );
     expect((mock as unknown as { _run: ReturnType<typeof vi.fn> })._run).toHaveBeenCalledOnce();
   });
@@ -185,11 +189,13 @@ describe("upsertPost", () => {
       content: "",
       featured: false,
       readingTime: undefined,
+      lang: "en",
     });
 
     const bindArgs = (mock as unknown as { _bind: ReturnType<typeof vi.fn> })._bind.mock.calls[0]!;
     expect(bindArgs[7]).toBe(0); // featured
     expect(bindArgs[8]).toBeNull(); // readingTime
+    expect(bindArgs[9]).toBe("en"); // lang
   });
 });
 

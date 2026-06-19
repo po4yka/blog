@@ -24,6 +24,48 @@ interface BlogFrontMatter {
   featured?: boolean;
 }
 
+/** Count words in content the same way generate-blog-data.ts does. */
+function countWords(content: string): number {
+  const stripped = content.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]*`/g, " ");
+  const tokens = stripped.split(/\s+/).filter((t) => /\w/.test(t));
+  return tokens.length;
+}
+
+interface BlogSeedEntry {
+  slug: string;
+  lang: string;
+  fm: BlogFrontMatter;
+  body: string;
+  readingTime: number;
+}
+
+/** Recursively collect entries from en/ and ru/ subdirs of BLOG_DIR. */
+function collectBlogEntries(): BlogSeedEntry[] {
+  const entries: BlogSeedEntry[] = [];
+  const items = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
+  for (const item of items) {
+    if (!item.isDirectory() || (item.name !== "en" && item.name !== "ru")) continue;
+    const lang = item.name;
+    const langDir = path.join(BLOG_DIR, lang);
+    const files = fs.readdirSync(langDir).filter((f) => f.endsWith(".mdx")).sort();
+    for (const file of files) {
+      const raw = fs.readFileSync(path.join(langDir, file), "utf-8");
+      const { data, content } = matter(raw);
+      const fm = data as BlogFrontMatter;
+      const body = content.trim();
+      const wordCount = countWords(body);
+      entries.push({
+        slug: file.replace(/\.mdx$/, ""),
+        lang,
+        fm,
+        body,
+        readingTime: Math.ceil(wordCount / 200),
+      });
+    }
+  }
+  return entries;
+}
+
 interface ProjectJSON {
   id: string;
   name: string;
@@ -47,34 +89,23 @@ interface ExperienceJSON {
   roles: RoleJSON[];
 }
 
-function generateBlogSeed(): string {
-  const files = fs
-    .readdirSync(BLOG_DIR)
-    .filter((f) => f.endsWith(".mdx"))
-    .sort();
-
-  if (files.length === 0) return "";
+function generateBlogSeed(entries: BlogSeedEntry[]): string {
+  if (entries.length === 0) return "";
 
   const values: string[] = [];
 
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf-8");
-    const { data, content } = matter(raw);
-    const fm = data as BlogFrontMatter;
-    const slug = file.replace(/\.mdx$/, "");
-    const body = content.trim();
-
+  for (const { slug, lang, fm, body, readingTime } of entries) {
     values.push(
-      `('${escapeSql(slug)}', '${escapeSql(fm.title)}', '${escapeSql(fm.date)}',\n` +
+      `('${escapeSql(slug)}', '${escapeSql(lang)}', '${escapeSql(fm.title)}', '${escapeSql(fm.date)}',\n` +
         ` '${escapeSql(fm.summary)}',\n` +
         ` '${escapeSql(JSON.stringify(fm.tags))}', '${escapeSql(fm.category)}',\n` +
-        ` '${escapeSql(body)}', ${fm.featured ? 1 : 0})`,
+        ` '${escapeSql(body)}', ${fm.featured ? 1 : 0}, ${readingTime})`,
     );
   }
 
   return (
     "-- Blog posts\n" +
-    "INSERT INTO blog_posts (slug, title, date, summary, tags, category, content, featured) VALUES\n" +
+    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES\n" +
     values.join(",\n\n") +
     ";\n"
   );
@@ -143,22 +174,18 @@ function generateSettingsSeed(): string {
 }
 
 export function generateSeedSource(): string {
-  // Collect categories from blog posts
-  const blogFiles = fs
-    .readdirSync(BLOG_DIR)
-    .filter((f) => f.endsWith(".mdx"));
+  const entries = collectBlogEntries();
 
+  // Derive categories from English posts only (mirrors generate-blog-data.ts deriveCategories)
   const categories = new Set<string>();
-  for (const file of blogFiles) {
-    const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf-8");
-    const { data } = matter(raw);
-    categories.add((data as BlogFrontMatter).category);
+  for (const e of entries) {
+    if (e.lang === "en") categories.add(e.fm.category);
   }
 
   const sections = [
     "-- Auto-generated from source files. Do not edit manually.",
     "-- Run \"npm run generate:all\" to regenerate.\n",
-    generateBlogSeed(),
+    generateBlogSeed(entries),
     generateCategoriesSeed(Array.from(categories)),
     generateProjectsSeed(),
     generateRolesSeed(),

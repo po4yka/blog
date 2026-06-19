@@ -30,6 +30,9 @@ const FONT_MEDIUM = path.resolve(
 const OUTPUT_DIR = path.resolve("public/og");
 const DEFAULT_OUTPUT = path.resolve("public/og-default.png");
 
+/** Section label shown on every blog post OG card. */
+const OG_WRITING_LABEL = "06 / WRITING";
+
 const SATORI_FONTS_CACHE: { regular?: Buffer; medium?: Buffer } = {};
 
 function loadFonts(): { regular: Buffer; medium: Buffer } {
@@ -92,7 +95,7 @@ async function renderCard(post: {
                       fontWeight: 400,
                     },
                     children: [
-                      { type: "span", props: { children: "06 / WRITING" } },
+                      { type: "span", props: { children: OG_WRITING_LABEL } },
                       { type: "span", props: { children: "po4yka.dev" } },
                     ],
                   },

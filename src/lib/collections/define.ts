@@ -24,6 +24,8 @@ export interface CollectionConfig<T> {
   name: string;
   table: string;
   primaryKey: keyof T & string;
+  /** Override the ON CONFLICT target columns when the PK is composite. */
+  conflictColumns?: string[];
   paramName?: string;
   orderBy: string;
   idGeneration?: "uuid";
@@ -73,16 +75,18 @@ function buildColumns(fields: FieldDefs): string[] {
   return Object.values(fields).map((f) => f.column);
 }
 
-function buildUpsertSQL(table: string, fields: FieldDefs, primaryKey: string): string {
+function buildUpsertSQL(table: string, fields: FieldDefs, primaryKey: string, conflictColumns?: string[]): string {
   const pkColumn = fields[primaryKey]!.column;
+  const conflictTarget = conflictColumns ? conflictColumns.join(", ") : pkColumn;
+  const pkColumns = conflictColumns ?? [pkColumn];
   const columns = [...buildColumns(fields), "updated_at"];
   const placeholders = [...Object.keys(fields).map(() => "?"), "datetime('now')"];
   const updateSet = columns
-    .filter((c) => c !== pkColumn)
+    .filter((c) => !pkColumns.includes(c))
     .map((c) => `${c} = excluded.${c}`)
     .join(", ");
 
-  return `INSERT INTO ${table} (${columns.join(", ")}) VALUES (${placeholders.join(", ")}) ON CONFLICT(${pkColumn}) DO UPDATE SET ${updateSet}`;
+  return `INSERT INTO ${table} (${columns.join(", ")}) VALUES (${placeholders.join(", ")}) ON CONFLICT(${conflictTarget}) DO UPDATE SET ${updateSet}`;
 }
 
 function buildBindParams(fields: FieldDefs, input: Record<string, unknown>): unknown[] {
@@ -130,10 +134,10 @@ export interface Collection<T> {
 }
 
 export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> {
-  const { name, table, primaryKey, paramName, orderBy, idGeneration, capabilities, fields } = config;
+  const { name, table, primaryKey, conflictColumns, paramName, orderBy, idGeneration, capabilities, fields } = config;
   const pkColumn = fields[primaryKey]!.column;
   const mapRow = buildRowMapper<T>(fields);
-  const upsertSQL = buildUpsertSQL(table, fields, primaryKey);
+  const upsertSQL = buildUpsertSQL(table, fields, primaryKey, conflictColumns);
   const schema = buildSchema(fields);
 
   const collection: Collection<T> = {

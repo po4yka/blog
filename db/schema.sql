@@ -1,6 +1,7 @@
 -- Blog posts
 CREATE TABLE IF NOT EXISTS blog_posts (
-  slug         TEXT PRIMARY KEY,
+  slug         TEXT NOT NULL,
+  lang         TEXT NOT NULL DEFAULT 'en',
   title        TEXT NOT NULL,
   date         TEXT NOT NULL,
   summary      TEXT NOT NULL,
@@ -10,7 +11,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   featured     INTEGER DEFAULT 0,
   reading_time INTEGER,
   created_at   TEXT DEFAULT (datetime('now')),
-  updated_at   TEXT DEFAULT (datetime('now'))
+  updated_at   TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (slug, lang)
 );
 
 -- Projects

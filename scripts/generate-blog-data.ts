@@ -157,8 +157,6 @@ function appendEntriesForDir(entries: BlogEntry[], dir: string, lang: string): v
 function readBlogPosts(): BlogEntry[] {
   const entries: BlogEntry[] = [];
 
-  appendEntriesForDir(entries, BLOG_DIR, "en");
-
   const langDirs = listBlogLangDirs();
   for (const lang of langDirs) {
     appendEntriesForDir(entries, path.join(BLOG_DIR, lang), lang);
