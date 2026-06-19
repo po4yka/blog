@@ -32,7 +32,7 @@ function RoleEntry({
           <span className="text-muted-foreground text-label font-mono">
             {role.period}
           </span>
-          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-mono text-mono-lg font-medium">
+          <h3 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
             {role.title}
           </h3>
         </div>
@@ -44,7 +44,7 @@ function RoleEntry({
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 font-mono text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 font-sans text-mono" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
@@ -54,7 +54,7 @@ function RoleEntry({
           {role.highlights.map((h, i) => (
             <li
               key={i}
-              className="text-foreground/80 list-disc font-mono text-mono-sm"
+              className="text-foreground/80 list-disc font-sans text-mono-sm"
               style={{ lineHeight: 1.7 }}
             >
               {animateNumbers(h)}
@@ -182,7 +182,7 @@ function TagConnections({
           />
         </g>
       ))}
-      <style>{`@keyframes draw-line { to { stroke-dashoffset: 0; } }`}</style>
+      <style>{`@keyframes draw-line { to { stroke-dashoffset: 0; } } @media (prefers-reduced-motion: reduce) { [style*="draw-line"] { animation: none !important; stroke-dashoffset: 0 !important; } }`}</style>
     </svg>
   );
 }

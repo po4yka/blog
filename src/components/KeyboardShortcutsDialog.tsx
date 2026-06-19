@@ -50,7 +50,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="font-mono max-w-md"
+        className="max-w-md"
         style={{ background: "var(--card)", border: "1px solid var(--border)" }}
       >
         <DialogHeader>

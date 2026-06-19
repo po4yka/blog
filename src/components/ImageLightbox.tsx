@@ -574,7 +574,7 @@ export function ImageLightbox({ contentRef }: Props) {
                       type="button"
                       onClick={() => nav(-1)}
                       aria-label={t("blogPost.imageLightbox.previous")}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 sm:left-4 flex items-center justify-center min-h-[44px] min-w-[44px] rounded-[2px] border border-border bg-card/75 text-muted-foreground backdrop-blur-sm transition-colors duration-150 hover:text-foreground active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 sm:left-4 flex items-center justify-center min-h-[44px] min-w-[44px] rounded-[2px] border border-border bg-card/75 text-muted-foreground transition-colors duration-150 hover:text-foreground active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
                       style={{ outlineColor: "var(--emphasis)" }}
                     >
                       <ChevronLeft size={18} strokeWidth={1.5} />
@@ -583,7 +583,7 @@ export function ImageLightbox({ contentRef }: Props) {
                       type="button"
                       onClick={() => nav(1)}
                       aria-label={t("blogPost.imageLightbox.next")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 sm:right-4 flex items-center justify-center min-h-[44px] min-w-[44px] rounded-[2px] border border-border bg-card/75 text-muted-foreground backdrop-blur-sm transition-colors duration-150 hover:text-foreground active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 sm:right-4 flex items-center justify-center min-h-[44px] min-w-[44px] rounded-[2px] border border-border bg-card/75 text-muted-foreground transition-colors duration-150 hover:text-foreground active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
                       style={{ outlineColor: "var(--emphasis)" }}
                     >
                       <ChevronRight size={18} strokeWidth={1.5} />

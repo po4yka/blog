@@ -36,18 +36,17 @@
 
 .prose-blog a {
   color: var(--foreground);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-color: var(--emphasis);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
   font-weight: 500;
-  background-image: linear-gradient(var(--emphasis), var(--emphasis));
-  background-size: 100% 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.2s ease;
+  transition: text-decoration-thickness 0.2s ease, color 0.2s ease;
 }
 
 .prose-blog a:hover {
   color: var(--emphasis);
-  background-size: 100% 2px;
+  text-decoration-thickness: 2px;
 }
 
 .prose-blog a:visited {

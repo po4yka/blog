@@ -25,13 +25,13 @@ export function Experience() {
           {roles.slice(0, 3).map((role, i) => (
             <div
               key={role.period}
-              className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group font-mono"
+              className="py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group"
             >
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div className="flex items-baseline gap-2">
                   {/* Status marker: ● current, ○ past */}
                   <span
-                    className="shrink-0 text-mono-sm select-none"
+                    className="shrink-0 font-mono text-mono-sm select-none"
                     style={{ color: "var(--foreground)", opacity: i === 0 ? 0.80 : 0.30 }}
                     aria-hidden="true"
                     title={i === 0 ? "current" : "past"}
@@ -40,7 +40,7 @@ export function Experience() {
                   </span>
                   {/* Column divider */}
                   <span
-                    className="shrink-0 text-muted-foreground-dim text-mono-sm select-none"
+                    className="shrink-0 text-muted-foreground-dim font-mono text-mono-sm select-none"
                     aria-hidden="true"
                   >
                     │
@@ -51,19 +51,19 @@ export function Experience() {
                     {role.title}
                   </span>
                   <span
-                    className="text-muted-foreground text-mono-sm"
+                    className="text-muted-foreground font-mono text-mono-sm"
                   >
                     {role.company}
                   </span>
                 </div>
                 <span
-                  className="text-muted-foreground text-mono-sm tabular-nums"
+                  className="text-muted-foreground font-mono text-mono-sm tabular-nums"
                 >
                   {role.period}
                 </span>
               </div>
               <p
-                className="mt-1.5 text-muted-foreground group-hover:text-foreground/70 transition-colors duration-200 text-mono"
+                className="mt-1.5 text-muted-foreground group-hover:text-foreground/70 transition-colors duration-200 font-sans text-mono"
                 style={{ lineHeight: 1.7 }}
               >
                 {role.description}

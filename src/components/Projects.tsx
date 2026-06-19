@@ -32,11 +32,11 @@ export function Projects() {
             <a
               key={project.slug}
               href="/projects"
-              className="group flex items-start gap-2 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono"
+              className="group flex items-start gap-2 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2"
             >
               {/* Tree branch prefix */}
               <span
-                className="shrink-0 text-muted-foreground-dim transition-colors duration-200 text-mono-sm pt-0.5 select-none"
+                className="shrink-0 text-muted-foreground-dim transition-colors duration-200 font-mono text-mono-sm pt-0.5 select-none"
                 aria-hidden="true"
               >
                 {branch}
@@ -46,17 +46,17 @@ export function Projects() {
               <div className="flex-1 min-w-0">
                 {/* First line: platform · name · year */}
                 <div className="flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-muted-foreground text-mono-sm shrink-0 letter-wide" aria-hidden="true">
+                  <span className="text-muted-foreground font-mono text-mono-sm shrink-0 letter-wide" aria-hidden="true">
                     [{project.platforms[0]?.toLowerCase() ?? ""}]
                   </span>
                   <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm">
                     {project.name}
                   </span>
-                  <span className="text-muted-foreground-dim text-mono-sm" aria-hidden="true">·</span>
-                  <span className="text-muted-foreground text-mono-sm shrink-0">{project.year}</span>
+                  <span className="text-muted-foreground-dim font-mono text-mono-sm" aria-hidden="true">·</span>
+                  <span className="text-muted-foreground font-mono text-mono-sm shrink-0">{project.year}</span>
                   {project.featured && (
                     <>
-                      <span className="text-muted-foreground-dim text-mono-sm" aria-hidden="true">·</span>
+                      <span className="text-muted-foreground-dim font-mono text-mono-sm" aria-hidden="true">·</span>
                       <Tag variant="highlight">{t("projects.featured")}</Tag>
                     </>
                   )}
@@ -64,12 +64,12 @@ export function Projects() {
                 {/* Second line: continuation + description */}
                 <div className="flex items-start gap-1.5 mt-0.5">
                   <span
-                    className="shrink-0 text-muted-foreground-dim text-mono-sm select-none"
+                    className="shrink-0 text-muted-foreground-dim font-mono text-mono-sm select-none"
                     aria-hidden="true"
                   >
                     {cont} └─
                   </span>
-                  <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200 truncate text-mono-sm">
+                  <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200 truncate font-mono text-mono-sm">
                     {project.description}
                   </p>
                 </div>

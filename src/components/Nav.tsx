@@ -101,7 +101,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     <MotionProvider>
     <motion.nav
       aria-label={t("nav.primary")}
-      className={`sticky top-0 z-50 font-mono transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled ? "backdrop-blur-sm" : ""
       }`}
       style={{
@@ -142,7 +142,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           {/* Logo / prefix */}
           <a
             href="/"
-            className="flex items-center gap-2 text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
+            className="flex items-center gap-2 font-mono text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
           >
             <span
               className="inline-block w-[8px] h-[8px] rounded-[1px]"
@@ -163,7 +163,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   key={link.labelKey}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative px-3 py-1.5 text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
+                  className={`relative px-3 py-1.5 font-mono text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
                     active
                       ? "text-foreground font-medium"
                       : "text-muted-foreground hover:text-foreground"
@@ -208,7 +208,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                 className="w-[5px] h-[5px]"
                 style={{ backgroundColor: "var(--foreground)", opacity: 0.5, borderRadius: 1 }}
               />
-              <span className="text-3xs text-muted-foreground">
+              <span className="font-mono text-3xs text-muted-foreground">
                 {t("nav.online")}
               </span>
             </span>
@@ -247,7 +247,6 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             className="md:hidden grid overflow-hidden"
             style={{
               background: "var(--mobile-menu-bg)",
-              backdropFilter: "blur(20px)",
               borderTop: "1px solid var(--rule)",
             }}
             initial={{ opacity: 0, gridTemplateRows: "0fr" }}
@@ -264,14 +263,14 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                       key={link.labelKey}
                       href={link.href}
                       aria-current={active ? "page" : undefined}
-                      className={`py-3 px-3 text-mono transition-colors duration-200 whitespace-nowrap ${
+                      className={`py-3 px-3 font-mono text-mono transition-colors duration-200 whitespace-nowrap ${
                         active
                           ? "text-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setMenuOpen(false)}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.2, delay: i * 0.03 }}
                     >
                       {t(link.labelKey)}

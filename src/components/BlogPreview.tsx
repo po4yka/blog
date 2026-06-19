@@ -56,29 +56,29 @@ export function BlogPreview() {
               <a
                 key={post.slug}
                 href={blogUrl(displayLang as Locale, post.slug)}
-                className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2 font-mono"
+                className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2"
               >
                 <div className="flex-1 min-w-0">
                   {/* Rank line: 001 │ date │ [tag] │ title │ langs */}
                   <div className="flex items-baseline gap-1.5 flex-wrap">
                     <span
-                      className="text-muted-foreground-dim shrink-0 text-mono-sm tabular-nums select-none"
+                      className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm tabular-nums select-none"
                       aria-hidden="true"
                     >
                       {String(i + 1).padStart(3, "0")}
                     </span>
-                    <span className="text-muted-foreground-dim shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
-                    <span className="text-muted-foreground shrink-0 text-label">{post.date}</span>
+                    <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
+                    <span className="text-muted-foreground shrink-0 font-mono text-label">{post.date}</span>
                     {post.featured && (
                       <>
-                        <span className="text-muted-foreground-dim shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
+                        <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
                         <Tag variant="highlight">{t("blogPreview.new")}</Tag>
                       </>
                     )}
-                    <span className="text-muted-foreground-dim shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
+                    <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
                     {/* Title */}
                     <div className="relative min-w-0">
-                      <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-mono">
+                      <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 font-sans text-mono">
                         {title}
                       </span>
                       <span
@@ -89,8 +89,8 @@ export function BlogPreview() {
                     {/* Language indicators */}
                     {availLangs.length > 1 && (
                       <>
-                        <span className="text-muted-foreground-dim shrink-0 text-mono-sm select-none" aria-hidden="true">│</span>
-                        <span className="text-muted-foreground-dim shrink-0 text-label select-none">
+                        <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
+                        <span className="text-muted-foreground-dim shrink-0 font-mono text-label select-none">
                           {availLangs.map((l) => l.toUpperCase()).join(" ")}
                         </span>
                       </>

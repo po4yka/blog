@@ -54,13 +54,13 @@ function ProjectEntry({ project }: { project: Project }) {
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-mono text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-sans text-mono" style={{ lineHeight: 1.75 }}>
         {project.description}
       </p>
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/75 pl-6 font-mono text-mono-sm" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-foreground/75 pl-6 font-sans text-mono-sm" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}

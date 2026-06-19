@@ -22,7 +22,7 @@ export function Footer() {
             border: "1px solid var(--border)",
           }}
         >
-          <div className="text-3xs font-mono text-foreground/60 pb-2">
+          <div className="label-meta text-foreground/60 pb-2">
             {t("footer.shellHelp")}
           </div>
           <TerminalPrompt />
@@ -32,7 +32,7 @@ export function Footer() {
           className="pt-5"
           style={{ borderTop: "1px solid var(--rule)" }}
         >
-          <p className="text-left font-mono text-label text-muted-foreground">
+          <p className="text-left label-meta text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </p>
         </div>

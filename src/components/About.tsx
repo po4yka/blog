@@ -26,7 +26,7 @@ export function About() {
       <OutputBlock delay={0.05}>
         <div
           ref={ref}
-          className="space-y-5 font-mono text-sm text-muted-foreground"
+          className="space-y-5 font-sans text-sm text-muted-foreground"
           style={{ lineHeight: 1.8 }}
         >
           <motion.p

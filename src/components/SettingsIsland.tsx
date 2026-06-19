@@ -47,7 +47,7 @@ export function Settings() {
 
   return (
     <MotionProvider>
-    <div className="space-y-8 font-mono">
+    <div className="space-y-8">
       <SectionHeader
         number="09"
         label="SETTINGS"

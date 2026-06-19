@@ -56,7 +56,7 @@ export function NotFound() {
 
   return (
     <MotionProvider>
-    <div className="pt-16 font-mono">
+    <div className="pt-16">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -83,7 +83,7 @@ export function NotFound() {
         {/* Content */}
         <div className="p-6 space-y-6">
           <motion.div
-            className="text-mono"
+            className="font-mono text-mono"
             style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
@@ -95,7 +95,7 @@ export function NotFound() {
             </span>
           </motion.div>
           <motion.div
-            className="text-mono"
+            className="font-mono text-mono"
             style={{ lineHeight: 1.7 }}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
