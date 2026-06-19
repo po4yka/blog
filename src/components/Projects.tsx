@@ -87,7 +87,10 @@ export function Projects() {
           aria-label={t("projects.viewAllLabel")}
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
         >
-          {t("projects.viewAll")}
+          {/* Visible label is decorative shell chrome (`$ ls … →`); the
+              aria-label carries the accessible name. Hiding the text from AT
+              avoids the WCAG 2.5.3 label-in-name mismatch. */}
+          <span aria-hidden="true">{t("projects.viewAll")}</span>
         </a>
       </div>
     </section>

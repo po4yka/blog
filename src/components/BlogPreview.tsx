@@ -109,7 +109,10 @@ export function BlogPreview() {
           aria-label={t("blogPreview.viewAllLabel")}
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
         >
-          {t("blogPreview.viewAll")}
+          {/* Visible label is decorative shell chrome (`$ find … →`); the
+              aria-label carries the accessible name. Hiding the text from AT
+              avoids the WCAG 2.5.3 label-in-name mismatch. */}
+          <span aria-hidden="true">{t("blogPreview.viewAll")}</span>
         </a>
       </div>
     </section>
