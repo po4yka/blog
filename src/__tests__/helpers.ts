@@ -9,7 +9,7 @@ export function createMockDb() {
   const run = vi.fn().mockResolvedValue({ success: true, results: [] });
   const first = vi.fn();
   const bind = vi.fn().mockReturnValue({ run, first });
-  const prepare = vi.fn().mockReturnValue({ run, bind });
+  const prepare = vi.fn().mockReturnValue({ run, bind, first });
 
   const batch = vi.fn().mockResolvedValue([]);
 
