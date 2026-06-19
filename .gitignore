@@ -51,3 +51,6 @@ __pycache__/
 .claude/scheduled_tasks.lock
 .omc/
 .desloppify/
+
+# local audit scratch (not committed)
+.audit/
