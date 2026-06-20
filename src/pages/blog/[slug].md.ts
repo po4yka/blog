@@ -29,7 +29,28 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const GET: APIRoute = ({ props }) => {
   const { post } = props as { post: (typeof blogPosts)[number] };
 
+  const lang = post.lang ?? "en";
+  const canonical = `https://po4yka.dev/blog/${post.slug}`;
+  const tagsYaml = `[${post.tags.map((t) => JSON.stringify(t)).join(", ")}]`;
+
+  const frontmatter = [
+    "---",
+    `title: ${JSON.stringify(post.title)}`,
+    `description: ${JSON.stringify(post.summary)}`,
+    `author: "Nikita Pochaev"`,
+    `slug: "${post.slug}"`,
+    `lang: "${lang}"`,
+    ...(post.isoDate ? [`date: "${post.isoDate}"`] : []),
+    ...(post.wordCount !== undefined ? [`wordCount: ${post.wordCount}`] : []),
+    `category: "${post.category}"`,
+    `tags: ${tagsYaml}`,
+    `canonical: "${canonical}"`,
+    "---",
+  ].join("\n");
+
   const lines = [
+    frontmatter,
+    "",
     `# ${post.title}`,
     "",
     `> ${post.summary}`,

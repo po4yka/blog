@@ -17,6 +17,8 @@ interface Props {
   hasTranslation?: boolean;
   /** Extra hreflang <link> tags injected by the caller (e.g. blog index pages). */
   hreflangAlternates?: HreflangAlternate[];
+  /** When true, emits <meta name="robots" content="noindex,nofollow" />. */
+  noindex?: boolean;
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   lang = "en",
   hasTranslation = false,
   hreflangAlternates,
+  noindex = false,
 } = Astro.props;
 ---
 <meta charset="UTF-8" />
@@ -45,6 +48,7 @@ const {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>{title}</title>
 <meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
 <link rel="canonical" href={new URL(Astro.url.pathname, "https://po4yka.dev").href} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

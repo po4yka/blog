@@ -50,6 +50,12 @@ export const GET: APIRoute = ({ site }) => {
         name: "Nikita Pochaev",
         handle: "@po4yka",
         origin,
+        sameAs: [
+          "https://github.com/po4yka",
+          "https://www.linkedin.com/in/po4yka",
+          "https://x.com/po4yka",
+          "https://t.me/po4yka",
+        ],
         llmsUrl: `${origin}/llms.txt`,
         llmsFullUrl: `${origin}/llms-full.txt`,
       },

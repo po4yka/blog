@@ -32,6 +32,14 @@ function pickCategory(platforms: string[]): string {
   return "SoftwareApplication";
 }
 
+function pickAppCategory(platforms: string[], tags: string[]): string {
+  const j = (platforms.join(" ") + " " + tags.join(" ")).toLowerCase();
+  if (j.includes("tool") || j.includes("cli") || j.includes("plugin") || j.includes("library") || j.includes("sdk")) return "DeveloperApplication";
+  if (j.includes("android") || j.includes("ios") || j.includes("mobile")) return "Productivity";
+  if (j.includes("backend") || j.includes("server") || j.includes("web")) return "WebApplication";
+  return "Utilities";
+}
+
 function pickDownloadUrl(links: { type: string; href: string }[] | undefined): string | null {
   if (!links || links.length === 0) return null;
   const store = links.find((l) => {
@@ -60,11 +68,13 @@ const itemList = {
       "@type": type,
       name: project.name,
       description: project.longDescription ?? project.description,
-      applicationCategory: type,
+      applicationCategory: pickAppCategory(project.platforms, project.tags),
       operatingSystem: operatingSystem || "Cross-platform",
       url,
       author: { "@id": `${SITE_URL}/#person` },
     };
+    node["@id"] = url;
+    node.offers = { "@type": "Offer", price: "0", priceCurrency: "USD" };
     if (downloadUrl) node.downloadUrl = downloadUrl;
     if (project.year) node.datePublished = project.year;
     if (project.tags.length > 0) node.keywords = project.tags.join(", ");

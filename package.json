@@ -21,7 +21,8 @@
     "test:e2e": "playwright test",
     "test:coverage": "vitest run --coverage",
     "lighthouse": "lhci autorun",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "indexnow": "node scripts/indexnow-submit.mjs"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",

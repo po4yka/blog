@@ -24,15 +24,16 @@ interface Props {
   hasTranslation?: boolean;
   translationSlug?: string;
   hreflangAlternates?: HreflangAlternate[];
+  noindex?: boolean;
 }
 
-const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false, translationSlug, hreflangAlternates } = Astro.props;
+const { title, description, isHomePage, blogPost, blogSlug, lang = "en", hasTranslation = false, translationSlug, hreflangAlternates, noindex = false } = Astro.props;
 const { pathname } = Astro.url;
 const { nonce } = Astro.locals;
 ---
 <html lang={lang}>
   <head>
-    <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} lang={lang} hasTranslation={hasTranslation} hreflangAlternates={hreflangAlternates} />
+    <BaseHead title={title} description={description} isHomePage={isHomePage} blogPost={blogPost} blogSlug={blogSlug} lang={lang} hasTranslation={hasTranslation} hreflangAlternates={hreflangAlternates} noindex={noindex} />
     <ThemeScript />
     <script nonce={nonce} is:inline>
       // Sync <picture data-theme-aware> source media queries with the site's

@@ -84,8 +84,25 @@ User-agent: DuckAssistBot
 Allow: /
 Disallow: /admin/
 
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+
+User-agent: Cohere-ai
+Allow: /
+Disallow: /admin/
+
+User-agent: Google-CloudVertexBot
+Allow: /
+Disallow: /admin/
+
+User-agent: Timpibot
+Allow: /
+Disallow: /admin/
+
 User-agent: *
 Allow: /
 Disallow: /admin/
 
 Sitemap: https://po4yka.dev/sitemap-index.xml
+Sitemap: https://po4yka.dev/llms.txt

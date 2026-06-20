@@ -29,12 +29,18 @@ export function Footer() {
         </div>
 
         <div
-          className="pt-5"
+          className="pt-5 flex items-center justify-between gap-4"
           style={{ borderTop: "1px solid var(--rule)" }}
         >
-          <p className="text-left label-meta text-muted-foreground">
+          <p className="label-meta text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </p>
+          <a
+            href="/privacy"
+            className="label-meta text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Privacy
+          </a>
         </div>
       </div>
     </footer>

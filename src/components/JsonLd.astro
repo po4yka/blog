@@ -20,6 +20,7 @@ const personSchema = {
   name: "Nikita Pochaev",
   alternateName: "po4yka",
   url: SITE_URL,
+  image: { "@type": "ImageObject", url: `${SITE_URL}/og-default.png`, width: 1200, height: 630 },
   jobTitle: "AI Engineer & Senior Mobile Developer",
   description:
     "AI Engineer and Senior Mobile Developer specializing in Android and Kotlin Multiplatform Mobile (KMM). Architects KMM shared modules with 60%+ code sharing, builds release automation pipelines, and integrates ML-powered features — from LLM-driven product flows to on-device inference — into production mobile apps.",
@@ -42,7 +43,7 @@ const personSchema = {
   hasOccupation: {
     "@type": "Occupation",
     name: "AI Engineer & Senior Mobile Developer",
-    occupationLocation: { "@type": "Country", name: "Remote" },
+    occupationLocation: { "@type": "Place", name: "Worldwide" },
     skills:
       "Kotlin, Swift, Jetpack Compose, SwiftUI, Kotlin Multiplatform, Gradle, Fastlane, CI/CD, Mobile Architecture, Python, PyTorch, LLM integration, on-device ML",
   },
@@ -57,7 +58,8 @@ const personSchema = {
   },
   sameAs: [
     "https://github.com/po4yka",
-    "https://linkedin.com/in/po4yka",
+    "https://www.linkedin.com/in/po4yka",
+    "https://x.com/po4yka",
     "https://t.me/po4yka",
   ],
 };
@@ -102,6 +104,7 @@ const blogPostingSchema = blogPost && blogPostUrl
         ? { wordCount: blogPost.wordCount }
         : {}),
       author: { "@id": `${SITE_URL}/#person` },
+      publisher: { "@id": `${SITE_URL}/#person` },
       isPartOf: { "@id": `${SITE_URL}/#website` },
       keywords: blogPost.tags,
       articleSection: blogPost.category,
@@ -110,6 +113,7 @@ const blogPostingSchema = blogPost && blogPostUrl
         "@type": "WebPage",
         "@id": blogPostUrl,
       },
+      speakable: { "@type": "SpeakableSpecification", cssSelector: [".prose-blog p", "h1"] },
     }
   : null;
 ---
