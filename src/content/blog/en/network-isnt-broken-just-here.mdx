@@ -1,0 +1,122 @@
+---
+title: "The Network Isn't Broken Everywhere, Just Here: Diagnosing One Connection at a Time"
+date: "Jun 2026"
+summary: "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict -- then a fix, only if one exists."
+tags: ["DPI", "Network Diagnostics", "Rust", "Android"]
+category: "Networking"
+featured: false
+---
+
+import BlogFigure from "../../../components/BlogFigure.astro";
+import { figures } from "../../../assets/blog/network-isnt-broken-just-here/_figures";
+
+Over mobile data, Telegram won't bring up a connection: the client sits on "Connecting…". Over Wi-Fi, the same client connects instantly. Between the two attempts only the network changes: the point of attachment and the carrier. That is enough for traffic to the same server to go through on one network and die on the handshake on the other.
+
+The network itself is nominally fine: DNS resolves, other sites load, a ping to 8.8.8.8 comes back clean. What drops is specific connections, and always the same ones. This is the signature of DPI: a box on the carrier side inspects the traffic and drops the connections that match a signature. The rest goes through untouched.
+
+For a busy network this asymmetry has long been the norm. A mobile carrier doesn't stop at routing: it fingerprints TLS and QUIC handshakes, throttles per connection, clamps the MTU, and strips ECN; an in-path box kills a connection that a home router would pass without a second look. The outcome is predictable: one destination is dead, the next one is fine, and any global "turn it on everywhere" switch is guaranteed wrong for at least one of them.
+
+Most tools in this space start from a guess. They run one packet-level trick against a list of hosts and hope it lands. Route-everything tunnels go to the opposite extreme: they funnel all traffic through a remote node and pay for it in latency even where nothing was broken. Both prescribe the treatment without making a diagnosis.
+
+RIPDPI runs the diagnosis first.
+
+## The diagnosis
+
+Diagnosis runs as a chain of four Rust crates: `ripdpi-diagnostics-candidates` builds the probe inputs, `ripdpi-diagnostics-probes` defines the `Probe` trait every check implements, `ripdpi-diagnostics-classification` turns raw observations into a verdict, and `ripdpi-diagnostics-runner` drives the whole battery. More than a dozen probe stages: DNS integrity and tampering, domain and QUIC reachability, an ECH handshake check, MTProto reachability for Telegram, throughput, a DoH-JSON resolver survey. Not one talks to a hard-coded server: the target arrives at runtime through a `ProbeContext`, and the probe hits exactly the address that was actually being opened.
+
+`TcpRunner` opens one TLS session and sends up to 16 padded HTTP HEAD requests, each larger than the last, tracking the cumulative bytes against a 16 KiB threshold (`FAT_HEADER_THRESHOLD_BYTES = 16 * 1024`). Many boxes hold connection state only within an internal buffer; let that request stream outgrow the buffer mid-flight and the box tears the connection down. The probe clocks the exact byte where it breaks. A reset or timeout after roughly 14 KiB has been sent, or after a response once at least 8 KiB has gone through, is logged as `tcp_16kb_blocked` rather than a plain reset: the byte of the break is the signal. It splits resets by timing too: a RST within twice the SYN-ACK round-trip is charged to the in-path node, not the server; one that arrives later is taken as the server itself hanging up, and that gets treated differently.
+
+The probe maps each run to one outcome tag:
+
+```text
+tcp_fat_header_ok            request stream reached 16 KiB cleanly
+tcp_16kb_blocked             cut off at the ~14 KiB threshold
+tcp_freeze_after_threshold   stalled past the threshold
+tcp_reset                    reset before the threshold
+tcp_timeout                  no response
+tcp_connect_failed           never connected
+tls_handshake_failed         TLS setup failed
+```
+
+<BlogFigure
+  variants={figures["01-sixteen-kb-timing"].en}
+  alt="Annotated byte axis of the fat-header probe over one TLS session. Gates at 8 KiB (late_stage_cutoff once a response is seen), 14 KiB (fat_threshold_reached, 16384 minus 2048 bytes), and 16 KiB (FAT_HEADER_THRESHOLD_BYTES). A cut-off at the threshold is logged tcp_16kb_blocked, the focal signal. Below, classify_rst_origin splits a reset by timing: in_path_rst within twice the SYN-ACK RTT, server_rst later."
+/>
+
+The figure is the decision logic; here is the probe actually running it, three times against the repo's local-network-fixture, which stands in for the middlebox on loopback:
+
+```text
+outcome            bytesSent  rstTimingMs  rstOrigin   confidence
+tcp_fat_header_ok  147664     -            -           none
+tcp_reset          8273       12           server_rst  medium
+tcp_16kb_blocked   16680      3            server_rst  high
+```
+
+These are real probe results, not mock-ups. Three numbers cluster near the threshold and are easy to conflate: 16384 is the 16 KiB cumulative threshold (`FAT_HEADER_THRESHOLD_BYTES`); ~14 KiB is that minus a 2 KiB margin, the point from which the probe reads a teardown as the fat-header signal rather than a plain reset; and 16680 is simply the bytes already sent when this teardown landed, just past the threshold, so `window_cap` fires and it lands as `tcp_16kb_blocked`. One honest limit of a loopback rig: the SYN-ACK RTT is ~0, so the RST falls to `server_rst` either way; only a non-loopback path, with a measurable round-trip, lets the `2×RTT` rule separate `in_path_rst` from `server_rst`.
+
+Each probe outcome lands in one of four `ProbeOutcomeBucket` values: `Healthy`, `Attention`, `Failed`, `Inconclusive`. Each carries an event level: info, warn, or error. When the path actively rejected the connection, the failure also carries a `FailureClass`, one of sixteen variants (`DnsTampering`, `TlsAlert`, `HttpBlockpage`, `IpBlockSuspect`, and the rest). `Inconclusive` is the careful bucket. A transient timeout that fired before any real signal arrived goes there and never triggers an automatic strategy change. Guessing on noise is how you train the wrong fix.
+
+The classification layer collapses all of it into four verdicts, and those decide what happens to the traffic. `TRANSPARENT_OK`: everything works directly, nothing to touch. `OWNED_STACK_ONLY`: the site loads only through the app's own TLS stack, so that's where the connection goes. `NO_DIRECT_SOLUTION`: no on-device packet surgery recovers this one, it needs a tunnel. `IP_BLOCK_SUSPECT`: nothing answers at the IP layer at all.
+
+`IP_BLOCK_SUSPECT` is deliberately hard to reach. It needs every DoH-supplied IPv4 address to fail at the SYN, every alternate IPv6 to fail too, and a second independent flow to confirm. Until that confirmation lands, the runner sits in `PendingSecondFlow` and withholds the verdict. A false positive here would shove a connection onto a relay it never needed, so the runner waits for proof. When the verdict does fire, it sets `arm_gate = OwnedStackOnly` and doesn't even try a TLS-family repair: rewriting packets is pointless if nothing is home at the address.
+
+<BlogFigure
+  variants={figures["02-verdict-decision-flow"].en}
+  alt="Decision flow from a probe outcome to one of four policy verdicts. The outcome is bucketed into ProbeOutcomeBucket (Healthy, Attention, Failed, Inconclusive); a Failed path carries a FailureClass. The four verdicts are TRANSPARENT_OK, OWNED_STACK_ONLY, NO_DIRECT_SOLUTION, and IP_BLOCK_SUSPECT. IP_BLOCK_SUSPECT is gated behind a dashed PendingSecondFlow node that waits for a second independent flow before the verdict fires."
+/>
+
+## The lightest fix
+
+When a verdict calls for packet surgery, a second system takes over. Every fix implements the `DesyncStrategy` trait from `ripdpi-strategy-trait`: `plan` assembles the steps, the other three methods are bookkeeping. The steps are variants of a `DesyncAction` enum, and they share one idea: show the in-path box something other than what the server will see. `Split { offset, disorder }` fragments a TCP segment. `WriteFake { ttl, sni_mode, payload_file }` injects a decoy at a low TTL so it dies in transit before it reaches the server. From there it climbs in weight, from games with the TCP window and TTL up to IP fragmentation and data overlaid on sequence numbers. By default it runs on ordinary unprivileged sockets; the steps that need raw ones live in an optional root helper (`ripdpi-root-helper`) and are skipped quietly when there's no root.
+
+A "lightest fix" is concrete. It's a short ordered list of those actions, the output of one strategy's `plan`, applied to a single connection and nothing else.
+
+Ten strategies ship built in, registered through `linkme` distributed slices, so adding one means a single entry and no central match statement. The names are utilitarian: `split` fragments a segment, `seq_overlap` lays data over sequence numbers; the rest are in the same vein. Two more, `synack` and `synack_split`, sit as `Unimplemented` placeholders; SYN-ACK injection runs on a separate path, through the TUN ingress interceptor. The registry tries strategies in registration order and takes the first whose `plan` builds. If applying it fails, an `OnFail` policy decides: roll back to the next one, fall back to plain traffic, or drop the connection. Plain is the floor if nothing works.
+
+There's a scripted escape hatch too: a feature-gated Lua strategy runs custom logic in a locked-down sandbox (the dangerous stdlib stripped, compiled bytecode refused, a 16 MiB memory ceiling, an instruction-counting watchdog for busy loops, and no escape from its configured directory).
+
+Where the action lands inside the flow is not fixed either. A per-flow tuner, `AdaptivePlannerResolver` in `ripdpi-runtime-adaptive`, keeps state per `(network, group, flow kind, target)` tuple and walks five tuning dimensions one at a time when a fix fails (split offset, TLS record offset, and three protocol-specific profiles). The walk order is shuffled per flow from a seed derived from its key, so two flows take different routes instead of stampeding the same path. A win pins the current candidate. A loss benches it for fifteen seconds before it's allowed back in.
+
+A layer up, `StrategyEvolver` runs a UCB1 bandit: explore versus exploit. It weights the option that has worked against the one it has sampled least. It scores each strategy combination on success rate, latency, and stability, with a penalty drawn from the failure classes that mean the path actively rejected the connection (`TlsAlert`, `HttpBlockpage`, `Redirect`, `ConnectionFreeze`). Wins decay on a two-hour half-life and losses on a one-hour half-life, so a strategy that worked holds its edge about twice as long as one that failed. A Thompson-sampling alternative sits in the same crate, marked dead code; UCB1 is the default, and the comment says so out loud.
+
+Packet surgery is one of two ways out of a bad verdict. The other is `OWNED_STACK_ONLY`: route the connection through the app's own TLS client instead of the system's. That client (`OwnedTlsClientFactory` over the Rust `ripdpi-tls-profiles` crate) keeps verified ClientHello templates for Chrome, Firefox, Safari, and Edge, down to cipher-suite order and session-ticket behavior. It picks one per connection by hashing `SHA-256(authority | session seed | profile set)`, so the choice is stable per host but varies across hosts. It speaks ECH where the target offers it and negotiates the post-quantum hybrid `X25519MLKEM768` group when both ends support it. A checked-in fingerprint snapshot (`owned_stack_tls_fingerprint_snapshot.json`) fails CI if the handshake drifts.
+
+## What the phone remembers
+
+The learning is stored per network, not per destination alone. The `RememberedNetworkPolicyStore`, Kotlin over a Room database, stamps every entry with a SHA-256 hash of the network's scope. The hash folds in transport type, DNS-validation state, captive-portal status, private-DNS mode, the sorted list of DNS servers, and an identity tuple that differs by transport: SSID, BSSID, and gateway for Wi-Fi; operator and SIM codes, carrier ID, and roaming state for cellular. Everything is lowercased and trimmed before it's hashed, and the raw values barely outlive the hash: `CapturedWifiIdentity.toString()` prints `redacted`, the coarse `NetworkSnapshot` used for classification carries no SSID or IP at all, and a repo rule keeps raw SSID and BSSID out of logs and crash reports. The raw SSID never leaves the phone.
+
+A remembered policy moves through three states: `observed`, `validated`, `suppressed`. Two consecutive failures of a validated policy flip it to suppressed and lock it out for 24 hours; any success resets the failure count and clears the lock. The table keeps at most 64 rows total and forgets anything older than 90 days. On rejoining a known network, the store replays the validated policy at once, then re-checks quietly in the background. Every handoff between Wi-Fi and cellular recomputes the fingerprint and queries the store. Over weeks the phone ends up holding a private map of which networks break which connections, and how.
+
+<BlogFigure
+  variants={figures["04-policy-state-machine"].en}
+  alt="State machine of the remembered per-network policy. States observed, validated, suppressed. A new scope enters observed, validates to validated, and a success self-loops there. Two consecutive failures of a validated policy move it to suppressed with a 24-hour lock; any success or lock expiry returns it to validated. The scope key is a SHA-256 hash; the store keeps at most 64 rows and forgets entries older than 90 days."
+/>
+
+## Two ways it runs
+
+The lighter of the two is proxy mode. `RipDpiProxyService` opens a SOCKS5 proxy on a localhost port; apps that speak SOCKS5 or HTTP CONNECT point at it explicitly, and nothing else on the device is redirected. The other mode runs that same proxy on an ephemeral port, then layers a TUN device on top through Android's `VpnService`. The tunnel reads IP packets off the TUN device (`10.10.10.10/32`, MTU 1500) and opens authenticated SOCKS5 sessions back into the proxy.
+
+With no relay configured, the tunnel doesn't change the exit IP: traffic still leaves the device directly. On the way out the packets are only rewritten, so the destination sees the real address and a slightly stranger-looking handshake. The route doesn't change; only the packets do.
+
+When encrypted DNS is on in tunnel mode, an internal FakeIP layer called MapDNS answers queries from the `198.18.0.0/15` range, resolves the real name over the encrypted resolver, and hands the app a synthetic address it pins for the life of the connection. It's never a user-facing toggle: its IPv6 interactions and fail-closed drops make it a poor thing to put behind a switch.
+
+That encrypted resolver is its own piece. `ripdpi-dns-resolver` speaks DoH, Oblivious DoH (RFC 9230), and DNSCrypt, so the tool doesn't have to fall back to the system resolver and let whatever the network's DNS answers pollute a measurement. Oblivious DoH splits the knowledge in two: the query goes through a relay that sees the address but not the name, while the target resolver sees the name but not the address, so no single hop sees both. Answers land in a route-aware cache keyed by `(domain, qtype, route decision)`, which forces a fresh lookup when the route changes rather than serving a result resolved for a different path.
+
+Routing through your own server is optional, and it comes with caveats. The native core in `libripdpi-relay.so` carries a dozen-odd transports, from Shadowsocks and Trojan up to VLESS Reality and multi-hop chains; WARP and AmneziaWG sit apart, tunnels rather than relays. The list matters less than the line under it in the status doc: every protocol is tested on loopback only, and not one has live remote-endpoint coverage. Mieru shows the gap plainly. It has a native crate and a loopback test, but no activator arm is wired into the profile switch, so a saved profile can't turn it on at this revision.
+
+When the path does run through your own server, the handoff is a contract, not a copy-paste. The server-side deploy tooling (`emit-bundle.sh`) emits a standard sing-box JSON config with one extra top-level `ripdpi` object: a `schema_version` plus the fields sing-box has no slot for: an array of AmneziaWG profiles and Hysteria2 obfuscation extras. The app's `SingBoxSubscriptionParser` reads the standard outbounds, then the `ripdpi` block; it rejects a `schema_version` it doesn't know, and a plain sing-box client never notices the key. A contract test on each side holds the shape, `SingBoxRipdpiExtensionParserTest` on the client and the secrets validator on the server, so the format can't drift apart in silence. One credential deliberately never travels this path: a WireGuard private key stays a placeholder (`private_key_placeholder: true`) and is delivered out of band.
+
+## Why the line is drawn where it is
+
+The Kotlin/Rust boundary is narrow on purpose. The workspace is 115 crates (the architecture docs still say 114) arranged in nine layers, L0 to L8, and the layering is machine-enforced: a CI script lets only the thirteen top-layer crates touch the `jni` crate or the `android-support` shim. Nothing below them can. Five of those top crates compile to the shared libraries Android loads: `libripdpi.so`, `libripdpi-tunnel.so`, `libripdpi-relay.so`, `libripdpi-warp.so`, `libripdpi-amneziawg.so`.
+
+<BlogFigure
+  variants={figures["03-layer-map"].en}
+  alt="Layer map of the 115-crate native Rust workspace grouped into nine layers L0 to L8, dependencies pointing downward only. From the bottom: L0 support; L1, L2, L5 protocol, contracts, platform; L3 domain logic; L4, L6, L7 runtime, diagnostics, relay transports; L8 Android and JNI adapters, the only .so roots, behind a dashed JNI boundary. Only the 13 L8 crates may touch jni, and 11 do today."
+/>
+
+Nothing in the data plane crosses into Java. SOCKS5 sessions, the TUN packet pump, the desync mutations, relay transport, DNS forwarding: all of it stays in Rust. JNI is crossed only to start and stop a session, poll telemetry about once a second, push a network snapshot, and call `VpnService.protect()` on a socket. Every one of those crossings is wrapped. The `android-support` crate's `ffi_boundary` runs each export inside `catch_unwind`, so a Rust panic comes back as a sentinel value instead of unwinding across the `extern "system"` edge into undefined behavior. The JNI build profile even sets `panic = "unwind"` deliberately, because the project's release profile is set to abort, and inheriting that would take down the whole process instead of letting the boundary catch it.
+
+Why Rust, specifically, for code that parses untrusted bytes straight off the wire is the subject of the next piece.
+
+The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.
