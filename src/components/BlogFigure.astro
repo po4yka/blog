@@ -11,8 +11,10 @@ import type { ImageMetadata } from "astro";
 interface Variants {
   desktopLight: ImageMetadata;
   desktopDark: ImageMetadata;
-  mobileLight: ImageMetadata;
-  mobileDark: ImageMetadata;
+  // Optional: articles authored without mobile canonicals ship no mobile
+  // renders, so the generated manifest omits these. Fall back to desktop.
+  mobileLight?: ImageMetadata;
+  mobileDark?: ImageMetadata;
 }
 
 interface Props {
@@ -29,6 +31,12 @@ const { variants, alt, caption, eager = false } = Astro.props;
 
 const FORMATS = ["avif", "webp", "png"] as const;
 
+// Mobile renders are optional. When an article ships none, the manifest
+// leaves mobileLight/mobileDark undefined; reuse the desktop render for the
+// narrow-viewport media queries so every <source> still resolves an image.
+const mobileDark = variants.mobileDark ?? variants.desktopDark;
+const mobileLight = variants.mobileLight ?? variants.desktopLight;
+
 const ART_DIRECTIONS: Array<{
   media: string;
   src: ImageMetadata;
@@ -37,13 +45,13 @@ const ART_DIRECTIONS: Array<{
 }> = [
   {
     media: "(prefers-color-scheme: dark) and (max-width: 640px)",
-    src: variants.mobileDark,
+    src: mobileDark,
     theme: "dark",
     viewport: "mobile",
   },
   {
     media: "(max-width: 640px)",
-    src: variants.mobileLight,
+    src: mobileLight,
     theme: "light",
     viewport: "mobile",
   },
