@@ -58,12 +58,19 @@ export default defineConfig({
     service: { entrypoint: "astro/assets/services/sharp" },
   },
   markdown: {
+    // Monochrome paper/ink design: code blocks are styled entirely by the
+    // --code-bg / --foreground theme tokens (correct in both light and dark).
+    // Shiki's default github-dark theme injected an inline dark background on
+    // <pre>, which overrode --code-bg and left dark text on a dark block in
+    // light mode. Disable it so the design tokens stay authoritative.
+    syntaxHighlight: false,
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
   },
   integrations: [
     react(),
     mdx({
+      syntaxHighlight: false,
       remarkPlugins: [remarkGfm, remarkMath],
       rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
     }),
