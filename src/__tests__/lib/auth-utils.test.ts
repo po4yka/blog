@@ -112,7 +112,7 @@ describe("deleteSession", () => {
     // The raw token is hashed with SHA-256 before the DELETE so a D1 breach
     // cannot reconstruct valid session cookies. Verify the bound value is a
     // 64-char hex digest, not the raw input.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const boundArg: string = (db._bind as any).mock.calls[0]?.[0];
     expect(typeof boundArg).toBe("string");
     expect(boundArg).toMatch(/^[0-9a-f]{64}$/);
