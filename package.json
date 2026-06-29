@@ -97,7 +97,7 @@
     "remark-math": "^6.0.0",
     "sharp": "^0.35.2",
     "simple-git-hooks": "^2.13.1",
-    "tailwindcss": "^4.3.0",
+    "tailwindcss": "^4.3.2",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
