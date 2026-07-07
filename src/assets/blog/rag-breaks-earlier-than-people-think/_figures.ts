@@ -33,8 +33,8 @@ import _f3RuMD from "./03-compute-shift-quadrant.mobile.ru.dark.png";
 export interface FigureVariants {
   desktopLight: ImageMetadata;
   desktopDark: ImageMetadata;
-  mobileLight: ImageMetadata;
-  mobileDark: ImageMetadata;
+  mobileLight?: ImageMetadata;
+  mobileDark?: ImageMetadata;
 }
 
 export type FigureSet = Record<"en" | "ru", FigureVariants>;
