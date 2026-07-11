@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Trash2, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, TriangleAlert, Star, ChevronDown, ChevronUp } from "lucide-react";
 import type { Project } from "@/admin/api";
 import { useProjects, useSaveProject, useDeleteProject } from "@/admin/hooks/useAdminQueries";
 import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
@@ -59,7 +59,7 @@ export function AdminProjects() {
         <button
           onClick={() => setEditing(newProject())}
           className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
-          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
+          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
         >
           <Plus size={15} />
           Add project
@@ -81,7 +81,7 @@ export function AdminProjects() {
       {/* Project list */}
       <motion.div
         className="border border-border/50 bg-card overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
@@ -120,7 +120,7 @@ export function AdminProjects() {
                     <span key={p} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>{p}</span>
                   ))}
                   <span className="text-border/50">·</span>
-                  <span className="font-mono text-muted-foreground/30" style={{ fontSize: "0.5625rem" }}>
+                  <span className="font-mono text-muted-foreground-dim" style={{ fontSize: "0.5625rem" }}>
                     {project.tags.length} tags
                   </span>
                 </div>
@@ -140,7 +140,7 @@ export function AdminProjects() {
                   confirmingId === project.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
-                <Trash2 size={13} />
+                {confirmingId === project.id ? <TriangleAlert size={13} /> : <Trash2 size={13} />}
               </button>
             </div>
 

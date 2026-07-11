@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { ease, duration, stagger } from "@/lib/motion";
 import { getCommand, getCommandNames } from "./commands/registry";
 import type { CommandContext } from "./commands/types";
-import { useSettingsStore } from "@/stores/settingsStore";
+import { useSettingsStore, useLocale } from "@/stores/settingsStore";
 // Re-export shared UI primitives (defined in ui.tsx to avoid import cycles)
 export { Accent, Tag } from "./ui";
 
@@ -34,7 +34,7 @@ export function InfoTable({
   return (
     <motion.div
       ref={ref}
-      className="space-y-0 font-mono"
+      className="space-y-0"
       initial={instant ? false : { opacity: 0 }}
       animate={instant || inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.base, delay, ease }}
@@ -55,14 +55,14 @@ export function InfoTable({
           {fieldCodes ? (
             <>
               <span
-                className="shrink-0 select-none text-mono-sm"
+                className="shrink-0 select-none font-mono text-mono-sm"
                 style={{ color: "var(--muted-foreground-dim)" }}
                 aria-hidden="true"
               >
                 [{String(i + 1).padStart(2, "0")}]
               </span>
               <span
-                className="shrink-0 text-mono-sm"
+                className="shrink-0 font-mono text-mono-sm"
                 style={{ color: "var(--muted-foreground)", letterSpacing: "0.04em" }}
               >
                 {row.label.toUpperCase()}
@@ -77,13 +77,13 @@ export function InfoTable({
             </>
           ) : (
             <span
-              className="shrink-0 text-sm"
+              className="shrink-0 font-mono text-sm"
               style={{ minWidth: "80px", color: "var(--muted-foreground)" }}
             >
               {row.label}
             </span>
           )}
-          <span className="text-foreground text-sm min-w-0 flex-1" style={{ opacity: 0.92 }}>
+          <span className="font-sans text-foreground text-sm min-w-0 flex-1" style={{ opacity: 0.92 }}>
             {row.value}
           </span>
         </motion.div>
@@ -134,6 +134,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
 
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
+  const { t } = useLocale();
 
   const ctx: CommandContext = useMemo(
     () => ({
@@ -242,21 +243,23 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.base, delay }}
     >
-      {displayHistory.map((h, i) => (
-        <motion.div
-          key={i}
-          className="space-y-0.5"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.15 }}
-        >
-          <div className="flex items-center gap-2">
-            <span style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
-            <span className="text-foreground" style={{ opacity: 0.92 }}>{h.cmd}</span>
-          </div>
-          <div className="text-muted-foreground pl-5">{h.output}</div>
-        </motion.div>
-      ))}
+      <div aria-live="polite">
+        {displayHistory.map((h, i) => (
+          <motion.div
+            key={i}
+            className="space-y-0.5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15 }}
+          >
+            <div className="flex items-center gap-2">
+              <span style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
+              <span className="text-foreground" style={{ opacity: 0.92 }}>{h.cmd}</span>
+            </div>
+            <div className="text-muted-foreground pl-5">{h.output}</div>
+          </motion.div>
+        ))}
+      </div>
 
       <form onSubmit={handleSubmit} className="flex items-center gap-2">
         <span aria-hidden="true" style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
@@ -268,7 +271,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            aria-label="Terminal command input"
+            aria-label={t("footer.terminalInputLabel")}
             className="w-full bg-transparent outline-none text-foreground text-mono font-mono"
             style={{ caretColor: "var(--emphasis)" }}
             placeholder={focused ? "" : "type a command"}

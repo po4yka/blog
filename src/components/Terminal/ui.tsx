@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
  * (`--emphasis`), not a chromatic accent. Kept as `Accent` for source
  * compatibility with existing call sites.
  */
-export function Accent({ children }: { children: ReactNode; glow?: boolean }) {
+export function Accent({ children }: { children: ReactNode }) {
   return (
     <span
       style={{

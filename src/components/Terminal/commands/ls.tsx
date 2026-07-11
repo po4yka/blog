@@ -23,13 +23,13 @@ const ls: Command = {
               <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
-              <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 80 }}>
+              <span className="text-muted-foreground-dim shrink-0" style={{ minWidth: 80 }}>
                 {p.status}
               </span>
-              <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 50 }}>
+              <span className="text-muted-foreground-dim shrink-0" style={{ minWidth: 50 }}>
                 {p.year}
               </span>
-              <span className="text-muted-foreground/30">
+              <span className="text-muted-foreground-dim">
                 {p.platforms.join(", ")}
               </span>
             </div>
@@ -46,10 +46,10 @@ const ls: Command = {
               <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
-              <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 80 }}>
+              <span className="text-muted-foreground-dim shrink-0" style={{ minWidth: 80 }}>
                 {p.date}
               </span>
-              <span className="text-muted-foreground/30">{p.category}</span>
+              <span className="text-muted-foreground-dim">{p.category}</span>
             </div>
           ))}
         </div>

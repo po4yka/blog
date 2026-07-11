@@ -32,7 +32,7 @@ export function BlogStatsPanel({ delay = 0 }: { delay?: number }) {
       value: (
         <span>
           {stats.totalReadingMinutes}{" "}
-          <span style={{ opacity: 0.5 }}>min total</span>
+          <span className="text-muted-foreground-dim">min total</span>
         </span>
       ),
     },

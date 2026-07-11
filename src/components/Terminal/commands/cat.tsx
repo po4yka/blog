@@ -13,7 +13,7 @@ const allSlugs: string[] = [
 function renderRow(label: string, children: React.ReactNode) {
   return (
     <div className="flex gap-4">
-      <span className="text-muted-foreground/40 shrink-0" style={{ minWidth: 80 }}>
+      <span className="text-muted-foreground-dim shrink-0" style={{ minWidth: 80 }}>
         {label}
       </span>
       <span className="text-foreground/70">{children}</span>

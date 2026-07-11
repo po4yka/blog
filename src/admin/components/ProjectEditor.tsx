@@ -35,11 +35,10 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
   return (
     <AnimatePresence>
       <motion.div
-        role="dialog"
-        aria-modal="true"
+        role="region"
         aria-labelledby={EDITOR_TITLE_ID}
         className="mb-6 grid overflow-hidden border border-border bg-card"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
         animate={{ opacity: 1, y: 0, gridTemplateRows: "1fr" }}
         exit={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
@@ -70,7 +69,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
                 placeholder="Project name"
                 autoComplete="off"
                 className="w-full px-3 py-2 bg-card border border-border text-foreground focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/30"
-                style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
             <FieldBlock label="Platforms">
@@ -90,7 +89,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
               rows={2}
               autoComplete="off"
               className="w-full px-3 py-2 bg-card border border-border text-foreground focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/30 resize-y"
-              style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
+              style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.6 }}
             />
           </FieldBlock>
 
@@ -136,7 +135,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
               onClick={onSave}
               disabled={!editing.name.trim() || isPending}
               className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
-              style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
+              style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "2px" }}
             >
               <Save size={13} />
               {isPending ? "Saving..." : "Save"}

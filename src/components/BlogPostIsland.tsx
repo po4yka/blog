@@ -5,7 +5,7 @@ declare global {
     umami?: { track: (event: string, data?: Record<string, unknown>) => void };
   }
 }
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, ChevronUp, ArrowUp, FileCode2 } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { ImageLightbox } from "./ImageLightbox";
@@ -105,7 +105,7 @@ function CopyLinkButton() {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
+      className="inline-flex items-center gap-1.5 py-3 -my-3 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
       title={t("blogPost.copyLink")}
       aria-label={t("blogPost.copyLink")}
     >
@@ -141,7 +141,7 @@ function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
+      className="inline-flex items-center gap-1.5 py-3 -my-3 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer font-mono text-label"
       title={label}
       aria-label={label}
     >
@@ -168,23 +168,25 @@ function ScrollToTop() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!visible) return null;
-
   return (
-    <motion.button
-      className="fixed z-50 p-2.5 bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
-      style={{
-        borderRadius: "2px",
-      }}
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      title={t("blogPost.scrollToTop")}
-      aria-label={t("blogPost.scrollToTop")}
-    >
-      <ChevronUp size={18} />
-    </motion.button>
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          className="fixed z-50 flex items-center justify-center min-h-[44px] min-w-[44px] bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
+          style={{
+            borderRadius: "2px",
+          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          title={t("blogPost.scrollToTop")}
+          aria-label={t("blogPost.scrollToTop")}
+        >
+          <ChevronUp size={18} />
+        </motion.button>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -242,7 +244,7 @@ function TableOfContents({
             <li key={id} className={level === 3 ? "pl-3" : ""}>
               <a
                 href={`#${id}`}
-                aria-current={activeId === id ? "true" : undefined}
+                aria-current={activeId === id ? "location" : undefined}
                 className={cn(
                   "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
                   activeId === id
@@ -400,7 +402,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
             <div className="mt-8 pt-4 border-t border-border space-y-6" style={{ maxWidth: "46rem" }}>
               {/* Author row */}
               <div className="space-y-2">
-                <div className="font-sans text-[15px] leading-snug">
+                <div className="font-sans text-[0.9375rem] leading-snug">
                   <span className="text-foreground font-medium">Nikita Pochaev</span>
                   <span className="text-muted-foreground"> — {t("blogPost.authorRole")}</span>
                 </div>
@@ -409,6 +411,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                     href="https://github.com/po4yka"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`GitHub (${t("links.opensNewWindow")})`}
                     className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
                   >
                     github.com/po4yka
@@ -417,6 +420,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                     href="https://linkedin.com/in/pochaev-nikita/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`LinkedIn (${t("links.opensNewWindow")})`}
                     className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
                   >
                     linkedin.com/in/pochaev-nikita
@@ -440,7 +444,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                           <span className="label-meta text-muted-foreground-dim shrink-0 sm:w-24 truncate">
                             {rp.category}
                           </span>
-                          <span className="flex-1 font-sans text-[15px] leading-snug text-foreground/80 group-hover:text-foreground transition-colors duration-150 min-w-0 sm:truncate">
+                          <span className="flex-1 font-sans text-[0.9375rem] leading-snug text-foreground/80 group-hover:text-foreground transition-colors duration-150 min-w-0 sm:truncate">
                             {rp.title}
                           </span>
                           <span className="label-meta text-muted-foreground-dim opacity-70 shrink-0 tabular-nums">

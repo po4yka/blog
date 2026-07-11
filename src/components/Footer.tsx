@@ -11,7 +11,7 @@ export function Footer() {
 
   return (
     <MotionProvider>
-    <footer aria-label="Site footer" className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
+    <footer aria-label="Site footer" className="max-w-[1160px] mx-auto px-6 md:px-10 lg:px-12 pb-12">
       <div className="space-y-6">
         {/* Interactive terminal */}
         <div

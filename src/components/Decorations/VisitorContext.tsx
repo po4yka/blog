@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { PanelShell } from "./_helpers";
+import { useSettings } from "@/stores/settingsStore";
 
 interface VisitorInfo {
   browser: string;
@@ -28,13 +29,12 @@ function detectOS(): string {
   return "Unknown";
 }
 
-function getVisitorInfo(): VisitorInfo {
+function getVisitorInfo(): Omit<VisitorInfo, "theme"> {
   const browser = detectBrowser();
   const os = detectOS();
   const w = window.innerWidth;
   const h = window.innerHeight;
   const dpr = window.devicePixelRatio;
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
   const nav = navigator as Navigator & { connection?: { effectiveType?: string; rtt?: number } };
   const conn = nav.connection;
@@ -44,13 +44,15 @@ function getVisitorInfo(): VisitorInfo {
   return {
     browser: `${browser} / ${os}`,
     viewport: `${w} x ${h} @${dpr}x`,
-    theme: prefersDark ? "dark (system)" : "light (system)",
     network: rtt ? `${networkType} · ${rtt}` : networkType,
   };
 }
 
 export function VisitorContext({ delay = 0 }: { delay?: number }) {
-  const [info, setInfo] = useState<VisitorInfo | null>(null);
+  const [info, setInfo] = useState<Omit<VisitorInfo, "theme"> | null>(null);
+  // Report the theme actually applied to the page (store-driven), not just the
+  // OS preference — a manual dark/light override must show up here truthfully.
+  const { theme, resolvedTheme } = useSettings();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time initialization with browser APIs
   useEffect(() => { setInfo(getVisitorInfo()); }, []);
@@ -60,7 +62,7 @@ export function VisitorContext({ delay = 0 }: { delay?: number }) {
   const rows = [
     { label: "Browser", value: info.browser },
     { label: "Viewport", value: info.viewport },
-    { label: "Theme", value: info.theme },
+    { label: "Theme", value: theme === "system" ? `${resolvedTheme} (system)` : resolvedTheme },
     { label: "Network", value: info.network },
   ];
 

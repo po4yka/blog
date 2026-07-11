@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor } from "lucide-react";
+import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard } from "lucide-react";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useState } from "react";
@@ -31,6 +31,7 @@ export function Settings() {
     theme, setTheme,
     reduceMotion, setReduceMotion,
     fontSize, setFontSize,
+    keyboardShortcuts, setKeyboardShortcuts,
     resetPreferences,
     resolvedTheme,
   } = useSettings();
@@ -107,7 +108,7 @@ export function Settings() {
                   key={value}
                   onClick={() => setTheme(value)}
                   aria-pressed={theme === value}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
                     theme === value
                       ? "text-foreground font-medium border-border bg-muted"
                       : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -141,7 +142,7 @@ export function Settings() {
                   key={String(val)}
                   onClick={() => setReduceMotion(val)}
                   aria-pressed={reduceMotion === val}
-                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
+                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
                     reduceMotion === val
                       ? "text-foreground font-medium border-border bg-muted"
                       : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -171,7 +172,7 @@ export function Settings() {
                   key={size}
                   onClick={() => setFontSize(size)}
                   aria-pressed={fontSize === size}
-                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
+                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
                     fontSize === size
                       ? "text-foreground font-medium border-border bg-muted"
                       : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -201,7 +202,7 @@ export function Settings() {
                   key={loc}
                   onClick={() => setLocale(loc)}
                   aria-pressed={locale === loc}
-                  className={`px-3 py-1.5 transition-all duration-150 cursor-pointer text-label border ${
+                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
                     locale === loc
                       ? "text-foreground font-medium border-border bg-muted"
                       : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -209,6 +210,39 @@ export function Settings() {
                   style={{ borderRadius: "2px" }}
                 >
                   {loc.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Keyboard shortcuts */}
+          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Keyboard size={14} className="text-muted-foreground" />
+                <span className="text-foreground/80 text-mono">
+                  {tt("settings.shortcuts")}
+                </span>
+              </div>
+              <span className="text-muted-foreground text-label">
+                {tt(keyboardShortcuts ? "settings.shortcutsOn" : "settings.shortcutsOff")}
+              </span>
+            </div>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.shortcutsDesc")}</p>
+            <div className="flex gap-2" role="group" aria-label={tt("settings.shortcuts")}>
+              {[true, false].map((val) => (
+                <button
+                  key={String(val)}
+                  onClick={() => setKeyboardShortcuts(val)}
+                  aria-pressed={keyboardShortcuts === val}
+                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
+                    keyboardShortcuts === val
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
+                  }`}
+                  style={{ borderRadius: "2px" }}
+                >
+                  {tt(val ? "settings.shortcutsOn" : "settings.shortcutsOff")}
                 </button>
               ))}
             </div>

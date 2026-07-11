@@ -118,7 +118,10 @@ export function AdminLayout() {
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/40 px-4 py-3">
+      <div
+        className="md:hidden fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b border-border/40 px-4 py-3"
+        style={{ background: "var(--nav-glass)" }}
+      >
         <div className="flex items-center justify-between">
           <div>
             <span
@@ -150,7 +153,7 @@ export function AdminLayout() {
               to={link.path}
               end={link.path === "/admin"}
               className={({ isActive }) =>
-                `shrink-0 px-2.5 py-1 font-mono transition-colors duration-200 ${
+                `shrink-0 min-h-11 flex items-center px-2.5 font-mono transition-colors duration-200 ${
                   isActive
                     ? "bg-foreground text-background"
                     : "text-muted-foreground hover:text-foreground"

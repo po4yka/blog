@@ -30,7 +30,7 @@ export function Hero() {
         <h1 id="hero-heading" className="display-1 text-foreground">
           {t("hero.name")}
         </h1>
-        <p className="text-mono-lg text-foreground/80">{t("hero.subtitle")}</p>
+        <p className="font-mono text-mono-lg text-foreground/80">{t("hero.subtitle")}</p>
       </div>
 
       {/* Visitor context + build stats panels */}

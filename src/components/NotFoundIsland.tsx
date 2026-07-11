@@ -1,58 +1,11 @@
 import { motion } from "motion/react";
-import { useState, useEffect } from "react";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
-import { useLocale, useSettings } from "@/stores/settingsStore";
+import { useLocale } from "@/stores/settingsStore";
 import { ease } from "@/lib/motion";
 
 export function NotFound() {
   const { t } = useLocale();
-  const { reduceMotion } = useSettings();
-  const [glitchTransform, setGlitchTransform] = useState("none");
-
-  // Glitch effect on the 404 number (respects reduce-motion)
-  useEffect(() => {
-    if (reduceMotion) return;
-
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-
-    // Entry flicker: rapid glitch sequence for the first 800ms
-    const entryInterval = setInterval(() => {
-      const x = Math.random() * 8 - 4;
-      const y = Math.random() * 4 - 2;
-      const skew = Math.random() * 4 - 2;
-      setGlitchTransform(
-        `translate(${x}px, ${y}px) skewX(${skew}deg)`
-      );
-      const t = setTimeout(() => setGlitchTransform("none"), 80);
-      timeouts.push(t);
-    }, 100);
-
-    const entryEnd = setTimeout(() => {
-      clearInterval(entryInterval);
-      setGlitchTransform("none");
-
-      // Periodic subtle glitch after entry sequence
-      const periodicId = setInterval(() => {
-        const x = Math.random() * 6 - 3;
-        const y = Math.random() * 3 - 1.5;
-        setGlitchTransform(`translate(${x}px, ${y}px)`);
-        const t = setTimeout(() => setGlitchTransform("none"), 200);
-        timeouts.push(t);
-      }, 4000);
-
-      timeouts.push(periodicId as unknown as ReturnType<typeof setTimeout>);
-    }, 800);
-
-    return () => {
-      clearInterval(entryInterval);
-      clearTimeout(entryEnd);
-      timeouts.forEach((id) => {
-        clearTimeout(id);
-        clearInterval(id as unknown as ReturnType<typeof setInterval>);
-      });
-    };
-  }, [reduceMotion]);
 
   return (
     <MotionProvider>
@@ -90,7 +43,7 @@ export function NotFound() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.3 }}
           >
-            <span className="text-destructive">[ ERROR ]</span>{" "}
+            <span className="text-muted-foreground label-meta">ERROR ·</span>{" "}
             <span className="text-foreground/80">
               {t("notFound.error")}
             </span>
@@ -114,16 +67,7 @@ export function NotFound() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.4, ease }}
           >
-            <span
-              className="text-foreground/80"
-              style={{
-                display: "inline-block",
-                transform: glitchTransform,
-                transition: glitchTransform !== "none" ? "none" : "all 0.1s ease",
-              }}
-            >
-              404
-            </span>
+            <span className="text-foreground/80 inline-block">404</span>
             <span className="text-muted-foreground mx-3" style={{ fontSize: "1.5rem" }}>—</span>
             <span className="text-foreground/60" style={{ fontSize: "1rem" }}>{t("notFound.pageNotFound")}</span>
           </motion.div>

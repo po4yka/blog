@@ -33,6 +33,16 @@ export function Cmd({
     }
   }, [ref]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        if (e.key === " ") e.preventDefault();
+        handleCopy();
+      }
+    },
+    [handleCopy],
+  );
+
   return (
     <motion.div
       ref={ref}
@@ -41,6 +51,10 @@ export function Cmd({
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.fast, delay, ease }}
       onClick={handleCopy}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label="Click to copy command"
       title="Click to copy command"
     >
       <span
@@ -104,6 +118,16 @@ export function OutputBlock({
     }
   }, [ref]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        if (e.key === " ") e.preventDefault();
+        handleCopy();
+      }
+    },
+    [handleCopy],
+  );
+
   return (
     <motion.div
       ref={ref}
@@ -113,6 +137,10 @@ export function OutputBlock({
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
       onClick={handleCopy}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label="Click to copy"
       title="Click to copy"
     >
       {children}

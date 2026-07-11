@@ -46,7 +46,7 @@ export function Experience() {
                     │
                   </span>
                   <span
-                    className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-sm font-medium"
+                    className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-sm font-medium font-sans"
                   >
                     {role.title}
                   </span>

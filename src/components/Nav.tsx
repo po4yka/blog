@@ -77,18 +77,21 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
   const nextThemeFor = (m: ThemeMode): ThemeMode =>
     m === "system" ? "dark" : m === "dark" ? "light" : "system";
   const switchThemeLabel = `${t("nav.switchTheme")} (${nextThemeFor(theme)})`;
-  const themeLabel = theme;
+  const themeLabel = t(`settings.${theme}` as TranslationKey);
 
-  const cycleTheme = (e: React.MouseEvent) => {
+  // On blog surfaces the content language is fixed by the route; reflect the
+  // page language in the switcher instead of the stored UI locale.
+  const blogPageLang: Locale | undefined = currentPathname.startsWith("/blog")
+    ? currentPathname.startsWith("/blog/ru") ? "ru" : "en"
+    : undefined;
+
+  const cycleTheme = () => {
     const newTheme: ThemeMode =
       theme === "system" ? "dark" :
       theme === "dark"   ? "light" :
                             "system";
     const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
     if (!reduceMotion && doc.startViewTransition) {
-      const { clientX: x, clientY: y } = e;
-      document.documentElement.style.setProperty("--tx", `${x}px`);
-      document.documentElement.style.setProperty("--ty", `${y}px`);
       doc.startViewTransition(() => { setTheme(newTheme); });
     } else {
       setTheme(newTheme);
@@ -136,13 +139,13 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         </div>
       )}
 
-      <div className="max-w-[1080px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
+      <div className="max-w-[1160px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
         {/* Left group: wordmark + divider + desktop tabs */}
         <div className="flex items-center gap-0 min-w-0 shrink">
           {/* Logo / prefix */}
           <a
             href="/"
-            className="flex items-center gap-2 font-mono text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
+            className="flex items-center gap-2 font-sans text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
           >
             <span
               className="inline-block w-[8px] h-[8px] rounded-[1px]"
@@ -163,7 +166,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   key={link.labelKey}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative px-3 py-1.5 font-mono text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
+                  className={`relative px-3 py-1.5 font-sans text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
                     active
                       ? "text-foreground font-medium"
                       : "text-muted-foreground hover:text-foreground"
@@ -187,7 +190,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         <div className="flex items-center gap-3 shrink-0">
           {/* Desktop right controls */}
           <div className="hidden md:flex items-center gap-3">
-            <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
+            <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : blogPageLang} />
 
             {/* Theme toggle */}
             <button
@@ -255,7 +258,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             transition={{ duration: 0.2 }}
           >
             <div className="min-h-0">
-              <div className="max-w-[1080px] mx-auto px-6 py-3 flex flex-col gap-0.5">
+              <div className="max-w-[1160px] mx-auto px-6 py-3 flex flex-col gap-0.5">
                 {navLinks.map((link, i) => {
                   const active = isActive(link);
                   return (
@@ -263,7 +266,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                       key={link.labelKey}
                       href={link.href}
                       aria-current={active ? "page" : undefined}
-                      className={`py-3 px-3 font-mono text-mono transition-colors duration-200 whitespace-nowrap ${
+                      className={`py-3 px-3 font-sans text-mono transition-colors duration-200 whitespace-nowrap ${
                         active
                           ? "text-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground"
@@ -278,7 +281,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   );
                 })}
                 <div className="py-3 px-3">
-                  <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : undefined} />
+                  <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : blogPageLang} />
                 </div>
               </div>
             </div>

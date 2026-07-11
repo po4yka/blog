@@ -4,7 +4,7 @@
 
 /* ═══════════════════════════════════════════════════════════════════
    Blog prose — MDX rendered content.
-   Body runs in Geist Sans (Swiss reading column ~62ch); code in Geist Mono.
+   Body runs in Piazzolla serif (Swiss reading column ~62ch); code in Geist Mono.
    ═══════════════════════════════════════════════════════════════════ */
 
 .prose-blog {
@@ -61,6 +61,11 @@
 
 .prose-blog :is(h2, h3, h4) {
   scroll-margin-top: 3rem;
+}
+
+/* Clears the sticky nav when the j/k shortcuts jump between homepage sections. */
+[data-section-name] {
+  scroll-margin-top: 4rem;
 }
 
 .prose-blog .heading-anchor {

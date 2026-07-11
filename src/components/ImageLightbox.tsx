@@ -486,6 +486,17 @@ export function ImageLightbox({ contentRef }: Props) {
                       }
                       if (canZoom) setNaturalSize((v) => !v);
                     }}
+                    onKeyDown={(event) => {
+                      if (!canZoom) return;
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setNaturalSize((v) => !v);
+                      }
+                    }}
+                    role={canZoom ? "button" : undefined}
+                    tabIndex={canZoom ? 0 : undefined}
+                    aria-label={canZoom ? t("blogPost.imageLightbox.toggleZoom") : undefined}
                     draggable={false}
                     style={{
                       display: "block",
@@ -537,7 +548,7 @@ export function ImageLightbox({ contentRef }: Props) {
                           aria-selected={isActive}
                           aria-label={`${t("blogPost.imageLightbox.goToFigure")} ${i + 1}`}
                           onClick={() => openAt(i)}
-                          className="relative h-10 w-14 overflow-hidden rounded-[2px] border transition-opacity duration-150 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
+                          className="relative h-11 w-14 overflow-hidden rounded-[2px] border transition-opacity duration-150 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px]"
                           style={{
                             borderColor: isActive ? "var(--emphasis)" : "var(--border)",
                             opacity: isActive ? 1 : 0.55,

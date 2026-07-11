@@ -60,6 +60,8 @@ export function KeyboardShortcuts() {
   const [overlayOpen, setOverlayOpen] = useState(false);
   const [pendingChord, setPendingChord] = useState<string | null>(null);
   const chordTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // WCAG 2.1.4: single-key shortcuts must be user-disableable (Settings page).
+  const shortcutsEnabled = useSettingsStore((s) => s.keyboardShortcuts);
 
   const cycleTheme = useCallback(() => {
     const store = useSettingsStore.getState();
@@ -84,6 +86,8 @@ export function KeyboardShortcuts() {
       if (isInputTarget(e.target)) return;
       // Skip with modifier keys (allow browser shortcuts)
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // Respect the Settings toggle for single-key shortcuts
+      if (!shortcutsEnabled) return;
 
       // Chord: g + <key>
       if (pendingChord === "g") {
@@ -118,7 +122,7 @@ export function KeyboardShortcuts() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [pendingChord, overlayOpen, cycleTheme]);
+  }, [pendingChord, overlayOpen, cycleTheme, shortcutsEnabled]);
 
   if (!overlayOpen) return null;
 

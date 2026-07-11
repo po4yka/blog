@@ -68,15 +68,11 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         label="WRITING"
         heading="Posts"
         meta={`${posts.length} POSTS`}
-        description={
-          featured
-            ? `${t("blog.reading")}: posts/${featured.slug}.txt`
-            : t("blog.browseAll") ?? undefined
-        }
       />
 
       {/* Boot block — compressed to 2 lines; the "{n} POSTS" meta in
-          SectionHeader already carries the count. */}
+          SectionHeader already carries the count, and the INFO line below
+          carries the "Reading: …" pointer (was duplicated in the header). */}
       <BootBlock
         lines={[
           {
@@ -107,7 +103,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         </Cmd>
 
         {/* Category filter — flat row separated by │ */}
-        <div role="group" aria-label="Filter by category" className="flex flex-wrap items-center gap-0 pl-1">
+        <div role="group" aria-label={t("blog.filterByCategory")} className="flex flex-wrap items-center gap-0 pl-1">
           {categories.map((cat, i) => (
             <span key={cat} className="flex items-center">
               {i > 0 && (
@@ -118,7 +114,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
               <button
                 onClick={() => setActiveCategory(cat)}
                 aria-pressed={activeCategory === cat}
-                className={`px-1.5 py-0.5 transition-colors duration-150 cursor-pointer text-label ${
+                className={`inline-flex items-center px-1.5 py-0.5 min-h-11 sm:min-h-0 transition-colors duration-150 cursor-pointer text-label ${
                   activeCategory === cat
                     ? "text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground"
@@ -138,7 +134,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
             <button
               onClick={clearTag}
               aria-label={t("blogPost.clearFilter")}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-150 cursor-pointer"
+              className="text-muted-foreground hover:text-foreground transition-colors duration-150 cursor-pointer inline-flex items-center justify-center min-h-11 min-w-11 -my-3 sm:min-h-0 sm:min-w-0 sm:my-0"
             >
               ×
             </button>
@@ -177,7 +173,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                         {post.title}
                         <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
                       </h2>
-                      <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
+                      <p className="mt-3 text-[0.9375rem] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
                         {post.summary}
                       </p>
                     </div>
@@ -237,7 +233,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
           borderBottom: "1px solid var(--rule)",
         }}
       >
-        <span className="text-muted-foreground-dim select-none text-2xs label-meta">$ wc -l ./posts/*</span>
+        <span className="text-muted-foreground-dim select-none text-2xs font-mono">$ wc -l ./posts/*</span>
       </div>
       <div className="pt-5 space-y-4 text-mono-sm">
         {/* Summary row */}
@@ -269,7 +265,7 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
                       className="h-full"
                       style={{
                         background: "var(--foreground)",
-                        opacity: 0.35,
+                        opacity: 0.5,
                         transformOrigin: "left center",
                         width: `${Math.max(pct, 4)}%`,
                       }}

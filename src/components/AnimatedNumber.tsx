@@ -36,7 +36,7 @@ export function AnimatedNumber({
   }, [inView, value, duration, reduceMotion]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className="tabular-nums">
       {display}
       {suffix}
     </span>

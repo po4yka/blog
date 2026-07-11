@@ -102,8 +102,10 @@ const { nonce } = Astro.locals;
           const stored = JSON.parse(localStorage.getItem('site_preferences') || '{}');
           const prefs = stored.state || stored;
           if (prefs.locale && prefs.locale !== document.documentElement.lang) {
-            // Only override for non-blog-ru pages (blog/ru pages set lang="ru" server-side)
-            if (!window.location.pathname.startsWith('/blog/ru')) {
+            // Never override on blog pages: their content language is fixed by the
+            // route (/blog = en, /blog/ru = ru), so relabelling <html lang> to the
+            // UI locale would mislabel untranslated article text (WCAG 3.1.2).
+            if (!window.location.pathname.startsWith('/blog')) {
               document.documentElement.lang = prefs.locale;
             }
           }

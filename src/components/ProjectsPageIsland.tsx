@@ -30,7 +30,7 @@ function ProjectEntry({ project }: { project: Project }) {
             ├──
           </span>
           <h2
-            className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 text-mono-lg font-medium"
+            className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium"
           >
             {project.name}
           </h2>
@@ -87,10 +87,11 @@ function ProjectEntry({ project }: { project: Project }) {
               className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`${link.type} (${t("links.opensNewWindow")})`}
               data-umami-event="click-project-link"
               data-umami-event-target={`${project.name}:${link.type}`}
             >
-              {link.type === "GitHub" ? <GithubIcon size={11} /> : <ExternalLink size={10} />}
+              {link.type.startsWith("GitHub") ? <GithubIcon size={11} /> : <ExternalLink size={10} />}
               {link.type}
             </a>
           ))}
@@ -125,8 +126,8 @@ export function ProjectsPage() {
               </>
             ),
           },
-          { status: "OK", text: `Mounted projects index — ${projects.length} ${t("projectsPage.entriesFound")}` },
-          { status: "INFO", text: t("projectsPage.clickToExpand") },
+          { status: "OK", text: `${t("projectsPage.mountedIndex")} — ${projects.length} ${t("projectsPage.entriesFound")}` },
+          { status: "INFO", text: t("projectsPage.detailsInline") },
         ]}
       />
 
@@ -141,9 +142,13 @@ export function ProjectsPage() {
         sectionNumber="04"
         delay={0.05}
       >
-        {projects.map((project) => (
-          <ProjectEntry key={project.slug} project={project} />
-        ))}
+        <ul className="list-none m-0 p-0">
+          {projects.map((project) => (
+            <li key={project.slug}>
+              <ProjectEntry project={project} />
+            </li>
+          ))}
+        </ul>
       </MacWindow>
 
     </div>

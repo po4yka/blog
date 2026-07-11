@@ -14,7 +14,7 @@ const help: Command = {
             <span className="text-foreground font-medium shrink-0" style={{ minWidth: 100 }}>
               {c.name}
             </span>
-            <span className="text-muted-foreground/50">{c.description}</span>
+            <span className="text-muted-foreground">{c.description}</span>
           </div>
         ))}
       </div>

@@ -604,7 +604,7 @@ INSERT INTO projects (id, name, description, platforms, tags, links, featured, s
 ('ratatoskr', 'Ratatoskr',
  'Self-hosted messenger between you and the internet. Pulls articles, videos, and feeds, summarizes with LLMs, delivers signal — not feed. KMP, web, and Telegram clients.',
  '["Android","iOS","Backend","Web"]', '["KMP","Compose Multiplatform","Python","FastAPI","Telegram Bot","React","Ktor","SQLDelight"]',
- '[{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr"},{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr-client"},{"type":"GitHub","href":"https://github.com/po4yka/ratatoskr-web"}]', 1, 8);
+ '[{"type":"GitHub · backend","href":"https://github.com/po4yka/ratatoskr"},{"type":"GitHub · client","href":"https://github.com/po4yka/ratatoskr-client"},{"type":"GitHub · web","href":"https://github.com/po4yka/ratatoskr-web"}]', 1, 8);
 
 -- Roles
 INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES

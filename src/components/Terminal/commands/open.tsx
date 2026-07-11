@@ -25,7 +25,7 @@ const open: Command = {
     const target = args[0];
 
     if (!target) {
-      return "open: missing operand. Try: open blog, open meridian";
+      return "open: missing operand. Try: open blog, open ratatoskr";
     }
 
     if (pages[target]) {
@@ -45,7 +45,7 @@ const open: Command = {
       return `Opening projects page...`;
     }
 
-    return `open: ${target}: not found. Try: open blog, open meridian`;
+    return `open: ${target}: not found. Try: open blog, open ratatoskr`;
   },
 };
 

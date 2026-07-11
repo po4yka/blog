@@ -35,7 +35,7 @@ export function LanguageSwitcher({ translationUrl, activeLang, className = "" }:
           )}
           <button
             onClick={() => handleSwitch(lang)}
-            className="relative px-1.5 py-0.5 cursor-pointer overflow-hidden transition-colors duration-200"
+            className="relative inline-flex items-center px-1.5 py-0.5 min-h-11 min-w-11 justify-center md:min-h-0 md:min-w-0 cursor-pointer overflow-hidden transition-colors duration-200"
             style={{
               borderRadius: 2,
               color: displayLang === lang ? "var(--foreground)" : "var(--muted-foreground)",

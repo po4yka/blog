@@ -1,5 +1,6 @@
 import { buildMeta } from "@/data/buildMeta";
 import { PanelShell } from "./_helpers";
+import { useLocale } from "@/stores/settingsStore";
 
 const GH_REPO = "po4yka/blog";
 
@@ -14,6 +15,7 @@ function pluralize(count: number, singular: string, plural: string): string {
 }
 
 export function BuildStats({ delay = 0 }: { delay?: number }) {
+  const { t } = useLocale();
   const rows: Array<{ label: string; value: React.ReactNode }> = [
     {
       label: "Deploy",
@@ -32,6 +34,7 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
           rel="noopener noreferrer"
           className="text-foreground/90 hover:text-foreground hover:underline decoration-dotted underline-offset-2 transition-colors duration-150"
           title={`View commit ${buildMeta.commitHash} on GitHub`}
+          aria-label={`View commit ${buildMeta.commitHash} on GitHub (${t("links.opensNewWindow")})`}
         >
           {buildMeta.commitHash}
         </a>
@@ -56,7 +59,7 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
             <span className="text-muted-foreground/80 text-mono-sm shrink-0">
               {row.label}
             </span>
-            <span className="text-foreground/90 text-mono-sm text-right truncate min-w-0">
+            <span className="text-foreground/90 text-mono-sm text-right min-w-0 break-words">
               {row.value}
             </span>
           </div>

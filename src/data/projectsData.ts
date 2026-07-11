@@ -121,9 +121,9 @@ export const projects: Project[] = [
     platforms: ["Android", "iOS", "Backend", "Web"],
     tags: ["KMP", "Compose Multiplatform", "Python", "FastAPI", "Telegram Bot", "React", "Ktor", "SQLDelight"],
     links: [
-      { type: "GitHub", href: "https://github.com/po4yka/ratatoskr" },
-      { type: "GitHub", href: "https://github.com/po4yka/ratatoskr-client" },
-      { type: "GitHub", href: "https://github.com/po4yka/ratatoskr-web" },
+      { type: "GitHub · backend", href: "https://github.com/po4yka/ratatoskr" },
+      { type: "GitHub · client", href: "https://github.com/po4yka/ratatoskr-client" },
+      { type: "GitHub · web", href: "https://github.com/po4yka/ratatoskr-web" },
     ],
     featured: true,
     previewLabel: "ratatoskr",

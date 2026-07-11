@@ -59,7 +59,7 @@ const grep: Command = {
               <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
-              <span className="text-muted-foreground/50">
+              <span className="text-muted-foreground">
                 {highlight(p.title, keyword)}
               </span>
             </div>
@@ -87,7 +87,7 @@ const grep: Command = {
               <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
               </span>
-              <span className="text-muted-foreground/50">
+              <span className="text-muted-foreground">
                 {highlight(p.description, keyword)}
               </span>
             </div>

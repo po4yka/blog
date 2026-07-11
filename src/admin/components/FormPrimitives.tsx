@@ -15,7 +15,7 @@ type FieldBlockProps = {
   children: ReactNode | ((props: FieldBlockRenderProps) => ReactNode);
 };
 
-const fieldLabelClassName = "block font-mono text-muted-foreground/60 mb-1.5";
+const fieldLabelClassName = "block font-sans text-muted-foreground/60 mb-1.5";
 const fieldLabelStyle = {
   fontSize: "0.6875rem",
   letterSpacing: "0.02em",
@@ -79,14 +79,14 @@ export function TagsInput({ id, tags, onChange, placeholder, label = "Add tag" }
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 p-2 bg-card border border-border/50 min-h-[38px]" style={{ borderRadius: "3px" }}>
+    <div className="flex flex-wrap items-center gap-1.5 p-2 bg-card border border-border/50 min-h-[38px]" style={{ borderRadius: "2px" }}>
       {tags.map((tag) => (
         <span key={tag} className="inline-flex items-center gap-1 font-mono px-2 py-0.5 bg-secondary/80 text-foreground/60 border border-border/40" style={{ fontSize: "0.625rem", borderRadius: "2px" }}>
           {tag}
           <button
             onClick={() => onChange(tags.filter((t) => t !== tag))}
             aria-label={`Remove ${tag}`}
-            className="inline-flex h-11 w-11 -my-3 -ml-2 -mr-3 items-center justify-center text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer"
+            className="inline-flex h-11 w-11 -my-3 -ml-2 -mr-3 items-center justify-center text-muted-foreground-dim hover:text-destructive transition-colors cursor-pointer"
             style={{ fontSize: "0.6875rem", lineHeight: 1 }}
           >
             &times;
@@ -128,7 +128,7 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
             value={link.type}
             onChange={(e) => updateLink(i, "type", e.target.value)}
             className="w-full sm:w-[130px] px-3 py-2 bg-card border border-border text-foreground outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 shrink-0"
-            style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5, cursor: "pointer" }}
+            style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5, cursor: "pointer" }}
           >
             <option>GitHub</option>
             <option>Google Play</option>
@@ -143,12 +143,12 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
             aria-label={`Link ${i + 1} URL`}
             autoComplete="off"
             className="w-full px-3 py-2 bg-card border border-border text-foreground focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 placeholder:text-muted-foreground/50 flex-1"
-            style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+            style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
           />
           <button
             onClick={() => removeLink(i)}
             aria-label={`Remove link ${i + 1}`}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground/20 hover:text-destructive transition-colors cursor-pointer"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground-dim hover:text-destructive transition-colors cursor-pointer"
           >
             <X size={13} />
           </button>

@@ -7,7 +7,7 @@ interface BlogPreviewPaneProps {
 
 export function BlogPreviewPane({ form, readingTime }: BlogPreviewPaneProps) {
   return (
-    <div className="border border-border/50 bg-card p-6 md:p-8" style={{ borderRadius: "4px" }}>
+    <div className="border border-border/50 bg-card p-6 md:p-8" style={{ borderRadius: "2px" }}>
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.date}</span>
         <span className="text-border">·</span>

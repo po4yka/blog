@@ -20,7 +20,7 @@ const defaultSettings: SiteSettings = {
  * (`focus-visible:outline-*`) rather than a box-shadow ring.
  */
 const adminInputCn =
-  "w-full px-3 py-2 rounded-[3px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40";
+  "w-full px-3 py-2 rounded-[2px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40";
 
 export function AdminSettings() {
   const { data: settings } = useAdminSettings();
@@ -229,7 +229,7 @@ export function AdminSettings() {
               onClick={handleAddCategory}
               disabled={!newCat.trim()}
               className="inline-flex items-center gap-1 px-3 py-2 border border-border/50 text-muted-foreground/50 hover:text-foreground hover:border-border transition-colors cursor-pointer disabled:opacity-30"
-              style={{ fontSize: "0.75rem", borderRadius: "3px" }}
+              style={{ fontSize: "0.75rem", borderRadius: "2px" }}
             >
               <Plus size={13} />
               Add
@@ -246,7 +246,7 @@ export function AdminSettings() {
                 ? "border-destructive/40 text-destructive bg-destructive/[0.04]"
                 : "border-border/50 text-muted-foreground/40 hover:text-foreground hover:border-border"
             }`}
-            style={{ fontSize: "0.75rem", borderRadius: "3px" }}
+            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             {confirmReset ? (
               <>
@@ -264,7 +264,7 @@ export function AdminSettings() {
           <button
             onClick={handleSave}
             className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
+            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
           >
             {saved ? <Check size={14} /> : <Save size={14} />}
             {saved ? "Saved!" : "Save settings"}
@@ -280,7 +280,7 @@ export function AdminSettings() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border/50 p-5" style={{ borderRadius: "4px" }}>
+    <div className="bg-card border border-border/50 p-5" style={{ borderRadius: "2px" }}>
       <h2 className="text-foreground mb-4" style={{ fontSize: "0.9375rem", fontWeight: 600 }}>
         {title}
       </h2>

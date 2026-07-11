@@ -26,6 +26,11 @@ import {
       <Links client:visible />
     </div>
 
+    <!-- Real git commits from GitHub -->
+    <div data-section-name="git-log">
+      <RealGitLog client:visible delay={0.05} />
+    </div>
+
     <div data-section-name="projects">
       <Projects client:visible />
     </div>
@@ -42,11 +47,6 @@ import {
     <!-- GitHub activity calendar (real data) -->
     <div data-section-name="activity-calendar">
       <ActivityCalendar client:visible delay={0.05} />
-    </div>
-
-    <!-- Real git commits from GitHub -->
-    <div data-section-name="git-log">
-      <RealGitLog client:visible delay={0.05} />
     </div>
 
     <div data-section-name="blog">

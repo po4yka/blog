@@ -52,12 +52,23 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
             >
               <span
                 className="text-muted-foreground cursor-pointer shrink-0 text-mono-sm"
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   copy(c.hash);
                   setCopiedHash(c.hash);
                   setTimeout(() => setCopiedHash(null), 1500);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    if (e.key === " ") e.preventDefault();
+                    copy(c.hash);
+                    setCopiedHash(c.hash);
+                    setTimeout(() => setCopiedHash(null), 1500);
+                  }
+                }}
                 title="Copy hash"
+                aria-label="Copy commit hash"
               >
                 {copiedHash === c.hash ? "copied!" : c.hash}
               </span>

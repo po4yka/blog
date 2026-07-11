@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Plus, Trash2, Star, StarOff, Search, FileText } from "lucide-react";
+import { Plus, Trash2, TriangleAlert, Star, StarOff, Search, FileText } from "lucide-react";
 import { usePosts, useDeletePost, useSavePost } from "@/admin/hooks/useAdminQueries";
 import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 
@@ -47,14 +47,14 @@ export function AdminBlogList() {
           <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
             Blog Posts
           </h1>
-          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "0.625rem" }}>
+          <p className="font-mono text-muted-foreground-dim mt-0.5" style={{ fontSize: "0.625rem" }}>
             {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} total
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/blog/new")}
           className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer shrink-0"
-          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
+          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
         >
           <Plus size={15} />
           New post
@@ -68,7 +68,7 @@ export function AdminBlogList() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/30" />
+        <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground-dim" />
         <input
           type="search"
           value={search}
@@ -76,14 +76,14 @@ export function AdminBlogList() {
           placeholder="Search posts..."
           aria-label="Search posts"
           className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
-          style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+          style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
         />
       </motion.div>
 
       {/* List */}
       <motion.div
         className="mt-5 border border-border/50 bg-card overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
@@ -155,7 +155,7 @@ export function AdminBlogList() {
               aria-label={confirmDelete === post.slug ? `Confirm delete ${post.title}` : `Delete ${post.title}`}
               title={confirmDelete === post.slug ? "Click again to confirm" : "Delete post"}
             >
-              <Trash2 size={14} />
+              {confirmDelete === post.slug ? <TriangleAlert size={14} /> : <Trash2 size={14} />}
             </button>
           </div>
         ))}

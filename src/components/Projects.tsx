@@ -49,7 +49,7 @@ export function Projects() {
                   <span className="text-muted-foreground font-mono text-mono-sm shrink-0 letter-wide" aria-hidden="true">
                     [{project.platforms[0]?.toLowerCase() ?? ""}]
                   </span>
-                  <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm">
+                  <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 truncate text-sm font-sans">
                     {project.name}
                   </span>
                   <span className="text-muted-foreground-dim font-mono text-mono-sm" aria-hidden="true">·</span>

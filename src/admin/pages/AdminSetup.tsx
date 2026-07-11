@@ -70,7 +70,7 @@ export function AdminSetup() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <CheckCircle size={32} className="text-green-500/70 mx-auto mb-3" />
+          <CheckCircle size={32} className="text-muted-foreground mx-auto mb-3" />
           <p className="font-mono text-foreground/80 mb-1" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
             Passkey registered
           </p>
@@ -90,8 +90,8 @@ export function AdminSetup() {
 
       {state === "error" && (
         <div className="text-center">
-          <AlertCircle size={24} className="text-destructive/60 mx-auto mb-3" />
-          <p className="font-mono text-destructive/70 mb-4" style={{ fontSize: "0.75rem" }}>
+          <AlertCircle size={24} className="text-destructive mx-auto mb-3" />
+          <p className="font-mono text-destructive mb-4" style={{ fontSize: "0.75rem" }}>
             {error}
           </p>
           <button
@@ -130,7 +130,7 @@ function SetupShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-7 h-7 border border-border/60 flex items-center justify-center" style={{ borderRadius: "3px" }}>
+          <div className="w-7 h-7 border border-border/60 flex items-center justify-center" style={{ borderRadius: "2px" }}>
             <Fingerprint size={13} className="text-muted-foreground/50" />
           </div>
           <div>

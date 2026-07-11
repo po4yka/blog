@@ -233,9 +233,13 @@ export function ExperiencePage() {
         <MacWindow label="resume.log" sectionNumber="05" delay={0.05}>
           <div ref={rolesContainerRef} className="relative">
             <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
-            {roles.map((role) => (
-              <RoleEntry key={role.period} role={role} hoveredTag={hoveredTag} onTagHover={handleTagHover} />
-            ))}
+            <ul className="list-none m-0 p-0">
+              {roles.map((role) => (
+                <li key={role.period}>
+                  <RoleEntry role={role} hoveredTag={hoveredTag} onTagHover={handleTagHover} />
+                </li>
+              ))}
+            </ul>
           </div>
         </MacWindow>
       </div>

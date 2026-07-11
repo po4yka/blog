@@ -6,14 +6,10 @@ import { Accent } from "../ui";
 import type { Command } from "./types";
 
 const ASCII_ART = [
-  "    .~.    ",
-  "   /V V\\   ",
-  "  // _ \\\\  ",
-  " /.| |.\\ \\ ",
-  " \\\\| |//  ",
-  "  \\_/\\_/  ",
-  "   {   }  ",
-  "   `~'~'  ",
+  "┌──────────────┐",
+  "│  ■  po4yka   │",
+  "│  po4yka.dev  │",
+  "└──────────────┘",
 ];
 
 function renderInfoRow(label: string, value: string) {

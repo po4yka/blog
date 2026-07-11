@@ -11,6 +11,7 @@ export interface SitePreferences {
   reduceMotion: boolean;
   fontSize: FontSize;
   locale: Locale;
+  keyboardShortcuts: boolean;
 }
 
 interface SettingsActions {
@@ -18,16 +19,24 @@ interface SettingsActions {
   setReduceMotion: (reduceMotion: boolean) => void;
   setFontSize: (fontSize: FontSize) => void;
   setLocale: (locale: Locale) => void;
+  setKeyboardShortcuts: (keyboardShortcuts: boolean) => void;
   resetPreferences: () => void;
 }
 
 type SettingsStore = SitePreferences & SettingsActions;
 
+// Seed reduceMotion from the OS accessibility preference so hand-rolled JS
+// animations (which gate on this flag, not on Motion's own media-query check)
+// respect prefers-reduced-motion before the visitor ever opens /settings.
+const systemReduceMotion = () =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const defaults: SitePreferences = {
-  theme: "light",
-  reduceMotion: false,
+  theme: "system",
+  reduceMotion: systemReduceMotion(),
   fontSize: "default",
   locale: defaultLocale,
+  keyboardShortcuts: true,
 };
 
 function getSystemTheme(): "light" | "dark" {
@@ -59,16 +68,17 @@ export const useSettingsStore = create<SettingsStore>()(
         setReduceMotion: (reduceMotion) => set({ reduceMotion }),
         setFontSize: (fontSize) => set({ fontSize }),
         setLocale: (locale) => set({ locale }),
+        setKeyboardShortcuts: (keyboardShortcuts) => set({ keyboardShortcuts }),
         resetPreferences: () => set({ ...defaults }),
       }),
       {
         name: "site_preferences",
-        partialize: ({ theme, reduceMotion, fontSize, locale }) => ({ theme, reduceMotion, fontSize, locale }),
+        partialize: ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts }) => ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts }),
         migrate: (persisted) => {
           const p = persisted && typeof persisted === "object" ? persisted : {};
           return { ...defaults, ...p };
         },
-        version: 2,
+        version: 3,
       },
     ),
   ),
@@ -104,7 +114,7 @@ if (typeof window !== "undefined") {
 
 /** Convenience hook preserving the original useSettings() API */
 export function useSettings() {
-  const { theme, reduceMotion, fontSize, locale, setTheme, setReduceMotion, setFontSize, setLocale, resetPreferences } =
+  const { theme, reduceMotion, fontSize, locale, keyboardShortcuts, setTheme, setReduceMotion, setFontSize, setLocale, setKeyboardShortcuts, resetPreferences } =
     useSettingsStore();
 
   const resolvedTheme: "light" | "dark" = theme === "system" ? getSystemTheme() : theme;
@@ -114,11 +124,13 @@ export function useSettings() {
     reduceMotion,
     fontSize,
     locale,
+    keyboardShortcuts,
     resolvedTheme,
     setTheme,
     setReduceMotion,
     setFontSize,
     setLocale,
+    setKeyboardShortcuts,
     resetPreferences,
   };
 }

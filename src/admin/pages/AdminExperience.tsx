@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Trash2, X, Save, GripVertical } from "lucide-react";
+import { Plus, Trash2, TriangleAlert, X, Save, GripVertical } from "lucide-react";
 import type { Role } from "@/admin/api";
 import { useRoles, useSaveRole, useDeleteRole } from "@/admin/hooks/useAdminQueries";
 import { FieldBlock as Field, TagsInput } from "@/admin/components/FormPrimitives";
@@ -88,7 +88,7 @@ export function AdminExperience() {
           ref={triggerRef}
           onClick={() => setEditing(newRole())}
           className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
-          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
+          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
         >
           <Plus size={15} />
           Add role
@@ -103,7 +103,7 @@ export function AdminExperience() {
             aria-modal="true"
             aria-labelledby={editorTitleId}
             className="mb-6 grid overflow-hidden border border-border bg-card"
-            style={{ borderRadius: "4px" }}
+            style={{ borderRadius: "2px" }}
             initial={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
             animate={{ opacity: 1, y: 0, gridTemplateRows: "1fr" }}
             exit={{ opacity: 0, y: -8, gridTemplateRows: "0fr" }}
@@ -135,7 +135,7 @@ export function AdminExperience() {
                     autoComplete="off"
                     required
                     className="admin-input w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
-                    style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                    style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
                 <Field label="Company" required>
@@ -147,7 +147,7 @@ export function AdminExperience() {
                     autoComplete="off"
                     required
                     className="admin-input w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
-                    style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                    style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                   />
                 </Field>
               </div>
@@ -160,7 +160,7 @@ export function AdminExperience() {
                   placeholder="2021 — 2023"
                   autoComplete="off"
                   className="w-full px-3 py-2 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors"
-                  style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                  style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </Field>
 
@@ -172,7 +172,7 @@ export function AdminExperience() {
                   rows={2}
                   autoComplete="off"
                   className="w-full px-3 py-2 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors resize-y"
-                  style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
+                  style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.6 }}
                 />
               </Field>
 
@@ -196,7 +196,7 @@ export function AdminExperience() {
                   onClick={handleSave}
                   disabled={!editing.title.trim() || saveRoleMutation.isPending}
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
-                  style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
+                  style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "2px" }}
                 >
                   <Save size={13} />
                   {saveRoleMutation.isPending ? "Saving..." : "Save"}
@@ -211,7 +211,7 @@ export function AdminExperience() {
       {/* Roles list */}
       <motion.div
         className="border border-border/50 bg-card overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
@@ -274,7 +274,7 @@ export function AdminExperience() {
                   confirmDelete === role.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
                 }`}
               >
-                <Trash2 size={13} />
+                {confirmDelete === role.id ? <TriangleAlert size={13} /> : <Trash2 size={13} />}
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
+import { useLocale } from "@/stores/settingsStore";
 import type { GitHubRepoSummary } from "@/types";
 import { ease, stagger } from "@/lib/motion";
 
@@ -31,6 +32,7 @@ function langGlyph(language: string | null): string {
 }
 
 export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
+  const { t } = useLocale();
   const { ref, inView } = useInView(0.1);
   const [repos, setRepos] = useState<GitHubRepoSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,6 +67,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`Open ${repo.name} on GitHub (${t("links.opensNewWindow")})`}
                 className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline rounded-[2px] border-b border-border/30 last:border-b-0"
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}

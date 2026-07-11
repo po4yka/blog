@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PanelShell } from "./_helpers";
 import { deferIdle } from "./_utils";
+import { useLocale } from "@/stores/settingsStore";
 import type { GitHubLatestRelease } from "@/types";
 
 function relativeTime(iso: string): string {
@@ -32,6 +33,7 @@ function TagDisplay({ tag }: { tag: string }) {
 }
 
 export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
+  const { t } = useLocale();
   const [release, setRelease] = useState<GitHubLatestRelease | null | undefined>(
     undefined,
   );
@@ -67,7 +69,7 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
         target="_blank"
         rel="noopener noreferrer"
         className="block group px-5 py-3 relative"
-        aria-label={`Open release ${release.tagName} on GitHub`}
+        aria-label={`Open release ${release.tagName} on GitHub (${t("links.opensNewWindow")})`}
       >
         <span
           aria-hidden="true"

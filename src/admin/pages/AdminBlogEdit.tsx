@@ -116,7 +116,7 @@ export function AdminBlogEdit() {
           <button
             onClick={() => setPreview(!preview)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border/50 text-muted-foreground/60 hover:text-foreground hover:border-border transition-colors duration-200 cursor-pointer"
-            style={{ fontSize: "0.75rem", borderRadius: "3px" }}
+            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             {preview ? <EyeOff size={13} /> : <Eye size={13} />}
             {preview ? "Edit" : "Preview"}
@@ -125,7 +125,7 @@ export function AdminBlogEdit() {
             onClick={handleSave}
             disabled={!form.title.trim() || savePostMutation.isPending}
             className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "3px" }}
+            style={{ fontSize: "0.75rem", fontWeight: 500, borderRadius: "2px" }}
           >
             <Save size={13} />
             {savePostMutation.isPending ? "Saving..." : "Save"}
@@ -152,7 +152,7 @@ export function AdminBlogEdit() {
                 autoComplete="off"
                 required
                 className="admin-input w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
-                style={{ fontSize: "0.875rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                style={{ fontSize: "0.875rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
 
@@ -165,7 +165,7 @@ export function AdminBlogEdit() {
                 autoComplete="off"
                 required
                 className="admin-input w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
-                style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
               />
             </FieldBlock>
 
@@ -178,7 +178,7 @@ export function AdminBlogEdit() {
                   placeholder="Mar 2026"
                   autoComplete="off"
                   className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
-                  style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                  style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                 />
               </FieldBlock>
               <FieldBlock label="Category">
@@ -186,7 +186,7 @@ export function AdminBlogEdit() {
                   value={form.category}
                   onChange={(e) => updateField("category", e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground outline-none focus:border-border transition-colors duration-200 cursor-pointer"
-                  style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.5 }}
+                  style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
                 >
                   {availableCategories.map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -203,7 +203,7 @@ export function AdminBlogEdit() {
                     ? "border-border text-foreground bg-muted"
                     : "border-border/50 text-muted-foreground hover:border-border"
                 }`}
-                style={{ fontSize: "0.75rem", borderRadius: "3px" }}
+                style={{ fontSize: "0.75rem", borderRadius: "2px" }}
               >
                 {form.featured ? <Star size={13} className="fill-foreground/20" /> : <StarOff size={13} />}
                 {form.featured ? "Featured" : "Not featured"}
@@ -218,7 +218,7 @@ export function AdminBlogEdit() {
                 rows={2}
                 autoComplete="off"
                 className="w-full px-3.5 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 resize-y"
-                style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.6 }}
+                style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.6 }}
               />
             </FieldBlock>
 
@@ -241,7 +241,7 @@ export function AdminBlogEdit() {
                     rows={18}
                     autoComplete="off"
                     className="w-full px-3.5 py-3 bg-card border border-border/50 text-foreground font-mono placeholder:text-muted-foreground/50 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200 resize-y"
-                    style={{ fontSize: "0.8125rem", borderRadius: "3px", fontWeight: 400, lineHeight: 1.7 }}
+                    style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.7 }}
                   />
                   <div className="absolute bottom-2.5 right-3 flex items-center gap-3">
                     <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
@@ -267,7 +267,7 @@ export function AdminBlogEdit() {
                 onClick={handleSave}
                 disabled={!form.title.trim() || savePostMutation.isPending}
                 className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer disabled:opacity-30"
-                style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "3px" }}
+                style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
               >
                 <Save size={14} />
                 {savePostMutation.isPending ? "Saving..." : "Save post"}

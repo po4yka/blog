@@ -84,7 +84,7 @@ export function AdminLogin() {
 
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-7 h-7 border border-border/60 flex items-center justify-center" style={{ borderRadius: "3px" }}>
+          <div className="w-7 h-7 border border-border/60 flex items-center justify-center" style={{ borderRadius: "2px" }}>
             <Lock size={13} className="text-muted-foreground/50" />
           </div>
           <div>

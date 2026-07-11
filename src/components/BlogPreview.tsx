@@ -9,8 +9,19 @@ import { blogUrl, type Locale } from "@/lib/i18n";
 interface GroupedPost {
   slug: string;
   date: string;
-  featured?: boolean;
+  isoDate?: string;
   langs: Record<string, { title: string }>;
+}
+
+// A post is "new" based on publish recency, not the editorial `featured` flag
+// (which marks curated posts and can point at an older entry).
+const NEW_WINDOW_DAYS = 45;
+function isRecentlyPublished(isoDate?: string): boolean {
+  if (!isoDate) return false;
+  const published = new Date(isoDate).getTime();
+  if (Number.isNaN(published)) return false;
+  const ageInDays = (Date.now() - published) / 86_400_000;
+  return ageInDays >= 0 && ageInDays <= NEW_WINDOW_DAYS;
 }
 
 export function BlogPreview() {
@@ -22,7 +33,7 @@ export function BlogPreview() {
       const lang = (p as { lang?: string }).lang ?? "en";
       let group = bySlug.get(p.slug);
       if (!group) {
-        group = { slug: p.slug, date: p.date, featured: p.featured, langs: {} };
+        group = { slug: p.slug, date: p.date, isoDate: p.isoDate, langs: {} };
         bySlug.set(p.slug, group);
       }
       group.langs[lang] = { title: p.title };
@@ -69,7 +80,7 @@ export function BlogPreview() {
                     </span>
                     <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
                     <span className="text-muted-foreground shrink-0 font-mono text-label">{post.date}</span>
-                    {post.featured && (
+                    {isRecentlyPublished(post.isoDate) && (
                       <>
                         <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
                         <Tag variant="highlight">{t("blogPreview.new")}</Tag>
@@ -81,10 +92,7 @@ export function BlogPreview() {
                       <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 font-sans text-mono">
                         {title}
                       </span>
-                      <span
-                        className="absolute bottom-0 left-0 right-0 h-[1px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"
-                        style={{ backgroundColor: "var(--foreground)", opacity: 0.3 }}
-                      />
+                      <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
                     </div>
                     {/* Language indicators */}
                     {availLangs.length > 1 && (
