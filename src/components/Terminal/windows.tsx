@@ -153,8 +153,8 @@ export function BootBlock({
         border: "1px solid var(--border)",
         borderRadius: "2px",
       }}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
+      initial={{ opacity: 0, y: 8 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: duration.slow, delay, ease }}
     >
       <div
@@ -212,22 +212,28 @@ export function LessViewer({
   meta,
   children,
   delay = 0,
+  statusLine,
 }: {
   filename: string;
   meta?: string;
   children: ReactNode;
   delay?: number;
+  /** Bottom pager bar, mirroring MacWindow's statusLine treatment. */
+  statusLine?: ReactNode;
 }) {
   return (
     <motion.div
-      className="overflow-hidden"
+      /* overflow-clip (not hidden): clips to the 2px radius without creating
+         a scroll container, so position:sticky children (blog TOC) keep
+         sticking to the viewport. */
+      className="overflow-clip"
       style={{
         background: "var(--card)",
         border: "1px solid var(--border)",
         borderRadius: "2px",
       }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: duration.slow, delay, ease }}
     >
       <div
@@ -249,6 +255,21 @@ export function LessViewer({
         )}
       </div>
       <div className="p-5 md:p-7 font-mono">{children}</div>
+
+      {statusLine && (
+        <div
+          className="px-4 py-1.5 font-mono text-xs select-none truncate"
+          style={{
+            borderTop: "1px solid var(--rule)",
+            color: "var(--muted-foreground-dim)",
+            letterSpacing: "0.06em",
+            fontVariantNumeric: "tabular-nums",
+          }}
+          aria-hidden="true"
+        >
+          {statusLine}
+        </div>
+      )}
     </motion.div>
   );
 }

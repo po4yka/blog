@@ -6,7 +6,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { useInView } from "@/hooks/useInView";
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
-import { ease } from "@/lib/motion";
+import { ease, stagger } from "@/lib/motion";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { animateNumbers } from "./_animatedNumber.utils";
@@ -176,7 +176,7 @@ function TagConnections({
                 ? undefined
                 : {
                     animation: `draw-line 300ms ease forwards`,
-                    animationDelay: `${i * 50}ms`,
+                    animationDelay: `${i * Math.round(stagger.base * 1000)}ms`,
                   }
             }
           />
@@ -230,7 +230,7 @@ export function ExperiencePage() {
         <Cmd>
           cat <Accent>resume.log</Accent>
         </Cmd>
-        <MacWindow label="resume.log" sectionNumber="05" delay={0.05}>
+        <MacWindow label="resume.log" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
           <div ref={rolesContainerRef} className="relative">
             <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
             <ul className="list-none m-0 p-0">
@@ -249,7 +249,7 @@ export function ExperiencePage() {
         <Cmd>
           cat <Accent>/etc/skills.conf</Accent>
         </Cmd>
-        <MacWindow label="skills.conf" sectionNumber="05" delay={0.05}>
+        <MacWindow label="skills.conf" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
           <motion.div
             ref={skillsRef}
             className="space-y-1"

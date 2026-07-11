@@ -21,4 +21,6 @@ export const easeStep8 = stepEase(8);
 export const stagger = {
   fast: 0.04,
   base: 0.06,
+  // DESIGN.md list-reveal cadence: 120-150ms per item for editorial list rows
+  list: 0.12,
 } as const;

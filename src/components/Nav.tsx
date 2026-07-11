@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
+import { stagger } from "@/lib/motion";
 import { MotionProvider } from "./MotionProvider";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { blogUrl, type Locale, type TranslationKey } from "@/lib/i18n";
@@ -166,20 +167,22 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   key={link.labelKey}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative px-3 py-1.5 font-sans text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
+                  className={`px-3 py-1.5 font-sans text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
                     active
-                      ? "text-foreground font-medium"
+                      ? "text-emphasis font-medium"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {active && (
-                    <span
-                      aria-hidden="true"
-                      className="inline-block w-1 h-1 bg-foreground mr-1.5 align-middle"
-                      style={{ borderRadius: 1 }}
-                    />
-                  )}
-                  {t(link.labelKey)}
+                  <span className="relative inline-block">
+                    {t(link.labelKey)}
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="rule-draw absolute left-0 right-0 -bottom-1 block"
+                        style={{ height: 1, background: "var(--emphasis)" }}
+                      />
+                    )}
+                  </span>
                 </a>
               );
             })}
@@ -268,15 +271,24 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                       aria-current={active ? "page" : undefined}
                       className={`py-3 px-3 font-sans text-mono transition-colors duration-200 whitespace-nowrap ${
                         active
-                          ? "text-foreground font-medium"
+                          ? "text-emphasis font-medium"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setMenuOpen(false)}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2, delay: i * 0.03 }}
+                      transition={{ duration: 0.2, delay: i * stagger.fast }}
                     >
-                      {t(link.labelKey)}
+                      <span className="relative inline-block">
+                        {t(link.labelKey)}
+                        {active && (
+                          <span
+                            aria-hidden="true"
+                            className="rule-draw absolute left-0 right-0 -bottom-1 block"
+                            style={{ height: 1, background: "var(--emphasis)" }}
+                          />
+                        )}
+                      </span>
                     </motion.a>
                   );
                 })}

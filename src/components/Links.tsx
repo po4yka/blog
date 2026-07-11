@@ -29,6 +29,7 @@ export function Links() {
         number="03"
         label="CONTACT"
         heading={t("links.heading")}
+        meta={`${links.filter((l) => l.href).length}/${links.length} ACTIVE`}
         id="links-heading"
       />
       <Cmd>
@@ -62,10 +63,7 @@ export function Links() {
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
               aria-label={link.href.startsWith("http") ? `${link.label} (${t("links.opensNewWindow")})` : link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200 font-mono text-mono rounded-[2px]"
-              style={{
-                border: "1px solid var(--border)",
-              }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-border text-muted-foreground hover:text-foreground hover:bg-muted hover:border-rule transition-colors duration-200 font-mono text-mono rounded-[2px]"
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease }}

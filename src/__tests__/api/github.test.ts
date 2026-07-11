@@ -285,7 +285,7 @@ describe("GET /api/github/commits", () => {
     expect(data[2].date).toBe("2d ago");
   });
 
-  it("caps output at MAX_COMMITS (7)", async () => {
+  it("caps output at MAX_COMMITS (5)", async () => {
     const now = new Date().toISOString();
     mockFetch.mockResolvedValueOnce({
       ok: true,
@@ -307,7 +307,7 @@ describe("GET /api/github/commits", () => {
     const GET = await getHandler();
     const response = await GET(ctx);
     const data = await response.json();
-    expect(data).toHaveLength(7);
+    expect(data).toHaveLength(5);
   });
 
   it("returns empty array when GitHub API fails with no cache", async () => {

@@ -19,7 +19,7 @@ function ProjectEntry({ project }: { project: Project }) {
   const { t } = useLocale();
 
   return (
-    <div className="py-5 border-b border-border last:border-b-0 group">
+    <div className="py-5 border-b border-dashed border-rule last:border-b-0 group">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
@@ -139,8 +139,10 @@ export function ProjectsPage() {
       {/* Project entries */}
       <MacWindow
         label={`projects — ${projects.length} ${t("projectsPage.entries")}`}
+        titleExt="~/projects | main"
         sectionNumber="04"
         delay={0.05}
+        statusLine
       >
         <ul className="list-none m-0 p-0">
           {projects.map((project) => (

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
+import { stagger } from "@/lib/motion";
 import { Cmd, OutputBlock, Accent } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
@@ -39,7 +40,7 @@ export function About() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.12 }}
+            transition={{ duration: 0.4, delay: 0.05 + stagger.base }}
           >
             {t("about.p2prefix")}{" "}
             <span className="text-foreground font-medium">
@@ -50,7 +51,7 @@ export function About() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.19 }}
+            transition={{ duration: 0.4, delay: 0.05 + stagger.base * 2 }}
           >
             {t("about.p3")}
           </motion.p>

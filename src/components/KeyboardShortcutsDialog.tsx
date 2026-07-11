@@ -32,11 +32,8 @@ const SHORTCUT_GROUPS: { labelKey: TranslationKey; shortcuts: { keys: string; de
 ];
 
 function Kbd({ children }: { children: string }) {
-  return (
-    <kbd className="inline-block px-1.5 py-0.5 rounded-[2px] text-xs font-mono text-foreground/80 bg-card border border-border min-w-[24px] text-center">
-      {children}
-    </kbd>
-  );
+  // key-cap chrome comes from the global kbd rule in theme.css
+  return <kbd className="text-xs text-foreground/80">{children}</kbd>;
 }
 
 interface Props {

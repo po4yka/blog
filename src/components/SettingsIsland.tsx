@@ -77,7 +77,7 @@ export function Settings() {
         cat <Accent>/etc/preferences.conf</Accent>
       </Cmd>
 
-      <MacWindow label="preferences.conf" sectionNumber="09" delay={0.05}>
+      <MacWindow label="preferences.conf" titleExt="~/settings | main" sectionNumber="09" delay={0.05} statusLine>
         <motion.div
           className="space-y-6"
           initial={{ opacity: 0 }}

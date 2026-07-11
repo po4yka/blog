@@ -32,7 +32,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
   return (
     <Shell
       delay={delay}
-      command={<>git log <Accent>--oneline</Accent> --decorate -7</>}
+      command={<>git log <Accent>--oneline</Accent> --decorate -5</>}
       windowTitle="git — log"
     >
       {() => (
@@ -40,7 +40,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
           {commits.map((c, i) => (
             <motion.div
               key={c.hash}
-              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono rounded-[2px]"
+              className="flex items-baseline gap-3 py-[3px] -mx-2 px-2 text-mono-sm rounded-[2px]"
               style={{
                 lineHeight: 1.7,
                 transition: "background-color 0.15s ease",

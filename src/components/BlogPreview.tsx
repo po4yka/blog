@@ -27,7 +27,7 @@ function isRecentlyPublished(isoDate?: string): boolean {
 export function BlogPreview() {
   const { locale, t } = useLocale();
 
-  const previewPosts = useMemo(() => {
+  const { previewPosts, totalPosts } = useMemo(() => {
     const bySlug = new Map<string, GroupedPost>();
     for (const p of blogPosts) {
       const lang = (p as { lang?: string }).lang ?? "en";
@@ -38,7 +38,7 @@ export function BlogPreview() {
       }
       group.langs[lang] = { title: p.title };
     }
-    return [...bySlug.values()].slice(0, 3);
+    return { previewPosts: [...bySlug.values()].slice(0, 3), totalPosts: bySlug.size };
   }, []);
 
   if (previewPosts.length === 0) return null;
@@ -50,6 +50,7 @@ export function BlogPreview() {
         number="06"
         label="WRITING"
         heading={t("blogPreview.heading")}
+        meta={`${totalPosts} POSTS`}
         id="blog-heading"
       />
       <Cmd>

@@ -47,7 +47,7 @@ export function Hero() {
           cd ~/po4yka &amp;&amp; cat <Accent>identity.md</Accent>
         </Cmd>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_240px] lg:grid-cols-[1fr_300px] gap-5 items-start">
           {/* Main info + CTAs */}
           <div className="flex flex-col gap-4">
             <MacWindow
@@ -113,13 +113,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Sidebar: real content panels — desktop only */}
-          <div className="hidden lg:flex flex-col gap-4">
+          {/* Sidebar: LatestPostPanel from md (tablet); full three-widget stack from lg only */}
+          <div className="hidden md:flex flex-col gap-4">
             <LatestPostPanel delay={0.15} />
-            <Suspense fallback={null}>
-              <ActivitySparkline delay={0.2} />
-              <LatestReleasePanel delay={0.25} />
-            </Suspense>
+            <div className="hidden lg:flex flex-col gap-4">
+              <Suspense fallback={null}>
+                <ActivitySparkline delay={0.2} />
+                <LatestReleasePanel delay={0.25} />
+              </Suspense>
+            </div>
           </div>
         </div>
       </div>

@@ -46,7 +46,12 @@ export function InfoTable({
           style={{
             lineHeight: 1.6,
             gap: fieldCodes ? "0.5rem" : "1.5rem",
-            borderBottom: i < rows.length - 1 ? "1px solid var(--border)" : undefined,
+            borderBottom:
+              i < rows.length - 1
+                ? fieldCodes
+                  ? "1px dashed var(--rule)"
+                  : "1px solid var(--border)"
+                : undefined,
           }}
           initial={instant ? false : { opacity: 0 }}
           animate={instant || inView ? { opacity: 1 } : {}}

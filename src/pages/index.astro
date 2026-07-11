@@ -26,36 +26,48 @@ import {
       <Links client:visible />
     </div>
 
-    <!-- Real git commits from GitHub -->
-    <div data-section-name="git-log">
-      <RealGitLog client:visible delay={0.05} />
+    <!-- Chapter: links -> real git commits -> projects -> open source repos.
+         Grouped tighter than the outer chapter beat so the git-log lead-in
+         and the open-source epilogue read as bound to Projects, not as
+         standalone numbered sections of their own. -->
+    <div class="space-y-4 md:space-y-5">
+      <!-- Real git commits from GitHub -->
+      <div data-section-name="git-log">
+        <RealGitLog client:visible delay={0.05} />
+      </div>
+
+      <div data-section-name="projects">
+        <Projects client:visible />
+      </div>
+
+      <!-- projects → open source repos from GitHub (real data) -->
+      <div data-section-name="open-source">
+        <OpenSourcePanel client:visible delay={0.05} />
+      </div>
     </div>
 
-    <div data-section-name="projects">
-      <Projects client:visible />
+    <!-- Chapter: experience -> GitHub activity calendar epilogue -->
+    <div class="space-y-4 md:space-y-5">
+      <div data-section-name="experience">
+        <Experience client:visible />
+      </div>
+
+      <!-- GitHub activity calendar (real data) -->
+      <div data-section-name="activity-calendar">
+        <ActivityCalendar client:visible delay={0.05} />
+      </div>
     </div>
 
-    <!-- projects → open source repos from GitHub (real data) -->
-    <div data-section-name="open-source">
-      <OpenSourcePanel client:visible delay={0.05} />
-    </div>
+    <!-- Chapter: blog -> blog stats epilogue -->
+    <div class="space-y-4 md:space-y-5">
+      <div data-section-name="blog">
+        <BlogPreview client:visible />
+      </div>
 
-    <div data-section-name="experience">
-      <Experience client:visible />
-    </div>
-
-    <!-- GitHub activity calendar (real data) -->
-    <div data-section-name="activity-calendar">
-      <ActivityCalendar client:visible delay={0.05} />
-    </div>
-
-    <div data-section-name="blog">
-      <BlogPreview client:visible />
-    </div>
-
-    <!-- blog → blog stats (decorative) -->
-    <div data-section-name="blog-stats">
-      <BlogStatsPanel client:visible delay={0.05} />
+      <!-- blog → blog stats (decorative) -->
+      <div data-section-name="blog-stats">
+        <BlogStatsPanel client:visible delay={0.05} />
+      </div>
     </div>
   </div>
 

@@ -94,6 +94,7 @@ const en = {
   "blog.browseAll": "Browse all posts below",
   "blog.noPosts": "no posts found",
   "blog.postsTitle": "posts",
+  "blog.featured": "featured",
 
   // blog post
   "blogPost.allPosts": "All posts",
@@ -104,6 +105,7 @@ const en = {
   "blogPost.copyLink": "Copy link",
   "blogPost.copyMarkdown": "Copy as Markdown",
   "blogPost.copyMarkdownFail": "Copy failed",
+  "blogPost.copyCode": "Copy code",
   "blogPost.copied": "Copied",
   "blogPost.scrollToTop": "Scroll to top",
   "blogPost.updated": "Updated",
@@ -281,6 +283,7 @@ const ru: TranslationKeys = {
   "blog.browseAll": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b \u043d\u0438\u0436\u0435",
   "blog.noPosts": "\u043f\u043e\u0441\u0442\u044b \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b",
   "blog.postsTitle": "\u043f\u043e\u0441\u0442\u044b",
+  "blog.featured": "\u0438\u0437\u0431\u0440\u0430\u043d\u043d\u043e\u0435",
 
   // blog post
   "blogPost.allPosts": "\u0412\u0441\u0435 \u043f\u043e\u0441\u0442\u044b",
@@ -291,6 +294,7 @@ const ru: TranslationKeys = {
   "blogPost.copyLink": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0441\u0441\u044b\u043b\u043a\u0443",
   "blogPost.copyMarkdown": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043a\u0430\u043a Markdown",
   "blogPost.copyMarkdownFail": "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c",
+  "blogPost.copyCode": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u0434",
   "blogPost.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
   "blogPost.scrollToTop": "\u041d\u0430\u0432\u0435\u0440\u0445",
   "blogPost.updated": "\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u043e",

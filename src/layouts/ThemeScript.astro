@@ -23,6 +23,16 @@ const { nonce } = Astro.locals;
     if (prefs.reduceMotion) {
       document.documentElement.style.setProperty('--motion-duration-scale', '0');
     }
+    // BaseHead's two static theme-color tags only track OS preference via
+    // `media`. An explicit light/dark override (not "system") needs its own
+    // non-media tag kept in sync so the mobile browser chrome matches it too.
+    var themeColorMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+    if (!themeColorMeta) {
+      themeColorMeta = document.createElement('meta');
+      themeColorMeta.setAttribute('name', 'theme-color');
+      document.head.appendChild(themeColorMeta);
+    }
+    themeColorMeta.setAttribute('content', resolved === 'dark' ? '#0b0b0c' : '#f5f3ee');
   } catch(e) {}
 })();
 </script>
@@ -45,6 +55,13 @@ const { nonce } = Astro.locals;
         "--motion-duration-scale",
         prefs.reduceMotion ? "0" : "1"
       );
+      let themeColorMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+      if (!themeColorMeta) {
+        themeColorMeta = document.createElement("meta");
+        themeColorMeta.setAttribute("name", "theme-color");
+        document.head.appendChild(themeColorMeta);
+      }
+      themeColorMeta.setAttribute("content", resolved === "dark" ? "#0b0b0c" : "#f5f3ee");
     } catch {}
   }
   document.addEventListener("astro:after-swap", applyThemeFromStorage);

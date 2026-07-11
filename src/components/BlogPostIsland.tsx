@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
+import { useState, useEffect, useCallback, useRef, type ReactNode, type RefObject } from "react";
 
 declare global {
   interface Window {
@@ -150,29 +150,58 @@ function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale }) {
   );
 }
 
-// --- Scroll to top ---
+// --- Shared scroll position (throttled, single listener) ---
 
-function ScrollToTop() {
-  const [visible, setVisible] = useState(false);
+// One scroll listener feeds both ScrollToTop's visibility and the
+// LessViewer pager status line's percent-through-file readout below, so
+// the pager status doesn't stack a second listener on top of this one
+// (ReadingProgress above tracks scroll separately, but via a zero-JS CSS
+// scroll-timeline, not an event listener).
+interface ScrollState {
+  scrollY: number;
+  percent: number;
+}
+
+function useScrollState(): ScrollState {
+  const [state, setState] = useState<ScrollState>({ scrollY: 0, percent: 0 });
   const lastCheck = useRef(0);
-  const { t } = useLocale();
 
   useEffect(() => {
+    const compute = () => {
+      const scrollY = window.scrollY;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const percent =
+        scrollable <= 0 ? 100 : Math.min(100, Math.max(0, Math.round((scrollY / scrollable) * 100)));
+      setState({ scrollY, percent });
+    };
     const onScroll = () => {
       const now = Date.now();
       if (now - lastCheck.current < 200) return;
       lastCheck.current = now;
-      setVisible(window.scrollY > 600);
+      compute();
     };
+    compute();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
+
+  return state;
+}
+
+// --- Scroll to top ---
+
+function ScrollToTop({ visible }: { visible: boolean }) {
+  const { t } = useLocale();
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.button
-          className="fixed z-50 flex items-center justify-center min-h-[44px] min-w-[44px] bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
+          className="no-print fixed z-50 flex items-center justify-center min-h-[44px] min-w-[44px] bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
           style={{
             borderRadius: "2px",
           }}
@@ -190,17 +219,88 @@ function ScrollToTop() {
   );
 }
 
-// --- Table of contents (sticky, desktop-only) ---
+// --- Pager status (LessViewer bottom bar) ---
+
+// Mirrors what `less` itself reports at the bottom of the pane: filename
+// plus percent-through-file, switching to "(END)" once fully scrolled.
+function PagerStatus({ filename, percent }: { filename: string; percent: number }) {
+  return (
+    <>
+      {filename} · {percent >= 100 ? "(END)" : `${percent}%`}
+    </>
+  );
+}
+
+// --- Copy-to-clipboard affordance for code fences ---
+
+// Enhances already-rendered <pre> blocks inside the prerendered MDX body
+// with a small copy button. The code text itself is already static HTML by
+// the time this runs — only the button (chrome, not content) is added
+// client-side, so nodes are built via createElement + textContent only
+// (never innerHTML) and the effect fully tears down what it attached.
+function CodeBlockCopy({ contentRef }: { contentRef: RefObject<HTMLDivElement | null> }) {
+  const { t } = useLocale();
+
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+
+    const pres = Array.from(root.querySelectorAll<HTMLPreElement>("pre")).filter(
+      (pre) => !pre.dataset.copyAttached,
+    );
+
+    const cleanups = pres.map((pre) => {
+      pre.dataset.copyAttached = "true";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "absolute top-2 right-2 px-1.5 py-0.5 border border-border rounded-[2px] font-mono text-[11px] leading-none text-muted-foreground-dim hover:text-foreground cursor-pointer active:opacity-70 transition-colors duration-150";
+      btn.style.background = "var(--code-bg)";
+      btn.textContent = "copy";
+      btn.setAttribute("aria-label", t("blogPost.copyCode"));
+
+      let resetTimer: ReturnType<typeof setTimeout> | undefined;
+      const handleClick = () => {
+        // read from the code child, not pre — the button itself lives inside
+        // the pre, so pre.textContent would append its "copy" label
+        navigator.clipboard
+          .writeText(pre.querySelector("code")?.textContent ?? "")
+          .then(() => {
+            btn.textContent = "copied";
+            btn.setAttribute("aria-label", t("blogPost.copied"));
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => {
+              btn.textContent = "copy";
+              btn.setAttribute("aria-label", t("blogPost.copyCode"));
+            }, 1500);
+          })
+          .catch(() => { /* clipboard unavailable */ });
+      };
+      btn.addEventListener("click", handleClick);
+      pre.appendChild(btn);
+
+      return () => {
+        clearTimeout(resetTimer);
+        btn.removeEventListener("click", handleClick);
+        btn.remove();
+        delete pre.dataset.copyAttached;
+      };
+    });
+
+    return () => cleanups.forEach((fn) => fn());
+  }, [contentRef, t]);
+
+  return null;
+}
+
+// --- Heading collection + scroll-spy ---
+// Shared by the desktop sticky TOC and the mobile/tablet jump-nav so both
+// read from one IntersectionObserver instead of each running its own.
 
 type TocItem = { id: string; text: string; level: 2 | 3 };
 
-function TableOfContents({
-  contentRef,
-  label,
-}: {
-  contentRef: { current: HTMLDivElement | null };
-  label: string;
-}) {
+function useHeadings(contentRef: RefObject<HTMLDivElement | null>) {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
@@ -233,6 +333,20 @@ function TableOfContents({
     return () => io.disconnect();
   }, [contentRef]);
 
+  return { items, activeId };
+}
+
+// --- Table of contents (sticky, desktop-only) ---
+
+function TableOfContents({
+  items,
+  activeId,
+  label,
+}: {
+  items: TocItem[];
+  activeId: string;
+  label: string;
+}) {
   if (items.length < 3) return null;
 
   return (
@@ -240,25 +354,73 @@ function TableOfContents({
       <nav aria-label={label} className="sticky top-24 space-y-3">
         <div className="label-meta text-muted-foreground-dim">{label}</div>
         <ul className="list-none m-0 p-0 space-y-1.5">
-          {items.map(({ id, text, level }) => (
-            <li key={id} className={level === 3 ? "pl-3" : ""}>
-              <a
-                href={`#${id}`}
-                aria-current={activeId === id ? "location" : undefined}
-                className={cn(
-                  "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
-                  activeId === id
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {text}
-              </a>
-            </li>
-          ))}
+          {items.map(({ id, text, level }) => {
+            const isActive = activeId === id;
+            return (
+              <li key={id} className={cn("flex items-baseline gap-1", level === 3 && "pl-3")}>
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "shrink-0 font-mono text-muted-foreground-dim transition-opacity duration-150",
+                    isActive ? "opacity-100" : "opacity-0",
+                  )}
+                >
+                  {"›"}
+                </span>
+                <a
+                  href={`#${id}`}
+                  aria-current={isActive ? "location" : undefined}
+                  className={cn(
+                    "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
+                    isActive
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {text}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>
+  );
+}
+
+// --- Heading jump-nav (mobile / tablet — below the desktop TOC breakpoint) ---
+
+function MobileJumpNav({
+  items,
+  activeId,
+  label,
+}: {
+  items: TocItem[];
+  activeId: string;
+  label: string;
+}) {
+  if (items.length < 3) return null;
+
+  return (
+    <nav aria-label={label} className="no-print lg:hidden -mx-1 mb-8 overflow-x-auto">
+      <ul className="flex list-none gap-4 whitespace-nowrap m-0 p-0 label-meta">
+        {items.map(({ id, text, level }) => (
+          <li key={id}>
+            <a
+              href={`#${id}`}
+              aria-current={activeId === id ? "location" : undefined}
+              className={cn(
+                "no-underline transition-colors duration-150",
+                activeId === id ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {level === 3 ? "› " : ""}
+              {text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
@@ -275,6 +437,9 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
   const listHref = blogUrl(lang);
   const tagsLabel = t("blogPost.tags");
   const relatedPosts = related ?? [];
+  const { scrollY, percent } = useScrollState();
+  const { items: tocItems, activeId } = useHeadings(contentRef);
+  const tocLabel = t("blogPost.toc");
 
   useEffect(() => {
     if (!post.readingTime && contentRef.current) {
@@ -306,7 +471,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
   return (
     <MotionProvider>
       <ReadingProgress />
-      <ScrollToTop />
+      <ScrollToTop visible={scrollY > 600} />
 
       <div className="space-y-8">
         {/* Back */}
@@ -331,6 +496,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
           filename={`posts/${slug}.txt`}
           meta={`${readingTime} ${t("blogPost.min")}`}
           delay={0.1}
+          statusLine={<PagerStatus filename={`posts/${slug}.txt`} percent={percent} />}
         >
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
           <article className="min-w-0">
@@ -388,6 +554,8 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
               </ul>
             </header>
 
+            <MobileJumpNav items={tocItems} activeId={activeId} label={tocLabel} />
+
             {/* MDX Content rendered by Astro, passed as children */}
             <div
               ref={contentRef}
@@ -396,6 +564,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
               {children}
             </div>
             <ImageLightbox contentRef={contentRef} />
+            <CodeBlockCopy contentRef={contentRef} />
 
 
             {/* Footer — author micro-block + related posts */}
@@ -425,8 +594,10 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                   >
                     linkedin.com/in/pochaev-nikita
                   </a>
-                  <CopyLinkButton />
-                  <CopyMarkdownButton slug={slug} lang={lang} />
+                  <span className="no-print inline-flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <CopyLinkButton />
+                    <CopyMarkdownButton slug={slug} lang={lang} />
+                  </span>
                 </div>
               </div>
 
@@ -458,7 +629,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
               )}
             </div>
           </article>
-          <TableOfContents contentRef={contentRef} label={t("blogPost.toc")} />
+          <TableOfContents items={tocItems} activeId={activeId} label={tocLabel} />
           </div>
         </LessViewer>
 

@@ -1,68 +1,10 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
+import { PrivacyPage } from "@/components/PrivacyPageIsland";
 ---
 <MainLayout
   title="Privacy — Nikita Pochaev"
   description="How po4yka.dev handles visitor data: self-hosted Umami analytics, no third-party trackers, no advertising, no personal data sold."
 >
-  <div class="space-y-10 max-w-[46rem]">
-
-    {/* Section header — matches operator-console SectionHeader pattern */}
-    <header class="space-y-2 pb-3 relative">
-      <div class="flex items-baseline justify-between gap-4 min-w-0">
-        <div class="flex items-baseline gap-2.5 min-w-0 truncate">
-          <span
-            aria-hidden="true"
-            style="font-family: var(--font-pixel); font-size: 11px; color: var(--muted-foreground); letter-spacing: 0.08em;"
-          >10</span>
-          <span class="label-meta truncate">/ PRIVACY</span>
-        </div>
-        <span
-          class="shrink-0 text-right"
-          style="font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground-dim); letter-spacing: 0.06em; text-transform: uppercase;"
-        >last updated: 2026-06</span>
-      </div>
-      <h1
-        class="text-foreground"
-        style="font-size: 1.375rem; font-weight: 500; letter-spacing: -0.012em; line-height: 1.2;"
-      >Privacy</h1>
-      <span
-        aria-hidden="true"
-        class="rule-draw absolute left-0 right-0 bottom-0 block"
-        style="height: 1px; background: var(--rule);"
-      ></span>
-    </header>
-
-    {/* Content */}
-    <div class="space-y-8 text-foreground/80" style="font-size: 0.9375rem; line-height: 1.7;">
-
-      <section class="space-y-3">
-        <h2 class="text-foreground" style="font-weight: 500; letter-spacing: -0.01em;">Analytics</h2>
-        <p>This site uses <a href="https://umami.is" class="underline underline-offset-2 hover:text-foreground transition-colors" rel="noopener noreferrer" target="_blank">Umami</a>, a self-hosted, open-source analytics tool running at <span style="font-family: var(--font-mono); font-size: 0.875rem;">analytics.po4yka.dev</span>. No data leaves the site's own infrastructure. Umami is configured with <span style="font-family: var(--font-mono); font-size: 0.875rem;">data-do-not-track="true"</span>, which means it honors the browser Do-Not-Track header — visitors with DNT enabled are not counted.</p>
-        <p>As a server-side fallback, the Cloudflare Worker middleware records a single pageview to the same Umami instance when the client-side script is blocked or has not yet run. These server-side events are tagged <span style="font-family: var(--font-mono); font-size: 0.875rem;">"edge"</span> in the Umami dashboard so the two streams are distinguishable.</p>
-        <p>Umami does not use cookies for analytics. It derives a session signal from a first-party hash of the IP address and user-agent string, which is not stored or linked to any identity. The raw IP address is not retained.</p>
-      </section>
-
-      <section class="space-y-3">
-        <h2 class="text-foreground" style="font-weight: 500; letter-spacing: -0.01em;">Third-party trackers and advertising</h2>
-        <p>There are no third-party trackers, advertising networks, or affiliate scripts on this site. No visitor data is sold, rented, or shared with third parties.</p>
-      </section>
-
-      <section class="space-y-3">
-        <h2 class="text-foreground" style="font-weight: 500; letter-spacing: -0.01em;">Admin area</h2>
-        <p>The <span style="font-family: var(--font-mono); font-size: 0.875rem;">/admin</span> area is secured with WebAuthn passkeys and is excluded from analytics collection entirely. Admin sessions are stored as short-lived tokens in a Cloudflare D1 database and are not visible to site visitors.</p>
-      </section>
-
-      <section class="space-y-3">
-        <h2 class="text-foreground" style="font-weight: 500; letter-spacing: -0.01em;">Visitor preferences</h2>
-        <p>Theme, font size, and locale preferences you set via the Settings page are stored in your browser's <span style="font-family: var(--font-mono); font-size: 0.875rem;">localStorage</span> only. They never leave your device.</p>
-      </section>
-
-      <section class="space-y-3">
-        <h2 class="text-foreground" style="font-weight: 500; letter-spacing: -0.01em;">Contact</h2>
-        <p>Questions about data handling can be sent to <a href="mailto:hello@po4yka.dev" class="underline underline-offset-2 hover:text-foreground transition-colors">hello@po4yka.dev</a>.</p>
-      </section>
-
-    </div>
-  </div>
+  <PrivacyPage client:visible />
 </MainLayout>

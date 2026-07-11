@@ -106,6 +106,28 @@
   opacity: 0.88;
 }
 
+/* Editorial lede: the opening paragraph sits directly under the display-2
+   title and reads one quiet step larger. Capped at 18px so it never
+   outweighs h3 (17px) deeper in the scale. */
+.prose-blog > p:first-of-type {
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  opacity: 0.94;
+}
+
+/* lang-aware via <html lang>; Piazzolla + long technical words benefit most */
+.prose-blog p,
+.prose-blog li,
+.prose-blog blockquote p {
+  hyphens: auto;
+  text-wrap: pretty;
+}
+
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  text-wrap: balance;
+}
+
 .prose-blog ul,
 .prose-blog ol {
   margin-bottom: 1rem;
@@ -127,13 +149,14 @@
   color: var(--muted-foreground);
 }
 
+/* Inline code: background-only chip. A border here chops dense technical
+   paragraphs into visual confetti — kbd keeps the bordered key-cap look. */
 .prose-blog code {
   font-size: 0.85em;
   background: var(--code-bg);
-  padding: 0.15em 0.4em;
+  padding: 0.125em 0.375em;
   border-radius: 2px;
   color: var(--foreground);
-  border: 1px solid var(--border);
 }
 
 .prose-blog pre {
@@ -172,6 +195,22 @@
   color: var(--muted-foreground);
 }
 
+/* Attribution in the label-meta voice; em dash supplied here so authors
+   write plain <cite>Name</cite> */
+.prose-blog blockquote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground-dim);
+}
+.prose-blog blockquote cite::before {
+  content: "\2014  ";
+}
+
 .prose-blog hr {
   margin: 2.5rem 0;
   border: 0;
@@ -201,8 +240,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Table headers speak InfoTable's field-code vocabulary (DESIGN.md section 4) */
 .prose-blog th {
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
 }
 
 .prose-blog td {
@@ -214,11 +259,38 @@
   accent-color: var(--emphasis);
 }
 
+/* GFM footnotes (remark-gfm emits data-footnote-* markup) */
+.prose-blog a[data-footnote-ref] {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+.prose-blog a[data-footnote-ref]:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+.prose-blog section[data-footnotes] {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+.prose-blog section[data-footnotes] li {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--rule);
+}
+
+/* Display math gets hairline framing — lighter than the code-fence card so
+   math and code stay distinguishable block voices */
 .prose-blog .katex-display {
-  margin: 1.25rem 0;
+  margin: 1.5rem 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.25rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
 }
 .prose-blog .katex-display > .katex {
   font-size: 1.05em;
@@ -227,6 +299,7 @@
 .prose-blog img {
   max-width: 100%;
   height: auto;
+  border: 1px solid var(--border);
   border-radius: 2px;
   margin: 1.25rem 0;
   cursor: zoom-in;
@@ -281,4 +354,53 @@
 .reduce-motion ::view-transition-old(*),
 .reduce-motion ::view-transition-new(*) {
   animation: none !important;
+}
+
+/* Print: paper is always light — force ink-on-paper tokens regardless of the
+   active theme so a dark-mode visitor never prints white-on-black. Chrome
+   (nav, footer, floating UI) is dropped; external link targets are spelled
+   out so they survive on paper. */
+@media print {
+  :root,
+  :root.dark,
+  :root.light {
+    --background: #ffffff;
+    --foreground: #101012;
+    --card: #ffffff;
+    --secondary: #f2f0ea;
+    --muted: #eceae4;
+    --muted-foreground: #4a4a50;
+    --muted-foreground-dim: #6a6a70;
+    --border: rgba(16, 16, 18, 0.25);
+    --rule: rgba(16, 16, 18, 0.3);
+    --emphasis: #000000;
+    --code-bg: #f2f0ea;
+  }
+
+  nav,
+  footer,
+  aside,
+  .no-print,
+  .reading-progress-track {
+    display: none !important;
+  }
+
+  .prose-blog {
+    max-width: none;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .prose-blog a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: var(--muted-foreground);
+  }
+
+  .prose-blog pre,
+  .prose-blog img,
+  .prose-blog table {
+    break-inside: avoid;
+  }
 }

@@ -40,6 +40,7 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--destructive` | `#e8634b` | Destructive actions + invalid-form flash only |
 | `--panel-bg` | `rgba(20,20,22,0.65)` | Translucent panel background (sidebar widgets) |
 | `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop (with blur) |
+| `--overlay-shadow` | `0 16px 48px rgba(0,0,0,0.5)` | Floating overlays only (dialogs, dropdowns) |
 
 ### Light Theme (warm paper + ink)
 
@@ -47,18 +48,19 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 |-------|-------|------|
 | `--background` | `#f5f3ee` | Warm paper canvas |
 | `--foreground` | `#101012` | Primary text — ink |
-| `--card` | `#ffffff` | Section panels |
+| `--card` | `#fefefc` | Section panels |
 | `--secondary` | `#ebe8e2` | Nested containers |
 | `--muted` | `#dedcd5` | Subtle fills |
 | `--muted-foreground` | `#4a4a50` | Secondary labels — 8.5:1 on bg |
 | `--muted-foreground-dim` | `#6a6a70` | Tertiary labels — 5.0:1 on bg |
-| `--border` | `rgba(16,16,18,0.10)` | Panel edges |
-| `--rule` | `rgba(16,16,18,0.14)` | Section divider rules |
+| `--border` | `rgba(16,16,18,0.16)` | Panel edges — stronger than dark: warm paper swallows low-alpha ink |
+| `--rule` | `rgba(16,16,18,0.20)` | Section divider rules |
 | `--emphasis` | `#000000` | Full-luminance emphasis, focus rings |
 | `--code-bg` | `#eeebe4` | Code block backgrounds |
 | `--destructive` | `#b83a28` | Destructive actions + invalid-form flash only |
 | `--panel-bg` | `rgba(255,255,255,0.70)` | Translucent panel background |
 | `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop |
+| `--overlay-shadow` | `0 12px 32px rgba(16,16,18,0.18)` | Floating overlays only (dialogs, dropdowns) |
 
 ### Emphasis Rule
 
@@ -342,8 +344,8 @@ Pixel font: Geist Pixel (decorative counters only, ≤6 uses/page)
 Serif font: Piazzolla (blog post body prose only — .prose-blog block text)
 Dark bg: #0b0b0c | Card: #141416 | Emphasis: #ffffff
 Light bg: #f5f3ee | Card: #ffffff  | Emphasis: #000000
-Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.10) light
-Rule:   rgba(233,232,228,0.14) dark | rgba(16,16,18,0.14) light
+Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.16) light
+Rule:   rgba(233,232,228,0.14) dark | rgba(16,16,18,0.20) light
 Radius: 2px base | Body: 15–17px Geist Sans | label-meta: 11px Geist Mono caps
 Grid: 12-column, max-width 1160px
 ```
@@ -413,7 +415,7 @@ Permitted:
 - Mobile menu height/opacity `AnimatePresence` (functional state change)
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
-- `rule-draw` keyframe on SectionHeader hairline (steps(24) left→right plotter wipe)
+- `rule-draw` keyframe on SectionHeader hairline and the active nav-link underline (steps(24) left→right plotter wipe; SectionHeader plays it once on scroll-into-view, nav replays on route change)
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
 Not permitted:

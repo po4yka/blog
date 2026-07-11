@@ -74,6 +74,8 @@
   --panel-bg: rgba(20, 20, 22, 0.65);
   --bar-empty: rgba(233, 232, 228, 0.07);
   --selection-bg: rgba(233, 232, 228, 0.20);
+  /* floating overlays only (dialogs, dropdowns) — flat panels stay shadowless */
+  --overlay-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 
 /* ─── LIGHT THEME — paper + ink (default) ─────────────────────────── */
@@ -81,9 +83,10 @@
   color-scheme: light;
   --background: #f5f3ee;
   --foreground: #101012;
-  --card: #fbfaf6;
+  /* near-white card widens the panel/canvas step the way #141416 does on dark */
+  --card: #fefefc;
   --card-foreground: #101012;
-  --popover: #fbfaf6;
+  --popover: #fefefc;
   --popover-foreground: #101012;
   --primary: #101012;
   --primary-foreground: #f5f3ee;
@@ -96,8 +99,10 @@
   --code-bg: #eeebe4;
   --destructive: #b83a28;
   --destructive-foreground: #ffffff;
-  --border: rgba(16, 16, 18, 0.10);
-  --rule: rgba(16, 16, 18, 0.14);
+  /* Light hairlines run stronger than dark: warm paper swallows low-alpha
+     ink, so 0.10/0.14 rendered nearly invisible on #f5f3ee. */
+  --border: rgba(16, 16, 18, 0.16);
+  --rule: rgba(16, 16, 18, 0.20);
   --input: transparent;
   --input-background: #ebe8e2;
   --switch-background: #c9c5bd;
@@ -123,6 +128,8 @@
   --panel-bg: rgba(255, 255, 255, 0.70);
   --bar-empty: rgba(16, 16, 18, 0.07);
   --selection-bg: rgba(16, 16, 18, 0.20);
+  /* floating overlays only (dialogs, dropdowns) — flat panels stay shadowless */
+  --overlay-shadow: 0 12px 32px rgba(16, 16, 18, 0.18);
 }
 
 /* ─── Focus ring — pure emphasis colour, offset for visibility ────── */
@@ -247,6 +254,20 @@ body, .bg-background, .bg-card, [class*="bg-"] {
   }
 }
 
+/* kbd — key-cap look, global (KeyboardShortcutsDialog, footer hints, prose) */
+kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0.1em 0.4em;
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Display type — for hero name and post titles */
 .display-1 {
   font-family: var(--font-sans);
@@ -360,7 +381,11 @@ body, .bg-background, .bg-card, [class*="bg-"] {
   color: var(--foreground);
 }
 
-/* Scrollbar — thin neutral */
+/* Scrollbar — thin neutral (Firefox: scrollbar-* properties; no-op elsewhere) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

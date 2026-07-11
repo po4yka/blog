@@ -13,7 +13,10 @@ export interface CommitSummary {
 }
 
 const CACHE_TTL_S = 600; // 10 minutes
-const MAX_COMMITS = 7;
+// Kept below the row count of the numbered sections it sits between
+// (Projects: 4, Experience: 3) so the panel reads as connective tissue,
+// not a fifth full section.
+const MAX_COMMITS = 5;
 // Shared with calendar.ts and events.ts — one upstream call fills all three.
 const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
 

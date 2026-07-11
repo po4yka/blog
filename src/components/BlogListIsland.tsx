@@ -1,13 +1,13 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { BootBlock, Cmd, Accent } from "./Terminal";
+import { BootBlock, Cmd, Accent, Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 import { useInView } from "@/hooks/useInView";
 
-import { ease, duration, easeStep8 } from "@/lib/motion";
+import { ease, duration, easeStep8, stagger } from "@/lib/motion";
 import { blogUrl, type Locale } from "@/lib/i18n";
 
 export interface BlogPostMeta {
@@ -42,6 +42,15 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     if (typeof window !== "undefined" && typeof history !== "undefined") {
       const url = new URL(window.location.href);
       url.searchParams.delete("tag");
+      history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const selectTag = (tag: string) => {
+    setActiveTag(tag);
+    if (typeof window !== "undefined" && typeof history !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tag", tag);
       history.replaceState(null, "", url.toString());
     }
   };
@@ -152,8 +161,13 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
               transition={{ duration: duration.fast }}
               className="list-none m-0 p-0"
             >
-              {filtered.map((post) => (
-                <li key={post.slug}>
+              {filtered.map((post, i) => (
+                <motion.li
+                  key={post.slug}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: duration.fast, delay: Math.min(i, 5) * stagger.list, ease }}
+                >
                   <a
                     href={blogUrl(lang, post.slug)}
                     className="group w-full text-left flex items-start gap-4 py-6 border-b border-rule last:border-b-0 no-underline"
@@ -169,13 +183,27 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
 
                     {/* Title + summary */}
                     <div className="flex-1 min-w-0 relative">
-                      <h2 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
-                        {post.title}
-                        <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
-                      </h2>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="display-2 text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
+                          {post.title}
+                          <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
+                        </h2>
+                        {post.featured && <Tag variant="highlight">{t("blog.featured")}</Tag>}
+                      </div>
                       <p className="mt-3 text-[0.9375rem] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
                         {post.summary}
                       </p>
+                      <div className="mt-2 flex items-center gap-2 label-meta text-muted-foreground-dim">
+                        <span>{post.category}</span>
+                        {post.readingTime != null && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span>
+                              {post.readingTime} {t("blogPost.min")}
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     {/* Date */}
@@ -183,11 +211,23 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                       {post.date}
                     </span>
                   </a>
-                </li>
+                </motion.li>
               ))}
               {filtered.length === 0 && (
-                <li className="py-8 text-center text-muted-foreground text-mono">
-                  {t("blog.noPosts")}
+                <li className="py-8 flex items-baseline gap-3 font-mono text-mono">
+                  <span
+                    className="shrink-0 font-mono font-medium"
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: 11,
+                      letterSpacing: "0.10em",
+                      textTransform: "uppercase",
+                      paddingTop: "2px",
+                    }}
+                  >
+                    WARN ·
+                  </span>
+                  <span className="text-foreground/70">{t("blog.noPosts")}</span>
                 </li>
               )}
             </motion.ul>
@@ -196,14 +236,24 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
       </div>
 
       {/* Blog stats */}
-      <BlogStats posts={posts} categories={categories} />
+      <BlogStats posts={posts} categories={categories} activeTag={activeTag} onTagClick={selectTag} />
     </div>
     </MotionProvider>
     </ErrorBoundary>
   );
 }
 
-function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: string[] }) {
+function BlogStats({
+  posts,
+  categories,
+  activeTag,
+  onTagClick,
+}: {
+  posts: BlogPostMeta[];
+  categories: string[];
+  activeTag: string | null;
+  onTagClick: (tag: string) => void;
+}) {
   const { ref, inView } = useInView(0.1);
 
   const stats = useMemo(() => {
@@ -285,7 +335,18 @@ function BlogStats({ posts, categories }: { posts: BlogPostMeta[]; categories: s
         {stats.tags.length > 0 && (
           <div className="flex flex-wrap gap-x-2 gap-y-1 pt-1">
             {stats.tags.map((tag) => (
-              <span key={tag} className="text-muted-foreground text-label">#{tag}</span>
+              <button
+                key={tag}
+                onClick={() => onTagClick(tag)}
+                aria-pressed={activeTag === tag}
+                className={`text-label transition-colors duration-150 cursor-pointer ${
+                  activeTag === tag
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                #{tag}
+              </button>
             ))}
           </div>
         )}
