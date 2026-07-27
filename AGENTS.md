@@ -4,7 +4,7 @@ Personal portfolio, apps showcase, and technical blog for po4yka.dev.
 
 ## Tech Stack
 
-- Astro 6 + React 19 + TypeScript (islands architecture)
+- Astro 7 + React 19 + TypeScript 7 CLI with a temporary TypeScript 6 API bridge (islands architecture)
 - Tailwind CSS 4 (via `@tailwindcss/vite`)
 - Radix UI primitives
 - Motion for animations

@@ -6,6 +6,7 @@ import ThemeScript from "./ThemeScript.astro";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import type { Locale } from "@/lib/i18n";
 import "@/styles/index.css";
 import type { BlogPostData } from "@/types";
 
@@ -20,7 +21,7 @@ interface Props {
   isHomePage?: boolean;
   blogPost?: BlogPostData;
   blogSlug?: string;
-  lang?: string;
+  lang?: Locale;
   hasTranslation?: boolean;
   translationSlug?: string;
   hreflangAlternates?: HreflangAlternate[];

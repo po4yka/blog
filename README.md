@@ -1,8 +1,8 @@
 # po4yka.dev
 
-Personal site, blog, and apps portfolio for a mobile engineer. Built with Astro 6, React 19, TypeScript 6, and Tailwind CSS 4. React islands for the public side, a full React SPA behind passkey auth for the admin, all running on Cloudflare Workers + D1.
+Personal site, blog, and apps portfolio for a mobile engineer. Built with Astro 7, React 19, the TypeScript 7 CLI, and Tailwind CSS 4. React islands for the public side, a full React SPA behind passkey auth for the admin, all running on Cloudflare Workers + D1.
 
-**Stack:** Astro 6 | React 19 | TypeScript 6 | Tailwind CSS 4 | Motion | Zustand | TanStack Query | Cloudflare Workers + D1 | WebAuthn
+**Stack:** Astro 7 | React 19 | TypeScript 7 CLI + TypeScript 6 API bridge | Tailwind CSS 4 | Motion | Zustand | TanStack Query | Cloudflare Workers + D1 | WebAuthn
 
 ## Architecture
 
@@ -99,6 +99,16 @@ wrangler d1 execute blog-db --local --file=db/schema.sql
 wrangler d1 execute blog-db --local --file=db/seed.sql
 ```
 
+### TypeScript migration
+
+The repository uses the official side-by-side bridge while the embedded-language ecosystem adopts TypeScript 7:
+
+- `@typescript/native` provides the TypeScript 7 `tsc` CLI for the fast native check.
+- `@typescript/typescript6` is installed as `typescript` and provides the temporary TypeScript 6 API plus the `tsc6` compatibility CLI required by Astro, MDX, and `typescript-eslint`.
+- `npm run typecheck` enforces parity in the order TypeScript 6, TypeScript 7, then `astro check`.
+
+Keep the Astro editor extension on the workspace TypeScript 6 API. Do not enable the TypeScript 7 language server workspace-wide yet. The bridge can be removed only after TypeScript publishes a stable programmatic API and Astro, `@astrojs/check`, and `typescript-eslint` officially support TypeScript 7.
+
 ### Scripts
 
 | Command | Purpose |
@@ -106,7 +116,10 @@ wrangler d1 execute blog-db --local --file=db/seed.sql
 | `npm run dev` | Start dev server |
 | `npm run build` | Generate data + Astro build |
 | `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript check |
+| `npm run typecheck` | Run the TypeScript 6, TypeScript 7, and Astro checks |
+| `npm run typecheck:ts6` | Check app and build scripts with the TypeScript 6 compatibility compiler |
+| `npm run typecheck:ts7` | Check app and build scripts with the TypeScript 7 native CLI |
+| `npm run typecheck:astro` | Check Astro and MDX files with `astro check` |
 | `npm test` | Unit tests (Vitest) |
 | `npm run test:e2e` | E2E tests (Playwright) |
 | `npm run test:coverage` | Unit tests with coverage report |
