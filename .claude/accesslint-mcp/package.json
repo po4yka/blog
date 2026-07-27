@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "MCP server providing accessibility analysis tools for WCAG conformance",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "main": "dist/index.js",
   "bin": {
     "accesslint-mcp": "dist/index.js"
@@ -43,13 +46,14 @@
   "homepage": "https://github.com/accesslint/mcp-server#readme",
   "overrides": {
     "hono": ">=4.12.27",
-    "@hono/node-server": ">=2.0.5",
+    "@hono/node-server": "2.0.12",
     "body-parser": ">=2.3.0",
     "fast-uri": "3.1.4",
     "ip-address": ">=10.2.0",
     "qs": ">=6.15.2"
   },
   "dependencies": {
+    "@hono/node-server": "2.0.12",
     "@modelcontextprotocol/sdk": "^1.29.0"
   },
   "devDependencies": {

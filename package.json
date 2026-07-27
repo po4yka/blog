@@ -13,6 +13,7 @@
     "typecheck:ts7": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.scripts.json",
     "typecheck:astro": "astro check",
     "test": "vitest run",
+    "test:mcp-http": "node scripts/verify-mcp-node-server.mjs",
     "test:watch": "vitest",
     "generate:blog": "tsx scripts/generate-blog-data.ts",
     "generate:all": "tsx scripts/generate-all-data.ts",
