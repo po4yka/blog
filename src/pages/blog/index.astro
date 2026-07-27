@@ -1,10 +1,10 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import MainLayout from "@/layouts/MainLayout.astro";
 import { BlogListIsland } from "@/components/BlogListIsland";
 import { parsePostId } from "@/lib/i18n";
 
-const allPosts = await getCollection("blog");
+const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
 
 // Filter to English posts only
 const posts = allPosts.filter((p) => parsePostId(p.id).lang === "en");
