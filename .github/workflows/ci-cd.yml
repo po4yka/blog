@@ -16,6 +16,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Verify MCP HTTP compatibility
+        run: |
+          npm ci --ignore-scripts --prefix .claude/accesslint-mcp
+          npm ci --ignore-scripts --prefix .claude/cms-mcp
+          npm run test:mcp-http
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test -- --coverage
