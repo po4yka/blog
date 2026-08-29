@@ -77,11 +77,13 @@
     "@babel/core": "^7.29.6",
     "@typescript/old": "npm:typescript@6.0.2",
     "body-parser@^1.0.0": "1.20.6",
-    "brace-expansion@^5.0.0": "5.0.8",
+    "brace-expansion@^5.0.0": "5.0.9",
     "chrome-launcher": "1.2.1",
-    "fast-uri": "3.1.4",
-    "js-yaml@^3.0.0": "3.15.0",
-    "js-yaml@^4.0.0": "4.3.0"
+    "fast-uri": "3.1.5",
+    "ip-address": "10.3.1",
+    "js-yaml@^3.0.0": "3.15.1",
+    "js-yaml@^4.0.0": "4.3.1",
+    "nanoid": "3.3.18"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
