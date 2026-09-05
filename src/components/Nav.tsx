@@ -27,13 +27,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
   const translationUrl = translationSlug ? blogUrl(otherLang, translationSlug) : undefined;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
   const { theme, setTheme, reduceMotion } = useSettings();
   const { t } = useLocale();
-
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-mount flag; no external state involved
-  useEffect(() => setMounted(true), []);
 
   // Update pathname on View Transition navigation (Nav is persisted)
   useEffect(() => {
@@ -120,26 +116,6 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Scroll progress — 24 discrete segments, lit sequentially. CSS scroll-driven, no JS. */}
-      {mounted && !reduceMotion && (
-        <div
-          aria-hidden="true"
-          className="nav-led-meter absolute top-0 left-0 right-0 flex gap-[1px] pointer-events-none"
-          style={{ height: "1px", zIndex: 10 }}
-        >
-          {Array.from({ length: 24 }, (_, i) => (
-            <span
-              key={i}
-              className="flex-1 nav-led-seg"
-              style={{
-                background: "var(--foreground)",
-                ['--i' as string]: i,
-              }}
-            />
-          ))}
-        </div>
-      )}
-
       <div className="max-w-[1160px] mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
         {/* Left group: wordmark + divider + desktop tabs */}
         <div className="flex items-center gap-0 min-w-0 shrink">

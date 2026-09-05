@@ -380,8 +380,7 @@
   nav,
   footer,
   aside,
-  .no-print,
-  .reading-progress-track {
+  .no-print {
     display: none !important;
   }
 

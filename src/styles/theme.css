@@ -452,41 +452,6 @@ html {
   overscroll-behavior: contain;
 }
 
-/* Reading progress bar — CSS scroll-driven, no JS scroll listener.
-   `animation-timeline: scroll(root)` ties scaleX progression directly to
-   document scroll, runs on compositor. Falls back to a static 0% bar in
-   browsers without scroll-timeline (Firefox <127 / Safari pre-2026) — that
-   degrades gracefully because the fill is invisible at scaleX(0). */
-@keyframes reading-progress {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-.reading-progress-fill {
-  background: var(--foreground);
-  opacity: 0.4;
-  transform: scaleX(0);
-  animation: reading-progress linear both;
-  animation-timeline: scroll(root);
-  --animation-reduced: reading-progress linear both;
-  animation-range: 0% 100%;
-}
-
-/* Nav scroll-progress LED meter — 24 segments lit in sequence based on
-   document scroll position. CSS scroll-driven, no JS. Each segment runs
-   its own keyframe with a stagger threshold derived from --i / 24. */
-.nav-led-seg {
-  opacity: 0.06;
-  animation: nav-led-light steps(1, end) both;
-  animation-timeline: scroll(root);
-  --animation-reduced: nav-led-light steps(1, end) both;
-  /* Light the segment when scroll progress reaches (i + 1) / 24 of the page. */
-  animation-range: calc(var(--i) / 24 * 100%) calc((var(--i) + 1) / 24 * 100%);
-}
-@keyframes nav-led-light {
-  from { opacity: 0.06; }
-  to   { opacity: 0.55; }
-}
-
 /* Off-screen blog prose sections skip layout/paint until they approach the
    viewport. `auto` keeps content in the a11y tree (find-in-page still works,
    screen-readers still see headings). Intrinsic-size estimate prevents

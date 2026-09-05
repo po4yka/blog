@@ -5,13 +5,14 @@ declare global {
     umami?: { track: (event: string, data?: Record<string, unknown>) => void };
   }
 }
-import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Link2, ChevronUp, ArrowUp, FileCode2 } from "lucide-react";
+import { motion } from "motion/react";
+import { ArrowLeft, ArrowRight, Link2, ArrowUp, FileCode2 } from "lucide-react";
 import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { ImageLightbox } from "./ImageLightbox";
 import { MotionProvider } from "./MotionProvider";
 import { duration } from "@/lib/motion";
 import { useLocale } from "@/stores/settingsStore";
+import { useScrollState } from "@/hooks/useScrollState";
 import { blogUrl, type Locale } from "@/lib/i18n";
 import { cn } from "./ui/utils";
 
@@ -69,24 +70,6 @@ function formatIsoDate(iso: string): string {
   ];
   if (!Number.isFinite(monthNum) || monthNum < 1 || monthNum > 12) return iso;
   return `${monthNames[monthNum - 1]} ${year}`;
-}
-
-// --- Reading progress ---
-
-// CSS scroll-driven animation — zero JS, runs on the compositor.
-// Falls back to a static 0% bar in browsers without scroll-timeline
-// (Firefox <127 / Safari pre-2026) — invisible at scaleX(0), degrades gracefully.
-// aria-hidden: WAI-ARIA scroll-progress visual is decorative; AT users get
-// document position from the scroll bar already.
-function ReadingProgress() {
-  return (
-    <div
-      className="reading-progress-track fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none"
-      aria-hidden="true"
-    >
-      <div className="reading-progress-fill h-full origin-left" />
-    </div>
-  );
 }
 
 // --- Copy link ---
@@ -147,75 +130,6 @@ function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale }) {
     >
       {state === "copied" ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><FileCode2 size={11} /> {label}</>}
     </button>
-  );
-}
-
-// --- Shared scroll position (throttled, single listener) ---
-
-// One scroll listener feeds both ScrollToTop's visibility and the
-// LessViewer pager status line's percent-through-file readout below, so
-// the pager status doesn't stack a second listener on top of this one
-// (ReadingProgress above tracks scroll separately, but via a zero-JS CSS
-// scroll-timeline, not an event listener).
-interface ScrollState {
-  scrollY: number;
-  percent: number;
-}
-
-function useScrollState(): ScrollState {
-  const [state, setState] = useState<ScrollState>({ scrollY: 0, percent: 0 });
-  const lastCheck = useRef(0);
-
-  useEffect(() => {
-    const compute = () => {
-      const scrollY = window.scrollY;
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      const percent =
-        scrollable <= 0 ? 100 : Math.min(100, Math.max(0, Math.round((scrollY / scrollable) * 100)));
-      setState({ scrollY, percent });
-    };
-    const onScroll = () => {
-      const now = Date.now();
-      if (now - lastCheck.current < 200) return;
-      lastCheck.current = now;
-      compute();
-    };
-    compute();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-
-  return state;
-}
-
-// --- Scroll to top ---
-
-function ScrollToTop({ visible }: { visible: boolean }) {
-  const { t } = useLocale();
-
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          className="no-print fixed z-50 flex items-center justify-center min-h-[44px] min-w-[44px] bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 cursor-pointer bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] sm:bottom-[calc(2rem+env(safe-area-inset-bottom))] sm:right-[calc(2rem+env(safe-area-inset-right))]"
-          style={{
-            borderRadius: "2px",
-          }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          title={t("blogPost.scrollToTop")}
-          aria-label={t("blogPost.scrollToTop")}
-        >
-          <ChevronUp size={18} />
-        </motion.button>
-      )}
-    </AnimatePresence>
   );
 }
 
@@ -437,7 +351,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
   const listHref = blogUrl(lang);
   const tagsLabel = t("blogPost.tags");
   const relatedPosts = related ?? [];
-  const { scrollY, percent } = useScrollState();
+  const { percent } = useScrollState();
   const { items: tocItems, activeId } = useHeadings(contentRef);
   const tocLabel = t("blogPost.toc");
 
@@ -470,9 +384,6 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
 
   return (
     <MotionProvider>
-      <ReadingProgress />
-      <ScrollToTop visible={scrollY > 600} />
-
       <div className="space-y-8">
         {/* Back */}
         <motion.a

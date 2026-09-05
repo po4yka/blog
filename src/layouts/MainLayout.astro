@@ -6,6 +6,7 @@ import ThemeScript from "./ThemeScript.astro";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { StatusLine } from "@/components/StatusLine";
 import type { Locale } from "@/lib/i18n";
 import "@/styles/index.css";
 import type { BlogPostData } from "@/types";
@@ -90,6 +91,7 @@ const { nonce } = Astro.locals;
       </main>
       <Footer client:idle transition:persist />
       <KeyboardShortcuts client:idle transition:persist />
+      <StatusLine client:idle pathname={pathname} transition:persist />
     </div>
     <script>
       // WebMCP bootstrap: expose site-scoped tools to in-browser AI agents.

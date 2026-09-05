@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { SHORTCUTS_EVENT } from "./StatusLine";
 import { useSettingsStore } from "@/stores/settingsStore";
 
 const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
@@ -120,8 +121,13 @@ export function KeyboardShortcuts() {
       }
     }
 
+    const toggleOverlay = () => setOverlayOpen((o) => !o);
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener(SHORTCUTS_EVENT, toggleOverlay);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener(SHORTCUTS_EVENT, toggleOverlay);
+    };
   }, [pendingChord, overlayOpen, cycleTheme, shortcutsEnabled]);
 
   if (!overlayOpen) return null;
