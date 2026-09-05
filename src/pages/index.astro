@@ -7,11 +7,7 @@ import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { BlogPreview } from "@/components/BlogPreview";
 import { RealGitLog } from "@/components/MobileTerminal";
-import {
-  OpenSourcePanel,
-  ActivityCalendar,
-  BlogStatsPanel,
-} from "@/components/Decorations";
+import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
 ---
 <MainLayout isHomePage>
   <div class="space-y-8 md:space-y-14">
@@ -58,16 +54,8 @@ import {
       </div>
     </div>
 
-    <!-- Chapter: blog -> blog stats epilogue -->
-    <div class="space-y-4 md:space-y-5">
-      <div data-section-name="blog">
-        <BlogPreview client:visible />
-      </div>
-
-      <!-- blog → blog stats (decorative) -->
-      <div data-section-name="blog-stats">
-        <BlogStatsPanel client:visible delay={0.05} />
-      </div>
+    <div data-section-name="blog">
+      <BlogPreview client:visible />
     </div>
   </div>
 
@@ -86,8 +74,7 @@ import {
     }
 
     [data-section-name="experience"],
-    [data-section-name="blog"],
-    [data-section-name="blog-stats"] {
+    [data-section-name="blog"] {
       content-visibility: auto;
       contain-intrinsic-size: auto 300px;
     }

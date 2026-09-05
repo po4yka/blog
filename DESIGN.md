@@ -482,6 +482,7 @@ The following components were removed during the Swiss refactor and its follow-u
 | `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere |
 | `ProjectPlatformMatrix` | _dead-code purge_ | Exported but rendered nowhere; project×platform matrix |
 | `StackHeatmap` | _follow-up_ | Low-information dot-matrix — a 10×68 grid the reader can't parse at a glance |
+| `BlogStatsPanel` | _editorial pass_ | Statistics about the site itself (post counts, minutes of reading) under a two-post blog: self-referential, and it emphasised how little was there |
 
 Real-data equivalents that cover every functional use-case:
 
@@ -494,6 +495,5 @@ Real-data equivalents that cover every functional use-case:
 | Build metadata | `BuildStats` (from `buildMeta.ts`) |
 | Latest post | `LatestPostPanel` (from `blogData`) |
 | Latest release | `LatestReleasePanel` (GitHub API) |
-| Blog stats | `BlogStatsPanel` (from `blogData`) |
 
 If a new widget need appears and there is no real data source for it, **do not render a fake one** — leave the slot empty or add a real data source first.
