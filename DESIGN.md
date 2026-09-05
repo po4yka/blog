@@ -241,7 +241,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
 **Grid column assignments:**
-- Hero: name + subtitle cols 1–8, technical sidebar cols 9–12
+- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile
 - Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem.
 - Project list: cols 1–12 single column
 - Experience timeline: cols 1–8, year column cols 9–12

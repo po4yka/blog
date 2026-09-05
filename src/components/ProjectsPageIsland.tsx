@@ -19,7 +19,7 @@ function ProjectEntry({ project }: { project: Project }) {
   const { t } = useLocale();
 
   return (
-    <div className="py-5 border-b border-dashed border-rule last:border-b-0 group">
+    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
@@ -136,22 +136,62 @@ export function ProjectsPage() {
         ls -lt <Accent>./projects/</Accent>
       </Cmd>
 
-      {/* Project entries */}
-      <MacWindow
-        label={`projects — ${projects.length} ${t("projectsPage.entries")}`}
-        titleExt="~/projects | main"
-        sectionNumber="04"
-        delay={0.05}
-        statusLine
-      >
-        <ul className="list-none m-0 p-0">
-          {projects.map((project) => (
-            <li key={project.slug}>
-              <ProjectEntry project={project} />
-            </li>
-          ))}
-        </ul>
-      </MacWindow>
+      {/* Project entries + sticky index rail (lg). The rail is the `ls`
+          output: one row per project, deep-linking into the entry below. */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <nav
+          aria-label={t("projectsPage.indexLabel")}
+          className="hidden lg:block lg:col-span-3 lg:sticky lg:top-16"
+        >
+          <div
+            className="overflow-hidden"
+            style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 2 }}
+          >
+            <div className="flex items-baseline justify-between px-4 py-2" style={{ borderBottom: "1px solid var(--rule)" }}>
+              <span className="label-meta">INDEX</span>
+              <span className="font-mono text-muted-foreground-dim" style={{ fontSize: 11, letterSpacing: "0.04em" }}>
+                {projects.length}
+              </span>
+            </div>
+            <ol className="list-none m-0 px-3 py-2">
+              {projects.map((project, i) => (
+                <li key={project.slug}>
+                  <a
+                    href={`#${project.slug}`}
+                    className="flex items-baseline gap-2 py-1.5 px-1 -mx-1 rounded-[2px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-150 font-mono text-mono-sm"
+                  >
+                    <span className="text-muted-foreground-dim tabular-nums shrink-0" aria-hidden="true">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="truncate min-w-0 font-sans">{project.name}</span>
+                    {project.year && (
+                      <span className="ml-auto text-muted-foreground-dim tabular-nums shrink-0">{project.year}</span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </nav>
+
+        <div className="lg:col-span-9 min-w-0">
+          <MacWindow
+            label={`projects — ${projects.length} ${t("projectsPage.entries")}`}
+            titleExt="~/projects | main"
+            sectionNumber="04"
+            delay={0.05}
+            statusLine
+          >
+            <ul className="list-none m-0 p-0">
+              {projects.map((project) => (
+                <li key={project.slug}>
+                  <ProjectEntry project={project} />
+                </li>
+              ))}
+            </ul>
+          </MacWindow>
+        </div>
+      </div>
 
     </div>
     </MotionProvider>

@@ -31,8 +31,8 @@ export function Projects() {
             return (
             <a
               key={project.slug}
-              href="/projects"
-              className="group flex items-start gap-2 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2"
+              href={`/projects#${project.slug}`}
+              className="group flex items-start gap-2 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2"
             >
               {/* Tree branch prefix */}
               <span
@@ -69,7 +69,7 @@ export function Projects() {
                   >
                     {cont} └─
                   </span>
-                  <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200 truncate font-mono text-mono-sm">
+                  <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200 font-sans text-sm leading-[1.55] line-clamp-2">
                     {project.description}
                   </p>
                 </div>

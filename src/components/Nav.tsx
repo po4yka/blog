@@ -207,17 +207,6 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               <span className="hidden lg:inline">{themeLabel}</span>
             </button>
 
-            {/* Online dot */}
-            <span className="flex items-center gap-1.5">
-              <span
-                aria-hidden="true"
-                className="w-[5px] h-[5px]"
-                style={{ backgroundColor: "var(--foreground)", opacity: 0.5, borderRadius: 1 }}
-              />
-              <span className="font-mono text-3xs text-muted-foreground">
-                {t("nav.online")}
-              </span>
-            </span>
           </div>
 
           {/* Mobile: theme toggle + hamburger */}

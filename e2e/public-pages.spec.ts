@@ -5,7 +5,7 @@ test.describe("public pages", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Nikita Pochaev/);
     // Nav is visible
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     // Hero content
     await expect(page.getByText("Nikita Pochaev", { exact: true }).first()).toBeVisible();
     // Key homepage sections exist (rendered via React islands)
@@ -18,7 +18,7 @@ test.describe("public pages", () => {
   test("blog list page renders", async ({ page }) => {
     await page.goto("/blog");
     await expect(page).toHaveTitle(/Blog — Nikita Pochaev/);
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     // Blog list island should hydrate and show content (posts or empty state)
     await page.getByRole("button", { name: "All" }).waitFor({ state: "visible" });
   });
@@ -26,7 +26,7 @@ test.describe("public pages", () => {
   test("projects page renders", async ({ page }) => {
     await page.goto("/projects");
     await expect(page).toHaveTitle(/Projects — Nikita Pochaev/);
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     // Projects from projectsData.ts
     await expect(
       page.getByRole("heading", { name: "Copilot AI Platform" })
@@ -39,7 +39,7 @@ test.describe("public pages", () => {
   test("experience page renders", async ({ page }) => {
     await page.goto("/experience");
     await expect(page).toHaveTitle(/Experience — Nikita Pochaev/);
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     // Roles from experienceData.ts
     await expect(page.getByText("AI Engineer").first()).toBeVisible();
     await expect(
@@ -50,7 +50,7 @@ test.describe("public pages", () => {
   test("settings page renders", async ({ page }) => {
     await page.goto("/settings");
     await expect(page).toHaveTitle(/Settings — Nikita Pochaev/);
-    await expect(page.locator("nav")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
     // Settings island hydrates and exposes theme controls
     await expect(page.getByRole("button", { name: "light", exact: true })).toBeVisible();
   });

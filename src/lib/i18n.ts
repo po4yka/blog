@@ -53,6 +53,9 @@ const en = {
   "hero.focusValue": "AI/ML integration, Android, Kotlin Multiplatform Mobile,\nMobileOps, CI/CD, Release Automation",
   "hero.infoStatus": "status",
   "hero.statusValue": "open to collaboration \u00b7 building tools & apps",
+  "hero.intro": "I build Android and Kotlin Multiplatform apps and the systems that ship them: CI pipelines, release automation, developer tooling, and lately the AI layer around all of it.",
+  "hero.ctaBlog": "Read the blog",
+  "hero.ctaProjects": "Projects",
 
   // about
   "about.heading": "About",
@@ -194,6 +197,7 @@ const en = {
   "projectsPage.mountedIndex": "Mounted projects index",
   "projectsPage.detailsInline": "Details & store links rendered inline",
   "projectsPage.entries": "entries",
+  "projectsPage.indexLabel": "Project index",
 
   // language switcher
   "lang.switchTo": "Switch language",
@@ -242,6 +246,9 @@ const ru: TranslationKeys = {
   "hero.focusValue": "AI/ML-\u0438\u043d\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438, Android, Kotlin Multiplatform Mobile,\nMobileOps, CI/CD, Release Automation",
   "hero.infoStatus": "\u0441\u0442\u0430\u0442\u0443\u0441",
   "hero.statusValue": "\u043e\u0442\u043a\u0440\u044b\u0442 \u043a \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u0447\u0435\u0441\u0442\u0432\u0443 \u00b7 \u0441\u043e\u0437\u0434\u0430\u044e \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b \u0438 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+  "hero.intro": "\u0414\u0435\u043b\u0430\u044e Android- \u0438 Kotlin Multiplatform-\u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f \u0438 \u0441\u0438\u0441\u0442\u0435\u043c\u044b, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0438\u0445 \u0434\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u044e\u0442: CI-\u043f\u0430\u0439\u043f\u043b\u0430\u0439\u043d\u044b, \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0437\u0430\u0446\u0438\u044e \u0440\u0435\u043b\u0438\u0437\u043e\u0432, \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b \u0434\u043b\u044f \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a\u043e\u0432, \u0430 \u0441 \u043d\u0435\u0434\u0430\u0432\u043d\u0438\u0445 \u043f\u043e\u0440 \u0438 AI-\u0441\u043b\u043e\u0439 \u043f\u043e\u0432\u0435\u0440\u0445 \u0432\u0441\u0435\u0433\u043e \u044d\u0442\u043e\u0433\u043e.",
+  "hero.ctaBlog": "\u0427\u0438\u0442\u0430\u0442\u044c \u0431\u043b\u043e\u0433",
+  "hero.ctaProjects": "\u041f\u0440\u043e\u0435\u043a\u0442\u044b",
 
   // about
   "about.heading": "\u041e\u0431\u043e \u043c\u043d\u0435",
@@ -383,6 +390,7 @@ const ru: TranslationKeys = {
   "projectsPage.mountedIndex": "\u0421\u043c\u043e\u043d\u0442\u0438\u0440\u043e\u0432\u0430\u043d \u0438\u043d\u0434\u0435\u043a\u0441 \u043f\u0440\u043e\u0435\u043a\u0442\u043e\u0432",
   "projectsPage.detailsInline": "\u041f\u043e\u0434\u0440\u043e\u0431\u043d\u043e\u0441\u0442\u0438 \u0438 \u0441\u0441\u044b\u043b\u043a\u0438 \u043d\u0430 \u0441\u0442\u043e\u0440\u044b \u0440\u0430\u0437\u0432\u0451\u0440\u043d\u0443\u0442\u044b \u043d\u0438\u0436\u0435",
   "projectsPage.entries": "\u0437\u0430\u043f\u0438\u0441\u0435\u0439",
+  "projectsPage.indexLabel": "\u0421\u043f\u0438\u0441\u043e\u043a \u043f\u0440\u043e\u0435\u043a\u0442\u043e\u0432",
 
   // language switcher
   "lang.switchTo": "\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u044f\u0437\u044b\u043a",
