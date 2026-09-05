@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { stagger } from "@/lib/motion";
-import { Cmd, OutputBlock, Accent } from "./Terminal";
+import { OutputBlock } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
@@ -20,10 +20,6 @@ export function About() {
         meta="README.md"
         id="about-heading"
       />
-      <Cmd>
-        cat <Accent>README.md</Accent> | head -20
-      </Cmd>
-
       <OutputBlock delay={0.05}>
         <div
           ref={ref}

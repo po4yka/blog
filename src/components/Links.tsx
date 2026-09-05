@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Mail, Play, Apple, Briefcase, FolderGit2, Send } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
-import { Cmd, Accent } from "./Terminal";
+
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { GITHUB_USERNAME } from "@/lib/constants";
@@ -32,13 +32,9 @@ export function Links() {
         meta={`${links.filter((l) => l.href).length}/${links.length} ACTIVE`}
         id="links-heading"
       />
-      <Cmd>
-        cat <Accent>~/.config/links.toml</Accent>
-      </Cmd>
-
       <motion.div
         ref={ref}
-        className="flex flex-wrap gap-2 pl-4 md:pl-6"
+        className="flex flex-wrap gap-2"
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
         transition={{ duration: 0.4, ease }}

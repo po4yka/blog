@@ -1,5 +1,5 @@
 import { roles } from "@/data/experienceData";
-import { Cmd, Accent, MacWindow } from "./Terminal";
+
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
@@ -17,16 +17,11 @@ export function Experience() {
         meta={`${roles.length} ROLES`}
         id="experience-heading"
       />
-      <Cmd>
-        git log <Accent>--author=po4yka</Accent> --format=career | head -3
-      </Cmd>
-
-      <MacWindow title="resume.log" sectionNumber="05" delay={0.05}>
-        <div className="space-y-0">
+      <div className="space-y-0">
           {roles.slice(0, 3).map((role, i) => (
             <div
               key={role.period}
-              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-4 border-b border-border/50 last:border-b-0 -mx-2 px-2 group"
+              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 group hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
             >
               <div className="lg:col-span-8">
                 <div className="flex items-baseline justify-between lg:justify-start gap-4 flex-wrap">
@@ -96,8 +91,7 @@ export function Experience() {
               </div>
             </div>
           ))}
-        </div>
-      </MacWindow>
+      </div>
 
       <div>
         <a

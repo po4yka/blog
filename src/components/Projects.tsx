@@ -1,5 +1,5 @@
 import { projects } from "@/data/projectsData";
-import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { Tag } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
@@ -18,12 +18,7 @@ export function Projects() {
         meta={`${projects.length} RECORDS`}
         id="projects-heading"
       />
-      <Cmd>
-        ./gradlew <Accent>:projects:list</Accent> --format=compact | head -4
-      </Cmd>
-
-      <MacWindow title="projects" sectionNumber="04" delay={0.05}>
-        <div className="space-y-0">
+      <div className="space-y-0">
           {homeProjects.map((project, i) => {
             const isLast = i === homeProjects.length - 1;
             const branch = isLast ? "└──" : "├──";
@@ -32,7 +27,7 @@ export function Projects() {
             <a
               key={project.slug}
               href={`/projects#${project.slug}`}
-              className="group flex items-start gap-2 py-3 border-b border-border/50 last:border-b-0 -mx-2 px-2"
+              className="group flex items-start gap-2 py-4 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
             >
               {/* Tree branch prefix */}
               <span
@@ -77,8 +72,7 @@ export function Projects() {
             </a>
             );
           })}
-        </div>
-      </MacWindow>
+      </div>
 
       {/* View all link */}
       <div>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { Cmd, Accent, Tag } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
@@ -57,8 +57,7 @@ export function BlogPreview() {
         find <Accent>./posts/</Accent> -name "*.md" -mtime -30 | head -3
       </Cmd>
 
-      <MacWindow title="recent posts" sectionNumber="06" delay={0.05}>
-        <div className="space-y-0">
+      <div className="space-y-0">
           {previewPosts.map((post, i) => {
             const displayLang = post.langs[locale] ? locale : "en";
             const title = post.langs[displayLang]?.title ?? post.langs.en?.title ?? post.slug;
@@ -68,7 +67,7 @@ export function BlogPreview() {
               <a
                 key={post.slug}
                 href={blogUrl(displayLang as Locale, post.slug)}
-                className="group flex items-start gap-0 py-2.5 border-b border-border/50 last:border-b-0 -mx-2 px-2"
+                className="group flex items-start gap-0 py-3.5 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
               >
                 <div className="flex-1 min-w-0">
                   {/* Rank line: 001 │ date │ [tag] │ title │ langs */}
@@ -109,8 +108,7 @@ export function BlogPreview() {
               </a>
             );
           })}
-        </div>
-      </MacWindow>
+      </div>
 
       <div>
         <a
