@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard } from "lucide-react";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
+import { useClientValue } from "@/hooks/useClientValue";
 import { useState } from "react";
 import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
@@ -27,16 +28,21 @@ const fontSizeLabelKeys: Record<FontSize, TranslationKey> = {
 };
 
 export function Settings() {
-  const {
-    theme, setTheme,
-    reduceMotion, setReduceMotion,
-    fontSize, setFontSize,
-    keyboardShortcuts, setKeyboardShortcuts,
-    resetPreferences,
-    resolvedTheme,
-  } = useSettings();
+  const live = useSettings();
+  const { setTheme, setReduceMotion, setFontSize, setKeyboardShortcuts, resetPreferences } = live;
+  const { locale: liveLocale, setLocale, t: tt } = useLocale();
 
-  const { locale, setLocale, t: tt } = useLocale();
+  // Persisted preferences rehydrate before the first client render, and
+  // resolvedTheme reads matchMedia, so rendering them straight from the store
+  // disagrees with the prerendered HTML (React #418). Show the SSR defaults
+  // until mount, then the real values.
+  const mounted = useClientValue(() => true, false);
+  const theme: ThemeMode = mounted ? live.theme : "system";
+  const resolvedTheme = mounted ? live.resolvedTheme : "light";
+  const reduceMotion = mounted ? live.reduceMotion : false;
+  const fontSize: FontSize = mounted ? live.fontSize : "default";
+  const keyboardShortcuts = mounted ? live.keyboardShortcuts : true;
+  const locale = mounted ? liveLocale : "en";
 
   const [resetDone, setResetDone] = useState(false);
 
