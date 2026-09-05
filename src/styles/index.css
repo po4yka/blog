@@ -179,6 +179,23 @@
   opacity: 0.92;
 }
 
+/* Shiki monochrome highlighting (see src/lib/shiki-mono.ts). Colours arrive
+   as --shiki-light / --shiki-dark variables; the site theme class decides
+   which one applies, so a manual theme override wins over the OS setting.
+   Keyword tokens are marked bold in the theme; Geist Mono at 700 is too
+   loud next to 400 body code, so bold is remapped to 500 here. */
+.prose-blog .astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style, normal);
+}
+.dark .prose-blog .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style, normal);
+}
+.prose-blog .astro-code span[style*="font-weight:bold"] {
+  font-weight: 500;
+}
+
 .prose-blog strong {
   color: var(--foreground);
   font-weight: 600;

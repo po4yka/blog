@@ -10,6 +10,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { blogPosts } from "./src/data/blogData.ts";
+import { monoDark, monoLight } from "./src/lib/shiki-mono.ts";
 
 const isAstroDev = process.argv.includes("dev");
 
@@ -58,19 +59,21 @@ export default defineConfig({
     service: { entrypoint: "astro/assets/services/sharp" },
   },
   markdown: {
-    // Monochrome paper/ink design: code blocks are styled entirely by the
-    // --code-bg / --foreground theme tokens (correct in both light and dark).
-    // Shiki's default github-dark theme injected an inline dark background on
-    // <pre>, which overrode --code-bg and left dark text on a dark block in
-    // light mode. Disable it so the design tokens stay authoritative.
-    syntaxHighlight: false,
+    // Monochrome syntax highlighting: two greyscale themes emitted as CSS
+    // variables (defaultColor: false), so no inline colour or background is
+    // written on <pre> and the --code-bg / --foreground tokens stay
+    // authoritative. index.css maps the variables to the active site theme.
+    syntaxHighlight: "shiki",
+    shikiConfig: {
+      themes: { light: monoLight, dark: monoDark },
+      defaultColor: false,
+    },
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
   },
   integrations: [
     react(),
     mdx({
-      syntaxHighlight: false,
       remarkPlugins: [remarkGfm, remarkMath],
       rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
     }),
