@@ -123,6 +123,17 @@ export interface GitHubLatestRelease {
   url: string;
 }
 
+/** Release summary for one project repository (GitHub releases API). */
+export interface GitHubProjectRelease {
+  repo: string;
+  /** Non-draft releases, capped at 100 by the upstream page size. */
+  count: number;
+  tagName: string;
+  publishedAt: string;
+  url: string;
+  prerelease: boolean;
+}
+
 /** One day of shipped, user-visible commits, versioned like a mobile build. */
 export interface ChangelogEntry {
   type: "feat" | "fix" | "perf";

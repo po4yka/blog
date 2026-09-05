@@ -14,9 +14,65 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { projects, type Project } from "@/data/projectsData";
 import { MotionProvider } from "./MotionProvider";
 import { useLocale } from "@/stores/settingsStore";
+import { useEffect, useState } from "react";
+import { deferIdle } from "./Decorations/_utils";
+import { GITHUB_USERNAME } from "@/lib/constants";
+import type { GitHubProjectRelease } from "@/types";
+import type { Locale } from "@/lib/i18n";
+import { pluralize } from "@/lib/plural";
 
-function ProjectEntry({ project }: { project: Project }) {
-  const { t } = useLocale();
+type ReleaseMap = Record<string, GitHubProjectRelease | null>;
+
+const RELEASE_FORMS = {
+  en: ["release", "releases"] as [string, string],
+  ru: ["\u0440\u0435\u043b\u0438\u0437", "\u0440\u0435\u043b\u0438\u0437\u0430", "\u0440\u0435\u043b\u0438\u0437\u043e\u0432"] as [string, string, string],
+};
+
+const REPO_LINK = new RegExp(`^https://github\\.com/${GITHUB_USERNAME}/([^/#?]+)/?$`, "i");
+
+function repoNames(project: Project): string[] {
+  return project.links.map((l) => REPO_LINK.exec(l.href)?.[1]).filter((r): r is string => !!r);
+}
+
+function monthYear(iso: string, locale: Locale): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-US", { month: "short", year: "numeric" }).format(d);
+}
+
+/** Latest release of the project, real data from GitHub, or nothing. */
+function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; locale: Locale; t: (k: "links.opensNewWindow") => string }) {
+  const tag = release.tagName.match(/^(v)(.+)$/i);
+  return (
+    <a
+      href={release.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${release.repo} ${release.tagName} (${t("links.opensNewWindow")})`}
+      className="inline-flex flex-wrap items-baseline gap-x-2 font-mono text-mono-sm text-muted-foreground hover:text-foreground transition-colors duration-150 tabular-nums"
+    >
+      <span>
+        {tag ? (
+          <>
+            <span className="text-muted-foreground-dim">{tag[1]}</span>
+            <span className="text-foreground/85">{tag[2]}</span>
+          </>
+        ) : (
+          <span className="text-foreground/85">{release.tagName}</span>
+        )}
+        {release.prerelease && <span className="text-muted-foreground-dim"> pre</span>}
+      </span>
+      <span aria-hidden="true" className="text-muted-foreground-dim">·</span>
+      <span>{pluralize(release.count, locale, RELEASE_FORMS)}</span>
+      <span aria-hidden="true" className="text-muted-foreground-dim">·</span>
+      <span>{monthYear(release.publishedAt, locale)}</span>
+    </a>
+  );
+}
+
+function ProjectEntry({ project, releases }: { project: Project; releases: ReleaseMap }) {
+  const { t, locale } = useLocale();
+  const release = repoNames(project).map((r) => releases[r]).find((r): r is GitHubProjectRelease => !!r);
 
   return (
     <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20">
@@ -65,6 +121,12 @@ function ProjectEntry({ project }: { project: Project }) {
         </p>
       )}
 
+      {release && (
+        <div className="mt-2.5 pl-6">
+          <ReleaseLine release={release} locale={locale} t={t} />
+        </div>
+      )}
+
       {/* Tags + links */}
       <div className="mt-3 pl-6 flex flex-wrap items-center gap-x-4 gap-y-2">
         <div className="flex flex-wrap gap-1.5">
@@ -103,6 +165,17 @@ function ProjectEntry({ project }: { project: Project }) {
 
 export function ProjectsPage() {
   const { t } = useLocale();
+  const [releases, setReleases] = useState<ReleaseMap>({});
+
+  useEffect(() => {
+    // Decorative enrichment: fetched after load so it never sits on the critical path.
+    return deferIdle(() => {
+      fetch("/api/github/releases")
+        .then((r) => (r.ok ? r.json() : {}))
+        .then((d: ReleaseMap) => setReleases(d ?? {}))
+        .catch(() => {});
+    });
+  }, []);
   return (
     <ErrorBoundary>
     <MotionProvider>
@@ -185,7 +258,7 @@ export function ProjectsPage() {
             <ul className="list-none m-0 p-0">
               {projects.map((project) => (
                 <li key={project.slug}>
-                  <ProjectEntry project={project} />
+                  <ProjectEntry project={project} releases={releases} />
                 </li>
               ))}
             </ul>
