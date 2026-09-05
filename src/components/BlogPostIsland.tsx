@@ -11,7 +11,7 @@ import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
 import { ImageLightbox } from "./ImageLightbox";
 import { MotionProvider } from "./MotionProvider";
 import { duration } from "@/lib/motion";
-import { useLocale } from "@/stores/settingsStore";
+import { useLocale, useSettings } from "@/stores/settingsStore";
 import { useScrollState } from "@/hooks/useScrollState";
 import { blogUrl, type Locale } from "@/lib/i18n";
 import { cn } from "./ui/utils";
@@ -131,6 +131,45 @@ function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale }) {
       {state === "copied" ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><FileCode2 size={11} /> {label}</>}
     </button>
   );
+}
+
+// --- Reading position memory ---
+
+// Stores how far the reader got (as a percent, so it survives font-size and
+// viewport changes) and offers a one-click resume on the next visit. Entries
+// below 5% or past 95% are dropped: nothing worth resuming there.
+const RESUME_MIN = 5;
+const RESUME_MAX = 95;
+const resumeKey = (lang: string, slug: string) => `read:${lang}/${slug}`;
+
+function useResumePosition(lang: string, slug: string, percent: number, reduceMotion: boolean) {
+  const [saved, setSaved] = useState<number | null>(null);
+  const key = resumeKey(lang, slug);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(key);
+      const value = raw == null ? NaN : Number(raw);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is client-only; read once after mount
+      if (Number.isFinite(value) && value >= RESUME_MIN && value <= RESUME_MAX) setSaved(value);
+    } catch { /* storage unavailable */ }
+  }, [key]);
+
+  useEffect(() => {
+    try {
+      if (percent >= RESUME_MIN && percent <= RESUME_MAX) localStorage.setItem(key, String(percent));
+      else if (percent > RESUME_MAX) localStorage.removeItem(key);
+    } catch { /* storage unavailable */ }
+  }, [key, percent]);
+
+  const resume = useCallback(() => {
+    if (saved == null) return;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: (saved / 100) * scrollable, behavior: reduceMotion ? "auto" : "smooth" });
+    setSaved(null);
+  }, [saved, reduceMotion]);
+
+  return { saved, resume, dismiss: () => setSaved(null) };
 }
 
 // --- Pager status (LessViewer bottom bar) ---
@@ -352,6 +391,8 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
   const tagsLabel = t("blogPost.tags");
   const relatedPosts = related ?? [];
   const { percent } = useScrollState();
+  const { reduceMotion } = useSettings();
+  const { saved: resumeAt, resume, dismiss: dismissResume } = useResumePosition(lang, slug, percent, reduceMotion);
   const { items: tocItems, activeId } = useHeadings(contentRef);
   const tocLabel = t("blogPost.toc");
 
@@ -401,6 +442,26 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
         <Cmd>
           less <Accent>posts/{slug}.txt</Accent>
         </Cmd>
+
+        {resumeAt != null && (
+          <div className="flex flex-wrap items-center gap-3 font-mono text-mono-sm" role="status">
+            <button
+              type="button"
+              onClick={resume}
+              className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer min-h-[44px] sm:min-h-0 py-2 sm:py-0"
+            >
+              -- {t("blogPost.resumeAt")} {resumeAt}% --
+            </button>
+            <button
+              type="button"
+              onClick={dismissResume}
+              aria-label={t("blogPost.resumeDismiss")}
+              className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150 cursor-pointer min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        )}
 
         {/* File viewer */}
         <LessViewer
