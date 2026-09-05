@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { blogPosts } from "@/data/blogData";
+import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { computeBlogStats } from "@/lib/homeStats";
 import { PanelShell } from "./_helpers";
 

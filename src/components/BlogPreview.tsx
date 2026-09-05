@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { blogPosts } from "@/data/blogData";
+import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { Cmd, Accent, Tag, MacWindow } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";

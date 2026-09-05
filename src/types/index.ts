@@ -20,6 +20,9 @@ export interface BlogPost {
   lang?: string;
 }
 
+/** BlogPost without the body. What client islands are allowed to import. */
+export type BlogPostMeta = Omit<BlogPost, "content">;
+
 /** Subset of BlogPost used for SEO meta tags and JSON-LD. */
 export interface BlogPostData {
   title: string;

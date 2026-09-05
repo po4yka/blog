@@ -1,6 +1,6 @@
-import type { BlogPost, BlogStats, Project, TagStat } from "@/types";
+import type { BlogPostMeta, BlogStats, Project, TagStat } from "@/types";
 
-export function computeBlogStats(posts: BlogPost[]): BlogStats {
+export function computeBlogStats(posts: Array<BlogPostMeta & { content?: string }>): BlogStats {
   const en = posts.filter((p) => !p.lang || p.lang === "en");
   const ru = posts.filter((p) => p.lang === "ru");
 
@@ -8,7 +8,7 @@ export function computeBlogStats(posts: BlogPost[]): BlogStats {
   const tags = new Set(posts.flatMap((p) => p.tags)).size;
 
   const totalReadingMinutes = posts.reduce((sum, p) => {
-    const words = p.content.trim().split(/\s+/).length;
+    const words = p.wordCount ?? p.content?.trim().split(/\s+/).length ?? 0;
     return sum + Math.ceil(words / 225);
   }, 0);
 

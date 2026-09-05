@@ -4,7 +4,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { generateBlogDataSource } from "./generate-blog-data.js";
+import { generateBlogDataSource, generateBlogMetaSource } from "./generate-blog-data.js";
 import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
@@ -22,6 +22,11 @@ const generators: GeneratorConfig[] = [
     name: "blog",
     outputFile: path.resolve("src/data/blogData.ts"),
     generate: generateBlogDataSource,
+  },
+  {
+    name: "blogMeta",
+    outputFile: path.resolve("src/data/blogMeta.ts"),
+    generate: generateBlogMetaSource,
   },
   {
     name: "projects",

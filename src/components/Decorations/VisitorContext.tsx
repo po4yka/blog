@@ -57,17 +57,18 @@ export function VisitorContext({ delay = 0 }: { delay?: number }) {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time initialization with browser APIs
   useEffect(() => { setInfo(getVisitorInfo()); }, []);
 
-  if (!info) return null;
-
+  // Server-render the frame with placeholder values: the panel sits above the
+  // fold, so mounting it only after hydration shifted everything below it
+  // (measured CLS 0.05 on mobile).
   const rows = [
-    { label: "Browser", value: info.browser },
-    { label: "Viewport", value: info.viewport },
-    { label: "Theme", value: theme === "system" ? `${resolvedTheme} (system)` : resolvedTheme },
-    { label: "Network", value: info.network },
+    { label: "Browser", value: info?.browser ?? "\u2014" },
+    { label: "Viewport", value: info?.viewport ?? "\u2014" },
+    { label: "Theme", value: info ? (theme === "system" ? `${resolvedTheme} (system)` : resolvedTheme) : "\u2014" },
+    { label: "Network", value: info?.network ?? "\u2014" },
   ];
 
   return (
-    <PanelShell label="VISITOR" labelRight="connected" delay={delay}>
+    <PanelShell label="VISITOR" labelRight={info ? "connected" : "connecting"} delay={delay}>
       <div className="px-5 py-3 space-y-1.5">
         {rows.map((row) => (
           <div key={row.label} className="flex items-baseline justify-between gap-4 min-w-0">

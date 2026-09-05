@@ -175,7 +175,7 @@ function deriveCategories(entries: BlogEntry[]): string[] {
   return ["All", ...Array.from(cats)];
 }
 
-function generateBlogPostEntry(entry: BlogEntry): string {
+function generateBlogPostEntry(entry: BlogEntry, withContent = true): string {
   const { slug, lang, frontmatter: fm, content, isoDate, isoDateModified, wordCount } = entry;
   const lines: string[] = [];
   lines.push("  {");
@@ -195,7 +195,9 @@ function generateBlogPostEntry(entry: BlogEntry): string {
   } else if (fm.featured === false) {
     lines.push("    featured: false,");
   }
-  lines.push(`    content: \`${escapeForTemplateLiteral(content)}\`,`);
+  if (withContent) {
+    lines.push(`    content: \`${escapeForTemplateLiteral(content)}\`,`);
+  }
   lines.push("  },");
   return lines.join("\n");
 }
@@ -221,9 +223,36 @@ export const categories = [${categoriesStr}];
 `;
 }
 
+// Content-free twin of blogData.ts for client islands (home preview, panels,
+// footer shell). Keeps the full post bodies out of the browser bundle.
+export function generateBlogMetaSource(): string {
+  const entries = readBlogPosts();
+  const categories = deriveCategories(entries);
+
+  const postEntries = entries.map((e) => generateBlogPostEntry(e, false)).join("\n");
+  const categoriesStr = categories.map((c) => `"${escapeForDoubleQuotedString(c)}"`).join(", ");
+
+  return `// Auto-generated from MDX content files. Do not edit manually.
+// Run "npm run generate:blog" to regenerate.
+// Metadata only (no post bodies) -- safe to import from client islands.
+import type { BlogPostMeta } from "@/types";
+
+export type { BlogPostMeta };
+
+export const blogPostsMeta: BlogPostMeta[] = [
+${postEntries}
+];
+
+export const categories = [${categoriesStr}];
+`;
+}
+
 // Run as script
 if (import.meta.url === `file://${process.argv[1]}`) {
   const output = generateBlogDataSource();
   fs.writeFileSync(OUTPUT_FILE, output, "utf-8");
   console.log(`Generated ${OUTPUT_FILE}`);
+  const metaFile = path.resolve("src/data/blogMeta.ts");
+  fs.writeFileSync(metaFile, generateBlogMetaSource(), "utf-8");
+  console.log(`Generated ${metaFile}`);
 }

@@ -1,6 +1,6 @@
 import { registerCommand } from "./registry";
 import { projects } from "@/data/projectsData";
-import { blogPosts } from "@/data/blogData";
+import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { roles, skills } from "@/data/experienceData";
 import { Accent } from "../ui";
 import type { Command } from "./types";

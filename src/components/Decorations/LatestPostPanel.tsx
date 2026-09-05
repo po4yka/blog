@@ -1,4 +1,4 @@
-import { blogPosts } from "@/data/blogData";
+import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { PanelShell } from "./_helpers";
 
 export function LatestPostPanel({ delay = 0 }: { delay?: number }) {

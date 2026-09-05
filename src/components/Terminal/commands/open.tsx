@@ -1,6 +1,6 @@
 import { registerCommand } from "./registry";
 import { projects } from "@/data/projectsData";
-import { blogPosts } from "@/data/blogData";
+import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import type { Command } from "./types";
 
 const pages: Record<string, string> = {
