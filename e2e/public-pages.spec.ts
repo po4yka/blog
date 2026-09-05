@@ -36,6 +36,14 @@ test.describe("public pages", () => {
     ).toBeVisible();
   });
 
+  test("changelog page renders", async ({ page }) => {
+    await page.goto("/changelog");
+    await expect(page).toHaveTitle(/Changelog — Nikita Pochaev/);
+    await expect(page.getByRole("heading", { level: 1, name: "Changelog" })).toBeVisible();
+    // At least one release with one conventional-commit entry linked to GitHub
+    await expect(page.locator("a[href*='github.com/po4yka/blog/commit/']").first()).toBeVisible();
+  });
+
   test("experience page renders", async ({ page }) => {
     await page.goto("/experience");
     await expect(page).toHaveTitle(/Experience — Nikita Pochaev/);

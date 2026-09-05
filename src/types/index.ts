@@ -122,3 +122,19 @@ export interface GitHubLatestRelease {
   publishedAt: string;
   url: string;
 }
+
+/** One day of shipped, user-visible commits, versioned like a mobile build. */
+export interface ChangelogEntry {
+  type: "feat" | "fix" | "perf";
+  scope: string | null;
+  subject: string;
+  hash: string;
+  breaking: boolean;
+}
+
+export interface ChangelogRelease {
+  version: string;
+  build: number;
+  date: string;
+  entries: ChangelogEntry[];
+}

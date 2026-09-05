@@ -21,6 +21,7 @@ Nikita has led platform teams, migrated large codebases (80+ screens) from legac
 - [Home](https://po4yka.dev/): Portfolio overview with about, projects, experience, and blog preview
 - [Blog](https://po4yka.dev/blog): Technical articles on mobile development
 - [Projects](https://po4yka.dev/projects): Open-source and professional projects
+- [Changelog](https://po4yka.dev/changelog): Release notes for the site itself, generated from conventional commits
 - [Experience](https://po4yka.dev/experience): Professional background and skills
 
 ## Optional

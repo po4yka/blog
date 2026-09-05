@@ -35,12 +35,20 @@ export function Footer() {
           <p className="label-meta text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </p>
-          <a
-            href="/privacy"
-            className="label-meta text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Privacy
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="/changelog"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Changelog
+            </a>
+            <a
+              href="/privacy"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Privacy
+            </a>
+          </div>
         </div>
       </div>
     </footer>

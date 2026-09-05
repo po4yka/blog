@@ -9,6 +9,7 @@ import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
 import { generateBuildMetaSource } from "./generate-build-meta.js";
+import { generateChangelogSource } from "./generate-changelog.js";
 import { generateOgImages } from "./generate-og-images.js";
 
 interface GeneratorConfig {
@@ -42,6 +43,11 @@ const generators: GeneratorConfig[] = [
     name: "seed",
     outputFile: path.resolve("db/seed.sql"),
     generate: generateSeedSource,
+  },
+  {
+    name: "changelog",
+    outputFile: path.resolve("src/data/changelog.ts"),
+    generate: generateChangelogSource,
   },
   {
     name: "buildMeta",

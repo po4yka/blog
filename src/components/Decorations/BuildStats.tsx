@@ -52,7 +52,15 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
   ];
 
   return (
-    <PanelShell label="BUILD" labelRight="po4yka.dev" delay={delay}>
+    <PanelShell
+      label="BUILD"
+      labelRight={
+        <a href="/changelog" className="hover:text-foreground transition-colors duration-150">
+          changelog
+        </a>
+      }
+      delay={delay}
+    >
       <div className="px-5 py-3 space-y-1.5">
         {rows.map((row) => (
           <div key={row.label} className="flex items-baseline justify-between gap-4 min-w-0">
