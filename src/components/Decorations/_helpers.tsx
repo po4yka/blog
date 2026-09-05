@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useInView } from "@/hooks/useInView";
-import { ease } from "@/lib/motion";
+import { ease, duration } from "@/lib/motion";
+import { DrawnRule, REVEAL_AFTER_RULE } from "../Terminal/windows";
 
 /** Shared panel shell — flat, hairline, operator-console header row. */
 export function PanelShell({
@@ -27,12 +28,9 @@ export function PanelShell({
       }}
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.45, delay, ease }}
+      transition={{ duration: duration.base, delay, ease }}
     >
-      <div
-        className="flex items-baseline justify-between px-4 py-2"
-        style={{ borderBottom: "1px solid var(--rule)" }}
-      >
+      <div className="relative flex items-baseline justify-between px-4 py-2">
         <span className="label-meta">{label}</span>
         {labelRight && (
           <span
@@ -46,8 +44,15 @@ export function PanelShell({
             {labelRight}
           </span>
         )}
+        <DrawnRule active={inView} />
       </div>
-      {children}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: duration.base, delay: delay + REVEAL_AFTER_RULE, ease }}
+      >
+        {children}
+      </motion.div>
     </motion.div>
   );
 }
