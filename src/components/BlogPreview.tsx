@@ -67,7 +67,7 @@ export function BlogPreview() {
               <a
                 key={post.slug}
                 href={blogUrl(displayLang as Locale, post.slug)}
-                className="group flex items-start gap-0 py-3.5 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
+                className="group flex items-start gap-0 py-3.5 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]"
               >
                 <div className="flex-1 min-w-0">
                   {/* Rank line: 001 │ date │ [tag] │ title │ langs */}
@@ -110,11 +110,11 @@ export function BlogPreview() {
           })}
       </div>
 
-      <div>
+      <div className="pt-1">
         <a
           href="/blog"
           aria-label={t("blogPreview.viewAllLabel")}
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* Visible label is decorative shell chrome (`$ find … →`); the
               aria-label carries the accessible name. Hiding the text from AT

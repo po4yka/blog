@@ -52,7 +52,7 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--secondary` | `#ebe8e2` | Nested containers |
 | `--muted` | `#dedcd5` | Subtle fills |
 | `--muted-foreground` | `#4a4a50` | Secondary labels — 8.5:1 on bg |
-| `--muted-foreground-dim` | `#6a6a70` | Tertiary labels — 5.0:1 on bg |
+| `--muted-foreground-dim` | `#5e5e64` | Tertiary labels — 6.0:1 on bg, 4.8:1 on `--muted` |
 | `--border` | `rgba(16,16,18,0.16)` | Panel edges — stronger than dark: warm paper swallows low-alpha ink |
 | `--rule` | `rgba(16,16,18,0.20)` | Section divider rules |
 | `--emphasis` | `#000000` | Full-luminance emphasis, focus rings |

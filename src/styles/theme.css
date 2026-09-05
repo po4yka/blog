@@ -94,7 +94,7 @@
   --secondary-foreground: #101012;
   --muted: #dedcd5;
   --muted-foreground: #4a4a50;
-  --muted-foreground-dim: #6a6a70;
+  --muted-foreground-dim: #5e5e64; /* 4.8:1 on --muted, so dim labels stay AA on hovered rows and chips */
   --emphasis: #000000;
   --code-bg: #eeebe4;
   --destructive: #b83a28;

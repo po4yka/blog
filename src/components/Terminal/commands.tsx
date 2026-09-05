@@ -54,7 +54,6 @@ export function Cmd({
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
-      aria-label="Click to copy command"
       title="Click to copy command"
     >
       <span
@@ -63,6 +62,9 @@ export function Cmd({
       >
         $
       </span>
+      {/* Accessible name = the visible command plus this suffix, so the
+          name contains the label (WCAG 2.5.3) instead of replacing it. */}
+      <span className="sr-only">(click to copy command)</span>
       <span
         data-cmd-text
         className="text-foreground min-w-0 break-all group-hover:opacity-100 transition-opacity duration-200"
@@ -140,10 +142,10 @@ export function OutputBlock({
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
-      aria-label="Click to copy"
       title="Click to copy"
     >
       {children}
+      <span className="sr-only">(click to copy)</span>
       <motion.span
         className="absolute -top-1 right-0 flex items-center select-none"
         style={{ color: "var(--muted-foreground)" }}

@@ -21,7 +21,7 @@ export function Experience() {
           {roles.slice(0, 3).map((role, i) => (
             <div
               key={role.period}
-              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 group hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
+              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 group hover:bg-card transition-colors duration-150 rounded-[2px]"
             >
               <div className="lg:col-span-8">
                 <div className="flex items-baseline justify-between lg:justify-start gap-4 flex-wrap">
@@ -93,11 +93,11 @@ export function Experience() {
           ))}
       </div>
 
-      <div>
+      <div className="pt-1">
         <a
           href="/experience"
           aria-label={t("experience.viewAllLabel")}
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* Visible label is decorative shell chrome (`$ git log … →`); the
               aria-label carries the accessible name (WCAG 2.4.6 / 2.5.3). */}

@@ -27,7 +27,7 @@ export function Projects() {
             <a
               key={project.slug}
               href={`/projects#${project.slug}`}
-              className="group flex items-start gap-2 py-4 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-muted/40 transition-colors duration-150 rounded-[2px]"
+              className="group flex items-start gap-2 py-4 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]"
             >
               {/* Tree branch prefix */}
               <span
@@ -75,11 +75,11 @@ export function Projects() {
       </div>
 
       {/* View all link */}
-      <div>
+      <div className="pt-1">
         <a
           href="/projects"
           aria-label={t("projects.viewAllLabel")}
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-block font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* Visible label is decorative shell chrome (`$ ls … →`); the
               aria-label carries the accessible name. Hiding the text from AT

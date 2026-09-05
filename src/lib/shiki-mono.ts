@@ -103,6 +103,6 @@ export const monoLight = buildTheme("po4yka-mono-light", "light", {
   foreground: "#101012",
   operator: "#4a4a50",
   muted: "#4a4a50",
-  dim: "#6a6a70",
+  dim: "#5e5e64",
   background: "#eeebe4",
 });

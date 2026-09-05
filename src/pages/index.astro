@@ -60,24 +60,12 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
   </div>
 
   <style>
-    /* Skip rendering for off-screen sections until scrolled into view.
-       Only sections that always render non-empty content — empty-prone
-       API-driven sections (open-source, activity-calendar, git-log)
-       would otherwise reserve a 300px placeholder that collapses to
-       0px once the component hydrates and returns null, producing a
-       visible gap while the user is scrolling. */
-    [data-section-name="about"],
-    [data-section-name="links"],
-    [data-section-name="projects"] {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 400px;
-    }
-
-    [data-section-name="experience"],
-    [data-section-name="blog"] {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 300px;
-    }
+    /* Sections used to carry content-visibility: auto with an intrinsic-size
+       placeholder. Since the home sections became flat rows they are cheap
+       to lay out, and the placeholders misreported section boxes (Lighthouse
+       flagged the view-all links as partially obscured, and the page jumped
+       when a placeholder resolved). Painting them normally costs nothing
+       measurable. */
 
     /* Collapse empty-prone API-driven section wrappers (open-source,
        activity-calendar, git-log) when the island has no content yet.
