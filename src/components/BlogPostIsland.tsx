@@ -524,6 +524,27 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
                   </li>
                 ))}
               </ul>
+              {/* Machine-readable twins of this post. They exist for coding
+                  agents and feed readers; showing them makes that part of
+                  the site visible to people too. */}
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta text-muted-foreground-dim">
+                <span>{t("blogPost.alsoAs")}</span>
+                {[
+                  { label: "markdown", href: `${listHref}/${slug}.md` },
+                  { label: "rss", href: lang === "ru" ? "/rss.ru.xml" : "/rss.xml" },
+                  { label: "llms-full.txt", href: "/llms-full.txt" },
+                ].map((f, i) => (
+                  <span key={f.label} className="flex items-center gap-x-3">
+                    {i > 0 && <span aria-hidden="true">·</span>}
+                    <a
+                      href={f.href}
+                      className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 no-underline"
+                    >
+                      {f.label}
+                    </a>
+                  </span>
+                ))}
+              </div>
             </header>
 
             <MobileJumpNav items={tocItems} activeId={activeId} label={tocLabel} />
