@@ -83,6 +83,14 @@ const sources = await Promise.all(
 );
 
 const fallback = await getImage({ src: variants.desktopLight, format: "png" });
+
+// Authored captions open with "Figure 3." / "Рисунок 3." (havamal sync).
+// Lift that number into a field code in the InfoTable voice, FIG 03, and
+// keep the rest of the sentence as the caption. Captions without a number
+// render as plain text; the content, not a CSS counter, stays authoritative.
+const captionMatch = caption?.match(/^\s*(?:Figure|Fig\.?|Рисунок|Рис\.?)\s*(\d+)\s*[.:]?\s*/i);
+const figCode = captionMatch ? `FIG ${captionMatch[1]!.padStart(2, "0")}` : null;
+const captionText = captionMatch && caption ? caption.slice(captionMatch[0].length) : caption;
 ---
 
 <figure class="blog-figure">
@@ -106,5 +114,10 @@ const fallback = await getImage({ src: variants.desktopLight, format: "png" });
       {...(eager ? { fetchpriority: "high" } : {})}
     />
   </picture>
-  {caption && <figcaption><em>{caption}</em></figcaption>}
+  {caption && (
+    <figcaption>
+      {figCode && <span class="fig-code">{figCode}</span>}
+      <em>{captionText}</em>
+    </figcaption>
+  )}
 </figure>
