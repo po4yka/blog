@@ -32,6 +32,9 @@ const {
   hreflangAlternates,
   noindex = false,
 } = Astro.props;
+// Piazzolla is needed on post pages (prose + title) and on the blog indexes (titles).
+const blogIndexPaths = new Set(["/blog", "/blog/ru"]);
+const usesSerif = !!blogPost || blogIndexPaths.has(Astro.url.pathname.replace(/\/$/, "") || "/");
 ---
 <meta charset="UTF-8" />
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -41,10 +44,10 @@ const {
 <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)" />
 <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
-{lang === "en" && blogPost && (
+{lang === "en" && usesSerif && (
   <link rel="preload" href="/fonts/piazzolla-latin.woff2" as="font" type="font/woff2" crossorigin />
 )}
-{lang === "ru" && blogPost && (
+{lang === "ru" && usesSerif && (
   <link rel="preload" href="/fonts/piazzolla-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
 )}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />

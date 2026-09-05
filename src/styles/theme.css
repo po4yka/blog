@@ -287,6 +287,21 @@ kbd {
   color: var(--foreground);
 }
 
+/* Blog title voice — Piazzolla at display size. Pairs with .display-2 on
+   the post <h1> and the blog-index <h2>s only; h2/h3 inside the prose and
+   every other surface stay in Geist Sans (DESIGN.md 3). Optical sizing is
+   left to the browser so the high-contrast strokes stay printable at 28px. */
+.display-serif {
+  font-family: var(--font-serif);
+  font-weight: 560;
+  font-optical-sizing: auto;
+  letter-spacing: -0.012em;
+  line-height: 1.08;
+  font-size: clamp(1.875rem, 1.25rem + 2.4vw, 2.75rem);
+  text-wrap: balance;
+  font-feature-settings: "kern", "liga", "clig", "calt";
+}
+
 /* Operator-console label — numbered section IDs, metadata strips */
 .label-meta {
   font-family: var(--font-mono);

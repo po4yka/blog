@@ -98,7 +98,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 | Class | Size | Weight | Tracking | Use |
 |-------|------|--------|----------|-----|
 | `display-1` | clamp(40px–64px) | 500 | -0.028em | Hero name, page-level identity |
-| `display-2` | clamp(28px–40px) | 500 | -0.020em | Post titles, major section heads |
+| `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles |
 | `h1` | clamp(28px–36px) | 500 | -0.015em | Page headings |
 | `h2` | 20px | 500 | -0.010em | Section headings |
 | `h3` | 17px | 500 | 0 | Sub-section headings |
@@ -106,7 +106,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 | body | 15–17px | 400 | 0 | UI copy, navigation |
 | `label-meta` | 11px mono, uppercase | 400 | 0.12em | Metadata strips, section number labels |
 
-All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at 17px, line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
+All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The two exceptions are the post `<h1>` and the blog-index `<h2>` titles, which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at 17px, line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
 ### Hierarchy Rules
 
@@ -397,9 +397,9 @@ Row separator: border-bottom 1px dashed var(--rule).
 ### Typography guidance
 
 - Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
-- Use `--font-serif` only inside `.prose-blog` body text. Headings inside the prose stay in `--font-sans` — do not switch the TOC or `display-2` post title to serif
+- Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title and blog-index titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
 - Use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for the hero name only
-- Use `display-2` (clamp 28–40px, wt 500, tracking -0.020em) for blog post titles
+- Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles; plain `display-2` elsewhere
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
 - Do not extend `--font-serif` beyond blog prose — no serif on project cards, experience blocks, settings, or any chrome surface

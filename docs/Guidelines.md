@@ -206,7 +206,7 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 Typography should carry the design.
 
 - **Geist Sans** (`--font-sans`) is the primary font for site chrome: headings (including inside blog prose), UI copy, navigation, labels, and button text. It replaces the former monospace-everywhere approach.
-- **Piazzolla** (`--font-serif`) is reserved for blog post body prose only — a variable-weight high-contrast serif with native Cyrillic. It gives long-form reading surfaces editorial warmth while site chrome stays geometric.
+- **Piazzolla** (`--font-serif`) is reserved for the blog: body prose plus the post title and blog-index titles (`.display-serif`) — a variable-weight high-contrast serif with native Cyrillic. It gives long-form reading surfaces editorial warmth while site chrome stays geometric.
 - **Geist Mono** (`--font-mono`) is demoted to code blocks, terminal output components (`Cmd`, `BootBlock`, `InfoTable`), and `.label-meta` metadata strips.
   - Exception: the single-line role subtitle directly beneath the hero name may render in Geist Mono (`text-mono-lg`). Anchors the terminal voice on first paint. One line max; no other prose surface uses mono.
 - **Geist Pixel** (`--font-pixel`) is reserved for decorative numbered section prefixes only — maximum 6 uses per page.

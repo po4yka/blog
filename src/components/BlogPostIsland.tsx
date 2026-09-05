@@ -474,7 +474,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
           <article className="min-w-0">
             {/* Article header */}
             <header className="mb-10" style={{ maxWidth: "46rem" }}>
-              <h1 className="display-2 text-foreground">
+              <h1 className="display-2 display-serif text-foreground">
                 {post.title}
               </h1>
               <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">
