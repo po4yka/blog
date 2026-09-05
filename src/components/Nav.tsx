@@ -168,18 +168,21 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         {/* Right group: lang switch + theme toggle + status (desktop) + mobile controls */}
         <div className="flex items-center gap-3 shrink-0">
           {/* Desktop right controls */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : blogPageLang} />
+
+            {/* Hairline divider, mirrors the one after the wordmark */}
+            <span aria-hidden="true" className="inline-block w-px h-4 bg-rule" />
 
             {/* Theme toggle */}
             <button
               onClick={cycleTheme}
-              className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] text-3xs text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] font-mono text-label text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
               aria-label={switchThemeLabel}
               data-umami-event="theme-toggle"
               data-umami-event-next={nextThemeFor(theme)}
             >
-              <ThemeIcon size={13} strokeWidth={1.8} />
+              <ThemeIcon size={14} strokeWidth={1.8} aria-hidden="true" />
               <span className="hidden lg:inline">{themeLabel}</span>
             </button>
 
