@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/scripts/hooks/protect-generated.mjs\"",
+            "statusMessage": "Checking for edits to generated files"
+          }
+        ]
+      }
+    ]
+  }
+}
