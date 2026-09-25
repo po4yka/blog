@@ -266,7 +266,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 4324,
+    wordCount: 4350,
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -295,7 +295,7 @@ The failures that follow cluster into three layers. Geometry (the ceiling above)
 
 The empirical fit across seven models puts the usable corpus ceiling around 250 million documents at 4096 dimensions, and around 1.7 million at 768, still the common open-weights default. Above those sizes, some top-$k$ sets sit outside the span of any vector the retriever can produce.
 
-Most benchmarks live inside those budgets and never probe the edge. LIMIT does. Fifty thousand documents, one thousand queries, sentences like "Jon likes apples". E5-Mistral, GritLM, Qwen3 (the 2025 state of the art) land below 20% Recall@100 at 4096 dimensions on that set. On the same metric BM25 reaches 93.6%, and GTE-ModernColBERT, which keeps a vector per token rather than one per document, reaches 54.8%. The failure sits in the single-vector geometry. A training-time embedding represents only a finite number of distinct top-$k$ sets, and when a query lands outside that set, nothing further in the pipeline compensates.
+Most benchmarks live inside those budgets and never probe the edge. LIMIT reaches it at a fraction of those sizes, through combinatorics: each query needs one specific pair of documents back together, so a thousand queries demand a thousand distinct top-2 sets. Fifty thousand documents, sentences like "Jon likes apples". E5-Mistral, GritLM, Qwen3 (the 2025 state of the art) land below 20% Recall@100 at 4096 dimensions on that set. On the same metric BM25 reaches 93.6%, and GTE-ModernColBERT, which keeps a vector per token rather than one per document, reaches 54.8%. The failure sits in the single-vector geometry. A training-time embedding represents only a finite number of distinct top-$k$ sets, and when a query lands outside that set, nothing further in the pipeline compensates.
 
 Chunking matters about as much as the model choice. Vectara's 2025 study ([arXiv:2410.13070](https://arxiv.org/abs/2410.13070)) asks whether semantic chunking justifies its cost and finds that in most settings it doesn't beat fixed-size chunking on F1@5 — the retrieval wins on recall, the generator loses on local context, and the two cancel. The failure is the common one: chunks small enough to retrieve precisely are too small for the generator to answer from.
 
@@ -446,7 +446,7 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 327,
+    wordCount: 326,
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -469,13 +469,13 @@ Weller и соавторы (ICLR 2026) записывают потолок ка�
 
 <BlogFigure
   variants={figures["01-rag-failure-layers"].ru}
-  alt="График в двойном логарифмическом масштабе: зависимость размера полезного корпуса от размерности эмбеддинга. Эмпирическая аппроксимация Weller et al. (коралловая линия) проходит через две отмеченные точки: d=768 с n≈1,7M документов (стандарт открытых моделей) и d=4096 с n≈250M (текущий фронтир). Над линией затенённая зона недостижимости. Формула сверху: d ≥ log C(n,k) / log(1+1/γ). Бенчмарк LIMIT (50K документов, 1K запросов): E5-Mistral, GritLM, Qwen3 падают ниже 20% Recall@100 при d=4096, а BM25 даёт 93,6% Recall@100; GTE-ModernColBERT (вектор на токен) восстанавливает 54,8% Recall@100 на том же наборе."
-  caption="Рисунок 1. Эмпирическая аппроксимация Weller et al. на семи single-vector ретриверах. Две опорные точки — d=768 и d=4096 — задают границу полезного корпуса. Выше кривой часть top-k рангов невозможно представить при этой размерности; реранкер и гибридный поиск эту границу не сдвигают."
+  alt="График в двойном логарифмическом масштабе: зависимость размера полезного корпуса от размерности эмбеддинга. Эмпирическая аппроксимация Weller et al. (коралловая линия) проходит через две отмеченные точки: d=768 при n≈1,7 млн документов (стандарт открытых моделей) и d=4096 при n≈250 млн (текущий фронтир). Над линией — затенённая зона недостижимости. Формула сверху: d ≥ log C(n,k) / log(1+1/γ). Бенчмарк LIMIT (50 тыс. документов, 1 тыс. запросов): E5-Mistral, GritLM, Qwen3 падают ниже 20% Recall@100 при d=4096, а BM25 даёт 93,6% Recall@100; GTE-ModernColBERT (вектор на токен) восстанавливает 54,8% Recall@100 на том же наборе."
+  caption="Рисунок 1. Эмпирическая аппроксимация Weller et al. на семи одновекторных ретриверах. Две опорные точки — d=768 и d=4096 — задают границу полезного корпуса. Выше кривой часть top-k-наборов невозможно представить при данной размерности; реранкер и гибридный поиск эту границу не сдвигают."
 />
 
-На практике разрыв между теоремой и реальностью оказывается меньше, чем хотелось бы. Потолок полезного корпуса — в районе 250 миллионов документов при размерности 4096 и около 1,7 миллиона при 768 (до сих пор стандарт для открытых моделей). Выше этих объёмов часть top-$k$-комбинаций уже вне досягаемости любого вектора, построенного ретривером.
+По эмпирической аппроксимации на семи моделях потолок полезного корпуса — около 250 миллионов документов при размерности 4096 и около 1,7 миллиона при 768 (до сих пор стандарт для открытых моделей). Выше этих объёмов часть top-$k$-комбинаций уже не может представить ни один вектор, который строит энкодер.
 
-Большинство бенчмарков на эту границу не выходят. LIMIT — выходит. В нём пятьдесят тысяч документов, тысяча запросов и предложения вроде «Jon likes apples». Лучшие эмбеддинг-модели падают ниже 20% Recall@100 при размерности 4096. BM25 по той же метрике выдаёт 93,6%. Проблема в геометрии одного вектора: обученный эмбеддинг представляет конечное число top-$k$ наборов, и когда запрос выпадает из этого набора, ничего дальше по цепочке ситуацию не исправляет.
+Большинство бенчмарков на эту границу не выходят, а LIMIT выходит на неё при куда меньшем корпусе, за счёт комбинаторики: каждому запросу нужна своя пара документов, и всего таких пар тысяча. В нём пятьдесят тысяч документов и предложения вроде «Jon likes apples». Лучшие эмбеддинг-модели падают ниже 20% Recall@100 при размерности 4096. BM25 по той же метрике выдаёт 93,6%. Проблема в геометрии одного вектора: обученный эмбеддинг представляет конечное число top-$k$-наборов, и когда требуемая запросом комбинация в их число не входит, ничего дальше по цепочке ситуацию не исправляет.
 
 Следующим ломается чанкинг, и весит он столько же, сколько выбор модели. Исследование Vectara ([arXiv:2410.13070](https://arxiv.org/abs/2410.13070)) ставит вопрос, окупается ли семантический чанкинг, и на F1@5 отвечает: в большинстве сценариев не окупается — ретривер выигрывает на recall, генератор проигрывает на локальном контексте, и два эффекта гасят друг друга. Провал обычный: чанки достаточно мелкие для точного поиска оказываются слишком мелкими, чтобы по ним ответить.
 
