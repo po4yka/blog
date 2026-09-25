@@ -1,5 +1,6 @@
 ---
 name: signal-deck
+disable-model-invocation: true
 description: "Terminal-industrial design system merging Nothing-style restraint with operator-console logic. Trigger on: 'signal deck', 'signal-deck', '/signal-deck', 'operator console style', 'terminal modernism', 'phosphor design'. NEVER auto-trigger for generic UI tasks."
 version: 1.0.0
 allowed-tools: Read, Write, Edit, Glob, Grep

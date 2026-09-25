@@ -1,9 +1,10 @@
 ---
 name: ui-ux-pro-max
+disable-model-invocation: true
 description: "UI/UX design intelligence for web applications. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 15 stacks (Astro, React, Next.js, Vue, Nuxt.js, Svelte, HTML/Tailwind, and more). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient."
 ---
 
-> **Project Override:** This project is a personal developer portfolio/blog (po4yka.dev) using Astro 6 + React 19 + Tailwind CSS 4. The design system is fully defined in `DESIGN.md` and `src/styles/theme.css`. Read those files before making any design decisions. See also `.claude/skills/uiux-context/SKILL.md` and `.claude/skills/taste-context/SKILL.md` for project overrides that take precedence over this skill's generic recommendations.
+> **Project Override:** This project is a personal developer portfolio/blog (po4yka.dev) using Astro 7 + React 19 + Tailwind CSS 4. The design system is fully defined in `DESIGN.md` and `src/styles/theme.css`. Read those files before making any design decisions. Load the `uiux-context` skill for the project overrides that take precedence over this skill's generic recommendations.
 
 # UI/UX Pro Max - Design Intelligence
 
@@ -315,7 +316,7 @@ Extract key information from user request:
 - **Product type**: Personal portfolio, technical blog, developer showcase
 - **Target audience**: Technical professionals, hiring managers, fellow engineers
 - **Style keywords**: Swiss typographic, operator console, neutral greyscale, no accent, editorial serif (blog prose), minimal, credible
-- **Stack**: Astro 6 + React 19 + Tailwind CSS 4 (use `--stack astro`)
+- **Stack**: Astro 7 + React 19 + Tailwind CSS 4 (use `--stack astro`)
 
 ### Step 2: Search Design Intelligence (Supplementary)
 

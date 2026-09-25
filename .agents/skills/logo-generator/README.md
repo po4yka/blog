@@ -26,7 +26,7 @@ These are deliberate adaptations; don't revert them without editing `DESIGN.md` 
 ## Setup (one-time, only if you want phase 4)
 
 ```bash
-cd .claude/skills/logo-generator
+cd .agents/skills/logo-generator
 pip install -r requirements.txt   # cairosvg, google-genai, python-dotenv, pillow
 cp .env.example .env              # edit .env and add GEMINI_API_KEY
 ```

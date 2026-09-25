@@ -1,5 +1,5 @@
 ---
-name: refactor
+name: accesslint-refactor
 description: Accessibility refactoring specialist. Automatically fixes accessibility issues across multiple files. Performs complex refactoring like extracting accessible components, restructuring markup, and implementing proper ARIA patterns.
 ---
 
@@ -53,7 +53,7 @@ Always clarify the scope at the beginning of your work and in your summary repor
 - Fix heading hierarchy
 - Add missing roles
 - Fix color contrast violations:
-  - Use the `accesslint:contrast-checker` skill to analyze color pairs and get compliant alternatives
+  - Use the `accesslint-contrast-checker` skill to analyze color pairs and get compliant alternatives
   - Update color values in CSS, styled-components, or theme files based on recommendations
   - Preserve design intent by maintaining hue when possible
 

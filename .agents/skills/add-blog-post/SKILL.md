@@ -1,8 +1,6 @@
 ---
 name: add-blog-post
-description: "Create a new blog post with correct MDX frontmatter and auto-generated data files. Use when writing or adding any blog content. MDX is the source of truth; data files are generated automatically."
-user-invocable: true
-argument-hint: "<post-title>"
+description: "Create or revise an English or Russian blog post: MDX frontmatter, generated data and OG image, sync validation, and the site's writing rules. Use when adding a post, adding a translation, or editing post frontmatter. Not for posts synced from the havamal repo; edit those in havamal."
 ---
 
 # Add Blog Post
@@ -51,7 +49,7 @@ Body text...
 | `updatedAt` | ISO date | No | Add when editing a shipped post. Drives JSON-LD `dateModified` |
 | `summary` | string | Yes | 1-2 sentences, concrete. Also used for RSS description and `og:description` |
 | `tags` | string[] | Yes | Use existing tags when possible |
-| `category` | string | Yes | Must match an existing category |
+| `category` | string | Yes | Reuse an existing category; a new value in an English post creates the category on the next `npm run generate:all` |
 | `featured` | boolean | No | Default false. Only 1-2 posts should be featured |
 | `readingTime` | number | No | Minutes. Generator computes this if omitted |
 
@@ -96,20 +94,9 @@ These surfaces pick up the new post with no manual work, but verify after genera
 - `/og/{lang}-{slug}.png` used as `og:image` and `twitter:image`
 - Self-referential `hreflang` + `x-default` in `<head>`; translated pair is linked when the sibling `{en,ru}/{slug}.mdx` exists
 
-## Existing Categories
+## Categories
 
-Current categories (from `db/seed.sql`):
-- All
-- Architecture
-- DevOps
-- Android
-- iOS
-- Tooling
-
-Add new categories to `db/seed.sql` if needed:
-```sql
-INSERT OR IGNORE INTO categories (name) VALUES ('<NewCategory>');
-```
+Categories are derived from English post frontmatter by `scripts/generate-seed.ts`; `db/seed.sql` is generated, so never edit it. List the current ones with `rg -N '^category:' src/content/blog/en`.
 
 ## Existing Tags
 
@@ -156,7 +143,7 @@ Good: "Our mobile CI was slow and flaky. Here is how we cut build times from 45 
 - [ ] `date` display label is `"Mon YYYY"`
 - [ ] `publishedAt` is ISO `YYYY-MM-DD`
 - [ ] `updatedAt` added (only when revising a shipped post)
-- [ ] Category matches an existing category (or new one added to seed)
+- [ ] Category reuses an existing one unless the post really needs a new category
 - [ ] Tags reuse existing tags where possible
 - [ ] Run `npm run generate:all` to regenerate data files and OG image
 - [ ] Run `npm run validate:blog` (or `npm run validate:all`) to confirm sync

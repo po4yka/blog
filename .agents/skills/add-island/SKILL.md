@@ -1,8 +1,6 @@
 ---
 name: add-island
-description: "Add a new React island component to an Astro page with correct hydration strategy, SSR guards, and motion patterns. Use when creating any new interactive section for the public site. Prevents hydration mismatches and ensures consistent animation integration."
-user-invocable: true
-argument-hint: "<component-name>"
+description: "Add a React island to an Astro page with the right client:* directive, SSR-safe rendering, and the project motion pattern. Use when creating a new interactive component on the public site. Not for admin SPA pages (src/admin/) or static content that needs no JavaScript."
 ---
 
 # Add React Island
@@ -28,8 +26,9 @@ Create the component in `src/components/`:
 
 ```tsx
 import { motion } from "motion/react";
-import { useInView } from "@/components/useInView";
+import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
+import { SectionHeader } from "@/components/SectionHeader";
 
 interface Props {
   delay?: number;
@@ -41,14 +40,7 @@ export function MySection({ delay = 0 }: Props) {
   return (
     <MotionProvider>
       <section ref={ref} className="space-y-6">
-        <motion.h2
-          className="text-lg font-semibold"
-          initial={{ opacity: 0, y: 8 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, delay }}
-        >
-          Section Title
-        </motion.h2>
+        <SectionHeader number="NN" label="LABEL" heading="Section title" meta="…" />
         {/* Content with staggered animations */}
       </section>
     </MotionProvider>
@@ -70,15 +62,13 @@ Add the island to an `.astro` page (e.g., `src/pages/index.astro`):
 ---
 import { MySection } from "@/components/MySection";
 ---
-<div class="section-reveal" data-section-name="my-section" style="transition-delay:0.3s">
+<div data-section-name="my-section">
   <MySection client:visible delay={0.05} />
 </div>
 ```
 
 Integration rules:
-- Wrap in a `div` with `class="section-reveal"` for CSS scroll-reveal animation
-- Add `data-section-name` attribute for identification (used by scroll observer)
-- Set `style="transition-delay:Xs"` -- increment by ~0.05s from the previous section
+- Wrap in a `div` with a `data-section-name` attribute, matching the other sections in `src/pages/index.astro`
 - Pass `delay` prop for internal motion staggering
 - Decorative/non-content sections (terminal blocks, strips) can omit `section-reveal`
 
@@ -124,7 +114,7 @@ const HeavyComponent = lazy(() => import("./HeavyComponent"));
 
 export function Wrapper() {
   return (
-    <Suspense fallback={<div className="h-40" />}>
+    <Suspense fallback={null}>
       <HeavyComponent />
     </Suspense>
   );
@@ -150,8 +140,8 @@ export function Wrapper() {
 ## File Naming
 
 - Page-level interactive sections: `src/components/<Name>.tsx` or `src/components/<Name>Island.tsx`
-- Shared utilities: `src/components/useInView.ts`, `src/components/MotionProvider.tsx`
-- UI primitives: `src/components/ui/` (shadcn/ui components)
+- Shared utilities: `src/hooks/useInView.ts`, `src/components/MotionProvider.tsx`
+- UI primitives: `src/components/ui/` (dialog, sonner, utils)
 
 ## Checklist
 
@@ -159,7 +149,7 @@ export function Wrapper() {
 - [ ] Correct `client:*` directive chosen and applied
 - [ ] `MotionProvider` wrapper for animated content
 - [ ] `useInView` for scroll-triggered reveals
-- [ ] `section-reveal` + `data-section-name` on Astro wrapper
+- [ ] `data-section-name` on the Astro wrapper
 - [ ] No browser API access during initial render (SSR safe)
 - [ ] Props are serializable (primitives only from Astro)
-- [ ] TypeScript compiles: `npx astro check`
+- [ ] `npm run typecheck` passes; the island renders in `npm run build && npm run preview` with no hydration warnings in the console

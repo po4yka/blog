@@ -30,4 +30,7 @@ for skill in "${IMPECCABLE_SKILLS[@]}"; do
 done
 cp -r "$TEMP_DIR/impeccable/.codex/skills/"* "$PROJECT_ROOT/.agents/skills/"
 
+echo "Re-applying skill routing policy..."
+bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
+
 echo "Done. Skills updated on $(date +%Y-%m-%d)."

@@ -1,5 +1,5 @@
 ---
-name: reviewer
+name: accesslint-reviewer
 description: Comprehensive accessibility code reviewer. Performs multi-step audits of components, pages, and features for WCAG compliance. Navigates through related files to understand full context and generates detailed audit reports.
 allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__new_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__evaluate_script, mcp__chrome-devtools__list_pages, mcp__chrome-devtools__select_page, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__list_console_messages
 ---
@@ -41,19 +41,19 @@ Always clarify the scope at the beginning of your audit report.
 
    You have access to specialized skills for different WCAG criteria:
 
-   - **`accesslint:contrast-checker`**: For WCAG 1.4.3 Contrast (Minimum) and 1.4.11 Non-text Contrast
+   - **`accesslint-contrast-checker`**: For WCAG 1.4.3 Contrast (Minimum) and 1.4.11 Non-text Contrast
      - Extracts colors from CSS, styled-components, or inline styles
      - Checks text colors against backgrounds (normal text needs 4.5:1, large text 3:1)
      - Validates UI component boundaries (borders, focus indicators need 3:1)
      - Provides compliant color alternatives when violations are found
      - Remember: Text in buttons/UI components uses text requirements, not UI component thresholds
 
-   - **`accesslint:use-of-color`**: For WCAG 1.4.1 Use of Color (Level A)
+   - **`accesslint-use-of-color`**: For WCAG 1.4.1 Use of Color (Level A)
      - Identifies where color is used as the only means of conveying information
      - Detects links without underlines, form errors shown only by color, etc.
      - Recommends additional visual indicators like text, icons, patterns, or ARIA attributes
 
-   - **`accesslint:link-purpose`**: For WCAG 2.4.4 Link Purpose (In Context) (Level A)
+   - **`accesslint-link-purpose`**: For WCAG 2.4.4 Link Purpose (In Context) (Level A)
      - Identifies generic link text ("click here", "read more", "learn more")
      - Detects ambiguous links (same text, different destinations)
      - Recommends descriptive link text and proper ARIA attributes
@@ -83,9 +83,9 @@ Always clarify the scope at the beginning of your audit report.
 
    d. **Analyze using skills**:
       - Save extracted content to temporary files if needed
-      - Invoke `accesslint:contrast-checker` with color data
-      - Invoke `accesslint:use-of-color` to check for color-only indicators
-      - Invoke `accesslint:link-purpose` to check link text
+      - Invoke `accesslint-contrast-checker` with color data
+      - Invoke `accesslint-use-of-color` to check for color-only indicators
+      - Invoke `accesslint-link-purpose` to check link text
       - Skills work best with actual code/markup, so extract relevant HTML snippets
 
    e. **Check console messages**:
@@ -101,8 +101,8 @@ Always clarify the scope at the beginning of your audit report.
    1. new_page(url: "https://example.com")
    2. take_snapshot() → Get DOM structure and links
    3. evaluate_script() → Extract all colors and styles
-   4. Skill("accesslint:contrast-checker") with extracted color data
-   5. Skill("accesslint:link-purpose") with extracted links
+   4. Skill("accesslint-contrast-checker") with extracted color data
+   5. Skill("accesslint-link-purpose") with extracted links
    6. list_console_messages() → Check for runtime errors
    7. Compile comprehensive audit report
    ```

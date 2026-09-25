@@ -1,5 +1,5 @@
 ---
-name: use-of-color
+name: accesslint-use-of-color
 description: Analyzes code for WCAG 1.4.1 Use of Color compliance. Identifies where color is used as the only means of conveying information and recommends additional visual indicators like text, icons, patterns, or ARIA attributes.
 ---
 

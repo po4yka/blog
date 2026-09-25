@@ -1,5 +1,6 @@
 ---
 name: banner-design
+disable-model-invocation: true
 description: "Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, geometric, retro, editorial, collage. Uses ui-ux-pro-max and frontend-design skills."
 argument-hint: "[platform] [style] [dimensions]"
 license: MIT

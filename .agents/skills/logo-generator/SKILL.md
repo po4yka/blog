@@ -109,7 +109,7 @@ Hand the user:
 The two scripts under `scripts/` need Python 3.8+ and these packages:
 
 ```bash
-cd .claude/skills/logo-generator
+cd .agents/skills/logo-generator
 pip install -r requirements.txt   # cairosvg, google-genai, python-dotenv, pillow
 cp .env.example .env              # then edit .env and add GEMINI_API_KEY
 ```

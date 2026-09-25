@@ -31,8 +31,8 @@ The site should not feel corporate, over-marketed, gimmicky, or visually overdes
 - Keep code and layout clean and easy to extend.
 - Use a small number of reusable components with consistent spacing and behavior.
 - Avoid adding sections just to “fill” the page. Decorative terminal blocks serve as rhythm dividers, not standalone content.
-- **Decorative section budget:** Maximum 6-8 decorative terminal blocks on the homepage. Each must relate to mobile engineering tools. Quality over quantity.
-- Avoid fake product UI, fake metrics presented as real data, fake testimonials, or meaningless visual fillers. (Atmospheric terminal widgets are permitted -- see Anti-AI-slop rules.)
+- **Decorative section budget:** Maximum 6-8 terminal-styled blocks on the homepage. Each must show real data or real tool output (never invented logs, counts, or metrics) and relate to mobile engineering tools. Quality over quantity.
+- Avoid fake product UI, fake metrics presented as real data, fake testimonials, or meaningless visual fillers. Every operator panel must show real data (see `DESIGN.md` section 10).
 - Do not generate generic startup copy or vague marketing language.
 - Prefer fewer, better-designed elements over many average ones.
 - Keep visual noise low.
@@ -60,16 +60,11 @@ The website must **not** look like a generic AI-generated portfolio.
 - no exaggerated visual trends unless they support the concept
 - no generic hacker/Matrix theme -- terminal aesthetic must feel like a real developer's environment
 
-## Atmospheric terminal widgets
+## Operator panels
 
-Decorative system widgets (CPU monitor, network graph, build output, process tables) are permitted when:
+System-style panels (build stats, GitHub activity, latest post, latest release) are permitted only when they render real data from a build-time file or an API. Simulated metrics (CPU monitors, network graphs, invented CI output, hardcoded process tables or git logs) were removed and must not return; `DESIGN.md` section 10 lists them. If an idea has no real data source, leave the slot empty.
 
-- They serve the terminal workstation metaphor and are clearly atmospheric, not presented as real metrics
-- They relate to mobile engineering tools (adb, gradle, xcode, fastlane, git)
-- They remain secondary to actual content (smaller, dimmer, sidebar placement)
-- They do not exceed the decorative section budget (see Layout guidelines)
-
-This is distinct from “fake dashboard visuals” which are dishonest KPI cards or metrics designed to impress. Atmospheric widgets are ambient decoration like wallpaper in a terminal emulator.
+Real-data panels still stay secondary to content (smaller, dimmer, sidebar placement) and count toward the decorative section budget (see Layout guidelines).
 
 ## Always prefer this instead
 
@@ -125,7 +120,7 @@ The visual language combines:
 - numbered section labels (`01 / IDENTITY`, `04 / PROJECTS`) with hairline dividers
 - calm whitespace between operator panels
 - near-zero decorative motion; fade-in on mount and opacity shift on hover only
-- atmospheric system widgets that reinforce the workstation feel
+- real-data operator panels (build, activity, latest post, latest release) that reinforce the workstation feel
 
 The terminal metaphor must stay grounded and credible:
 
@@ -185,7 +180,7 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 
 ## Decorative blocks as layout rhythm
 
-- Decorative terminal blocks (MobileTerminal components) function as section dividers and breathing space between content sections.
+- Terminal-styled blocks (real-data panels such as `RealGitLog`) function as section dividers and breathing space between content sections.
 - Alternate content and decorative sections for rhythm -- never stack two decorative blocks back-to-back.
 - Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable on small screens.
 - Each decorative block should relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint).
@@ -373,9 +368,9 @@ This section should immediately explain who the site belongs to, using the termi
 
 ### Hero structure
 
-1. **Boot block** -- system initialization messages (SDK detection, toolchain status, last login timestamp). Keep to 4-6 lines maximum.
+1. **Identity** -- name, role line, short intro, and CTAs.
 2. **`$ whois` command** -- introduces identity via an InfoTable inside a MacWindow.
-3. **Decorative sidebar** (desktop only) -- atmospheric system widgets (CPU monitor, network graph). Must remain secondary to the identity content.
+3. **Operator panels** -- real-data panels (latest post, build, activity, release). Must remain secondary to the identity content.
 
 ### Must include
 
@@ -390,10 +385,8 @@ This section should immediately explain who the site belongs to, using the termi
 
 - Keep it precise
 - Avoid generic marketing copy
-- Decorative system widgets may appear in hero sidebar on desktop; keep them secondary to identity content
 - Use one strong compositional idea
 - The hero should feel instantly credible
-- Boot block versions should be periodically updated or pulled from config
 
 ## About / Profile
 
@@ -514,18 +507,15 @@ Motion should add:
 - staggered text entrances
 - underline or line-draw hover interactions
 - smooth project hover transitions
-- soft parallax only when restrained (>= 8px range to be perceptible)
 - animated dividers or separators
 - elegant section transitions
-- subtle scroll-linked movement
 - refined blog list hover behavior
 - gentle motion on hero artifact or visual support
 
 ## Terminal-specific motion
 
 - Staggered line reveals for terminal output (0.03-0.05s between lines)
-- Interval-based widget updates: CPU/memory panels update on 3-10s cycles, not every frame
-- Scroll-velocity-linked activity simulation is permitted but should be subtle
+- Live panels refresh on 3-10s intervals at most, never every frame
 - Terminal cursor blink animation for interactive elements
 
 ## Motion rules

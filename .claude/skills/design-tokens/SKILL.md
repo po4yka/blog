@@ -1,5 +1,6 @@
 ---
 name: design-tokens
+disable-model-invocation: true
 description: "Reference documentation for three-layer design token architecture (primitive, semantic, component). Educational context for the token system used in src/styles/theme.css."
 metadata:
   author: claudekit

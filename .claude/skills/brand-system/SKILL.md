@@ -1,5 +1,6 @@
 ---
 name: brand-system
+disable-model-invocation: true
 description: "Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Supplementary tooling for the po4yka.dev brand defined in DESIGN.md and docs/Guidelines.md."
 argument-hint: "[update|review|create] [args]"
 metadata:

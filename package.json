@@ -19,7 +19,7 @@
     "generate:all": "tsx scripts/generate-all-data.ts",
     "scan:complexity": "tsx scripts/scan-complexity.ts",
     "validate:blog": "tsx scripts/validate-blog-sync.ts",
-    "validate:skills": "bash scripts/validate-codex-skills.sh",
+    "validate:skills": "bash scripts/validate-skills.sh",
     "validate:all": "tsx scripts/validate-all-sync.ts",
     "setup:passkey": "tsx scripts/setup-passkey.ts",
     "test:e2e": "playwright test",
@@ -35,7 +35,9 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --no-warn-ignored"
-    ]
+    ],
+    "{.claude,.agents}/skills/**": "bash scripts/validate-skills.sh",
+    "scripts/apply-skill-policy.sh": "bash scripts/validate-skills.sh"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.7",

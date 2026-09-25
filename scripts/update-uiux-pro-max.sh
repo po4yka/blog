@@ -67,6 +67,9 @@ mkdir -p "$CLAUDE_SKILLS_DIR" "$AGENTS_SKILLS_DIR"
 update_targets "$CLAUDE_SKILLS_DIR"
 update_targets "$AGENTS_SKILLS_DIR"
 
+echo "Re-applying skill routing policy..."
+bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
+
 echo ""
 echo "Done. UI/UX Pro Max skills updated on $(date +%Y-%m-%d)."
 echo "Skills: ui-ux-pro-max, brand-system, slides, banner-design, design-tokens (refs)"

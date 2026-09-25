@@ -138,7 +138,7 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - Background: `var(--card)` — no glass, no blur on primary content
 - Border: `1px solid var(--border)`, `border-radius: 2px`
 - Top label row: `.label-meta` on left, mono 11px `--muted-foreground-dim` on right
-- Used for: sidebar widgets, compact system panels (CPU, network, build stats)
+- Used for: sidebar widgets, compact real-data panels (build stats, activity, latest post, latest release)
 
 **BootBlock**
 - Status prefix format: `OK ·` / `INFO ·` / `WARN ·` — no brackets, no color coding
@@ -236,7 +236,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - **Max content width:** `1160px` via `.page-grid`
 - **Grid:** 12-column CSS grid, `gap: 1.5rem`, `padding: 0 clamp(1.25rem, 2vw + 0.5rem, 3rem)`
 - **Base radius:** `2px` — sharp, Swiss-derived; no soft rounded corners on panels
-- **Decorative section budget:** Maximum 6–8 atmospheric blocks on the homepage. Each must relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint). Never stack two without a content section between them.
+- **Decorative section budget:** Maximum 6–8 atmospheric blocks on the homepage, each backed by real data (see section 10). Each must relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint). Never stack two without a content section between them.
 - **Asymmetric over symmetric:** editorial, off-center compositions. Vary section layout while keeping the same design language.
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
@@ -283,7 +283,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use operator panels (`MacWindow` in flat mode, `PanelShell`) as the primary content framing unit
 - Use `SectionHeader` with numbered labels (`01 / IDENTITY`) at the top of every major section
 - Build hierarchy through weight (400→500), opacity layers, and hairline rules — not color
-- Keep terminal output realistic — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
+- Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
 - Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable
 - Use underline-on-hover via `clip-path` animation — not color jumps
 - Respect `prefers-reduced-motion` — all Motion library animations must check it
@@ -337,13 +337,13 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 ### Quick reference for UI generation
 
 ```
-Stack: Astro 6 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
+Stack: Astro 7 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
 Primary font: Geist Sans (all UI + headings, including h2/h3/h4 inside blog prose)
 Mono font: Geist Mono (code, terminal output, label-meta strips)
 Pixel font: Geist Pixel (decorative counters only, ≤6 uses/page)
 Serif font: Piazzolla (blog post body prose only — .prose-blog block text)
 Dark bg: #0b0b0c | Card: #141416 | Emphasis: #ffffff
-Light bg: #f5f3ee | Card: #ffffff  | Emphasis: #000000
+Light bg: #f5f3ee | Card: #fefefc  | Emphasis: #000000
 Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.16) light
 Rule:   rgba(233,232,228,0.14) dark | rgba(16,16,18,0.20) light
 Radius: 2px base | Body: 15–17px Geist Sans | label-meta: 11px Geist Mono caps

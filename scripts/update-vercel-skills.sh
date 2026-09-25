@@ -35,4 +35,7 @@ sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$
 sed -i '' 's/^name: vercel-composition-patterns$/name: composition-patterns/' "$PROJECT_ROOT/.agents/skills/composition-patterns/SKILL.md"
 sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$PROJECT_ROOT/.agents/skills/react-best-practices/SKILL.md"
 
+echo "Re-applying skill routing policy..."
+bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
+
 echo "Done. Vercel skills updated on $(date +%Y-%m-%d)."

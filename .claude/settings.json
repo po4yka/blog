@@ -1,12 +1,15 @@
 {
-  "mcpServers": {
-    "accesslint": {
-      "command": "node",
-      "args": [".claude/accesslint-mcp/dist/index.js"]
-    },
-    "cms": {
-      "command": "node",
-      "args": [".claude/cms-mcp/dist/index.js"]
-    }
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/protect-generated.mjs"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,5 +1,5 @@
 ---
-name: contrast-checker
+name: accesslint-contrast-checker
 description: Color contrast analyzer for WCAG compliance. Use when analyzing color contrast in code files, when user mentions WCAG compliance, color accessibility, contrast ratios, or when discussing colors in UI components. Calculates contrast ratios, identifies violations, and suggests accessible color alternatives that preserve design themes.
 ---
 
@@ -142,7 +142,9 @@ Keep the output concise and terminal-friendly. Use simple markdown formatting (h
 
 ## Using MCP Tools for Analysis
 
-You have access to three MCP tools for contrast analysis:
+These tools come from the accesslint MCP server, which this repository does not currently provide (`.claude/accesslint-mcp/` holds only a dependency manifest). If the tools are not connected, compute ratios directly with the WCAG 2.x relative-luminance formula and check them against the same thresholds.
+
+When connected, the three MCP tools are:
 
 **`analyze_color_pair(foreground, background, contentType, level)`**
 - Analyzes WCAG compliance for a color pair

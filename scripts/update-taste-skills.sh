@@ -1,13 +1,13 @@
 #!/bin/bash
 # Update taste-skill design skills to latest version from GitHub.
-# Installs a curated subset (taste, redesign, output, minimalist) alongside Impeccable skills.
+# Installs a curated subset (taste, redesign, minimalist) alongside Impeccable skills.
 # Usage: bash scripts/update-taste-skills.sh
 set -euo pipefail
 
 REPO="https://github.com/Leonxlnx/taste-skill.git"
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TEMP_DIR="$(mktemp -d)"
-TASTE_SKILLS=(taste-skill redesign-skill output-skill minimalist-skill)
+TASTE_SKILLS=(taste-skill redesign-skill minimalist-skill)
 
 cleanup() { rm -rf "$TEMP_DIR"; }
 trap cleanup EXIT
@@ -32,11 +32,12 @@ done
 echo "Fixing skill name fields..."
 sed -i '' 's/^name: design-taste-frontend$/name: taste-skill/' "$PROJECT_ROOT/.claude/skills/taste-skill/SKILL.md"
 sed -i '' 's/^name: redesign-existing-projects$/name: redesign-skill/' "$PROJECT_ROOT/.claude/skills/redesign-skill/SKILL.md"
-sed -i '' 's/^name: full-output-enforcement$/name: output-skill/' "$PROJECT_ROOT/.claude/skills/output-skill/SKILL.md"
 sed -i '' 's/^name: minimalist-ui$/name: minimalist-skill/' "$PROJECT_ROOT/.claude/skills/minimalist-skill/SKILL.md"
 sed -i '' 's/^name: design-taste-frontend$/name: taste-skill/' "$PROJECT_ROOT/.agents/skills/taste-skill/SKILL.md"
 sed -i '' 's/^name: redesign-existing-projects$/name: redesign-skill/' "$PROJECT_ROOT/.agents/skills/redesign-skill/SKILL.md"
-sed -i '' 's/^name: full-output-enforcement$/name: output-skill/' "$PROJECT_ROOT/.agents/skills/output-skill/SKILL.md"
 sed -i '' 's/^name: minimalist-ui$/name: minimalist-skill/' "$PROJECT_ROOT/.agents/skills/minimalist-skill/SKILL.md"
+
+echo "Re-applying skill routing policy..."
+bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
 
 echo "Done. Taste skills updated on $(date +%Y-%m-%d)."
