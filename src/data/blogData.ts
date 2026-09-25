@@ -266,7 +266,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 4230,
+    wordCount: 4234,
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -303,7 +303,7 @@ Position bias is architectural. The MIT analysis in [arXiv:2502.01951](https://a
 
 Hard-negative documents (the near-miss cases a good retriever is designed to surface) degrade end-to-end accuracy; [arXiv:2401.14887](https://arxiv.org/abs/2401.14887) shows the mirror-image result, that random unrelated documents improve accuracy by up to 35%. The U-curve of answer quality against retrieved chunk count is OP-RAG's core finding ([arXiv:2409.01666](https://arxiv.org/abs/2409.01666)). Fixing one failure mode surfaces the next.
 
-Contextual Retrieval rewrites chunks with surrounding context before embedding: 35% failure reduction for embeddings alone, 49% when paired with BM25, 67% with a reranker on top. GraphRAG prioritises query-focused summarisation at indexing costs high enough that Microsoft itself shipped LazyGraphRAG as a cheaper follow-up, matching quality at roughly 1/700 the per-query cost. Self-RAG and CRAG move retrieval policy into the model itself. None of them change the basic loop: embed, search, read, generate, repeat. Once per question, paying the full cost again.
+Contextual Retrieval rewrites chunks with surrounding context before embedding: 35% failure reduction for embeddings alone, 49% when paired with BM25, 67% with a reranker on top. GraphRAG prioritises query-focused summarisation at indexing costs high enough that Microsoft itself shipped LazyGraphRAG as a cheaper follow-up, with comparable quality on global queries at more than 700 times lower query cost. Self-RAG and CRAG move retrieval policy into the model itself. None of them change the basic loop: embed, search, read, generate, repeat. Once per question, paying the full cost again.
 
 RAG is the correct first answer to "how do I ground an LLM in my data." For a prototype, a proof of concept, a first integration, it works cheaply and buys you the shape of the problem. It breaks once you try to run a product on it. The embed-search-read-generate loop pays the full retrieval cost on every question and caps out where the geometry does, so scaling the loop scales the bill without moving the ceiling.
 
@@ -375,7 +375,7 @@ Zep does the most interesting thing in this group. Its graph layer, Graphiti ([a
 
 ### Graph RAG: Microsoft's line
 
-Graph-RAG starts expensive. Microsoft's GraphRAG ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) extracts an entity graph, runs Leiden clustering, and pre-writes community summaries at every level — indexing cost that becomes prohibitive on anything larger than a single book. Microsoft's own follow-up, LazyGraphRAG (Microsoft Research blog, November 2024), drops the pre-summarisation and matches quality at more than 700 times lower per-query cost. That's Microsoft Research admitting its own indexing pipeline was wasteful. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) arrives nearby: entity-and-relation extraction at ingest, dual-level retrieval, lightweight per-query profile by design.
+Graph-RAG starts expensive. Microsoft's GraphRAG ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) extracts an entity graph, runs Leiden clustering, and pre-writes community summaries at every level, all with LLM calls before the first query arrives. Microsoft's own follow-up, LazyGraphRAG (Microsoft Research blog, November 2024), drops the pre-summarisation: its indexing costs 0.1% of GraphRAG's, and on global queries it matches GraphRAG's answer quality at more than 700 times lower query cost. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) arrives nearby: entity-and-relation extraction at ingest, dual-level retrieval, lightweight per-query profile by design.
 
 ### Concept graphs: HippoRAG
 
@@ -397,7 +397,7 @@ A wiki isn't always the right answer. Four places it loses: three concrete, one 
 
 **Error accumulation.** Ingest feeds back into the wiki. Karpathy is explicit about this: partial-context updates miss dependencies, compression drops nuance you can't recover. The feedback works through the ingest input. A pass reads existing wiki pages alongside the new source, so a slightly wrong summary already in the corpus becomes the authority the next ingest integrates against, and the error is inside the corpus by the time lint runs.
 
-Lint is the prescribed fix. It catches contradictions and orphan pages cheaply. What it can't see is a quietly wrong summary that nothing downstream notices. Two shipped systems have already corrected for this in public. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) explicitly rewrites v1's entity-centric indexing because it lost context during both ingest and inference. LazyGraphRAG is Microsoft Research admitting, in a product blog, that GraphRAG's upfront summarisation was prohibitive and wasted compute on documents the queries never touched.
+Lint is the prescribed fix. It catches contradictions and orphan pages cheaply. What it can't see is a quietly wrong summary that nothing downstream notices. Two shipped systems have already corrected for this in public. HippoRAG 2 ([arXiv:2502.14802](https://arxiv.org/abs/2502.14802)) explicitly rewrites v1's entity-centric indexing because it lost context during both ingest and inference. LazyGraphRAG is Microsoft Research conceding, in a product blog, that GraphRAG's up-front indexing costs "may be prohibitive for some users and use cases".
 
 **Specific wording and multi-author corpora.** Regulated content that relies on specific wording loses when the wiki paraphrases it. Plain vector RAG over the originals preserves the phrase the wiki dropped. Multi-author coordination breaks things differently. Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) layers typed read/write permissions over shared memory to keep per-user views isolated, machinery a single-author wiki doesn't need.
 
@@ -444,7 +444,7 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 311,
+    wordCount: 313,
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -479,7 +479,7 @@ import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-thi
 
 Ошибки складываются. Hard-negative документы (похожие на нужные, но нерелевантные; хороший ретривер как раз их и находит) ухудшают итоговую точность. А случайные несвязанные документы, как показывает [arXiv:2401.14887](https://arxiv.org/abs/2401.14887), её улучшают — максимум на 35%. Починка одной проблемы обычно вскрывает следующую.
 
-Улучшения есть, и все настоящие. Contextual Retrieval переписывает чанки с учётом окружающего контекста перед эмбеддингом: –35% провалов на одних эмбеддингах, –49% с BM25, –67% с реранкером сверху. GraphRAG ставит в приоритет саммари сообществ и платит за это индексацией, достаточно дорогой, что Microsoft сам выпустил LazyGraphRAG как дешёвое продолжение, совпадающее по качеству примерно за 1/700 стоимости запроса. Self-RAG и CRAG переносят политику извлечения внутрь самой модели. Ни одно из этих улучшений не меняет базовый цикл: эмбеддинг, поиск, чтение, генерация. Каждый запрос проходит цикл заново, платя полную цену.
+Улучшения есть, и все настоящие. Contextual Retrieval переписывает чанки с учётом окружающего контекста перед эмбеддингом: –35% провалов на одних эмбеддингах, –49% с BM25, –67% с реранкером сверху. GraphRAG делает упор на саммари сообществ и платит за это индексацией, настолько дорогой, что Microsoft сам выпустил LazyGraphRAG как дешёвое продолжение: на глобальных запросах качество сопоставимое, а запрос обходится более чем в 700 раз дешевле. Self-RAG и CRAG переносят политику извлечения внутрь самой модели. Ни одно из этих улучшений не меняет базовый цикл: эмбеддинг, поиск, чтение, генерация. Каждый запрос проходит цикл заново, платя полную цену.
 
 RAG — правильный первый ответ на вопрос «как прицепить LLM к своим данным». Для прототипа, PoC, первой интеграции он работает, стоит недорого и даёт форму задачи. Ломается, когда на нём пытаются держать продукт. Цикл эмбеддинг-поиск-чтение-генерация платит полную стоимость извлечения на каждый вопрос и упирается в тот же потолок, где упирается геометрия; масштабирование цикла масштабирует счёт, а не потолок.
 
@@ -547,7 +547,7 @@ Zep делает самое интересное в этой группе. Ег�
 
 ### Граф-RAG: линия Microsoft
 
-Граф-RAG-системы стартуют дорого. GraphRAG от Microsoft ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) извлекает граф сущностей, запускает Leiden-кластеризацию и заранее пишет саммари сообществ на каждом уровне — стоимость индексации становится запретительной на чём-то большем одной книги. Собственный follow-up Microsoft, LazyGraphRAG (блог Microsoft Research, ноябрь 2024), выкидывает предварительную суммаризацию и даёт то же качество более чем в 700 раз дешевле на запрос. Это Microsoft Research признаёт, что их собственный индексационный пайплайн был расточительным. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) рядом: извлечение сущностей и отношений на ингесте, двухуровневый поиск, небольшой расход на один запрос по дизайну.
+Граф-RAG-системы стартуют дорого. GraphRAG от Microsoft ([arXiv:2404.16130](https://arxiv.org/abs/2404.16130)) извлекает граф сущностей, запускает Leiden-кластеризацию и заранее пишет саммари сообществ на каждом уровне, причём всё это вызовами LLM ещё до первого запроса. Собственное продолжение Microsoft, LazyGraphRAG (блог Microsoft Research, ноябрь 2024), выкидывает предварительную суммаризацию: индексация обходится в 0,1% стоимости GraphRAG, а на глобальных запросах качество ответов сопоставимое при стоимости запроса более чем в 700 раз ниже. LightRAG ([arXiv:2410.05779](https://arxiv.org/abs/2410.05779)) рядом: извлечение сущностей и отношений на ингесте, двухуровневый поиск, небольшой расход на один запрос по замыслу.
 
 ### Концептные графы: HippoRAG
 
@@ -567,7 +567,7 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) — самый �
 
 **Масштаб.** По моему опыту, ниже примерно 50 000 токенов (граница мягкая и зависит от того, чьё окно контекста оплачиваешь) корпус целиком помещается в контекстное окно, и вики проигрывает полному контексту. Запускать компрессию раньше — значит платить за то, что модель и так может обработать целиком. Верхняя граница тоже описана в гисте: Karpathy оценивает рабочий диапазон в сотни источников и несколько сотен страниц, выше чего плоский markdown-индекс перестаёт работать как каталог и паттерну приходится отращивать иерархию или эмбеддинг-слой.
 
-**Накопление ошибок.** Karpathy называет этот режим в оригинальном гисте: ингест возвращает результаты обратно в вики, обновления на частичном контексте упускают зависимости, а компрессия теряет нюансы, и восстановить их нельзя. Петля замыкается через вход ингеста. Проход читает существующие страницы вики вместе с новым источником, поэтому слегка ошибочный саммари, уже попавший в корпус, становится авторитетом для следующего ингеста, и ошибка оказывается внутри корпуса к моменту, когда линт добирается до неё. Самое неприятное: такая ошибка выглядит как нормальный текст. Линт тут штатное лекарство. Он ловит противоречия и сирот-страницы дёшево, но тихо ошибочный саммари ему не виден, если ничто ниже по потоку не замечает расхождения. Это уже ломалось публично. HippoRAG переписал свою индексацию во второй версии, потому что первая теряла контекст и при ингесте, и при инференсе. LazyGraphRAG — признание, что предварительная суммаризация GraphRAG тратила вычисления на документы, до которых запросы так и не добрались.
+**Накопление ошибок.** Karpathy называет этот режим в оригинальном гисте: ингест возвращает результаты обратно в вики, обновления на частичном контексте упускают зависимости, а компрессия теряет нюансы, и восстановить их нельзя. Петля замыкается через вход ингеста. Проход читает существующие страницы вики вместе с новым источником, поэтому слегка ошибочный саммари, уже попавший в корпус, становится авторитетом для следующего ингеста, и ошибка оказывается внутри корпуса к моменту, когда линт добирается до неё. Самое неприятное: такая ошибка выглядит как нормальный текст. Линт тут штатное лекарство. Он ловит противоречия и сирот-страницы дёшево, но тихо ошибочный саммари ему не виден, если ничто ниже по потоку не замечает расхождения. Это уже ломалось публично. HippoRAG переписал свою индексацию во второй версии, потому что первая теряла контекст и при ингесте, и при инференсе. LazyGraphRAG — признание Microsoft Research в продуктовом блоге, что расходы GraphRAG на предварительную индексацию «для некоторых пользователей и сценариев могут оказаться непомерными».
 
 **Точные формулировки и несколько авторов.** Регулируемый контент, завязанный на конкретные формулировки, проигрывает, когда вики их перефразирует, — а обычный векторный RAG по оригиналам сохраняет ту фразу, которую вики потеряла. Многоавторская координация давит с другой стороны: Collaborative Memory ([arXiv:2505.18279](https://arxiv.org/abs/2505.18279)) накручивает над общей памятью типизированные read/write-разрешения, чтобы у каждого пользователя был свой срез — механика, без которой одноавторская вики спокойно обходится.
 
