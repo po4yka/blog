@@ -82,9 +82,10 @@
     "body-parser@^1.0.0": "1.20.6",
     "brace-expansion@^5.0.0": "5.0.9",
     "chrome-launcher": "1.2.1",
-    "fast-uri": "3.1.5",
+    "lighthouse": "13.5.0",
+    "fast-uri": "3.1.6",
     "ip-address": "10.3.1",
-    "js-yaml@^3.0.0": "3.15.1",
+    "js-yaml@^3.0.0": "3.15.2",
     "js-yaml@^4.0.0": "4.3.2",
     "nanoid": "3.3.18"
   },
