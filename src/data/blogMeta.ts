@@ -13,7 +13,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Jun 2026",
     isoDate: "2026-06-01",
     isoDateModified: "2026-06-01",
-    wordCount: 2706,
+    wordCount: 2696,
     summary:
       "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
     tags: ["DPI", "Network Diagnostics", "Rust", "Android"],
