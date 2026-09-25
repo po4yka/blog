@@ -266,7 +266,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 4350,
+    wordCount: 4230,
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -279,13 +279,11 @@ import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-thi
 
 You can feel the ceiling before you can measure it. At a few hundred thousand documents, a well-tuned vector index starts returning near-misses on queries it answered perfectly at a few thousand. You add a reranker and the top-1 moves back. You add hybrid search and the long tail gets better. Then you keep growing and the failures come back. Same kind, just harder to reproduce. Most teams read this as tuning work. Weller et al. (ICLR 2026) offer a different explanation: a single-vector retriever has a representational ceiling, and past it no amount of downstream cleverness compensates.
 
-My own stack hit that ceiling before I could read the explanation for it, and the wiki that replaced it started as a reaction rather than a plan.
+My own stack hit that ceiling before I could read the explanation for it, and the wiki that replaced it started as a reaction, without a plan.
 
-Part 1 walks the places plain RAG breaks, with citations. Part 2 is the architectural alternative — Karpathy's LLM Wiki — and why it reframes the pipeline around compilation rather than retrieval. Part 3 is other systems doing the same move in different shapes (memory agents, graph RAG, HippoRAG). Part 4 is where the wiki is the wrong answer. Part 5 is what breaks first when you actually build one, from shipping a vault for an AI infrastructure team.
+The paper ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038)) states the ceiling as an inequality. For a corpus of $n$ documents with top-$k$ queries and score margin $\\gamma$, the embedding dimension $d$ must satisfy $d \\geq \\frac{\\log \\binom{n}{k}}{\\log(1 + 1/\\gamma)}$. Below that bound, some top-$k$ combinations are representationally unreachable in the vector space. The bound works in one direction only: if the embedding dimension sits below the threshold for a given corpus size, no reranker, hybrid search, or prompt engineering recovers the missing combinations. The geometry is already wrong.
 
-Weller et al. ([arXiv:2508.21038](https://arxiv.org/abs/2508.21038), ICLR 2026) state the ceiling as an inequality. For a corpus of $n$ documents with top-$k$ queries and score margin $\\gamma$, the embedding dimension $d$ must satisfy $d \\geq \\frac{\\log \\binom{n}{k}}{\\log(1 + 1/\\gamma)}$. Below that bound, some top-$k$ combinations are representationally unreachable in the vector space. The bound works in one direction only: if the embedding dimension sits below the threshold for a given corpus size, no reranker, hybrid search, or prompt engineering recovers the missing combinations. The geometry is already wrong.
-
-The failures that follow cluster into three layers. Geometry (the ceiling above) is structural: no tuning moves it. Chunking and context utilisation are budget problems: careful preprocessing helps, but the budgets themselves are shrinking. Attention and hard negatives are generator failures: better prompts help, until the prompts stop mattering. Geometry can't be tuned away. The other two layers respond to engineering effort.
+The failures that follow cluster into three layers. Geometry (the ceiling above) is structural: no tuning moves it. Chunking and context utilisation are budget problems: careful preprocessing helps, but the budgets themselves are shrinking. Attention and hard negatives are generator failures: better prompts help, until the prompts stop mattering.
 
 <BlogFigure
   variants={figures["01-rag-failure-layers"].en}
@@ -311,7 +309,7 @@ RAG is the correct first answer to "how do I ground an LLM in my data." For a pr
 
 Two branches. One keeps optimising the query-time loop: better rerankers, late interaction, hybrid search, learned retrieval policies. Most public work is there. The other compiles the corpus once into something the model can read directly. Pay the work upfront, when the source comes in.
 
-All of these failures share one assumption: the corpus stays raw, and the model re-derives its understanding of it on every query. The alternative is to compile the corpus once, into an artefact the model can read directly, and pay the cost at ingest instead of at query time. Karpathy posted a gist in April 2026 calling this second branch an **LLM Wiki**. What follows is what that means architecturally, and three very different systems that have already shipped it.
+All of these failures share one assumption: the corpus stays raw, and the model re-derives its understanding of it on every query. Karpathy posted a gist in April 2026 calling this second branch an **LLM Wiki**.
 
 ## 2. The wiki reframes the loop
 
@@ -421,7 +419,7 @@ The first schema linter I wrote was too trusting with prose. It scanned every to
 
 Single-agent assumptions break early. An agent rulebook that grew up against one platform's permission model, tool surface, and skill invocation style won't port when a second agent arrives. Shimming one agent's interface onto the other's rulebook papers over a structural change that has already happened. The shape that survives is two peer rulebooks and a hook that refuses commits when the mirrors drift. Every skill gets written against both rulebooks in the same edit. Cost per skill is higher. The payoff: either agent can pick up the vault cold. That matters more than expected once the work has to outlast a particular CLI's session.
 
-During the hardening phase, metadata iterates faster than content. The rule files, the schema documents, the audit log: those are the most-edited artefacts. At first this looks like a smell. Governance churning more than the corpus it governs is counter-intuitive. Then it stops looking like a smell. Content accumulates quietly. The rules around content evolve fast, because real requirements surface only once real content exists. The day the metadata files stop churning is the day the vault either hardened or died.
+During the hardening phase, metadata iterates faster than content. The rule files, the schema documents, the audit log: those are the most-edited artefacts. At first this looks like a smell. Governance churning more than the corpus it governs is counter-intuitive. Then it stops looking like a smell. Content accumulates quietly. The rules around content evolve fast, because real requirements surface only once real content exists. Metadata churn therefore tracks the vault's state: while the rules keep changing, the vault is still being fitted to real content, and when they stop, it has either stabilised or fallen out of use.
 
 The uncomfortable part of this approach is that it sounds like overhead. The maintenance cost is paid upfront in templates, schema, hook chains, and the shape of the append-only log, and the per-commit cost afterwards is close to zero. A long meeting becomes a dozen pre-linked decision pages in the time it takes to run the ingest pass, because the graph walkers and the schema do the work the author would otherwise do by hand. Not every edit, though. Irreversible ones still require a timestamped log entry that names me. The \`decided_by\` field in a decision's frontmatter is always a human name; the agents never fill it. Contested claims stay in place with counter-evidence added below them, never silently overwritten.
 
@@ -446,7 +444,7 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 326,
+    wordCount: 311,
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -457,15 +455,13 @@ import { figures } from "../../../assets/blog/rag-breaks-earlier-than-people-thi
 
 ## 1. RAG ломается раньше, чем кажется
 
-Потолок начинаешь чувствовать раньше, чем его получается измерить. На нескольких сотнях тысяч документов хорошо настроенный векторный индекс начинает промахиваться на запросах, на которые отлично отвечал при нескольких тысячах. Добавляешь реранкер — top-1 возвращается. Добавляешь гибридный поиск — длинный хвост выравнивается. Растёшь дальше — и отказы возвращаются, те же по сути, только воспроизвести их сложнее. Большинство команд читает это как задачу тюнинга. Weller и соавторы (ICLR 2026) объясняют иначе: у одновекторного ретривера есть репрезентативный потолок, и выше него никакие ухищрения в конце пайплайна уже не помогают.
+Потолок начинаешь чувствовать раньше, чем его получается измерить. На нескольких сотнях тысяч документов хорошо настроенный векторный индекс начинает промахиваться на запросах, на которые отлично отвечал при нескольких тысячах. Добавляешь реранкер — top-1 возвращается. Добавляешь гибридный поиск — длинный хвост выравнивается. Растёшь дальше — и отказы возвращаются, те же по сути, только воспроизвести их сложнее. Большинство команд считает это задачей тюнинга. Weller и соавторы (ICLR 2026) объясняют иначе: у одновекторного ретривера есть потолок выразимости, и выше него никакие ухищрения в конце пайплайна уже не помогают.
 
-Мой собственный стек упёрся в этот потолок раньше, чем я прочитал его объяснение, и вики, которая его заменила, выросла из реакции, а не из плана.
+Мой собственный стек упёрся в этот потолок раньше, чем я узнал, чем он объясняется, и вики, которая заменила этот стек, появилась как реакция, без плана.
 
-Часть 1 проходит по местам, где плоский RAG ломается, со ссылками на исследования. Часть 2 — архитектурная альтернатива, LLM Wiki Karpathy, и почему она переформулирует пайплайн как компиляцию, а не как поиск. Часть 3 — другие системы, делающие тот же манёвр в разных формах: системы агентной памяти, граф-RAG, HippoRAG. Часть 4 — где вики оказывается неправильным ответом. Часть 5 — что ломается первым, когда её действительно строишь, из опыта сборки хранилища для команды AI-инфраструктуры.
+В статье Weller и соавторов потолок записан как неравенство. Для корпуса из $n$ документов, top-$k$ запросов и зазора оценок $\\gamma$ размерность эмбеддинга $d$ должна удовлетворять условию $d \\geq \\frac{\\log \\binom{n}{k}}{\\log(1 + 1/\\gamma)}$. Ниже этой границы часть top-$k$ комбинаций просто нельзя представить в векторном пространстве. Граница работает в одну сторону: если размерность эмбеддинга ниже порога для этого размера корпуса, ни реранкер, ни гибридный поиск, ни промпт-инжиниринг не вытащат пропущенные комбинации. Геометрия уже неправильная.
 
-Weller и соавторы (ICLR 2026) записывают потолок как неравенство. Для корпуса из $n$ документов, top-$k$ запросов и зазора score $\\gamma$ размерность эмбеддинга $d$ должна удовлетворять условию $d \\geq \\frac{\\log \\binom{n}{k}}{\\log(1 + 1/\\gamma)}$. Ниже этой границы часть top-$k$ комбинаций просто нельзя представить в векторном пространстве. Граница работает в одну сторону: если размерность эмбеддинга ниже порога для этого размера корпуса, ни реранкер, ни гибридный поиск, ни промпт-инжиниринг не вытащат пропущенные комбинации. Геометрия уже неправильная.
-
-Дальнейшие режимы сбоя ложатся в три слоя. Геометрия (потолок выше): структура, её тюнингом не сдвинуть. Чанкинг и утилизация контекста: вопрос бюджета — аккуратная предобработка лечит, но сами бюджеты усыхают. Внимание и hard-negatives: провалы на стороне генератора, лучшими промптами лечатся, пока промпты вообще работают. Геометрию тюнингом не сдвинуть. Остальные два слоя поддаются инженерной работе.
+Дальнейшие режимы сбоя ложатся в три слоя. Геометрия (описанный выше потолок): структура, её тюнингом не сдвинуть. Чанкинг и утилизация контекста: вопрос бюджета — аккуратная предобработка лечит, но сами бюджеты усыхают. Внимание и hard-negatives: провалы на стороне генератора, лучшими промптами лечатся, пока промпты вообще работают.
 
 <BlogFigure
   variants={figures["01-rag-failure-layers"].ru}
@@ -489,7 +485,7 @@ RAG — правильный первый ответ на вопрос «как 
 
 Отсюда две ветки. Одна продолжает улучшать цикл в момент запроса: реранкеры, late interaction (ColBERT и наследники), гибридный поиск, обучаемые политики извлечения. Ветка продуктивна, и публичной работы там больше. Другая ветка устроена иначе. Вместо того чтобы платить за извлечение, чанкинг и внимание на каждом вопросе, корпус один раз компилируется во что-то, чем модель может пользоваться сразу. Вся работа делается заранее, в момент поступления источника.
 
-Все эти режимы стоят на одном допущении: корпус остаётся сырым, и модель каждый раз заново выводит, что с ним делать. Альтернатива — скомпилировать корпус один раз в артефакт, который модель читает напрямую, и заплатить за работу при загрузке, а не при каждом запросе. Karpathy в апреле 2026 года опубликовал гист, где назвал эту вторую ветку **LLM Wiki**. Дальше — что это значит архитектурно и три очень разные системы, которые уже её отгрузили.
+Все эти режимы стоят на одном допущении: корпус остаётся сырым, и модель каждый раз заново выводит, что с ним делать. Karpathy в апреле 2026 года опубликовал гист, где назвал эту вторую ветку **LLM Wiki**.
 
 ## 2. Вики переносит работу на другой конец цикла
 
@@ -593,7 +589,7 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) — самый �
 
 Допущения под одного агента ломаются рано. Свод правил, выросший на модели прав, наборе инструментов и стиле вызова навыков одной платформы, не переносится, когда появляется второй агент. Натягивание интерфейса одного на свод правил другого маскирует структурные изменения, которые уже произошли. Выжившая форма: два равноправных свода правил и хук, отклоняющий коммиты при расхождении зеркал. Каждый навык пишется под оба свода в одной правке. Цена на навык выше. Зато любой из агентов может подхватить хранилище с нуля и работать с ним, и это оказывается важнее, чем ожидалось, когда работа должна пережить конкретную CLI-сессию.
 
-На этапе закалки хранилища метаданные итерируются быстрее контента. Файлы правил, документы схемы, лог аудита: это самые редактируемые артефакты, а отдельные страницы решений нет. Поначалу это выглядит как антипаттерн — управление, меняющееся быстрее управляемого корпуса, противоречит интуиции, — а потом перестаёт. Контент накапливается тихо. Правила вокруг контента эволюционируют быстро, потому что реальные требования проявляются только тогда, когда реальный контент уже есть. Когда метаданные перестают меняться, хранилище либо закалилось, либо умерло.
+На этапе закалки хранилища метаданные итерируются быстрее контента. Файлы правил, документы схемы, лог аудита: это самые редактируемые артефакты, а отдельные страницы решений нет. Поначалу это выглядит как антипаттерн — управление, меняющееся быстрее управляемого корпуса, противоречит интуиции, — а потом перестаёт. Контент накапливается тихо. Правила вокруг контента эволюционируют быстро, потому что реальные требования проявляются только тогда, когда реальный контент уже есть. Поэтому по частоте правок метаданных видно состояние хранилища: пока правила меняются, его ещё подгоняют под реальный контент, а когда перестают меняться, оно либо устоялось, либо заброшено.
 
 Хорошего способа определить, становится ли вики лучше, у меня нет. Скорость добавления легко измерить, но она говорит не о том, о чём хотелось бы. Публичные бенчмарки задают другой вопрос: LongMemEval ([arXiv:2410.10813](https://arxiv.org/abs/2410.10813)) покрывает пять способностей памяти на длинных чатах, LOCOMO ([arXiv:2402.17753](https://arxiv.org/abs/2402.17753)) тестирует multi-session-память в диалогах, DMR из MemGPT ([arXiv:2310.08560](https://arxiv.org/abs/2310.08560)) оценивает multi-session-recall. Ни один не спрашивает того, что меня интересует — возвращает ли один и тот же запрос через полгода на том же эволюционирующем корпусе согласованный ответ — и статья Zep по DMR ([arXiv:2501.13956](https://arxiv.org/abs/2501.13956)) признаёт, что вопросы там достаточно неоднозначны, чтобы высокий счёт отражал навыки инференса LLM, а не точность памяти.
 
