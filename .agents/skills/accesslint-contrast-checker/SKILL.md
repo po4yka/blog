@@ -142,7 +142,7 @@ Keep the output concise and terminal-friendly. Use simple markdown formatting (h
 
 ## Using MCP Tools for Analysis
 
-These tools come from the accesslint MCP server, which this repository does not currently provide (`.claude/accesslint-mcp/` holds only a dependency manifest). If the tools are not connected, compute ratios directly with the WCAG 2.x relative-luminance formula and check them against the same thresholds.
+These tools come from the accesslint MCP server ([accesslint/mcp-server](https://github.com/accesslint/mcp-server)), which this repository does not install. If the tools are not connected, compute ratios directly with the WCAG 2.x relative-luminance formula and check them against the same thresholds.
 
 When connected, the three MCP tools are:
 

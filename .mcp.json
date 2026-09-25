@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cms": {
+      "command": "node",
+      "args": [".claude/cms-mcp/dist/index.js"]
+    }
+  }
+}
