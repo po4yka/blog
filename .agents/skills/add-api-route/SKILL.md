@@ -1,6 +1,6 @@
 ---
 name: add-api-route
-description: "Create a server endpoint under src/pages/api/ using the withAdmin() wrapper (capability scoping, Zod validation) or a public handler. Use when adding or changing a single API route. For a full CRUD entity with admin UI, use add-admin-entity instead."
+description: "Create or change one endpoint under src/pages/api/: withAdmin() with a capability and Zod schema, or a public handler. Full CRUD entities use add-admin-entity."
 ---
 
 # Add API Route

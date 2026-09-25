@@ -1,6 +1,6 @@
 ---
 name: add-admin-entity
-description: "Scaffold a new admin-managed D1 entity end to end (schema, type, defineCollection() definition, withAdmin routes, query hooks, admin page). Use when adding a new data type to the admin panel, such as talks or certifications. Not for one-off endpoints (use add-api-route) or public-site content (use add-blog-post)."
+description: "Scaffold an admin-managed D1 entity end to end: schema, migration, defineCollection() definition, withAdmin routes, query hooks, admin page. Use for a new admin data type; single endpoints use add-api-route."
 ---
 
 # Add Admin Entity

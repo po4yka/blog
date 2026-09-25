@@ -1,6 +1,6 @@
 ---
 name: uiux-context
-description: "How to use the ui-ux-pro-max search engine and the brand-system, slides, banner-design, and design-tokens skills in this repo: required CLI flags and what their output may not override. Use together with any of those skills."
+description: "Project overrides for ui-ux-pro-max, brand-system, slides, banner-design, and design-tokens: required search flags and what their output may not override. Load with any of them."
 ---
 
 # UI/UX Pro Max in this repo

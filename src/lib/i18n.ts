@@ -191,7 +191,7 @@ const en = {
   "shortcuts.pressToClose": "Press ? to close",
 
   // footer
-  "footer.shellHelp": "interactive shell -- try: help, ls posts/, cat ratatoskr, open blog, neofetch",
+  "footer.shellHelp": "interactive shell — try: help, ls posts/, cat ratatoskr, open blog, neofetch",
   "footer.terminalInputLabel": "Terminal command input",
   "footer.copyright": "Nikita Pochaev",
 
@@ -393,7 +393,7 @@ const ru: TranslationKeys = {
   "shortcuts.pressToClose": "\u041d\u0430\u0436\u043c\u0438\u0442\u0435 ? \u0447\u0442\u043e\u0431\u044b \u0437\u0430\u043a\u0440\u044b\u0442\u044c",
 
   // footer
-  "footer.shellHelp": "\u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0439 \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b -- \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435: help, ls posts/, cat ratatoskr, open blog, neofetch",
+  "footer.shellHelp": "\u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0439 \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b — \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435: help, ls posts/, cat ratatoskr, open blog, neofetch",
   "footer.terminalInputLabel": "\u041f\u043e\u043b\u0435 \u0432\u0432\u043e\u0434\u0430 \u043a\u043e\u043c\u0430\u043d\u0434\u044b \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b\u0430",
   "footer.copyright": "\u041d\u0438\u043a\u0438\u0442\u0430 \u041f\u043e\u0447\u0430\u0435\u0432",
 

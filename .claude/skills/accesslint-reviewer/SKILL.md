@@ -1,6 +1,6 @@
 ---
 name: accesslint-reviewer
-description: Comprehensive accessibility code reviewer. Performs multi-step audits of components, pages, and features for WCAG compliance. Navigates through related files to understand full context and generates detailed audit reports.
+description: "Audit components or pages for WCAG 2.1 compliance across related files and write a findings report. Use for an accessibility review; for fixing, use accesslint-refactor."
 allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__new_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__evaluate_script, mcp__chrome-devtools__list_pages, mcp__chrome-devtools__select_page, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__list_console_messages
 ---
 

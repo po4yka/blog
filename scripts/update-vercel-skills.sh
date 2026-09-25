@@ -30,10 +30,10 @@ done
 
 # Fix upstream name: field mismatches (align with directory names)
 echo "Fixing skill name fields..."
-sed -i '' 's/^name: vercel-composition-patterns$/name: composition-patterns/' "$PROJECT_ROOT/.claude/skills/composition-patterns/SKILL.md"
-sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$PROJECT_ROOT/.claude/skills/react-best-practices/SKILL.md"
-sed -i '' 's/^name: vercel-composition-patterns$/name: composition-patterns/' "$PROJECT_ROOT/.agents/skills/composition-patterns/SKILL.md"
-sed -i '' 's/^name: vercel-react-best-practices$/name: react-best-practices/' "$PROJECT_ROOT/.agents/skills/react-best-practices/SKILL.md"
+perl -pi -e 's/^name: vercel-composition-patterns(\r?\n)/name: composition-patterns$1/' "$PROJECT_ROOT/.claude/skills/composition-patterns/SKILL.md"
+perl -pi -e 's/^name: vercel-react-best-practices(\r?\n)/name: react-best-practices$1/' "$PROJECT_ROOT/.claude/skills/react-best-practices/SKILL.md"
+perl -pi -e 's/^name: vercel-composition-patterns(\r?\n)/name: composition-patterns$1/' "$PROJECT_ROOT/.agents/skills/composition-patterns/SKILL.md"
+perl -pi -e 's/^name: vercel-react-best-practices(\r?\n)/name: react-best-practices$1/' "$PROJECT_ROOT/.agents/skills/react-best-practices/SKILL.md"
 
 echo "Re-applying skill routing policy..."
 bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"

@@ -1,6 +1,6 @@
 ---
 name: accesslint-contrast-checker
-description: Color contrast analyzer for WCAG compliance. Use when analyzing color contrast in code files, when user mentions WCAG compliance, color accessibility, contrast ratios, or when discussing colors in UI components. Calculates contrast ratios, identifies violations, and suggests accessible color alternatives that preserve design themes.
+description: "Check WCAG contrast ratios of text and UI colors in code and suggest compliant alternatives that keep the design. Use when reviewing colors, tokens, or themes for contrast failures."
 allowed-tools: Read, Glob, Grep, WebFetch
 ---
 
