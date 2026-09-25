@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
@@ -59,6 +60,10 @@ export default defineConfig({
     service: { entrypoint: "astro/assets/services/sharp" },
   },
   markdown: {
+    processor: unified({
+      remarkPlugins: [remarkGfm, remarkMath],
+      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
+    }),
     // Monochrome syntax highlighting: two greyscale themes emitted as CSS
     // variables (defaultColor: false), so no inline colour or background is
     // written on <pre> and the --code-bg / --foreground tokens stay
@@ -68,15 +73,10 @@ export default defineConfig({
       themes: { light: monoLight, dark: monoDark },
       defaultColor: false,
     },
-    remarkPlugins: [remarkGfm, remarkMath],
-    rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
   },
   integrations: [
     react(),
-    mdx({
-      remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
-    }),
+    mdx(),
     sitemap({
       filter: (page) => !page.includes("/admin/"),
       serialize(item) {
