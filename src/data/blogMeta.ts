@@ -41,7 +41,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 4234,
+    wordCount: 4335,
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -55,7 +55,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 313,
+    wordCount: 314,
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
