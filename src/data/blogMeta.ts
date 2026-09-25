@@ -15,7 +15,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     isoDateModified: "2026-06-01",
     wordCount: 2706,
     summary:
-      "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict -- then a fix, only if one exists.",
+      "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
     tags: ["DPI", "Network Diagnostics", "Rust", "Android"],
     category: "Networking",
     featured: false,
@@ -41,9 +41,9 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 4281,
+    wordCount: 4319,
     summary:
-      "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query -- here is what breaks when you build one.",
+      "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
     category: "Architecture",
     featured: true,
@@ -55,9 +55,9 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 382,
+    wordCount: 406,
     summary:
-      "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос -- вот что ломается, когда её строишь.",
+      "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
     category: "Architecture",
     featured: true,
