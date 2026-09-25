@@ -13,7 +13,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: process.env.CI ? "npm run preview" : "npm run build && npm run preview",
+    command: process.env.CI
+      ? "npm run preview -- --ignore-lock"
+      : "npm run build && npm run preview -- --ignore-lock",
     url: "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
