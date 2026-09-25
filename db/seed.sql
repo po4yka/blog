@@ -594,7 +594,7 @@ INSERT INTO projects (id, name, description, platforms, tags, links, featured, s
  '["Android"]', '["Kotlin","C++","NDK","CMake","Firebase Crashlytics"]',
  '[]', 0, 5),
 ('blog', 'po4yka.dev',
- 'Personal portfolio and technical blog. Astro 6 + React 19 islands, Cloudflare Workers + D1, WebAuthn admin panel.',
+ 'Personal portfolio and technical blog. Astro 7 + React 19 islands, Cloudflare Workers + D1, WebAuthn admin panel.',
  '["Web"]', '["Astro","React","TypeScript","Cloudflare Workers","D1","WebAuthn"]',
  '[{"type":"GitHub","href":"https://github.com/po4yka/blog"}]', 0, 6),
 ('ripdpi', 'RIPDPI',
