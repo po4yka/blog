@@ -1,6 +1,6 @@
 ---
 name: add-data-panel
-description: "Add a homepage operator panel (PanelShell in src/components/Decorations/) backed by a real data source: build-time data files or a /api/* fetch. Use when adding or reworking a hero or sidebar panel. Not for fabricated terminal or CLI output, which the design system forbids."
+description: "Add a homepage PanelShell panel in src/components/Decorations/ backed by real data (build-time files or an /api/* fetch). Never for fabricated terminal output."
 ---
 
 # Add Data Panel

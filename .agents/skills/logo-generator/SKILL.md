@@ -1,6 +1,6 @@
 ---
 name: logo-generator
-description: "Generate SVG logos and (optionally) Gemini-rendered showcase presentations, constrained to this project's Swiss + operator-console design language. Use when creating a logo or mark for a project, app, or brand in this repo; generating concept variants; exporting SVG/PNG assets; or rendering showcase images against neutral backgrounds. Enforces no chromatic accent, no gradients, no glow or phosphor effects, Geist typography, 2px radii, hairline rules. Showcase phase uses Gemini 3.1 Flash Image Preview (Nano Banana) via GEMINI_API_KEY — skip phase 4 if unset."
+description: "Generate SVG logo concepts for a project, app, or brand in this repo in the Swiss operator-console style (no chromatic accent, gradients, or glow; Geist type), export SVG/PNG, and optionally render showcase images with Gemini (needs GEMINI_API_KEY)."
 license: MIT. Adapted from op7418/logo-generator-skill. See README.md for deviations.
 metadata:
   author: po4yka.dev

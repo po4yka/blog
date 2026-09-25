@@ -1,6 +1,6 @@
 ---
 name: add-island
-description: "Add a React island to an Astro page with the right client:* directive, SSR-safe rendering, and the project motion pattern. Use when creating a new interactive component on the public site. Not for admin SPA pages (src/admin/) or static content that needs no JavaScript."
+description: "Add a React island to an Astro page: client:* directive, SSR-safe first render, project motion pattern. Not for admin SPA pages or static content."
 ---
 
 # Add React Island

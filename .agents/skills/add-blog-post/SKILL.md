@@ -1,6 +1,6 @@
 ---
 name: add-blog-post
-description: "Create or revise an English or Russian blog post: MDX frontmatter, generated data and OG image, sync validation, and the site's writing rules. Use when adding a post, adding a translation, or editing post frontmatter. Not for posts synced from the havamal repo; edit those in havamal."
+description: "Create or revise an EN/RU blog post: MDX frontmatter, generated data and OG image, sync validation, writing rules. Not for posts synced from havamal; edit those there."
 ---
 
 # Add Blog Post

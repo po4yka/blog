@@ -30,12 +30,12 @@ done
 
 # Fix upstream name: field mismatches (align with directory names)
 echo "Fixing skill name fields..."
-sed -i '' 's/^name: design-taste-frontend$/name: taste-skill/' "$PROJECT_ROOT/.claude/skills/taste-skill/SKILL.md"
-sed -i '' 's/^name: redesign-existing-projects$/name: redesign-skill/' "$PROJECT_ROOT/.claude/skills/redesign-skill/SKILL.md"
-sed -i '' 's/^name: minimalist-ui$/name: minimalist-skill/' "$PROJECT_ROOT/.claude/skills/minimalist-skill/SKILL.md"
-sed -i '' 's/^name: design-taste-frontend$/name: taste-skill/' "$PROJECT_ROOT/.agents/skills/taste-skill/SKILL.md"
-sed -i '' 's/^name: redesign-existing-projects$/name: redesign-skill/' "$PROJECT_ROOT/.agents/skills/redesign-skill/SKILL.md"
-sed -i '' 's/^name: minimalist-ui$/name: minimalist-skill/' "$PROJECT_ROOT/.agents/skills/minimalist-skill/SKILL.md"
+perl -pi -e 's/^name: design-taste-frontend(\r?\n)/name: taste-skill$1/' "$PROJECT_ROOT/.claude/skills/taste-skill/SKILL.md"
+perl -pi -e 's/^name: redesign-existing-projects(\r?\n)/name: redesign-skill$1/' "$PROJECT_ROOT/.claude/skills/redesign-skill/SKILL.md"
+perl -pi -e 's/^name: minimalist-ui(\r?\n)/name: minimalist-skill$1/' "$PROJECT_ROOT/.claude/skills/minimalist-skill/SKILL.md"
+perl -pi -e 's/^name: design-taste-frontend(\r?\n)/name: taste-skill$1/' "$PROJECT_ROOT/.agents/skills/taste-skill/SKILL.md"
+perl -pi -e 's/^name: redesign-existing-projects(\r?\n)/name: redesign-skill$1/' "$PROJECT_ROOT/.agents/skills/redesign-skill/SKILL.md"
+perl -pi -e 's/^name: minimalist-ui(\r?\n)/name: minimalist-skill$1/' "$PROJECT_ROOT/.agents/skills/minimalist-skill/SKILL.md"
 
 echo "Re-applying skill routing policy..."
 bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
