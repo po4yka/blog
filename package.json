@@ -83,8 +83,8 @@
     "brace-expansion@^5.0.0": "5.0.9",
     "chrome-launcher": "1.2.1",
     "lighthouse": "13.5.0",
-    "fast-uri": "3.1.6",
-    "ip-address": "10.3.1",
+    "fast-uri": "3.1.7",
+    "ip-address": "10.7.1",
     "js-yaml@^3.0.0": "3.15.2",
     "js-yaml@^4.0.0": "4.3.2",
     "nanoid": "3.3.18"
@@ -120,7 +120,7 @@
     "tsx": "^4.23.15",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.70.1",
-    "vite": "^8.2.0",
+    "vite": "^8.2.4",
     "vitest": "^4.1.10"
   }
 }
