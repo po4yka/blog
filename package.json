@@ -72,7 +72,7 @@
     "esbuild": ">=0.28.1",
     "tmp": ">=0.2.6",
     "defu": ">=6.1.5",
-    "basic-ftp": "6.0.1",
+    "basic-ftp": "6.2.1",
     "ws": ">=8.21.0",
     "qs": ">=6.16.0",
     "uuid": ">=11.1.1",
@@ -80,14 +80,21 @@
     "@babel/core": "^7.29.6",
     "@typescript/old": "npm:typescript@6.0.2",
     "body-parser@^1.0.0": "1.20.6",
-    "brace-expansion@^5.0.0": "5.0.9",
+    "brace-expansion@^5.0.0": "5.0.12",
     "chrome-launcher": "1.2.1",
     "lighthouse": "13.5.0",
-    "fast-uri": "3.1.6",
-    "ip-address": "10.3.1",
+    "fast-uri": "3.1.8",
+    "ip-address": "10.7.1",
     "js-yaml@^3.0.0": "3.15.2",
     "js-yaml@^4.0.0": "4.3.2",
-    "nanoid": "3.3.18"
+    "nanoid": "3.3.18",
+    "sharp": "$sharp",
+    "rehype-katex": {
+      "katex": "$katex"
+    },
+    "micromark-extension-math": {
+      "katex": "$katex"
+    }
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -114,13 +121,13 @@
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
-    "sharp": "^0.35.4",
+    "sharp": "^0.35.5",
     "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.70.1",
-    "vite": "^8.2.0",
+    "vite": "^8.2.4",
     "vitest": "^4.1.10"
   }
 }
