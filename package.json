@@ -88,7 +88,13 @@
     "js-yaml@^3.0.0": "3.15.2",
     "js-yaml@^4.0.0": "4.3.2",
     "nanoid": "3.3.18",
-    "sharp": "$sharp"
+    "sharp": "$sharp",
+    "rehype-katex": {
+      "katex": "$katex"
+    },
+    "micromark-extension-math": {
+      "katex": "$katex"
+    }
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -108,7 +114,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "gray-matter": "^4.0.3",
-    "katex": "^0.18.1",
+    "katex": "^0.18.9",
     "lint-staged": "^17.3.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-katex": "^7.0.1",
