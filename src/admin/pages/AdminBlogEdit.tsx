@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { usePosts, useSavePost, useCategories, useAddCategory } from "@/admin/hooks/useAdminQueries";
@@ -86,7 +86,7 @@ export function AdminBlogEdit() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[800px]">
       {/* Header */}
-      <motion.div
+      <m.div
         className="flex items-center justify-between gap-4 mb-8"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -131,9 +131,9 @@ export function AdminBlogEdit() {
             {savePostMutation.isPending ? "Saving..." : "Save"}
           </button>
         </div>
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
@@ -275,7 +275,7 @@ export function AdminBlogEdit() {
             </div>
           </div>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

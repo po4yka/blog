@@ -98,24 +98,5 @@ const { nonce } = Astro.locals;
       // No-ops in browsers that do not implement navigator.modelContext.
       import("@/lib/webmcp").then((m) => m.registerWebMCP()).catch(() => {});
     </script>
-    <script>
-      // Sync <html lang> with stored locale preference (for non-blog pages)
-      function syncLang() {
-        try {
-          const stored = JSON.parse(localStorage.getItem('site_preferences') || '{}');
-          const prefs = stored.state || stored;
-          if (prefs.locale && prefs.locale !== document.documentElement.lang) {
-            // Never override on blog pages: their content language is fixed by the
-            // route (/blog = en, /blog/ru = ru), so relabelling <html lang> to the
-            // UI locale would mislabel untranslated article text (WCAG 3.1.2).
-            if (!window.location.pathname.startsWith('/blog')) {
-              document.documentElement.lang = prefs.locale;
-            }
-          }
-        } catch { /* ignore */ }
-      }
-      syncLang();
-      document.addEventListener('astro:after-swap', syncLang);
-    </script>
   </body>
 </html>

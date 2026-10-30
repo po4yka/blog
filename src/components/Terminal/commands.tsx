@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useState, useCallback, useRef, type ReactNode } from "react";
 import { duration } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
@@ -71,7 +71,7 @@ export function Cmd({
       >
         {children}
       </span>
-      <motion.span
+      <m.span
         className="select-none flex items-center"
         style={{ color: "var(--muted-foreground)" }}
         initial={{ opacity: 0, x: -4 }}
@@ -79,7 +79,7 @@ export function Cmd({
         transition={{ duration: duration.fast }}
       >
         {copied && <AnimatedCheck size={12} />}
-      </motion.span>
+      </m.span>
       {!copied && (
         <span
           className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none text-xs"
@@ -144,7 +144,7 @@ export function OutputBlock({
     >
       {children}
       <span className="sr-only">(click to copy)</span>
-      <motion.span
+      <m.span
         className="absolute -top-1 right-0 flex items-center select-none"
         style={{ color: "var(--muted-foreground)" }}
         initial={{ opacity: 0 }}
@@ -152,7 +152,7 @@ export function OutputBlock({
         transition={{ duration: duration.fast }}
       >
         {copied && <AnimatedCheck size={12} />}
-      </motion.span>
+      </m.span>
     </Reveal>
   );
 }

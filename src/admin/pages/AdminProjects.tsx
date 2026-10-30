@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { Plus, Trash2, TriangleAlert, Star, ChevronDown, ChevronUp } from "lucide-react";
 import type { Project } from "@/admin/api";
 import { useProjects, useSaveProject, useDeleteProject } from "@/admin/hooks/useAdminQueries";
@@ -42,7 +42,7 @@ export function AdminProjects() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
       {/* Header */}
-      <motion.div
+      <m.div
         className="flex items-center justify-between gap-4 mb-8"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export function AdminProjects() {
           <Plus size={15} />
           Add project
         </button>
-      </motion.div>
+      </m.div>
 
       {/* Editor modal */}
       {editing && (
@@ -79,7 +79,7 @@ export function AdminProjects() {
       )}
 
       {/* Project list */}
-      <motion.div
+      <m.div
         className="border border-border/50 bg-card overflow-hidden"
         style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: 8 }}
@@ -147,7 +147,7 @@ export function AdminProjects() {
             {/* Expanded detail */}
             <AnimatePresence>
               {expanded === project.id && (
-                <motion.div
+                <m.div
                   id={project.id ? `project-detail-${project.id}` : undefined}
                   className="grid overflow-hidden"
                   initial={{ opacity: 0, gridTemplateRows: "0fr" }}
@@ -174,12 +174,12 @@ export function AdminProjects() {
                       ))}
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
         ))}
-      </motion.div>
+      </m.div>
 
     </div>
   );

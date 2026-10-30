@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { X, Save, Star, StarOff } from "lucide-react";
 import type { Project } from "@/admin/api";
 import { FieldBlock, TagsInput, LinksEditor } from "@/admin/components/FormPrimitives";
@@ -34,7 +34,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         role="region"
         aria-labelledby={EDITOR_TITLE_ID}
         className="mb-6 grid overflow-hidden border border-border bg-card"
@@ -143,7 +143,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
           </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

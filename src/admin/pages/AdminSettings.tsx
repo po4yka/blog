@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
 import type { SiteSettings } from "@/admin/api";
 import {
@@ -75,7 +75,7 @@ export function AdminSettings() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[700px]">
       {/* Header */}
-      <motion.div
+      <m.div
         className="mb-8"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,9 +87,9 @@ export function AdminSettings() {
         <p className="text-muted-foreground/40 mt-0.5" style={{ fontSize: "0.8125rem" }}>
           Site profile and configuration
         </p>
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         className="space-y-8"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -270,7 +270,7 @@ export function AdminSettings() {
             {saved ? "Saved!" : "Save settings"}
           </button>
         </div>
-      </motion.div>
+      </m.div>
 
     </div>
   );

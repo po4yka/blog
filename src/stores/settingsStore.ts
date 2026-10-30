@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { t, defaultLocale, type Locale, type TranslationKey } from "@/lib/i18n";
 import { applyReducedMotion, onSystemReducedMotionChange } from "@/lib/motion";
+import { applyLocale } from "@/lib/localeDom";
 import { setThemeColor } from "@/lib/themeColors";
 
 export type ThemeMode = "light" | "dark" | "system";
@@ -90,11 +91,13 @@ export const useSettingsStore = create<SettingsStore>()(
 if (typeof window !== "undefined") {
   // Apply on initial load (wait for persist middleware to rehydrate)
   if (useSettingsStore.persist.hasHydrated()) {
-    const { theme, reduceMotion, fontSize } = useSettingsStore.getState();
+    const { theme, reduceMotion, fontSize, locale } = useSettingsStore.getState();
     applyToDOM({ theme, reduceMotion, fontSize });
+    applyLocale(locale);
   } else {
     useSettingsStore.persist.onFinishHydration((state) => {
       applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize });
+      applyLocale(state.locale);
     });
   }
 
@@ -104,6 +107,7 @@ if (typeof window !== "undefined") {
     (prefs) => applyToDOM(prefs),
     { fireImmediately: false },
   );
+  useSettingsStore.subscribe((state) => state.locale, applyLocale, { fireImmediately: false });
 
   // Listen for system theme changes
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {

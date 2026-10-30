@@ -1,19 +1,16 @@
 import { roles } from "@/data/experienceData";
 
-import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
-import { useLocale } from "@/stores/settingsStore";
+import { T } from "./ui/T";
 
+/** Server-only (no client directive): static HTML with both languages, no JS. */
 export function Experience() {
-  const { t } = useLocale();
-
   return (
-    <MotionProvider>
     <section id="experience" aria-labelledby="experience-heading" className="space-y-5">
       <SectionHeader
         number="05"
         label="EXPERIENCE"
-        heading={t("experience.heading")}
+        heading={<T k="experience.heading" />}
         meta={`${roles.length} ROLES`}
         id="experience-heading"
       />
@@ -96,15 +93,16 @@ export function Experience() {
       <div className="pt-1">
         <a
           href="/experience"
-          aria-label={t("experience.viewAllLabel")}
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
-          {/* Visible label is decorative shell chrome (`$ git log … →`); the
-              aria-label carries the accessible name (WCAG 2.4.6 / 2.5.3). */}
-          <span aria-hidden="true">{t("experience.viewAll")}</span>
+          {/* The accessible name starts with the visible text (WCAG 2.5.3). */}
+          <T k="experience.viewAll" />
+          <span className="sr-only">
+            {" — "}
+            <T k="experience.viewAllLabel" />
+          </span>
         </a>
       </div>
     </section>
-    </MotionProvider>
   );
 }

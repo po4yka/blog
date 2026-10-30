@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { AnimatePresence, motion, type PanInfo } from "motion/react";
+import { AnimatePresence, m, type PanInfo, LazyMotion } from "motion/react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 
@@ -133,6 +133,8 @@ function readFigure(img: HTMLImageElement, root: HTMLDivElement): IndexedFigure 
     naturalHeight: img.naturalHeight || 0,
   };
 }
+
+const loadMaxFeatures = () => import("@/lib/motionFeaturesMax").then((mod) => mod.default);
 
 export function ImageLightbox({ contentRef }: Props) {
   const { t } = useLocale();
@@ -361,9 +363,12 @@ export function ImageLightbox({ contentRef }: Props) {
     <DialogPrimitive.Root open={isOpen} onOpenChange={onOpenChange}>
       <AnimatePresence>
         {isOpen && figure && (
+          // drag needs domMax on top of MotionProvider's domAnimation; it loads
+          // here, the first time the lightbox opens, not with every post.
+          <LazyMotion key="lightbox" features={loadMaxFeatures} strict>
           <DialogPrimitive.Portal forceMount>
             <DialogPrimitive.Overlay asChild forceMount>
-              <motion.div
+              <m.div
                 className="fixed inset-0 z-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -387,7 +392,7 @@ export function ImageLightbox({ contentRef }: Props) {
                 });
               }}
             >
-              <motion.div
+              <m.div
                 className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4 py-10 sm:px-12"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -401,7 +406,7 @@ export function ImageLightbox({ contentRef }: Props) {
                   {t("blogPost.imageLightbox.dialogLabel")}
                 </DialogPrimitive.Title>
 
-                <motion.div
+                <m.div
                   ref={wrapperRef}
                   className="relative flex items-center justify-center"
                   style={{
@@ -514,7 +519,7 @@ export function ImageLightbox({ contentRef }: Props) {
                       userSelect: "none",
                     }}
                   />
-                </motion.div>
+                </m.div>
 
                 {figure.caption && (
                   <div
@@ -601,9 +606,10 @@ export function ImageLightbox({ contentRef }: Props) {
                     </button>
                   </>
                 )}
-              </motion.div>
+              </m.div>
             </DialogPrimitive.Content>
           </DialogPrimitive.Portal>
+          </LazyMotion>
         )}
       </AnimatePresence>
     </DialogPrimitive.Root>

@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { stagger } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
@@ -233,7 +233,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
     <Reveal className="space-y-1 font-mono text-mono" delay={delay}>
       <div aria-live="polite">
         {displayHistory.map((h, i) => (
-          <motion.div
+          <m.div
             key={i}
             className="space-y-0.5"
             initial={{ opacity: 0 }}
@@ -245,7 +245,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
               <span className="text-foreground" style={{ opacity: 0.92 }}>{h.cmd}</span>
             </div>
             <div className="text-muted-foreground pl-5">{h.output}</div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 

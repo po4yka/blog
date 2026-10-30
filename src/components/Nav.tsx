@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
@@ -217,7 +217,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
       {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             className="md:hidden grid overflow-hidden"
             style={{
@@ -234,7 +234,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                 {navLinks.map((link, i) => {
                   const active = isActive(link);
                   return (
-                    <motion.a
+                    <m.a
                       key={link.labelKey}
                       href={link.href}
                       aria-current={active ? "page" : undefined}
@@ -258,7 +258,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                           />
                         )}
                       </span>
-                    </motion.a>
+                    </m.a>
                   );
                 })}
                 <div className="py-3 px-3">
@@ -266,7 +266,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </Reveal>

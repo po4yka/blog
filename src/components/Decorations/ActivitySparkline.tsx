@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { m } from "motion/react";
+import { GITHUB_USERNAME } from "@/lib/constants";
 import { useState, useEffect } from "react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
@@ -7,7 +8,6 @@ import { PanelShell } from "./_helpers";
 import { deferIdle } from "./_utils";
 import type { GitHubActivitySummary } from "@/types";
 
-const GH_USER = "po4yka";
 const BUCKETS = 14;
 const BAR_MAX_PX = 28;
 
@@ -73,7 +73,7 @@ function SparkBar({
       aria-label={hasEvents ? ariaLabel : undefined}
     >
       <div className="flex items-end" style={{ width: "14px", height: `${BAR_MAX_PX}px` }}>
-        <motion.div
+        <m.div
           style={{
             width: "10px",
             height: `${Math.max(2, normalizedHeight)}px`,
@@ -150,7 +150,7 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
         label="activity"
         labelRight={
           <a
-            href={`https://github.com/${GH_USER}`}
+            href={`https://github.com/${GITHUB_USERNAME}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150"

@@ -1,5 +1,4 @@
-import type { ReactNode, Ref } from "react";
-import { useInView } from "@/hooks/useInView";
+import type { ReactNode } from "react";
 
 /**
  * Operator-console section header: numbered label + h2 heading + hairline rule.
@@ -10,6 +9,9 @@ import { useInView } from "@/hooks/useInView";
  *
  * `number` renders in Geist Pixel; `label` in Geist Mono caps; `heading` is the
  * real <h2>; `meta` is a right-aligned technical string.
+ *
+ * No hooks, so it also renders inside server-only sections. The hairline draws
+ * on first render (.rule-draw); its final state is the full rule.
  */
 export function SectionHeader({
   number,
@@ -31,17 +33,9 @@ export function SectionHeader({
   className?: string;
 }) {
   const H = level === 1 ? "h1" : "h2";
-  // Fire-once viewport gate: below-the-fold headers only play the rule-draw
-  // wipe once their own hairline scrolls into view, so the plotter draw is
-  // actually witnessed on every section, not just the above-the-fold hero
-  // (which is already in view at mount and draws on first paint, unchanged).
-  const { ref, inView } = useInView(0.1);
 
   return (
-    <header
-      ref={ref as Ref<HTMLElement>}
-      className={`space-y-2 pb-3 relative ${className}`}
-    >
+    <header className={`space-y-2 pb-3 relative ${className}`}>
       <div className="flex items-baseline justify-between gap-4 min-w-0">
         <div className="flex items-baseline gap-2.5 min-w-0 truncate">
           <span
@@ -99,12 +93,8 @@ export function SectionHeader({
       )}
       <span
         aria-hidden="true"
-        className={`absolute left-0 right-0 bottom-0 block ${inView ? "rule-draw" : ""}`}
-        style={{
-          height: 1,
-          background: "var(--rule)",
-          clipPath: inView ? undefined : "inset(0 100% 0 0)",
-        }}
+        className="rule-draw absolute left-0 right-0 bottom-0 block"
+        style={{ height: 1, background: "var(--rule)" }}
       />
     </header>
   );

@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
 import { easeStep8 } from "@/lib/motion";
 
 // Variants for the grid wrapper — one animation registration drives all cells
-// via staggerChildren instead of 91 individual motion.div registrations.
+// via staggerChildren instead of 91 individual m.div registrations.
 const gridVariants = {
   hidden: {},
   visible: (baseDelay: number) => ({
@@ -96,20 +96,23 @@ const LEVEL_COLORS = [
 export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [events, setEvents] = useState<Array<{ created_at: string }>>([]);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/github/calendar`)
-      .then((r) => r.json())
-      .catch(() => [])
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setEvents(data);
-        }
-        setLoading(false);
-      });
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((data: unknown) => {
+        if (!Array.isArray(data)) throw new Error("unexpected payload");
+        setEvents(data);
+        setStatus("ready");
+      })
+      .catch(() => setStatus("unavailable"));
   }, []);
+  // Until data arrives the panel renders its full frame with an empty grid and
+  // nothing date-based, so the server HTML (built earlier) and the first client
+  // render match, and the height never changes.
+  const ready = status === "ready";
 
   const cells = useMemo(() => buildCalendar(events), [events]);
 
@@ -145,13 +148,14 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
 
   const hoveredCell = hoveredIdx !== null ? cells[hoveredIdx] ?? null : null;
 
-  const baselineLabel = `${totalEvents} EVENT${totalEvents === 1 ? "" : "S"} · ${activeDays}/${ACTIVE_WINDOW} ACTIVE`;
+  const baselineLabel = ready
+    ? `${totalEvents} EVENT${totalEvents === 1 ? "" : "S"} · ${activeDays}/${ACTIVE_WINDOW} ACTIVE`
+    : status === "loading"
+      ? "LOADING"
+      : "ACTIVITY UNAVAILABLE";
   const hoverLabel = hoveredCell && hoveredCell.count > 0
     ? `${hoveredCell.label} · ${hoveredCell.count} EVENT${hoveredCell.count === 1 ? "" : "S"}`
     : null;
-
-  // The server render is the loading state: it must not be empty, or client:visible has nothing to observe.
-  if (loading) return <div aria-hidden="true" />;
 
   return (
     <MotionProvider>
@@ -199,12 +203,16 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
           {/* Calendar grid — presented as a single image to screen readers; summary announced via aria-live region above */}
           <div
             role="img"
-            aria-label={`Activity calendar: ${totalEvents} event${totalEvents === 1 ? "" : "s"} across ${activeDays} active day${activeDays === 1 ? "" : "s"} in the past ${WEEKS} weeks`}
+            aria-label={
+              ready
+                ? `Activity calendar: ${totalEvents} event${totalEvents === 1 ? "" : "s"} across ${activeDays} active day${activeDays === 1 ? "" : "s"} in the past ${WEEKS} weeks`
+                : `Activity calendar: ${baselineLabel.toLowerCase()}`
+            }
           >
           {/* Month labels */}
           <div className="flex gap-[3px] mb-1 ml-[30px]" aria-hidden="true">
             {Array.from({ length: WEEKS }).map((_, w) => {
-              const label = monthLabels.find((m) => m.col === w);
+              const label = ready ? monthLabels.find((m) => m.col === w) : undefined;
               return (
                 <span
                   key={w}
@@ -232,7 +240,22 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
             </div>
 
             {/* Grid — one motion wrapper drives all cells via staggerChildren */}
-            <motion.div
+            {!ready ? (
+              <div className="flex gap-[3px]" aria-hidden="true">
+                {Array.from({ length: WEEKS }, (_, w) => (
+                  <div key={w} className="flex flex-col gap-[3px]">
+                    {Array.from({ length: DAYS_PER_WEEK }, (_, d) => (
+                      <div
+                        key={d}
+                        className="rounded-[2px]"
+                        style={{ width: 11, height: 11, backgroundColor: LEVEL_COLORS[0] }}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : (
+            <m.div
               className="flex gap-[3px]"
               variants={gridVariants}
               custom={delay}
@@ -244,7 +267,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                   {week.map((day, d) => {
                     const cellIdx = w * DAYS_PER_WEEK + d;
                     return (
-                      <motion.div
+                      <m.div
                         key={day.date}
                         aria-hidden="true"
                         className="rounded-[2px] cursor-default"
@@ -262,7 +285,8 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                   })}
                 </div>
               ))}
-            </motion.div>
+            </m.div>
+            )}
           </div>
           </div>
 

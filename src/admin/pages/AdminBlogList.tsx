@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Plus, Trash2, TriangleAlert, Star, StarOff, Search, FileText } from "lucide-react";
 import { usePosts, useDeletePost, useSavePost } from "@/admin/hooks/useAdminQueries";
 import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
@@ -37,7 +37,7 @@ export function AdminBlogList() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
       {/* Header */}
-      <motion.div
+      <m.div
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,10 +59,10 @@ export function AdminBlogList() {
           <Plus size={15} />
           New post
         </button>
-      </motion.div>
+      </m.div>
 
       {/* Search */}
-      <motion.div
+      <m.div
         className="mt-6 relative"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -78,10 +78,10 @@ export function AdminBlogList() {
           className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
           style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
         />
-      </motion.div>
+      </m.div>
 
       {/* List */}
-      <motion.div
+      <m.div
         className="mt-5 border border-border/50 bg-card overflow-hidden"
         style={{ borderRadius: "2px" }}
         initial={{ opacity: 0, y: 8 }}
@@ -159,7 +159,7 @@ export function AdminBlogList() {
             </button>
           </div>
         ))}
-      </motion.div>
+      </m.div>
     </div>
   );
 }
