@@ -99,7 +99,6 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "@babel/core": "^7.29.6",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.0",
     "@eslint/js": "^10.0.1",
