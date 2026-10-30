@@ -426,7 +426,8 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
     <MotionProvider>
       <div className="space-y-8">
         {/* Back */}
-        <Reveal className="flex">
+        {/* Block wrapper keeps the link's original line box; the link keeps its own colour transition. */}
+        <Reveal>
           <a
             href={listHref}
             className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline font-mono text-mono-sm"
