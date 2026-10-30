@@ -28,7 +28,7 @@ jobs:
       - run: npm run test -- --coverage
       - run: npm run build
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+        run: npx playwright install chromium webkit firefox --with-deps
       - name: Run E2E tests
         run: npm run test:e2e
       - name: Upload E2E test results
@@ -42,7 +42,44 @@ jobs:
         run: npx lhci autorun
         env:
           LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
+      - name: Run Lighthouse CI (mobile)
+        run: npx lhci autorun --config=.lighthouserc.mobile.json
+        env:
+          LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
 
+  # Screenshot baselines run only in the pinned Linux container, so fonts render the same every run.
+  # Keep the image tag equal to the @playwright/test version in package-lock.json.
+  visual:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    steps:
+      # The image has no git; checkout and the changelog generator need it.
+      - run: apt-get update && apt-get install -y --no-install-recommends git
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Run visual regression tests
+        run: npx playwright test --project=visual
+        env:
+          VISUAL: "1"
+      # On a first run or a deliberate change, the written snapshots are the new baselines to commit.
+      - name: Upload visual diffs and snapshots
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-diffs
+          path: |
+            test-results/
+            e2e/visual.spec.ts-snapshots/
+          retention-days: 7
+
+  # Add `visual` to needs once the Linux baselines are committed.
   deploy:
     needs: ci
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

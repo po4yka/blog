@@ -1,0 +1,11 @@
+/* Applied only while visual.spec.ts takes screenshots. */
+
+/* content-visibility: auto skips painting far from the viewport, which leaves blank gaps in full-page shots. */
+.prose-blog > * {
+  content-visibility: visible !important;
+}
+
+/* Fixed chrome would be painted once mid-page in a full-page shot. */
+.fixed.bottom-0 {
+  display: none !important;
+}
