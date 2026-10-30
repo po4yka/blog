@@ -34,7 +34,7 @@ export function AdminDashboard() {
           </h1>
           <span
             className="font-mono text-muted-foreground"
-            style={{ fontSize: "0.625rem" }}
+            style={{ fontSize: "max(11px, 0.6875rem)" }}
           >
             {settings?.handle}
           </span>
@@ -70,7 +70,7 @@ export function AdminDashboard() {
                 <div className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600, lineHeight: 1.1 }}>
                   {stat.value}
                 </div>
-                <div className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem", letterSpacing: "0.04em" }}>
+                <div className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.04em" }}>
                   {stat.label}
                 </div>
               </div>
@@ -88,13 +88,13 @@ export function AdminDashboard() {
       >
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 bg-foreground/40" style={{ borderRadius: "1px" }} />
-          <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+          <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             {featuredCount} featured
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 bg-foreground/20" style={{ borderRadius: "1px" }} />
-          <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+          <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             {totalTags} unique tags
           </span>
         </div>
@@ -114,7 +114,7 @@ export function AdminDashboard() {
           <button
             onClick={() => navigate("/admin/blog")}
             className="font-mono text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-1"
-            style={{ fontSize: "0.6875rem" }}
+            style={{ fontSize: "max(11px, 0.6875rem)" }}
           >
             View all <ArrowRight size={11} />
           </button>
@@ -139,7 +139,7 @@ export function AdminDashboard() {
                   {post.featured && (
                     <span
                       className="shrink-0 font-mono text-foreground/80 px-1.5 py-0.5 bg-muted border border-border"
-                      style={{ fontSize: "0.5rem", borderRadius: "2px", letterSpacing: "0.05em" }}
+                      style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px", letterSpacing: "0.05em" }}
                     >
                       FEATURED
                     </span>
@@ -147,11 +147,11 @@ export function AdminDashboard() {
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <Clock size={10} className="text-muted-foreground" />
-                  <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                  <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                     {post.date}
                   </span>
                   <span className="text-border/50">·</span>
-                  <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                  <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                     {post.category}
                   </span>
                 </div>
@@ -179,7 +179,7 @@ export function AdminDashboard() {
             <span className="text-foreground/80 group-hover:text-foreground transition-colors" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
               New blog post
             </span>
-            <p className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
+            <p className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
               Write a new article
             </p>
           </div>
@@ -196,7 +196,7 @@ export function AdminDashboard() {
             <span className="text-foreground/80 group-hover:text-foreground transition-colors" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
               View live site
             </span>
-            <p className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
+            <p className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
               Open public website
             </p>
           </div>

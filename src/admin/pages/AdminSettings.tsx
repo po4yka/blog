@@ -199,7 +199,7 @@ export function AdminSettings() {
               <span
                 key={cat}
                 className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 bg-secondary/60 text-foreground/60 border border-border/40"
-                style={{ fontSize: "0.6875rem", borderRadius: "2px" }}
+                style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}
               >
                 {cat}
                 <button

@@ -1,27 +1,32 @@
 ---
 // Inline script that runs synchronously before paint to prevent FOUC.
-// Reads theme preference from localStorage and applies .dark/.light to <html>.
+// Reads preferences from localStorage and applies .dark/.light, data-motion
+// and the font size to <html>.
+import { THEME_COLORS } from "@/lib/themeColors";
 const { nonce } = Astro.locals;
 ---
-<script is:inline nonce={nonce}>
+<script is:inline nonce={nonce} define:vars={{ themeColors: THEME_COLORS }}>
 (function() {
+  var prefs = {};
   try {
     var raw = localStorage.getItem('site_preferences');
     var stored = raw ? JSON.parse(raw) : {};
-    var prefs = stored.state || stored;
+    prefs = stored.state || stored;
+  } catch(e) {}
+  // Reduced motion first, so a bad theme value cannot skip it. OS or stored flag.
+  if (prefs.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.setAttribute('data-motion', 'reduce');
+  }
+  try {
     var theme = prefs.theme || 'system';
     var resolved = theme === 'system'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : theme;
     document.documentElement.classList.add(resolved);
-    if (prefs.reduceMotion) document.documentElement.classList.add('reduce-motion');
     if (prefs.fontSize) {
       var sizes = { compact: '15px', 'default': '16px', large: '17px' };
       var size = sizes[prefs.fontSize];
       if (size) document.documentElement.style.setProperty('--font-size', size);
-    }
-    if (prefs.reduceMotion) {
-      document.documentElement.style.setProperty('--motion-duration-scale', '0');
     }
     // BaseHead's two static theme-color tags only track OS preference via
     // `media`. An explicit light/dark override (not "system") needs its own
@@ -32,37 +37,30 @@ const { nonce } = Astro.locals;
       themeColorMeta.setAttribute('name', 'theme-color');
       document.head.appendChild(themeColorMeta);
     }
-    themeColorMeta.setAttribute('content', resolved === 'dark' ? '#0b0b0c' : '#f5f3ee');
+    themeColorMeta.setAttribute('content', resolved === 'dark' ? themeColors.dark : themeColors.light);
   } catch(e) {}
 })();
 </script>
 <script>
-  // Re-apply theme after View Transition DOM swap to prevent flash
-  function applyThemeFromStorage() {
+  import { applyReducedMotion } from "@/lib/motion";
+  import { setThemeColor } from "@/lib/themeColors";
+
+  // Re-apply preferences after the View Transition DOM swap, which resets <html> attributes.
+  function applyPrefsFromStorage() {
     try {
       const raw = localStorage.getItem("site_preferences");
-      if (!raw) return;
-      const stored = JSON.parse(raw);
+      const stored = raw ? JSON.parse(raw) : {};
       const prefs = stored.state || stored;
+      applyReducedMotion(!!prefs.reduceMotion);
+      if (!raw) return;
       const theme = prefs.theme || "system";
       const resolved = theme === "system"
         ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
         : theme;
       document.documentElement.classList.toggle("dark", resolved === "dark");
       document.documentElement.classList.toggle("light", resolved === "light");
-      document.documentElement.classList.toggle("reduce-motion", !!prefs.reduceMotion);
-      document.documentElement.style.setProperty(
-        "--motion-duration-scale",
-        prefs.reduceMotion ? "0" : "1"
-      );
-      let themeColorMeta = document.querySelector('meta[name="theme-color"]:not([media])');
-      if (!themeColorMeta) {
-        themeColorMeta = document.createElement("meta");
-        themeColorMeta.setAttribute("name", "theme-color");
-        document.head.appendChild(themeColorMeta);
-      }
-      themeColorMeta.setAttribute("content", resolved === "dark" ? "#0b0b0c" : "#f5f3ee");
+      setThemeColor(resolved);
     } catch {}
   }
-  document.addEventListener("astro:after-swap", applyThemeFromStorage);
+  document.addEventListener("astro:after-swap", applyPrefsFromStorage);
 </script>

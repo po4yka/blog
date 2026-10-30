@@ -91,7 +91,7 @@ export function AdminLogin() {
             <h1 className="text-foreground" style={{ fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.2 }}>
               Admin
             </h1>
-            <p className="font-mono text-muted-foreground/40" style={{ fontSize: "0.625rem", letterSpacing: "0.05em" }}>
+            <p className="font-mono text-muted-foreground/40" style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.05em" }}>
               Authenticate to continue
             </p>
           </div>
@@ -125,14 +125,14 @@ export function AdminLogin() {
               {hasPasskey && (
                 <div className="flex items-center gap-3 my-4">
                   <div className="flex-1 h-px bg-border/40" />
-                  <span className="font-mono text-muted-foreground/30" style={{ fontSize: "0.625rem" }}>or</span>
+                  <span className="font-mono text-muted-foreground/30" style={{ fontSize: "max(11px, 0.6875rem)" }}>or</span>
                   <div className="flex-1 h-px bg-border/40" />
                 </div>
               )}
               <label
                 htmlFor="password-input"
                 className="block font-mono text-muted-foreground/60 mb-2"
-                style={{ fontSize: "0.6875rem", letterSpacing: "0.02em" }}
+                style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.02em" }}
               >
                 Password
               </label>
@@ -172,7 +172,7 @@ export function AdminLogin() {
               type="button"
               onClick={() => setShowPassword(true)}
               className="w-full mt-3 font-mono text-muted-foreground hover:text-foreground transition-colors"
-              style={{ fontSize: "0.625rem" }}
+              style={{ fontSize: "max(11px, 0.6875rem)" }}
             >
               Use password instead
             </button>
@@ -180,7 +180,7 @@ export function AdminLogin() {
 
           {/* No passkey registered message */}
           {!hasPasskey && !allowPassword && (
-            <p className="font-mono text-muted-foreground/50 text-center" style={{ fontSize: "0.6875rem" }}>
+            <p className="font-mono text-muted-foreground/50 text-center" style={{ fontSize: "max(11px, 0.6875rem)" }}>
               No passkey registered. Run <code className="text-foreground/60">npm run setup:passkey</code> to get started.
             </p>
           )}
@@ -197,7 +197,7 @@ export function AdminLogin() {
             transition={{ duration: 0.2 }}
           >
             <AlertCircle size={12} />
-            <span className="font-mono" style={{ fontSize: "0.6875rem" }}>
+            <span className="font-mono" style={{ fontSize: "max(11px, 0.6875rem)" }}>
               {error}
             </span>
           </motion.div>

@@ -133,6 +133,9 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
       if (!firstDay) continue;
       const m = new Date(firstDay.date).getMonth();
       if (m !== lastMonth) {
+        // A label needs three columns; drop a partial month that would collide.
+        const prev = labels[labels.length - 1];
+        if (prev && w - prev.col < 3) labels.pop();
         labels.push({ col: w, label: months[m]! });
         lastMonth = m;
       }
@@ -199,14 +202,14 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
             aria-label={`Activity calendar: ${totalEvents} event${totalEvents === 1 ? "" : "s"} across ${activeDays} active day${activeDays === 1 ? "" : "s"} in the past ${WEEKS} weeks`}
           >
           {/* Month labels */}
-          <div className="flex gap-[3px] mb-1 ml-[28px]" aria-hidden="true">
+          <div className="flex gap-[3px] mb-1 ml-[30px]" aria-hidden="true">
             {Array.from({ length: WEEKS }).map((_, w) => {
               const label = monthLabels.find((m) => m.col === w);
               return (
                 <span
                   key={w}
-                  className="text-muted-foreground text-center"
-                  style={{ width: 11, fontSize: "8px" }}
+                  className="text-muted-foreground whitespace-nowrap"
+                  style={{ width: 11, fontSize: "max(11px, 0.6875rem)", lineHeight: "11px" }}
                 >
                   {label?.label ?? ""}
                 </span>
@@ -221,7 +224,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                 <span
                   key={i}
                   className="text-muted-foreground-dim"
-                  style={{ height: 11, lineHeight: "11px", fontSize: "8px", width: 20, textAlign: "right" }}
+                  style={{ height: 11, lineHeight: "11px", fontSize: "max(11px, 0.6875rem)", width: 22, textAlign: "right" }}
                 >
                   {label}
                 </span>
@@ -267,7 +270,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
           <div className="flex items-center gap-1.5 mt-2">
             <span
               className="text-muted-foreground-dim"
-              style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.08em", textTransform: "uppercase" }}
             >
               less
             </span>
@@ -280,7 +283,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
             ))}
             <span
               className="text-muted-foreground-dim"
-              style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase" }}
+              style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.08em", textTransform: "uppercase" }}
             >
               more
             </span>

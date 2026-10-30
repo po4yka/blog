@@ -105,7 +105,7 @@ export function AdminBlogEdit() {
               {isNew ? "New Post" : "Edit Post"}
             </h1>
             {!isNew && (
-              <span className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
+              <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                 /{form.slug}
               </span>
             )}
@@ -244,10 +244,10 @@ export function AdminBlogEdit() {
                     style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.7 }}
                   />
                   <div className="absolute bottom-2.5 right-3 flex items-center gap-3">
-                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
+                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                       {wordCount} words
                     </span>
-                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "0.5625rem" }}>
+                    <span className="font-mono text-muted-foreground/50" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                       ~{readingTime} min
                     </span>
                   </div>

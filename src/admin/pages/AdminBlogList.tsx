@@ -47,7 +47,7 @@ export function AdminBlogList() {
           <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
             Blog Posts
           </h1>
-          <p className="font-mono text-muted-foreground-dim mt-0.5" style={{ fontSize: "0.625rem" }}>
+          <p className="font-mono text-muted-foreground-dim mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} total
           </p>
         </div>
@@ -129,15 +129,15 @@ export function AdminBlogList() {
                 {post.title}
               </h3>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                   {post.date}
                 </span>
                 <span className="text-border/50">·</span>
-                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                   {post.category}
                 </span>
                 {post.tags.slice(0, 3).map((tag) => (
-                  <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
+                  <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                     {tag}
                   </span>
                 ))}

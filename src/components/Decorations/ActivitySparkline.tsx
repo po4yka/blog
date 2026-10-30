@@ -91,7 +91,7 @@ function SparkBar({
         <span
           aria-hidden="true"
           className="text-muted-foreground-dim select-none"
-          style={{ fontFamily: "var(--font-mono)", fontSize: 9, lineHeight: 1, marginTop: 3 }}
+          style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", lineHeight: 1, marginTop: 3 }}
         >
           {label.split(" ")[1]}
         </span>

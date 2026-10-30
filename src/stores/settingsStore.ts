@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { t, defaultLocale, type Locale, type TranslationKey } from "@/lib/i18n";
+import { applyReducedMotion, onSystemReducedMotionChange } from "@/lib/motion";
+import { setThemeColor } from "@/lib/themeColors";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type FontSize = "default" | "large" | "compact";
@@ -51,9 +53,9 @@ function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fon
   const resolved = prefs.theme === "system" ? getSystemTheme() : prefs.theme;
   root.classList.toggle("dark", resolved === "dark");
   root.classList.toggle("light", resolved === "light");
+  setThemeColor(resolved);
 
-  root.style.setProperty("--motion-duration-scale", prefs.reduceMotion ? "0" : "1");
-  root.classList.toggle("reduce-motion", prefs.reduceMotion);
+  applyReducedMotion(prefs.reduceMotion);
 
   const sizes: Record<FontSize, string> = { compact: "15px", default: "16px", large: "17px" };
   root.style.setProperty("--font-size", sizes[prefs.fontSize]);
@@ -110,6 +112,9 @@ if (typeof window !== "undefined") {
       applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize });
     }
   });
+
+  // A live OS reduced-motion toggle re-syncs data-motion.
+  onSystemReducedMotionChange(() => applyReducedMotion(useSettingsStore.getState().reduceMotion));
 }
 
 /** Convenience hook preserving the original useSettings() API */
