@@ -42,7 +42,7 @@ const ROW_CLASS =
   "group flex items-start gap-0 py-3.5 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]";
 
 /** One post row in one language. */
-function PostRow({ post, index, lang, dataL }: { post: GroupedPost; index: number; lang: Locale; dataL?: Locale }) {
+function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: number; lang: Locale; dataL?: Locale }) {
   const title = post.langs[lang]?.title ?? post.slug;
   const availLangs = Object.keys(post.langs) as Locale[];
   return (
@@ -120,11 +120,11 @@ export function BlogPreview() {
           <div key={post.slug} className="border-b border-border last:border-b-0">
             {post.langs.ru && post.langs.en ? (
               <>
-                <PostRow post={post} index={i} lang="en" dataL="en" />
-                <PostRow post={post} index={i} lang="ru" dataL="ru" />
+                <PreviewRow post={post} index={i} lang="en" dataL="en" />
+                <PreviewRow post={post} index={i} lang="ru" dataL="ru" />
               </>
             ) : (
-              <PostRow post={post} index={i} lang={post.langs.en ? "en" : "ru"} />
+              <PreviewRow post={post} index={i} lang={post.langs.en ? "en" : "ru"} />
             )}
           </div>
         ))}

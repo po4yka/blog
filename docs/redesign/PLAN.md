@@ -288,7 +288,7 @@ Do these before visual work. Each is behavior-preserving and verified by the exi
 6. **Split large islands:**
    - `BlogPostIsland.tsx` into `useResumePosition`, `useHeadings`, `Toc`, `MobileJumpNav`, `CodeBlockCopy`, `CopyLinkButton`, `CopyMarkdownButton`, `PostHeader`, `PostFooter`, `PostPager` under `src/components/blog/`.
    - `ImageLightbox.tsx` into variant-picking utilities (lines 37 to 135, pure and unit-testable), figure registry, dialog chrome, and pan/zoom, behind a `Lightbox` seam.
-   - `BlogListIsland.tsx` into `PostRow` (shared with `BlogPreview.tsx`), `Filters`, `BlogStats`.
+   - `BlogListIsland.tsx` into `PostRow` (list only; `BlogPreview.tsx` keeps its own `PreviewRow`), `Filters`, `BlogStats`, `usePostFilters`.
    - `Hero.tsx` into `HeroText`, `HeroWhois`, `HeroStrip`. This is done in Phase 8.1 with the hero work, not as a separate refactor.
 7. **Fix layout shift at the source:** data sections that return `null` until fetched (`RealGitLog.tsx`, `OpenSourcePanel.tsx`, `ActivityCalendar.tsx`) reserve height with a skeleton frame of fixed `min-height`. The `:has(> astro-island:empty)` hiding rule is removed once heights are reserved. Align `ActivityCalendar` on `deferIdle` like the sparkline, and use `GITHUB_USERNAME` from `@/lib/constants` instead of the hardcoded `GH_USER` in `ActivitySparkline.tsx` line 10.
 8. **Test scaffolding:** see Phase 0. Add Playwright screenshot baselines and a mobile Lighthouse run. Without these a visual redesign has no regression net.
@@ -339,7 +339,7 @@ Each phase is one small PR where feasible (target under about 400 changed lines;
 
 ### Phase 4: Split the blog islands
 
-- **Scope:** refactor item 6 for `BlogPostIsland.tsx`, `ImageLightbox.tsx` (with the `Lightbox` seam) and `BlogListIsland.tsx`, with `PostRow` shared by the home preview. No behavior change. This phase comes before any phase that edits these files.
+- **Scope:** refactor item 6 for `BlogPostIsland.tsx`, `ImageLightbox.tsx` (with the `Lightbox` seam) and `BlogListIsland.tsx`, with `PostRow` used by the blog list only (the home preview keeps its own row, renamed `PreviewRow`, because its markup differs). No behavior change. This phase comes before any phase that edits these files. Pure helpers live in `src/lib/blog/` so they count toward the coverage gate. The work lands as two PRs: PR A splits the post and list islands, PR B splits the lightbox.
 - **Files:** `src/components/blog/*`, `src/components/ImageLightbox/*`.
 - **Acceptance:** `e2e/blog.spec.ts`, `blog-lightbox.spec.ts`, `hydration.spec.ts` green; unit tests for the extracted pure functions (variant picking, heading tree); the JSON-LD and `<article>` structure unchanged (checked by `rg` plus a Playwright DOM assertion). This phase may be two PRs.
 
