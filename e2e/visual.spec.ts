@@ -1,8 +1,8 @@
 import path from "node:path";
 import { test, expect, type Page } from "@playwright/test";
 
-// Screenshot baselines for the redesign. They run only in the pinned Playwright container
-// (CI `visual` job), never on a developer Mac: font rendering differs per OS.
+// Screenshot baselines for the redesign. They run only in the CI `visual` job (pinned
+// ubuntu-24.04 runner), never on a developer Mac: font rendering differs per OS.
 
 const ROUTES = [
   { name: "home", path: "/" },

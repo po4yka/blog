@@ -59,9 +59,9 @@ Every route loads about 134 KB brotli before its own content: React, Motion and 
 - `e2e/visual.spec.ts` and `e2e/visual.css`: full-page screenshots of home, blog list, one post, projects and 404, in light and dark, at 375 and 1280 px (20 shots). Live GitHub data is stubbed and masked, build hash and dates are masked, animations are frozen with reduced motion, the page is scrolled once so `client:visible` sections render, `content-visibility` is turned off and the fixed status line is hidden during capture.
 - `playwright.config.ts`: the existing suite stays on the `chromium` project (unchanged settings, 25 tests pass locally). New `webkit` and `firefox` projects run the theme and navigation specs. The `visual` project exists only with `VISUAL=1`.
 - `.lighthouserc.mobile.json`: mobile run with thresholds set at this baseline, so a regression warns.
-- CI (`.github/workflows/ci-cd.yml`): installs WebKit and Firefox, runs mobile Lighthouse after desktop, and adds a `visual` job in the pinned `mcr.microsoft.com/playwright:v1.62.1-noble` container. `deploy` does not wait for `visual` yet.
+- CI (`.github/workflows/ci-cd.yml`): installs WebKit and Firefox, runs mobile Lighthouse after desktop, and adds a `visual` job on a pinned `ubuntu-24.04` runner (the Playwright container image was tried first, but the Cloudflare prerenderer's `workerd` does not start in it). `deploy` does not wait for `visual` yet.
 
-Screenshot baselines are not checked in yet. They must come from the CI container, not from a Mac or an arm64 Docker host, because font rendering differs. The first CI run of `visual` fails on purpose and uploads the written snapshots as the `visual-diffs` artifact; commit them to `e2e/visual.spec.ts-snapshots/`, then add `visual` to `deploy.needs`.
+Screenshot baselines are not checked in yet. They must come from the CI `visual` job, not from a Mac or an arm64 Docker host, because font rendering differs. The first CI run of `visual` fails on purpose and uploads the written snapshots as the `visual-diffs` artifact; commit them to `e2e/visual.spec.ts-snapshots/`, then add `visual` to `deploy.needs`.
 
 ## Real-device plan
 

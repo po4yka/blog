@@ -47,25 +47,23 @@ jobs:
         env:
           LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
 
-  # Screenshot baselines run only in the pinned Linux container, so fonts render the same every run.
-  # Keep the image tag equal to the @playwright/test version in package-lock.json.
+  # Screenshot baselines are Linux-only. The runner image is pinned (not ubuntu-latest) so system fonts
+  # stay the same between runs; the browser is the one @playwright/test pins in package-lock.json.
+  # The Playwright container image is not used: the Cloudflare prerenderer's workerd does not start in it.
   visual:
-    runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    runs-on: ubuntu-24.04
     steps:
-      # The image has no git; checkout and the changelog generator need it.
-      - run: apt-get update && apt-get install -y --no-install-recommends git
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # The container user does not own the checked-out workspace, so git refuses it otherwise.
-      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
       - name: Run visual regression tests
         run: npx playwright test --project=visual
         env:
