@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import { Cmd, Accent, Tag } from "./Terminal";
+import { Cmd, Em, Tag } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { useLocale } from "@/stores/settingsStore";
@@ -54,7 +54,7 @@ export function BlogPreview() {
         id="blog-heading"
       />
       <Cmd>
-        find <Accent>./posts/</Accent> -name "*.md" -mtime -30 | head -3
+        find <Em>./posts/</Em> -name "*.md" -mtime -30 | head -3
       </Cmd>
 
       <div className="space-y-0">

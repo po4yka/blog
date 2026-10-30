@@ -2,7 +2,7 @@ import { registerCommand } from "./registry";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { roles, skills } from "@/data/experienceData";
-import { Accent } from "../ui";
+import { Em } from "../ui";
 import type { Command } from "./types";
 
 const ASCII_ART = [
@@ -15,7 +15,7 @@ const ASCII_ART = [
 function renderInfoRow(label: string, value: string) {
   return (
     <div className="flex gap-1">
-      <Accent>{label}:</Accent>
+      <Em>{label}:</Em>
       <span className="text-foreground/60">{value}</span>
     </div>
   );
@@ -34,7 +34,7 @@ const neofetch: Command = {
         </pre>
         <div className="space-y-0.5">
           <div className="text-foreground/90">
-            <Accent>po4yka</Accent>
+            <Em>po4yka</Em>
             <span className="text-muted-foreground-dim">@po4yka.dev</span>
           </div>
           <div className="text-muted-foreground-dim">--------------</div>

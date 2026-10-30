@@ -7,7 +7,8 @@ function GithubIcon({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
-import { BootBlock, Cmd, Accent, Tag, MacWindow } from "./Terminal";
+import { BootBlock, Cmd, Em, Tag, OperatorPanel } from "./Terminal";
+import { Panel } from "./ui/Panel";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 
@@ -195,7 +196,7 @@ export function ProjectsPage() {
             status: "OK",
             text: (
               <>
-                Loaded <Accent>po4yka.dev/projects</Accent>
+                Loaded <Em>po4yka.dev/projects</Em>
               </>
             ),
           },
@@ -206,7 +207,7 @@ export function ProjectsPage() {
 
       {/* List command */}
       <Cmd>
-        ls -lt <Accent>./projects/</Accent>
+        ls -lt <Em>./projects/</Em>
       </Cmd>
 
       {/* Project entries + sticky index rail (lg). The rail is the `ls`
@@ -216,10 +217,7 @@ export function ProjectsPage() {
           aria-label={t("projectsPage.indexLabel")}
           className="hidden lg:block lg:col-span-3 lg:sticky lg:top-16"
         >
-          <div
-            className="overflow-hidden"
-            style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 2 }}
-          >
+          <Panel>
             <div className="flex items-baseline justify-between px-4 py-2" style={{ borderBottom: "1px solid var(--rule)" }}>
               <span className="label-meta">INDEX</span>
               <span className="font-mono text-muted-foreground-dim" style={{ fontSize: 11, letterSpacing: "0.04em" }}>
@@ -244,11 +242,11 @@ export function ProjectsPage() {
                 </li>
               ))}
             </ol>
-          </div>
+          </Panel>
         </nav>
 
         <div className="lg:col-span-9 min-w-0">
-          <MacWindow
+          <OperatorPanel
             label={`projects — ${projects.length} ${t("projectsPage.entries")}`}
             titleExt="~/projects | main"
             sectionNumber="04"
@@ -262,7 +260,7 @@ export function ProjectsPage() {
                 </li>
               ))}
             </ul>
-          </MacWindow>
+          </OperatorPanel>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { changelog } from "@/data/changelog";
-import { Cmd, Accent, Tag } from "./Terminal";
+import { Cmd, Em, Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -30,7 +30,7 @@ export function ChangelogPage() {
       />
 
       <Cmd>
-        git log <Accent>--format=release</Accent> | head -{changelog.length}
+        git log <Em>--format=release</Em> | head -{changelog.length}
       </Cmd>
 
       <ol className="list-none m-0 p-0 space-y-8">

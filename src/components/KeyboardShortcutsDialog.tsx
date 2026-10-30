@@ -47,8 +47,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md"
-        style={{ background: "var(--card)", border: "1px solid var(--border)" }}
+        className="max-w-md bg-card border border-border"
       >
         <DialogHeader>
           <DialogTitle className="text-sm text-muted-foreground uppercase tracking-widest font-medium">

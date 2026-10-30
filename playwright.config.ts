@@ -14,9 +14,9 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", testIgnore: /visual\.spec\.ts/ },
-    // Cross-engine coverage for theme, navigation and (later) scroll-timeline and transition specs.
-    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /(theme|navigation)\.spec\.ts/ },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /(theme|navigation)\.spec\.ts/ },
+    // Cross-engine coverage for theme, navigation, Reveal and (later) scroll-timeline and transition specs.
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/ },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/ },
     // Linux-only screenshot baselines; enabled in the CI `visual` job with VISUAL=1.
     ...(process.env.VISUAL ? [{ name: "visual", testMatch: /visual\.spec\.ts/ }] : []),
   ],

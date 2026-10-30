@@ -1,13 +1,10 @@
-import { motion } from "motion/react";
 import { Mail, Play, Apple, Briefcase, FolderGit2, Send } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useInView } from "@/hooks/useInView";
 
-import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
+import { Reveal } from "./ui/Reveal";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useLocale } from "@/stores/settingsStore";
-import { ease } from "@/lib/motion";
 
 const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
   { Icon: Mail, label: "email", href: "mailto:hello@po4yka.dev" },
@@ -19,11 +16,9 @@ const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
 ];
 
 export function Links() {
-  const { ref, inView } = useInView(0.1);
   const { t } = useLocale();
 
   return (
-    <MotionProvider>
     <section aria-labelledby="links-heading" className="space-y-5">
       <SectionHeader
         number="03"
@@ -32,45 +27,34 @@ export function Links() {
         meta={`${links.filter((l) => l.href).length}/${links.length} ACTIVE`}
         id="links-heading"
       />
-      <motion.div
-        ref={ref}
-        className="flex flex-wrap gap-2"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.4, ease }}
-      >
+      <Reveal className="flex flex-wrap gap-2" speed="slow">
         {links.map((link, i) =>
           link.href === undefined ? (
             <span
               key={link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
-              style={{
-                border: "1px solid var(--border)",
-              }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-border text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
               aria-label={`${link.label} (${t("links.comingSoon")})`}
             >
               <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground-dim shrink-0" />
               {link.label}
             </span>
           ) : (
-            <motion.a
-              key={link.label}
+            // The chip keeps its own colour transition, so the fade sits on a wrapper.
+            <Reveal key={link.label} className="flex" delay={0.05 + i * 0.04}>
+            <a
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
               aria-label={link.href.startsWith("http") ? `${link.label} (${t("links.opensNewWindow")})` : link.label}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-border text-muted-foreground hover:text-foreground hover:bg-muted hover:border-rule transition-colors duration-200 font-mono text-mono rounded-[2px]"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease }}
             >
               <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground-dim shrink-0" />
               {link.label}
-            </motion.a>
+            </a>
+            </Reveal>
           )
         )}
-      </motion.div>
+      </Reveal>
     </section>
-    </MotionProvider>
   );
 }

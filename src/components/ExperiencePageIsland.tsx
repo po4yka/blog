@@ -1,12 +1,11 @@
-import { motion } from "motion/react";
+import { Reveal } from "./ui/Reveal";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BootBlock, Cmd, Accent, MacWindow } from "./Terminal";
+import { BootBlock, Cmd, Em, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { useInView } from "@/hooks/useInView";
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
-import { ease, stagger } from "@/lib/motion";
+import { stagger } from "@/lib/motion";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { animateNumbers } from "./_animatedNumber.utils";
@@ -188,7 +187,6 @@ function TagConnections({
 }
 
 export function ExperiencePage() {
-  const { ref: skillsRef, inView: skillsInView } = useInView(0.1);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const rolesContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useLocale();
@@ -216,7 +214,7 @@ export function ExperiencePage() {
             status: "OK",
             text: (
               <>
-                Loaded <Accent>po4yka.dev/experience</Accent>
+                Loaded <Em>po4yka.dev/experience</Em>
               </>
             ),
           },
@@ -228,9 +226,9 @@ export function ExperiencePage() {
       {/* Resume log */}
       <div className="space-y-4">
         <Cmd>
-          cat <Accent>resume.log</Accent>
+          cat <Em>resume.log</Em>
         </Cmd>
-        <MacWindow label="resume.log" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
+        <OperatorPanel label="resume.log" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
           <div ref={rolesContainerRef} className="relative">
             <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
             <ul className="list-none m-0 p-0">
@@ -241,27 +239,21 @@ export function ExperiencePage() {
               ))}
             </ul>
           </div>
-        </MacWindow>
+        </OperatorPanel>
       </div>
 
       {/* Skills */}
       <div className="space-y-4">
         <Cmd>
-          cat <Accent>/etc/skills.conf</Accent>
+          cat <Em>/etc/skills.conf</Em>
         </Cmd>
-        <MacWindow label="skills.conf" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
-          <motion.div
-            ref={skillsRef}
-            className="space-y-1"
-            initial={{ opacity: 0 }}
-            animate={skillsInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, ease }}
-          >
+        <OperatorPanel label="skills.conf" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
+          <Reveal className="space-y-1" speed="slow">
             {skills.map((group) => (
               <SkillsSection key={group.label} group={group} />
             ))}
-          </motion.div>
-        </MacWindow>
+          </Reveal>
+        </OperatorPanel>
       </div>
 
     </div>

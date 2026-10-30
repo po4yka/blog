@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { useInView } from "@/hooks/useInView";
-import { Accent } from "@/components/Terminal";
+import { Em } from "@/components/Terminal";
 import { Shell } from "./Shell";
 import { useCopy } from "./_helpers";
 import type { CommitSummary } from "@/pages/api/github/commits";
@@ -34,7 +34,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
   return (
     <Shell
       delay={delay}
-      command={<>git log <Accent>--oneline</Accent> --decorate -5</>}
+      command={<>git log <Em>--oneline</Em> --decorate -5</>}
       windowTitle="git — log"
     >
       {() => (

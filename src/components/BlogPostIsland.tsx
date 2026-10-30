@@ -1,16 +1,15 @@
 import { useState, useEffect, useCallback, useRef, type ReactNode, type RefObject } from "react";
+import { Reveal } from "./ui/Reveal";
 
 declare global {
   interface Window {
     umami?: { track: (event: string, data?: Record<string, unknown>) => void };
   }
 }
-import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Link2, ArrowUp, FileCode2 } from "lucide-react";
-import { Cmd, Accent, LessViewer, AnimatedCheck } from "./Terminal";
+import { Cmd, Em, LessViewer, AnimatedCheck } from "./Terminal";
 import { ImageLightbox } from "./ImageLightbox";
 import { MotionProvider } from "./MotionProvider";
-import { duration } from "@/lib/motion";
 import { useLocale, useSettings } from "@/stores/settingsStore";
 import { useScrollState } from "@/hooks/useScrollState";
 import { blogUrl, type Locale } from "@/lib/i18n";
@@ -427,20 +426,19 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
     <MotionProvider>
       <div className="space-y-8">
         {/* Back */}
-        <motion.a
-          href={listHref}
-          className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline font-mono text-mono-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: duration.base }}
-        >
-          <ArrowLeft size={12} />
-          {t("blogPost.allPosts")}
-        </motion.a>
+        <Reveal className="flex">
+          <a
+            href={listHref}
+            className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline font-mono text-mono-sm"
+          >
+            <ArrowLeft size={12} />
+            {t("blogPost.allPosts")}
+          </a>
+        </Reveal>
 
         {/* Command */}
         <Cmd>
-          less <Accent>posts/{slug}.txt</Accent>
+          less <Em>posts/{slug}.txt</Em>
         </Cmd>
 
         {resumeAt != null && (

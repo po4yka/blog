@@ -348,12 +348,12 @@ Cards may be used, but do not rely on them for every layout.
 
 The project uses a flat operator-panel kit as its primary design system. All components use `1px solid var(--border)`, `border-radius: 2px`, no shadow, no traffic lights, no window chrome gradients.
 
-- **MacWindow** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `lineNumbers` and `statusLine` props; replaces former macOS window mockup
+- **OperatorPanel** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `lineNumbers` and `statusLine` props; replaces former macOS window mockup
 - **SectionHeader** -- new shared component; numbered label row + `<h2>` heading + `border-bottom: 1px solid var(--rule)`; applied to every home section and primary page header
 - **BootBlock** -- status output lines prefixed with `OK ·` / `INFO ·` / `WARN ·` in `--muted-foreground`; no color coding; keep to 4–6 lines
 - **Cmd** -- `$ command` prompt line in `--font-mono`; prompt `$` at `--emphasis /70`; introduces content sections
 - **OutputBlock** -- indented output wrapper with fade-in stagger; `2px solid var(--rule)` left border
-- **PanelShell** -- compact bordered block for sidebar widgets; same flat border treatment as MacWindow
+- **PanelShell** -- compact bordered block for sidebar widgets; same flat border treatment as OperatorPanel
 - **InfoTable** -- two-column key-value table; `fieldCodes` mode renders IBM 3270 `[01] KEY ......: value`; key column `--font-mono` 11px, value column `--font-sans` 14px
 
 These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment (`var(--border)`), and background (`var(--card)`).
@@ -369,7 +369,7 @@ This section should immediately explain who the site belongs to, using the termi
 ### Hero structure
 
 1. **Identity** -- name, role line, short intro, and CTAs.
-2. **`$ whois` command** -- introduces identity via an InfoTable inside a MacWindow.
+2. **`$ whois` command** -- introduces identity via an InfoTable inside an OperatorPanel.
 3. **Operator panels** -- real-data panels (latest post, build, activity, release). Must remain secondary to the identity content.
 
 ### Must include

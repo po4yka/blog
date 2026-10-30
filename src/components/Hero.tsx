@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Cmd, InfoTable, Accent, MacWindow } from "./Terminal";
+import { Cmd, InfoTable, Em, OperatorPanel } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { GITHUB_USERNAME } from "@/lib/constants";
@@ -86,10 +86,10 @@ export function Hero() {
 
         <div className="lg:col-span-5 space-y-3 lg:pt-7">
           <Cmd>
-            cd ~/po4yka &amp;&amp; cat <Accent>identity.md</Accent>
+            cd ~/po4yka &amp;&amp; cat <Em>identity.md</Em>
           </Cmd>
-          <MacWindow
-            title="whois — po4yka"
+          <OperatorPanel
+            label="whois — po4yka"
             titleExt="~/po4yka | main"
             sectionNumber="01"
             delay={0.1}
@@ -111,7 +111,7 @@ export function Hero() {
                 },
                 {
                   label: t("hero.infoHandle"),
-                  value: <Accent>@po4yka</Accent>,
+                  value: <Em>@po4yka</Em>,
                 },
                 {
                   label: t("hero.infoFocus"),
@@ -130,7 +130,7 @@ export function Hero() {
               ]}
               delay={0.15}
             />
-          </MacWindow>
+          </OperatorPanel>
         </div>
       </div>
 

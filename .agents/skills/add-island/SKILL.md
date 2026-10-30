@@ -70,7 +70,6 @@ import { MySection } from "@/components/MySection";
 Integration rules:
 - Wrap in a `div` with a `data-section-name` attribute, matching the other sections in `src/pages/index.astro`
 - Pass `delay` prop for internal motion staggering
-- Decorative/non-content sections (terminal blocks, strips) can omit `section-reveal`
 
 ## SSR Guards
 

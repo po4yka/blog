@@ -1,4 +1,4 @@
-import { Accent, BootBlock, Cmd, LessViewer } from "./Terminal";
+import { Em, BootBlock, Cmd, LessViewer } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 
@@ -24,7 +24,7 @@ export function PrivacyPage() {
             status: "OK",
             text: (
               <>
-                Loaded <Accent>po4yka.dev/privacy</Accent>
+                Loaded <Em>po4yka.dev/privacy</Em>
               </>
             ),
           },
@@ -34,7 +34,7 @@ export function PrivacyPage() {
 
       {/* Privacy log */}
       <Cmd>
-        cat <Accent>privacy.log</Accent>
+        cat <Em>privacy.log</Em>
       </Cmd>
 
       <LessViewer filename="privacy.log" meta="5 sections">

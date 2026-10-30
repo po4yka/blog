@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
-import { useState, useCallback, type ReactNode } from "react";
-import { ease, duration } from "@/lib/motion";
+import { useState, useCallback, useRef, type ReactNode } from "react";
+import { duration } from "@/lib/motion";
+import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedCheck } from "./AnimatedCheck";
 
 /**
@@ -14,11 +14,11 @@ export function Cmd({
   children: ReactNode;
   delay?: number;
 }) {
-  const { ref, inView, element } = useInView(0.1);
+  const ref = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    const el = element;
+    const el = ref.current;
     if (!el) return;
     const textParts = el.querySelectorAll("[data-cmd-text]");
     const text = Array.from(textParts)
@@ -31,7 +31,7 @@ export function Cmd({
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, [element]);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -44,12 +44,11 @@ export function Cmd({
   );
 
   return (
-    <motion.div
+    <Reveal
       ref={ref}
       className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg min-w-0"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.fast, delay, ease }}
+      speed="fast"
+      delay={delay}
       onClick={handleCopy}
       onKeyDown={handleKeyDown}
       role="button"
@@ -89,7 +88,7 @@ export function Cmd({
           ⌘C
         </span>
       )}
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -105,11 +104,11 @@ export function OutputBlock({
   delay?: number;
   className?: string;
 }) {
-  const { ref, inView, element } = useInView(0.1);
+  const ref = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    const el = element;
+    const el = ref.current;
     if (!el) return;
     const text = el.textContent?.trim();
     if (text) {
@@ -118,7 +117,7 @@ export function OutputBlock({
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, [element]);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -131,13 +130,12 @@ export function OutputBlock({
   );
 
   return (
-    <motion.div
+    <Reveal
       ref={ref}
       className={`relative pl-6 md:pl-8 font-mono cursor-pointer group/output ${className}`}
       style={{ borderLeft: "1px solid var(--rule)" }}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.slow, delay, ease }}
+      speed="slow"
+      delay={delay}
       onClick={handleCopy}
       onKeyDown={handleKeyDown}
       role="button"
@@ -155,6 +153,6 @@ export function OutputBlock({
       >
         {copied && <AnimatedCheck size={12} />}
       </motion.span>
-    </motion.div>
+    </Reveal>
   );
 }
