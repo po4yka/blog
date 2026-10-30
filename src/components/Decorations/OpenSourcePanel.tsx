@@ -48,7 +48,9 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
       .catch(() => setLoading(false));
   }, []);
 
-  if (loading || repos.length === 0) return null;
+  // The server render is the loading state: it must not be empty, or client:visible has nothing to observe.
+  if (loading) return <div aria-hidden="true" />;
+  if (repos.length === 0) return null;
 
   const totalStars = repos.reduce((sum, r) => sum + r.stars, 0);
 

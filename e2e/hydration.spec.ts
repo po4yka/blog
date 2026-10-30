@@ -39,6 +39,17 @@ test.describe("React island hydration", () => {
     expectNoHydrationErrors(errors);
   });
 
+  test("client:visible data panels hydrate when scrolled into view", async ({ page }) => {
+    // These islands render a loading placeholder on the server; an empty island never hydrates.
+    await page.route("**/api/github/**", (r) => r.abort());
+    await page.goto("/");
+    for (const name of ["git-log", "open-source", "activity-calendar"]) {
+      const island = page.locator(`[data-section-name="${name}"] astro-island`);
+      await island.evaluate((el) => el.closest("[data-section-name]")?.scrollIntoView());
+      await expect(island).not.toHaveAttribute("ssr", { timeout: 10_000 });
+    }
+  });
+
   test("blog list island becomes interactive", async ({ page }) => {
     const errors = setupConsoleCapture(page);
 

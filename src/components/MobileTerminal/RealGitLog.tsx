@@ -27,7 +27,9 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
       });
   }, []);
 
-  if (loading || commits.length === 0) return null;
+  // The server render is the loading state: it must not be empty, or client:visible has nothing to observe.
+  if (loading) return <div aria-hidden="true" />;
+  if (commits.length === 0) return null;
 
   return (
     <Shell

@@ -29,7 +29,7 @@ jobs:
       - run: npm run test -- --coverage
       - run: npm run build
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+        run: npx playwright install chromium webkit firefox --with-deps
       - name: Run E2E tests
         run: npm run test:e2e
       - name: Upload E2E test results
@@ -43,9 +43,45 @@ jobs:
         run: npx lhci autorun
         env:
           LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
+      - name: Run Lighthouse CI (mobile)
+        run: npx lhci autorun --config=.lighthouserc.mobile.json
+        env:
+          LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
+
+  # Screenshot baselines are Linux-only. The runner image is pinned (not ubuntu-latest) so system fonts
+  # stay the same between runs; the browser is the one @playwright/test pins in package-lock.json.
+  # The Playwright container image is not used: the Cloudflare prerenderer's workerd does not start in it.
+  visual:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+      - name: Run visual regression tests
+        run: npx playwright test --project=visual
+        env:
+          VISUAL: "1"
+      # On a first run or a deliberate change, the written snapshots are the new baselines to commit.
+      - name: Upload visual diffs and snapshots
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-diffs
+          path: |
+            test-results/
+            e2e/visual.spec.ts-snapshots/
+          retention-days: 7
 
   deploy:
-    needs: ci
+    needs: [ci, visual]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
