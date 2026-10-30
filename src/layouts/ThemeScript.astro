@@ -60,7 +60,8 @@ const { nonce } = Astro.locals;
       applyLocale(prefs.locale === "ru" ? "ru" : "en");
       if (!raw) return;
       const sizes: Record<string, string> = { compact: "15px", default: "16px", large: "17px" };
-      if (sizes[prefs.fontSize]) document.documentElement.style.setProperty("--font-size", sizes[prefs.fontSize]);
+      const size = sizes[prefs.fontSize];
+      if (size) document.documentElement.style.setProperty("--font-size", size);
       const theme = prefs.theme || "system";
       const resolved = theme === "system"
         ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
