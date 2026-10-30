@@ -426,15 +426,15 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
     <MotionProvider>
       <div className="space-y-8">
         {/* Back */}
-        {/* Block wrapper keeps the link's original line box; the link keeps its own colour transition. */}
-        <Reveal>
-          <a
-            href={listHref}
-            className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline font-mono text-mono-sm"
-          >
-            <ArrowLeft size={12} />
-            {t("blogPost.allPosts")}
-          </a>
+        {/* The link is the Reveal itself, so its line box (and the page layout)
+            is unchanged; its transition list carries the opacity fade. */}
+        <Reveal
+          as="a"
+          href={listHref}
+          className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-[color,text-decoration-color,opacity] duration-150 no-underline font-mono text-mono-sm"
+        >
+          <ArrowLeft size={12} />
+          {t("blogPost.allPosts")}
         </Reveal>
 
         {/* Command */}

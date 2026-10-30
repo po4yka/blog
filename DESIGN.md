@@ -131,7 +131,7 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 
 **Primitives** (`src/components/ui/`, styles in `src/styles/primitives.css`)
 - `Panel` draws every flat panel frame: `var(--card)` (or `tone="translucent"`, `var(--panel-bg)`), `1px solid var(--border)`, 2px radius. `clip` sets overflow: `hidden` (default), `clip` (clips without a scroll container, so `position: sticky` children such as the blog TOC keep working) or `visible`. Do not hand-write the border, radius and background again.
-- `Reveal` is the entrance fade: a CSS `@starting-style` opacity fade on first render, with `delay` (seconds, for staggers) and `speed` (`fast`, `base`, `slow` = `--dur-*`). The static HTML is already in its final state, so content shows without JS, without `@starting-style` support and under reduced motion. Never ship content at `opacity: 0` in the server HTML. Do not put a `transition-*` utility on the same element; wrap it instead. `instant` skips the fade for above-the-fold LCP content.
+- `Reveal` is the entrance fade: a CSS `@starting-style` opacity fade on first render, with `delay` (seconds, for staggers) and `speed` (`fast`, `base`, `slow` = `--dur-*`). The static HTML is already in its final state, so content shows without JS, without `@starting-style` support and under reduced motion. Never ship content at `opacity: 0` in the server HTML. A `transition-*` utility on the same element replaces the fade, so its property list must include `opacity` (as the nav and the blog back link do), or the element goes inside a wrapper Reveal. `instant` skips the fade for above-the-fold LCP content.
 - `Em` is emphasis text: `--emphasis` at weight 500.
 
 **OperatorPanel**

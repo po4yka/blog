@@ -25,8 +25,8 @@
      visible without JS, without @starting-style support and under reduced
      motion (tokens.css cuts the transition). A transition holds its start
      value through the delay, so staggered items stay hidden until their turn.
-     Do not put a transition-* utility on the same element: it would replace
-     this transition. */
+     A transition-* utility on the same element replaces this transition, so
+     its property list must include opacity (the nav and the blog back link do). */
   [data-reveal] {
     /* Reset, so a Reveal without its own delay does not inherit a parent's.
        An inline --reveal-delay (Reveal's delay prop) still wins. */
@@ -39,6 +39,17 @@
   }
   [data-reveal="slow"] {
     transition-duration: var(--dur-slow);
+  }
+
+  /* Reduced motion: no transition at all, so @starting-style has nothing to
+     animate and late-inserted content (hydrated islands) is final at once. */
+  :root[data-motion="reduce"] [data-reveal] {
+    transition: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      transition: none;
+    }
   }
 }
 
