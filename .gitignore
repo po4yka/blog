@@ -33,6 +33,7 @@ coverage/
 
 # Lighthouse CI
 .lighthouseci/
+lighthouse-reports/
 
 # OS
 .DS_Store

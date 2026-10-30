@@ -1,0 +1,26 @@
+name: Install Playwright browsers
+description: Restore cached Playwright browsers for the locked @playwright/test version, then install what is missing and the OS dependencies.
+
+inputs:
+  browsers:
+    description: Space-separated browser names
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: version
+      shell: bash
+      run: echo "version=$(node -p 'require("./node_modules/@playwright/test/package.json").version')" >> "$GITHUB_OUTPUT"
+    - id: cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ env.ImageOS }}-${{ runner.arch }}-${{ steps.version.outputs.version }}-${{ inputs.browsers }}
+    - if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install --with-deps ${{ inputs.browsers }}
+    # The cache holds only the browsers; the OS packages they need are installed on every runner.
+    - if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: npx playwright install-deps ${{ inputs.browsers }}

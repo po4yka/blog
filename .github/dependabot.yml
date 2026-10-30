@@ -22,10 +22,6 @@ updates:
       tanstack:
         patterns:
           - "@tanstack/*"
-      mui:
-        patterns:
-          - "@mui/*"
-          - "@emotion/*"
       astro:
         patterns:
           - "astro"
@@ -38,7 +34,9 @@ updates:
           - "@types/react-dom"
 
   - package-ecosystem: github-actions
-    directory: /
+    directories:
+      - /
+      - /.github/actions/playwright
     schedule:
       interval: weekly
       day: monday
@@ -47,3 +45,7 @@ updates:
     labels:
       - dependencies
       - ci
+    groups:
+      actions:
+        patterns:
+          - "*"

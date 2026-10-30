@@ -13,7 +13,7 @@ This file is the single source of agent instructions for Codex and Claude Code (
 - `npm run generate:all` regenerates every derived data file; `npm run validate:all` checks generated files against their sources.
 - `npm run validate:skills` checks agent skill layout and routing policy (see Skills below).
 
-Match verification to the change: the affected test file and `npm run typecheck` for most code edits; add `npm run build` when touching content, generators, routing, Astro config, or SEO surfaces; check visual changes in a browser at mobile and desktop widths. CI (`.github/workflows/ci-cd.yml`) runs lint, typecheck, tests with coverage thresholds, build, Playwright, and Lighthouse on pushes and pull requests to `main`.
+Match verification to the change: the affected test file and `npm run typecheck` for most code edits; add `npm run build` when touching content, generators, routing, Astro config, or SEO surfaces; check visual changes in a browser at mobile and desktop widths. CI (`.github/workflows/ci-cd.yml`) runs lint, typecheck, and tests with coverage thresholds in parallel with one build; Playwright, visual regression, and Lighthouse then test that `dist/`, and a push to `main` deploys the same `dist/`. Lighthouse reports are written to `lighthouse-reports/` (a CI artifact), not uploaded. `.nvmrc` pins the exact Node version; Dependabot does not update it.
 
 ## Content pipeline
 
@@ -65,7 +65,7 @@ Local, reversible work (edits, tests, builds, generators, local D1 with `--local
 - anything that lands on `main` (push, PR merge, enabling auto-merge): CI deploys `main` to production at po4yka.dev;
 - anything against remote Cloudflare resources (`wrangler deploy`, `wrangler d1 ... --remote`, secrets);
 - rewriting published history, force-pushing, or deleting branches;
-- commands that publish or notify externally: `npm run indexnow`, `npm run lighthouse` (uploads reports to public temporary storage).
+- commands that publish or notify externally: `npm run indexnow`.
 
 Commits follow Conventional Commits (enforced by commitlint in the `commit-msg` hook). No emoji in code or docs.
 
