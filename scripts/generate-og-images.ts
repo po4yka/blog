@@ -73,6 +73,7 @@ async function renderCard(post: {
           color: "#e9e8e4",
           fontFamily: "Geist",
           padding: "48px",
+          boxSizing: "border-box",
         },
         children: [
           {
@@ -86,6 +87,7 @@ async function renderCard(post: {
                 border: "1px solid rgba(233,232,228,0.10)",
                 borderRadius: "2px",
                 padding: "40px 56px",
+                boxSizing: "border-box",
                 justifyContent: "space-between",
               },
               children: [
@@ -174,6 +176,7 @@ async function renderDefaultCard(): Promise<Buffer> {
           color: "#e9e8e4",
           fontFamily: "Geist",
           padding: "48px",
+          boxSizing: "border-box",
         },
         children: [
           {
@@ -187,6 +190,7 @@ async function renderDefaultCard(): Promise<Buffer> {
                 border: "1px solid rgba(233,232,228,0.10)",
                 borderRadius: "2px",
                 padding: "40px 56px",
+                boxSizing: "border-box",
                 justifyContent: "space-between",
               },
               children: [
