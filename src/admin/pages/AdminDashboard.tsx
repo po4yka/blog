@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { FileText, FolderKanban, Briefcase, Clock, ArrowRight, ArrowUpRight } from "lucide-react";
 import { usePosts, useProjects, useRoles, useAdminSettings } from "@/admin/hooks/useAdminQueries";
 
@@ -23,7 +23,7 @@ export function AdminDashboard() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
       {/* Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -42,10 +42,10 @@ export function AdminDashboard() {
         <p className="text-muted-foreground" style={{ fontSize: "0.8125rem", lineHeight: 1.5 }}>
           Manage your website content
         </p>
-      </motion.div>
+      </m.div>
 
       {/* Stats */}
-      <motion.div
+      <m.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-8"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,10 +77,10 @@ export function AdminDashboard() {
             </button>
           );
         })}
-      </motion.div>
+      </m.div>
 
       {/* Quick metrics row */}
-      <motion.div
+      <m.div
         className="flex flex-wrap gap-x-8 gap-y-2 mt-6 px-1"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -98,10 +98,10 @@ export function AdminDashboard() {
             {totalTags} unique tags
           </span>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Recent posts */}
-      <motion.div
+      <m.div
         className="mt-10"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -160,10 +160,10 @@ export function AdminDashboard() {
             </button>
           ))}
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Quick actions */}
-      <motion.div
+      <m.div
         className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -201,7 +201,7 @@ export function AdminDashboard() {
             </p>
           </div>
         </a>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

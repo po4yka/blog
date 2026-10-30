@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
@@ -35,22 +35,19 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
   const { t } = useLocale();
   const { ref, inView } = useInView(0.1);
   const [repos, setRepos] = useState<GitHubRepoSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
 
   useEffect(() => {
     fetch("/api/github/repos")
-      .then((r) => r.json())
-      .then((data: GitHubRepoSummary[]) => {
-        const sorted = [...data].sort((a, b) => b.stars - a.stars);
-        setRepos(sorted.slice(0, MAX_REPOS));
-        setLoading(false);
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((data: unknown) => {
+        const list = Array.isArray(data) ? [...(data as GitHubRepoSummary[])] : [];
+        const sorted = list.sort((a, b) => b.stars - a.stars).slice(0, MAX_REPOS);
+        setRepos(sorted);
+        setStatus(sorted.length > 0 ? "ready" : "unavailable");
       })
-      .catch(() => setLoading(false));
+      .catch(() => setStatus("unavailable"));
   }, []);
-
-  // The server render is the loading state: it must not be empty, or client:visible has nothing to observe.
-  if (loading) return <div aria-hidden="true" />;
-  if (repos.length === 0) return null;
 
   const totalStars = repos.reduce((sum, r) => sum + r.stars, 0);
 
@@ -59,12 +56,12 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
       <div ref={ref}>
         <PanelShell
           label="po4yka / github"
-          labelRight={`${totalStars} STARS`}
+          labelRight={status === "ready" ? `${totalStars} STARS` : "\u00a0"}
           delay={delay}
         >
           <div className="space-y-0">
             {repos.map((repo, i) => (
-              <motion.a
+              <m.a
                 key={repo.name}
                 href={repo.url}
                 target="_blank"
@@ -100,8 +97,22 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                     </p>
                   )}
                 </div>
-              </motion.a>
+              </m.a>
             ))}
+            {/* Until repos arrive (or if the list is unavailable) the frame keeps
+                placeholder rows of the usual one-line-description height. */}
+            {status !== "ready" &&
+              Array.from({ length: MAX_REPOS }, (_, i) => (
+                <div key={`placeholder-${i}`} className="flex items-start gap-3 py-2.5 -mx-2 px-2 border-b border-border/30 last:border-b-0">
+                  <span className="label-meta shrink-0 w-[18px]">{"\u00a0"}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-muted-foreground text-mono-sm">
+                      {i === 0 && status === "unavailable" ? "repository list unavailable" : "\u00a0"}
+                    </span>
+                    <p className="text-label mt-0.5">{"\u00a0"}</p>
+                  </div>
+                </div>
+              ))}
           </div>
         </PanelShell>
       </div>

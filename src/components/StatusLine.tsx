@@ -81,7 +81,10 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
       </div>
 
       <div className="flex items-center gap-3 shrink-0">
-        <span aria-hidden="true">{position}</span>
+        {/* Fixed slot: TOP / 42% / BOT change width as you scroll, which would shift the bar. */}
+        <span aria-hidden="true" className="inline-block text-right" style={{ minWidth: "4ch" }}>
+          {position}
+        </span>
         <span aria-hidden="true">·</span>
         <span aria-hidden="true">{buildMeta.commitHash}</span>
         <span aria-hidden="true">·</span>
@@ -98,20 +101,20 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
           <kbd className="not-italic" style={{ fontSize: "max(11px, 0.6875rem)", padding: "0 0.3em", minWidth: 0 }}>?</kbd>
           <span aria-hidden="true">help</span>
         </button>
-        {scrollY > 600 && (
-          <>
-            <span aria-hidden="true">·</span>
-            <button
-              type="button"
-              className={buttonClass}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              aria-label={t("blogPost.scrollToTop")}
-            >
-              <span aria-hidden="true">gg</span>
-              <span aria-hidden="true">top</span>
-            </button>
-          </>
-        )}
+        {/* Always laid out, shown past 600px: appearing would widen the bar and shift it. */}
+        {/* visibility: hidden also takes it out of the tab order and the a11y tree. */}
+        <span className="contents" style={{ visibility: scrollY > 600 ? "visible" : "hidden" }}>
+          <span aria-hidden="true">·</span>
+          <button
+            type="button"
+            className={buttonClass}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label={t("blogPost.scrollToTop")}
+          >
+            <span aria-hidden="true">gg</span>
+            <span aria-hidden="true">top</span>
+          </button>
+        </span>
       </div>
     </div>
   );

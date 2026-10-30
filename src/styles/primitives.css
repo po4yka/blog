@@ -58,3 +58,11 @@
     opacity: 0;
   }
 }
+
+/* Static sections render both languages (src/components/ui/T.tsx); html[data-locale],
+   set before paint, shows one. Unlayered, so display utilities cannot override it.
+   With no attribute (no JS, crawlers) English shows. */
+html:not([data-locale="ru"]) [data-l="ru"],
+html[data-locale="ru"] [data-l="en"] {
+  display: none;
+}

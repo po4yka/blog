@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Reveal } from "./ui/Reveal";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Em, Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
@@ -156,7 +156,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
           {/* initial={false}: the server HTML and first render show the list at
               full opacity; only later filter changes fade. */}
           <AnimatePresence mode="wait" initial={false}>
-            <motion.ul
+            <m.ul
               key={`${activeCategory}|${activeTag ?? ""}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -165,7 +165,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
               className="list-none m-0 p-0"
             >
               {filtered.map((post, i) => (
-                <motion.li
+                <m.li
                   key={post.slug}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -214,7 +214,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                       {post.date}
                     </span>
                   </a>
-                </motion.li>
+                </m.li>
               ))}
               {filtered.length === 0 && (
                 <li className="py-8 flex items-baseline gap-3 font-mono text-mono">
@@ -233,7 +233,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                   <span className="text-foreground/70">{t("blog.noPosts")}</span>
                 </li>
               )}
-            </motion.ul>
+            </m.ul>
           </AnimatePresence>
         </div>
       </div>
@@ -309,7 +309,7 @@ function BlogStats({
                 <div key={cat} className="flex items-center gap-2">
                   <span className="text-muted-foreground w-24 text-right truncate text-label">{cat}</span>
                   <div aria-hidden="true" className="flex-1 h-[2px] overflow-hidden" style={{ background: "var(--border)" }}>
-                    <motion.div
+                    <m.div
                       className="h-full"
                       style={{
                         background: "var(--foreground)",

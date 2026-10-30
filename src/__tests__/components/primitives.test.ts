@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { Panel } from "@/components/ui/Panel";
 import { Reveal } from "@/components/ui/Reveal";
+import { T } from "@/components/ui/T";
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el);
 
@@ -68,5 +69,13 @@ describe("primitives.css", () => {
     expect(layer).toMatch(/\[data-reveal\] \{[^}]*--reveal-delay: 0ms;/);
     expect(layer).toContain("var(--dur-fast)");
     expect(layer).toContain("var(--dur-slow)");
+  });
+});
+
+describe("T", () => {
+  it("renders both languages, the Russian one marked lang=ru, separated by a space", () => {
+    expect(html(createElement(T, { k: "projects.heading" }))).toBe(
+      '<span data-l="en">Selected Projects</span> <span data-l="ru" lang="ru">Избранные проекты</span>',
+    );
   });
 });

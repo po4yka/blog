@@ -1,20 +1,18 @@
 import { projects } from "@/data/projectsData";
 import { Tag } from "./Terminal";
-import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
-import { useLocale } from "@/stores/settingsStore";
+import { T } from "./ui/T";
 
+/** Server-only (no client directive): static HTML with both languages, no JS. */
 export function Projects() {
-  const { t } = useLocale();
   const homeProjects = projects.slice(0, 4);
 
   return (
-    <MotionProvider>
     <section id="projects" aria-labelledby="projects-heading" className="space-y-5">
       <SectionHeader
         number="04"
         label="PROJECTS"
-        heading={t("projects.heading")}
+        heading={<T k="projects.heading" />}
         meta={`${projects.length} RECORDS`}
         id="projects-heading"
       />
@@ -52,7 +50,7 @@ export function Projects() {
                   {project.featured && (
                     <>
                       <span className="text-muted-foreground-dim font-mono text-mono-sm" aria-hidden="true">·</span>
-                      <Tag variant="highlight">{t("projects.featured")}</Tag>
+                      <Tag variant="highlight"><T k="projects.featured" /></Tag>
                     </>
                   )}
                 </div>
@@ -78,16 +76,17 @@ export function Projects() {
       <div className="pt-1">
         <a
           href="/projects"
-          aria-label={t("projects.viewAllLabel")}
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
-          {/* Visible label is decorative shell chrome (`$ ls … →`); the
-              aria-label carries the accessible name. Hiding the text from AT
-              avoids the WCAG 2.5.3 label-in-name mismatch. */}
-          <span aria-hidden="true">{t("projects.viewAll")}</span>
+          {/* The accessible name starts with the visible text (WCAG 2.5.3);
+              the sr-only part says where the link goes. */}
+          <T k="projects.viewAll" />
+          <span className="sr-only">
+            {" — "}
+            <T k="projects.viewAllLabel" />
+          </span>
         </a>
       </div>
     </section>
-    </MotionProvider>
   );
 }

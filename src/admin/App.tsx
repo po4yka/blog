@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { RouterProvider } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { MotionConfig } from "motion/react";
+import { LazyMotion, MotionConfig } from "motion/react";
 import { Toaster } from "@/components/ui/sonner";
 import { router } from "./routes";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -30,9 +30,13 @@ function LoadingFallback() {
   );
 }
 
+// Same lazily loaded feature set as the public islands (see MotionProvider).
+const loadMotionFeatures = () => import("@/lib/motionFeatures").then((mod) => mod.default);
+
 export default function AdminApp() {
   return (
     <QueryClientProvider client={queryClient}>
+      <LazyMotion features={loadMotionFeatures} strict>
       <MotionConfig reducedMotion="user">
         <AuthProvider>
           <Suspense fallback={<LoadingFallback />}>
@@ -42,6 +46,7 @@ export default function AdminApp() {
         <ReactQueryDevtools initialIsOpen={false} />
         <Toaster />
       </MotionConfig>
+      </LazyMotion>
     </QueryClientProvider>
   );
 }

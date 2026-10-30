@@ -47,8 +47,8 @@ for (const scheme of ["dark", "light"] as const) {
 
       for (const route of ROUTES) {
         test(route.name, async ({ page }) => {
-          // Abort live GitHub calls so each panel takes its own fetch-error path (renders nothing)
-          // instead of parsing a stub body of the wrong shape.
+          // Abort live GitHub calls so each panel shows its stable "unavailable" frame
+          // (masked anyway) instead of live data.
           await page.route("**/api/github/**", (r) => r.abort());
           await page.goto(route.path);
           await page.waitForLoadState("networkidle");

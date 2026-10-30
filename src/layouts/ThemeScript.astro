@@ -17,6 +17,10 @@ const { nonce } = Astro.locals;
   if (prefs.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.setAttribute('data-motion', 'reduce');
   }
+  // Locale before paint, so static sections show the stored language with no flash.
+  var locale = prefs.locale === 'ru' ? 'ru' : 'en';
+  document.documentElement.setAttribute('data-locale', locale);
+  if (location.pathname.indexOf('/blog') !== 0) document.documentElement.lang = locale;
   try {
     var theme = prefs.theme || 'system';
     var resolved = theme === 'system'
@@ -43,6 +47,7 @@ const { nonce } = Astro.locals;
 </script>
 <script>
   import { applyReducedMotion } from "@/lib/motion";
+  import { applyLocale } from "@/lib/localeDom";
   import { setThemeColor } from "@/lib/themeColors";
 
   // Re-apply preferences after the View Transition DOM swap, which resets <html> attributes.
@@ -52,7 +57,11 @@ const { nonce } = Astro.locals;
       const stored = raw ? JSON.parse(raw) : {};
       const prefs = stored.state || stored;
       applyReducedMotion(!!prefs.reduceMotion);
+      applyLocale(prefs.locale === "ru" ? "ru" : "en");
       if (!raw) return;
+      const sizes: Record<string, string> = { compact: "15px", default: "16px", large: "17px" };
+      const size = sizes[prefs.fontSize];
+      if (size) document.documentElement.style.setProperty("--font-size", size);
       const theme = prefs.theme || "system";
       const resolved = theme === "system"
         ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")

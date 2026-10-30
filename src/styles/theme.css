@@ -15,7 +15,10 @@
 
 :root {
   color-scheme: light;
-  --font-size: 15px;
+  /* Must equal the "default" size in settingsStore (16px): the store only
+     writes --font-size after hydration, and a different fallback shifts every
+     rem-based box on first load. */
+  --font-size: 16px;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   /* Font stacks live in tailwind.css (@theme static), the single definition. */

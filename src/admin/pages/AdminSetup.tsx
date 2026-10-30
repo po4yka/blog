@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Fingerprint, CheckCircle, AlertCircle } from "lucide-react";
 import { getPasskeyRegisterOptions, verifyPasskeyRegister } from "@/admin/api";
 import { startRegistration } from "@simplewebauthn/browser";
@@ -65,7 +65,7 @@ export function AdminSetup() {
       )}
 
       {state === "success" && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
@@ -85,7 +85,7 @@ export function AdminSetup() {
           >
             Go to login
           </button>
-        </motion.div>
+        </m.div>
       )}
 
       {state === "error" && (
@@ -113,7 +113,7 @@ function SetupShell({ children }: { children: React.ReactNode }) {
     <div
       className="min-h-screen bg-background flex items-center justify-center px-6"
     >
-      <motion.div
+      <m.div
         className="w-full max-w-[340px]"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -144,7 +144,7 @@ function SetupShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {children}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

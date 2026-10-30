@@ -19,7 +19,7 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
     </div>
 
     <div data-section-name="links">
-      <Links client:visible />
+      <Links />
     </div>
 
     <!-- Chapter: links -> real git commits -> projects -> open source repos.
@@ -33,7 +33,7 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
       </div>
 
       <div data-section-name="projects">
-        <Projects client:visible />
+        <Projects />
       </div>
 
       <!-- projects → open source repos from GitHub (real data) -->
@@ -45,7 +45,7 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
     <!-- Chapter: experience -> GitHub activity calendar epilogue -->
     <div class="space-y-4 md:space-y-5">
       <div data-section-name="experience">
-        <Experience client:visible />
+        <Experience />
       </div>
 
       <!-- GitHub activity calendar (real data) -->
@@ -55,27 +55,8 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
     </div>
 
     <div data-section-name="blog">
-      <BlogPreview client:visible />
+      <BlogPreview />
     </div>
   </div>
 
-  <style>
-    /* Sections used to carry content-visibility: auto with an intrinsic-size
-       placeholder. Since the home sections became flat rows they are cheap
-       to lay out, and the placeholders misreported section boxes (Lighthouse
-       flagged the view-all links as partially obscured, and the page jumped
-       when a placeholder resolved). Painting them normally costs nothing
-       measurable. */
-
-    /* Collapse empty-prone API-driven section wrappers (open-source,
-       activity-calendar, git-log) when the island has no content yet.
-       Without this, each wrapper keeps its Tailwind space-y-14 margin
-       and produces a phantom 56 px gap. `:has()` and `:empty` are
-       universally supported in modern browsers (Chrome 105+, Safari
-       15.4+, Firefox 121+). When the island hydrates and renders
-       content, `:empty` stops matching and the section reappears. */
-    [data-section-name]:has(> astro-island:empty) {
-      display: none;
-    }
-  </style>
 </MainLayout>

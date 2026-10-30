@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Lock, ArrowRight, AlertCircle, Fingerprint } from "lucide-react";
 import { useAuthContext } from "@/admin/contexts/AuthContext";
 import { getPasskeyStatus } from "@/admin/api";
@@ -65,7 +65,7 @@ export function AdminLogin() {
     <div
       className="min-h-screen bg-background flex items-center justify-center px-6"
     >
-      <motion.div
+      <m.div
         className="w-full max-w-[340px]"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -188,7 +188,7 @@ export function AdminLogin() {
 
         {/* Error display */}
         {error && (
-          <motion.div
+          <m.div
             id="login-error"
             aria-live="polite"
             className="mt-3 flex items-center gap-1.5 text-destructive/70"
@@ -200,9 +200,9 @@ export function AdminLogin() {
             <span className="font-mono" style={{ fontSize: "max(11px, 0.6875rem)" }}>
               {error}
             </span>
-          </motion.div>
+          </m.div>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 }
