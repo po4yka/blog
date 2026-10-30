@@ -52,7 +52,7 @@ export function AdminProjects() {
           <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
             Projects
           </h1>
-          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "0.625rem" }}>
+          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             {projects.length} {projects.length === 1 ? "project" : "projects"}
           </p>
         </div>
@@ -117,10 +117,10 @@ export function AdminProjects() {
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
                   {project.platforms.map((p) => (
-                    <span key={p} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>{p}</span>
+                    <span key={p} className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>{p}</span>
                   ))}
                   <span className="text-border/50">·</span>
-                  <span className="font-mono text-muted-foreground-dim" style={{ fontSize: "0.5625rem" }}>
+                  <span className="font-mono text-muted-foreground-dim" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                     {project.tags.length} tags
                   </span>
                 </div>
@@ -129,7 +129,7 @@ export function AdminProjects() {
               <button
                 onClick={() => setEditing({ ...project })}
                 className="shrink-0 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                style={{ fontSize: "0.625rem" }}
+                style={{ fontSize: "max(11px, 0.6875rem)" }}
               >
                 Edit
               </button>
@@ -161,14 +161,14 @@ export function AdminProjects() {
                     </p>
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {project.tags.map((tag) => (
-                        <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/80 border border-border/60" style={{ fontSize: "0.5625rem", borderRadius: "2px" }}>
+                        <span key={tag} className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/80 border border-border/60" style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}>
                           {tag}
                         </span>
                       ))}
                     </div>
                     <div className="flex flex-wrap gap-3">
                       {project.links.map((link) => (
-                        <span key={link.href} className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                        <span key={link.href} className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                           {link.type}: {link.href}
                         </span>
                       ))}

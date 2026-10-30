@@ -80,7 +80,7 @@ export function AdminExperience() {
           <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
             Experience
           </h1>
-          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "0.625rem" }}>
+          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             {roles.length} {roles.length === 1 ? "role" : "roles"}
           </p>
         </div>
@@ -240,14 +240,14 @@ export function AdminExperience() {
                 </span>
               </div>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-mono text-muted-foreground" style={{ fontSize: "0.625rem" }}>
+                <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                   {role.period}
                 </span>
                 {role.tags && role.tags.length > 0 && (
                   <>
                     <span className="text-border/50">·</span>
                     {role.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "0.5625rem" }}>
+                      <span key={tag} className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
                         {tag}
                       </span>
                     ))}
@@ -263,7 +263,7 @@ export function AdminExperience() {
               <button
                 onClick={() => setEditing({ ...role })}
                 className="shrink-0 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-1"
-                style={{ fontSize: "0.625rem" }}
+                style={{ fontSize: "max(11px, 0.6875rem)" }}
               >
                 Edit
               </button>

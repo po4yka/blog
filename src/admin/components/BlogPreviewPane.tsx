@@ -9,11 +9,11 @@ export function BlogPreviewPane({ form, readingTime }: BlogPreviewPaneProps) {
   return (
     <div className="border border-border/50 bg-card p-6 md:p-8" style={{ borderRadius: "2px" }}>
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.date}</span>
+        <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>{form.date}</span>
         <span className="text-border">·</span>
-        <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{form.category}</span>
+        <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>{form.category}</span>
         <span className="text-border">·</span>
-        <span className="font-mono text-muted-foreground" style={{ fontSize: "0.6875rem" }}>{readingTime} min read</span>
+        <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>{readingTime} min read</span>
       </div>
       <h2 className="text-foreground" style={{ fontSize: "1.5rem", fontWeight: 600, lineHeight: 1.25 }}>
         {form.title || "Untitled"}
@@ -26,7 +26,7 @@ export function BlogPreviewPane({ form, readingTime }: BlogPreviewPaneProps) {
           <span
             key={tag}
             className="font-mono px-2 py-0.5 bg-secondary/60 text-foreground/50 border border-border/50"
-            style={{ fontSize: "0.625rem", borderRadius: "2px" }}
+            style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}
           >
             {tag}
           </span>

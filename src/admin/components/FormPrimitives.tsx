@@ -17,7 +17,7 @@ type FieldBlockProps = {
 
 const fieldLabelClassName = "block font-sans text-muted-foreground/60 mb-1.5";
 const fieldLabelStyle = {
-  fontSize: "0.6875rem",
+  fontSize: "max(11px, 0.6875rem)",
   letterSpacing: "0.02em",
   fontWeight: 400,
   lineHeight: 1.5,
@@ -81,13 +81,13 @@ export function TagsInput({ id, tags, onChange, placeholder, label = "Add tag" }
   return (
     <div className="flex flex-wrap items-center gap-1.5 p-2 bg-card border border-border/50 min-h-[38px]" style={{ borderRadius: "2px" }}>
       {tags.map((tag) => (
-        <span key={tag} className="inline-flex items-center gap-1 font-mono px-2 py-0.5 bg-secondary/80 text-foreground/60 border border-border/40" style={{ fontSize: "0.625rem", borderRadius: "2px" }}>
+        <span key={tag} className="inline-flex items-center gap-1 font-mono px-2 py-0.5 bg-secondary/80 text-foreground/60 border border-border/40" style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}>
           {tag}
           <button
             onClick={() => onChange(tags.filter((t) => t !== tag))}
             aria-label={`Remove ${tag}`}
             className="inline-flex h-11 w-11 -my-3 -ml-2 -mr-3 items-center justify-center text-muted-foreground-dim hover:text-destructive transition-colors cursor-pointer"
-            style={{ fontSize: "0.6875rem", lineHeight: 1 }}
+            style={{ fontSize: "max(11px, 0.6875rem)", lineHeight: 1 }}
           >
             &times;
           </button>
@@ -157,7 +157,7 @@ export function LinksEditor({ links, onChange }: { links: { type: string; href: 
       <button
         onClick={addLink}
         className="inline-flex items-center gap-1 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-        style={{ fontSize: "0.625rem" }}
+        style={{ fontSize: "max(11px, 0.6875rem)" }}
       >
         <Plus size={11} />
         Add link

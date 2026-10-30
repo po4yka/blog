@@ -85,6 +85,8 @@ There is no chromatic accent. The only "accent" is `--emphasis` — pure white o
 --font-serif: "Piazzolla Variable", "Piazzolla", "Piazzolla Fallback", Georgia, "Iowan Old Style", "Charter", "Times New Roman", serif;
 ```
 
+The full stacks are defined once, in the `@theme static` block of `src/styles/tailwind.css`; that block is the only source of the variables and the `font-*` utilities.
+
 - **`--font-sans`** — headings (including inside blog prose), navigation, labels, button text, UI copy, site chrome
 - **`--font-mono`** — code blocks, terminal output (`Cmd`, `BootBlock`, `InfoTable`), `.label-meta` metadata strips. Code blocks are syntax-highlighted in monochrome only (`src/lib/shiki-mono.ts`): keywords at `--emphasis` weight 500, identifiers at `--foreground`, strings at `--muted-foreground`, comments at `--muted-foreground-dim` italic. Never introduce a chromatic Shiki theme
   - Exception: the single-line role subtitle directly beneath the hero `display-1` name may use `--font-mono` (`text-mono-lg`). It's load-bearing terminal voice — not body copy — and rendering it in sans dilutes the identity. Cap at one line. No other prose surface uses mono.
@@ -105,6 +107,8 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 | `h4` | 15px | 500 | 0 | Minor labels |
 | body | 15–17px | 400 | 0 | UI copy, navigation |
 | `label-meta` | 11px mono, uppercase | 400 | 0.12em | Metadata strips, section number labels |
+
+**Minimum text size: 11px**, everywhere including the admin SPA. Sizes in rem that can drop below it at the compact 15px root use `max(11px, <rem>)` (the `text-xs` and `text-label` tokens do this). The fluid sizes of `display-1` (`--step-5`), `.display-serif` (`--step-4`), `h1` (`--step-3`) and the blog prose (`--step-0` to `--step-2`) come from tokens in `src/styles/tokens.css`.
 
 All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The two exceptions are the post `<h1>` and the blog-index `<h2>` titles, which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at 17px, line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
@@ -177,7 +181,7 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - Wrapper must have base outline: `outline: 1px solid transparent; outline-offset: 4px; border-radius: 2px`
 - Re-triggered via React `key={invalidCount}` remount so repeated failures restart cleanly
 - Replaces the AI-cliché horizontal shake animation (`x: [-8, 8, -6, 6, -3, 3, 0]`) for rejected-credentials feedback
-- Reduce-motion: already caught by the global `animation-duration: 0.01ms !important` wildcard in `index.css`
+- Reduce-motion: already caught by the global reduced-motion rule in `tokens.css` (`animation-duration: 0.01ms`, so the fill-mode end state still applies)
 
 ### Buttons
 
@@ -233,8 +237,8 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ## 5. Layout Principles
 
-- **Max content width:** `1160px` via `.page-grid`
-- **Grid:** 12-column CSS grid, `gap: 1.5rem`, `padding: 0 clamp(1.25rem, 2vw + 0.5rem, 3rem)`
+- **Max content width:** `--grid-max` (1160px) in `src/styles/tokens.css`, used by the page shell, nav and footer
+- **Grid:** 12-column CSS grid (`.page-grid`), `gap: var(--grid-gap)` (1.5rem), `padding: 0 clamp(1.25rem, 2vw + 0.5rem, 3rem)`
 - **Base radius:** `2px` — sharp, Swiss-derived; no soft rounded corners on panels
 - **Decorative section budget:** Maximum 6–8 atmospheric blocks on the homepage, each backed by real data (see section 10). Each must relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint). Never stack two without a content section between them.
 - **Asymmetric over symmetric:** editorial, off-center compositions. Vary section layout while keeping the same design language.
@@ -286,7 +290,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
 - Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable
 - Use underline-on-hover via `clip-path` animation — not color jumps
-- Respect `prefers-reduced-motion` — all Motion library animations must check it
+- Respect reduced motion — `<html data-motion="reduce">` is set before paint when the OS asks for it or the visitor turns motion off in Settings; `tokens.css` cuts CSS animations and transitions under it, and Motion animations check it through `MotionProvider`
 - Use tree-branch unicode (`├──` `└──` `│`) inside panel list content for terminal density
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and section number prefixes
@@ -405,6 +409,8 @@ Row separator: border-bottom 1px dashed var(--rule).
 - Do not extend `--font-serif` beyond blog prose — no serif on project cards, experience blocks, settings, or any chrome surface
 
 ### Motion guidance
+
+Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-instant` 80ms, `--dur-fast` 150ms, `--dur-base` 240ms, `--dur-slow` 420ms, `--dur-scene` 700ms; `--ease-out`, `--ease-in-out`, `--ease-step-8`, `--ease-step-24`. `src/lib/motion.ts` mirrors them for Motion (`duration`, `ease`), and a unit test keeps the two in sync. Use a token, not a raw number, in new code.
 
 Permitted:
 - Fade-in stagger on mount (signals list structure, 120–150ms per item)

@@ -74,7 +74,7 @@ export function AdminSetup() {
           <p className="font-mono text-foreground/80 mb-1" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
             Passkey registered
           </p>
-          <p className="font-mono text-muted-foreground/50 mb-6" style={{ fontSize: "0.6875rem" }}>
+          <p className="font-mono text-muted-foreground/50 mb-6" style={{ fontSize: "max(11px, 0.6875rem)" }}>
             You can now sign in with your passkey.
           </p>
           <button
@@ -137,7 +137,7 @@ function SetupShell({ children }: { children: React.ReactNode }) {
             <h1 className="text-foreground" style={{ fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.2 }}>
               Setup
             </h1>
-            <p className="font-mono text-muted-foreground/40" style={{ fontSize: "0.625rem", letterSpacing: "0.05em" }}>
+            <p className="font-mono text-muted-foreground/40" style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.05em" }}>
               Register admin passkey
             </p>
           </div>

@@ -283,7 +283,7 @@ function BlogStats({
           borderBottom: "1px solid var(--rule)",
         }}
       >
-        <span className="text-muted-foreground-dim select-none text-2xs font-mono">$ wc -l ./posts/*</span>
+        <span className="text-muted-foreground-dim select-none text-xs font-mono">$ wc -l ./posts/*</span>
       </div>
       <div className="pt-5 space-y-4 text-mono-sm">
         {/* Summary row */}

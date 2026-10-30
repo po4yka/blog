@@ -45,6 +45,9 @@ window.__vite_plugin_react_preamble_installed__ = true;
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme;
         document.documentElement.classList.add(resolved);
+        if (prefs.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.setAttribute('data-motion', 'reduce');
+        }
       } catch(e) {}
     })();
     </script>

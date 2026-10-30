@@ -71,3 +71,39 @@ test.describe("Theme switching and persistence", () => {
     await expect(page.locator("html")).toHaveClass(/\blight\b/);
   });
 });
+
+test.describe("Reduced motion", () => {
+  // <body> carries the theme fade (--dur-base, 240ms), so it shows whether transitions are cut.
+  const bodyTransition = (page: import("@playwright/test").Page) =>
+    page.evaluate(() => parseFloat(getComputedStyle(document.body).transitionDuration));
+
+  test("stored Settings flag sets data-motion before paint and cuts transitions", async ({ page }) => {
+    await page.addInitScript((key) => {
+      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 3 }));
+    }, STORAGE_KEY);
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
+    expect(await bodyTransition(page)).toBeLessThan(0.001);
+
+    // Survives a client-side navigation, which resets <html> attributes.
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "blog" }).click();
+    await page.waitForURL(/\/blog/);
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
+  });
+
+  test.describe("OS setting", () => {
+    test.use({ reducedMotion: "reduce" });
+
+    test("sets data-motion with no stored preference", async ({ page }) => {
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
+      expect(await bodyTransition(page)).toBeLessThan(0.001);
+    });
+  });
+
+  test("full motion keeps the theme fade", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).not.toHaveAttribute("data-motion");
+    expect(await bodyTransition(page)).toBeCloseTo(0.24, 3);
+  });
+});

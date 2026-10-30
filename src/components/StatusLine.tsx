@@ -95,7 +95,7 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
           onClick={() => window.dispatchEvent(new CustomEvent(SHORTCUTS_EVENT))}
           aria-label={t("shortcuts.title")}
         >
-          <kbd className="not-italic" style={{ fontSize: 10, padding: "0 0.3em", minWidth: 0 }}>?</kbd>
+          <kbd className="not-italic" style={{ fontSize: "max(11px, 0.6875rem)", padding: "0 0.3em", minWidth: 0 }}>?</kbd>
           <span aria-hidden="true">help</span>
         </button>
         {scrollY > 600 && (

@@ -61,7 +61,7 @@ export function AdminLayout() {
           </a>
           <div
             className="mt-1 font-mono text-muted-foreground/40"
-            style={{ fontSize: "0.5625rem", letterSpacing: "0.1em" }}
+            style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.1em" }}
           >
             ADMIN PANEL
           </div>
@@ -132,7 +132,7 @@ export function AdminLayout() {
             </span>
             <span
               className="ml-2 font-mono text-muted-foreground/40"
-              style={{ fontSize: "0.5625rem" }}
+              style={{ fontSize: "max(11px, 0.6875rem)" }}
             >
               ADMIN
             </span>
@@ -159,7 +159,7 @@ export function AdminLayout() {
                     : "text-muted-foreground hover:text-foreground"
                 }`
               }
-              style={{ fontSize: "0.625rem", borderRadius: "2px" }}
+              style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}
             >
               {({ isActive }) => (
                 <>
