@@ -47,8 +47,9 @@ for (const scheme of ["dark", "light"] as const) {
 
       for (const route of ROUTES) {
         test(route.name, async ({ page }) => {
-          // Live GitHub data is masked anyway; failing fast keeps panels in a stable state.
-          await page.route("**/api/github/**", (r) => r.fulfill({ status: 503, body: "{}" }));
+          // Abort live GitHub calls so each panel takes its own fetch-error path (renders nothing)
+          // instead of parsing a stub body of the wrong shape.
+          await page.route("**/api/github/**", (r) => r.abort());
           await page.goto(route.path);
           await page.waitForLoadState("networkidle");
           await revealAll(page);
