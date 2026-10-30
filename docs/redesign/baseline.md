@@ -62,7 +62,7 @@ Every route loads about 134 KB brotli before its own content: React, Motion and 
 - `.lighthouserc.mobile.json`: mobile run with thresholds set at this baseline, so a regression warns.
 - CI (`.github/workflows/ci-cd.yml`): installs WebKit and Firefox, runs mobile Lighthouse after desktop, and adds a `visual` job on a pinned `ubuntu-24.04` runner (the Playwright container image was tried first, but the Cloudflare prerenderer's `workerd` does not start in it). `deploy` does not wait for `visual` yet.
 
-Screenshot baselines are not checked in yet. They must come from the CI `visual` job, not from a Mac or an arm64 Docker host, because font rendering differs. The first CI run of `visual` fails on purpose and uploads the written snapshots as the `visual-diffs` artifact; commit them to `e2e/visual.spec.ts-snapshots/`, then add `visual` to `deploy.needs`.
+Screenshot baselines are checked in under `e2e/visual.spec.ts-snapshots/` and `deploy` waits for `visual`. They must come from the CI `visual` job, not from a Mac or an arm64 Docker host, because font rendering differs. To update them after an intended visual change, take the snapshots from the failed job's `visual-diffs` artifact and commit them.
 
 ## Real-device plan
 

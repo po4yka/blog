@@ -79,9 +79,8 @@ jobs:
             e2e/visual.spec.ts-snapshots/
           retention-days: 7
 
-  # Add `visual` to needs once the Linux baselines are committed.
   deploy:
-    needs: ci
+    needs: [ci, visual]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
