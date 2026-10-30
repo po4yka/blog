@@ -10,8 +10,8 @@ interface GitHubEvent {
 }
 
 const CACHE_TTL_S = 900; // 15 minutes
-// Shared Cache API key for the GitHub events endpoint — calendar, events, and
-// commits all hit the same upstream URL so they share a single cached response.
+// Shared Cache API key for the GitHub events endpoint — calendar and events
+// hit the same upstream URL so they share a single cached response.
 const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
 
 export const GET: APIRoute = async () => {
@@ -40,8 +40,8 @@ export const GET: APIRoute = async () => {
 
   const events = (await res.json()) as GitHubEvent[];
 
-  // Store the raw events array under the shared cache key so events.ts and
-  // commits.ts can reuse the same upstream response without a second fetch.
+  // Store the raw events array under the shared cache key so events.ts can
+  // reuse the same upstream response without a second fetch.
   await cfCachePut(
     UPSTREAM_URL,
     Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
