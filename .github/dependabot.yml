@@ -10,6 +10,10 @@ updates:
     labels:
       - dependencies
     open-pull-requests-limit: 10
+    ignore:
+      # Transitive only, kept on 7.x by an override; tooling does not support Babel 8 yet.
+      - dependency-name: "@babel/core"
+        update-types: ["version-update:semver-major"]
     groups:
       radix-ui:
         patterns:
@@ -22,6 +26,10 @@ updates:
       tanstack:
         patterns:
           - "@tanstack/*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
       astro:
         patterns:
           - "astro"
