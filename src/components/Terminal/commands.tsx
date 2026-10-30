@@ -14,11 +14,11 @@ export function Cmd({
   children: ReactNode;
   delay?: number;
 }) {
-  const { ref, inView } = useInView(0.1);
+  const { ref, inView, element } = useInView(0.1);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    const el = ref.current;
+    const el = element;
     if (!el) return;
     const textParts = el.querySelectorAll("[data-cmd-text]");
     const text = Array.from(textParts)
@@ -31,7 +31,7 @@ export function Cmd({
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, [ref]);
+  }, [element]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -105,11 +105,11 @@ export function OutputBlock({
   delay?: number;
   className?: string;
 }) {
-  const { ref, inView } = useInView(0.1);
+  const { ref, inView, element } = useInView(0.1);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    const el = ref.current;
+    const el = element;
     if (!el) return;
     const text = el.textContent?.trim();
     if (text) {
@@ -118,7 +118,7 @@ export function OutputBlock({
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, [ref]);
+  }, [element]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

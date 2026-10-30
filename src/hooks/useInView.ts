@@ -1,27 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { observe } from "./observerManager";
 
 /**
- * Returns { ref, inView } — triggers once when element enters viewport,
+ * Returns { ref, inView, element } — triggers once when element enters viewport,
  * then stops observing (fire-once reveal pattern).
  * Uses the shared IntersectionObserver pool.
+ *
+ * `ref` is a callback ref, so observation starts whenever the element attaches,
+ * including components that render a placeholder first and the target later.
  */
 export function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
+  const [element, setElement] = useState<Element | null>(null);
   const [inView, setInView] = useState(false);
-  // Track whether we've already triggered to avoid re-subscribing
-  const triggered = useRef(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el || triggered.current) return;
+    if (!element || inView) return;
 
     const unobserve = observe(
-      el,
+      element,
       (isIntersecting) => {
         if (isIntersecting) {
           setInView(true);
-          triggered.current = true;
           unobserve();
         }
       },
@@ -29,8 +28,7 @@ export function useInView(threshold = 0.15) {
     );
 
     return unobserve;
-  }, [threshold]);
+  }, [element, inView, threshold]);
 
-  return { ref, inView };
+  return { ref: setElement, inView, element };
 }
-

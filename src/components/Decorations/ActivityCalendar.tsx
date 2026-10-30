@@ -147,7 +147,8 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
     ? `${hoveredCell.label} · ${hoveredCell.count} EVENT${hoveredCell.count === 1 ? "" : "S"}`
     : null;
 
-  if (loading) return null;
+  // The server render is the loading state: it must not be empty, or client:visible has nothing to observe.
+  if (loading) return <div aria-hidden="true" />;
 
   return (
     <MotionProvider>
