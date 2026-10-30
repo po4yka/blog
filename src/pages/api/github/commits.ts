@@ -17,14 +17,15 @@ const CACHE_TTL_S = 600; // 10 minutes
 // (Projects: 4, Experience: 3) so the panel reads as connective tissue,
 // not a fifth full section.
 const MAX_COMMITS = 5;
-// Shared with calendar.ts and events.ts — one upstream call fills all three.
-const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
+// Commit search, not the events feed: GitHub's PushEvent payloads no longer list commits.
+const UPSTREAM_URL = `https://api.github.com/search/commits?q=author:${GITHUB_USERNAME}&sort=author-date&order=desc&per_page=${MAX_COMMITS}`;
 
-type GitHubPushEvent = {
-  type: string;
-  payload?: { commits?: Array<{ sha: string; message: string }> };
-  created_at: string;
-  repo?: { name: string };
+type GitHubCommitSearch = {
+  items?: Array<{
+    sha: string;
+    html_url: string;
+    commit: { message: string; author: { date: string } };
+  }>;
 };
 
 function relativeTime(iso: string): string {
@@ -39,29 +40,19 @@ function relativeTime(iso: string): string {
   return `${months}mo ago`;
 }
 
-function extractCommits(events: GitHubPushEvent[]): CommitSummary[] {
-  const commits: CommitSummary[] = [];
-  for (const event of events) {
-    if (event.type !== "PushEvent" || !event.payload?.commits) continue;
-    for (const c of event.payload.commits) {
-      commits.push({
-        hash: c.sha.slice(0, 7),
-        msg: c.message.split("\n")[0]!,
-        date: relativeTime(event.created_at),
-        url: `https://github.com/${event.repo?.name ?? ""}/commit/${c.sha}`,
-      });
-      if (commits.length >= MAX_COMMITS) break;
-    }
-    if (commits.length >= MAX_COMMITS) break;
-  }
-  return commits;
+function extractCommits(search: GitHubCommitSearch): CommitSummary[] {
+  return (search.items ?? []).slice(0, MAX_COMMITS).map((c) => ({
+    hash: c.sha.slice(0, 7),
+    msg: c.commit.message.split("\n")[0]!,
+    date: relativeTime(c.commit.author.date),
+    url: c.html_url,
+  }));
 }
 
 export const GET: APIRoute = async () => {
   const cached = await cfCacheGet(UPSTREAM_URL);
   if (cached) {
-    const events = (await cached.json()) as GitHubPushEvent[];
-    const commits = extractCommits(events);
+    const commits = extractCommits((await cached.json()) as GitHubCommitSearch);
     return Response.json(commits, {
       headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "HIT" },
     });
@@ -81,14 +72,14 @@ export const GET: APIRoute = async () => {
     });
   }
 
-  const events = (await res.json()) as GitHubPushEvent[];
+  const search = (await res.json()) as GitHubCommitSearch;
 
   await cfCachePut(
     UPSTREAM_URL,
-    Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
+    Response.json(search, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
   );
 
-  const commits = extractCommits(events);
+  const commits = extractCommits(search);
   return Response.json(commits, {
     headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });

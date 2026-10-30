@@ -240,74 +240,66 @@ describe("GET /api/github/commits", () => {
 
   const ctx = { request: new Request("http://localhost/api/github/commits") } as import("astro").APIContext;
 
-  it("extracts commits from PushEvents and ignores other event types", async () => {
-    const now = new Date();
+  // Shape of GET /search/commits as returned by GitHub (fields the route reads).
+  function searchItem(sha: string, message: string, date: string, repo = "po4yka/blog") {
+    return { sha, html_url: `https://github.com/${repo}/commit/${sha}`, commit: { message, author: { date } } };
+  }
+
+  it("maps commit search results to short hash, first line, relative date and URL", async () => {
+    const now = Date.now();
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => [
-        // Non-push: ignored
-        { type: "WatchEvent", created_at: now.toISOString(), repo: { name: "po4yka/blog" } },
-        // Push with 2 commits: both counted
-        {
-          type: "PushEvent",
-          created_at: new Date(now.getTime() - 3 * 3600000).toISOString(), // 3h ago
-          repo: { name: "po4yka/blog" },
-          payload: {
-            commits: [
-              { sha: "abcdef1234567890", message: "feat: add thing\n\nbody" },
-              { sha: "1234567890abcdef", message: "fix: tweak" },
-            ],
-          },
-        },
-        // Another push, older
-        {
-          type: "PushEvent",
-          created_at: new Date(now.getTime() - 2 * 86400000).toISOString(), // 2d ago
-          repo: { name: "po4yka/other" },
-          payload: {
-            commits: [{ sha: "deadbeefdeadbeef", message: "chore: cleanup" }],
-          },
-        },
-      ],
+      json: async () => ({
+        total_count: 2,
+        items: [
+          searchItem("abcdef1234567890", "feat: add thing\n\nbody", new Date(now - 3 * 3600000).toISOString()),
+          searchItem("deadbeefdeadbeef", "chore: cleanup", new Date(now - 2 * 86400000).toISOString(), "po4yka/other"),
+        ],
+      }),
     });
 
     const GET = await getHandler();
     const response = await GET(ctx);
     expect(response.status).toBe(200);
     expect(response.headers.get("X-Cache")).toBe("MISS");
+    expect(String(mockFetch.mock.calls[0]![0])).toBe(
+      "https://api.github.com/search/commits?q=author:po4yka&sort=author-date&order=desc&per_page=5",
+    );
 
     const data = await response.json();
-    expect(data).toHaveLength(3);
-    expect(data[0].hash).toBe("abcdef1"); // 7-char short sha
-    expect(data[0].msg).toBe("feat: add thing"); // first line only
-    expect(data[0].date).toBe("3h ago");
-    expect(data[0].url).toBe("https://github.com/po4yka/blog/commit/abcdef1234567890");
-    expect(data[2].date).toBe("2d ago");
+    expect(data).toEqual([
+      { hash: "abcdef1", msg: "feat: add thing", date: "3h ago", url: "https://github.com/po4yka/blog/commit/abcdef1234567890" },
+      { hash: "deadbee", msg: "chore: cleanup", date: "2d ago", url: "https://github.com/po4yka/other/commit/deadbeefdeadbeef" },
+    ]);
   });
 
   it("caps output at MAX_COMMITS (5)", async () => {
     const now = new Date().toISOString();
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => [
-        {
-          type: "PushEvent",
-          created_at: now,
-          repo: { name: "po4yka/blog" },
-          payload: {
-            commits: Array.from({ length: 20 }, (_, i) => ({
-              sha: `${i}`.padStart(40, "0"),
-              message: `commit ${i}`,
-            })),
-          },
-        },
-      ],
+      json: async () => ({
+        items: Array.from({ length: 20 }, (_, i) => searchItem(`${i}`.padStart(40, "0"), `commit ${i}`, now)),
+      }),
     });
 
     const GET = await getHandler();
     const response = await GET(ctx);
     const data = await response.json();
     expect(data).toHaveLength(5);
+  });
+
+  it("serves the cached search response on the second call without re-fetching", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ items: [searchItem("abcdef1234567890", "fix: tweak", new Date().toISOString())] }),
+    });
+
+    const GET = await getHandler();
+    await GET(ctx);
+    const second = await GET(ctx);
+    expect(second.headers.get("X-Cache")).toBe("HIT");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect((await second.json())[0].hash).toBe("abcdef1");
   });
 
   it("returns empty array when GitHub API fails with no cache", async () => {
