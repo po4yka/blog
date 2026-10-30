@@ -1,7 +1,5 @@
-import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
-import { ease, duration } from "@/lib/motion";
-import { DrawnRule, REVEAL_AFTER_RULE } from "../Terminal/windows";
+import { DrawnRule, REVEAL_AFTER_RULE, RevealPanel } from "../Terminal/windows";
+import { Reveal } from "@/components/ui/Reveal";
 
 /** Shared panel shell — flat, hairline, operator-console header row. */
 export function PanelShell({
@@ -15,21 +13,8 @@ export function PanelShell({
   children: React.ReactNode;
   delay?: number;
 }) {
-  const { ref, inView } = useInView(0.08);
-
   return (
-    <motion.div
-      ref={ref}
-      className="overflow-hidden font-mono"
-      style={{
-        border: "1px solid var(--border)",
-        borderRadius: 2,
-        background: "var(--panel-bg)",
-      }}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.base, delay, ease }}
-    >
+    <RevealPanel tone="translucent" className="font-mono" delay={delay}>
       <div className="relative flex items-baseline justify-between px-4 py-2">
         <span className="label-meta">{label}</span>
         {labelRight && (
@@ -44,15 +29,9 @@ export function PanelShell({
             {labelRight}
           </span>
         )}
-        <DrawnRule active={inView} />
+        <DrawnRule />
       </div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: duration.base, delay: delay + REVEAL_AFTER_RULE, ease }}
-      >
-        {children}
-      </motion.div>
-    </motion.div>
+      <Reveal delay={delay + REVEAL_AFTER_RULE}>{children}</Reveal>
+    </RevealPanel>
   );
 }

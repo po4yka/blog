@@ -5,6 +5,7 @@ import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
 import { stagger } from "@/lib/motion";
 import { MotionProvider } from "./MotionProvider";
+import { Reveal } from "./ui/Reveal";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { blogUrl, type Locale, type TranslationKey } from "@/lib/i18n";
 
@@ -99,7 +100,10 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
 
   return (
     <MotionProvider>
-    <motion.nav
+    {/* The nav's own transition-all (for the scroll-state background) also
+        carries the Reveal opacity fade, at its 300ms. */}
+    <Reveal
+      as="nav"
       aria-label={t("nav.primary")}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled ? "backdrop-blur-sm" : ""
@@ -112,9 +116,6 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         paddingLeft: "env(safe-area-inset-left)",
         paddingRight: "env(safe-area-inset-right)",
       }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
     >
       <div className="max-w-(--grid-max) mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
         {/* Left group: wordmark + divider + desktop tabs */}
@@ -268,7 +269,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </Reveal>
     </MotionProvider>
   );
 }

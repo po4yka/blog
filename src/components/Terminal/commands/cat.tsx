@@ -1,7 +1,7 @@
 import { registerCommand } from "./registry";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import { Accent, Tag } from "../ui";
+import { Em, Tag } from "../ui";
 import type { Command } from "./types";
 
 const allSlugs: string[] = [
@@ -40,7 +40,7 @@ const cat: Command = {
     if (project) {
       return (
         <div className="space-y-0.5">
-          {renderRow("name", <Accent>{project.name}</Accent>)}
+          {renderRow("name", <Em>{project.name}</Em>)}
           {renderRow("desc", project.description)}
           {renderRow("platforms", project.platforms.join(", "))}
           {renderRow("year", project.year)}
@@ -81,7 +81,7 @@ const cat: Command = {
     if (post) {
       return (
         <div className="space-y-0.5">
-          {renderRow("title", <Accent>{post.title}</Accent>)}
+          {renderRow("title", <Em>{post.title}</Em>)}
           {renderRow("date", post.date)}
           {renderRow("category", post.category)}
           {renderRow("summary", post.summary)}

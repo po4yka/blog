@@ -1,7 +1,7 @@
 import { registerCommand } from "./registry";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import { Accent } from "../ui";
+import { Em } from "../ui";
 import type { Command } from "./types";
 
 function highlight(text: string, keyword: string) {
@@ -13,7 +13,7 @@ function highlight(text: string, keyword: string) {
   return (
     <>
       {text.slice(0, idx)}
-      <Accent>{text.slice(idx, idx + keyword.length)}</Accent>
+      <Em>{text.slice(idx, idx + keyword.length)}</Em>
       {text.slice(idx + keyword.length)}
     </>
   );

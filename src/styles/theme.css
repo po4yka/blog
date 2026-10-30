@@ -1,7 +1,7 @@
 /* Hallmark · design-system: DESIGN.md · stack: Astro 7 + React 19 + Tailwind v4
  * type: Geist Sans + Geist Mono + Piazzolla (blog prose only)
  * accent: emphasis-only (no chromatic accent — pure white on dark / pure black on light)
- * macrostructure: long-document + operator-panel kit (SectionHeader + MacWindow + Cmd + BootBlock)
+ * macrostructure: long-document + operator-panel kit (SectionHeader + OperatorPanel + Cmd + BootBlock)
  * radius: 2px · motion: cut to fade-in mount + opacity on hover · prefers-reduced-motion respected
  */
 @custom-variant dark (&:is(.dark *));
@@ -260,6 +260,11 @@ kbd {
 }
 .rule-draw {
   animation: rule-draw 0.5s var(--ease-step-24) both;
+}
+/* A panel's own hairline (DrawnRule) waits for the panel's Reveal delay.
+   Scoped to panels so SectionHeader and nav rules never pick it up. */
+.panel .rule-draw {
+  animation-delay: var(--reveal-delay, 0ms);
 }
 
 /* Terminal-authentic loading marker. Replaces skeleton shimmer.

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { Reveal } from "./ui/Reveal";
 import { motion, AnimatePresence } from "motion/react";
-import { BootBlock, Cmd, Accent, Tag } from "./Terminal";
+import { BootBlock, Cmd, Em, Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -88,7 +89,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
             status: "OK",
             text: (
               <>
-                Mounted <Accent>po4yka.dev/blog</Accent>
+                Mounted <Em>po4yka.dev/blog</Em>
               </>
             ),
           },
@@ -96,7 +97,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
             status: "INFO",
             text: featured ? (
               <>
-                {t("blog.reading")}: <Accent>posts/{featured.slug}.txt</Accent>
+                {t("blog.reading")}: <Em>posts/{featured.slug}.txt</Em>
               </>
             ) : (
               t("blog.browseAll")
@@ -108,7 +109,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
       {/* Post listing */}
       <div className="space-y-5">
         <Cmd>
-          ls -lt <Accent>./posts/</Accent>
+          ls -lt <Em>./posts/</Em>
         </Cmd>
 
         {/* Category filter — flat row separated by │ */}
@@ -150,9 +151,11 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
           </div>
         )}
 
-        {/* Posts list — flat, no MacWindow wrapping */}
+        {/* Posts list — flat, no OperatorPanel wrapping */}
         <div>
-          <AnimatePresence mode="wait">
+          {/* initial={false}: the server HTML and first render show the list at
+              full opacity; only later filter changes fade. */}
+          <AnimatePresence mode="wait" initial={false}>
             <motion.ul
               key={`${activeCategory}|${activeTag ?? ""}`}
               initial={{ opacity: 0 }}
@@ -271,12 +274,7 @@ function BlogStats({
   const realCategories = useMemo(() => categories.filter((c) => c !== "All"), [categories]);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.slow, delay: 0.1, ease }}
-    >
+    <Reveal ref={ref} speed="slow" delay={0.1}>
       <div
         className="flex items-center gap-3 py-2"
         style={{
@@ -351,6 +349,6 @@ function BlogStats({
           </div>
         )}
       </div>
-    </motion.div>
+    </Reveal>
   );
 }

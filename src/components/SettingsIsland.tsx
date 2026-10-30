@@ -1,13 +1,12 @@
-import { motion } from "motion/react";
+import { Reveal } from "./ui/Reveal";
 import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard } from "lucide-react";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useState } from "react";
-import { Cmd, Accent, BootBlock, MacWindow } from "./Terminal";
+import { Cmd, Em, BootBlock, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
-import { ease } from "@/lib/motion";
 
 const themeOptions: { value: ThemeMode; icon: typeof Sun; labelKey: TranslationKey }[] = [
   { value: "dark", icon: Moon, labelKey: "settings.dark" },
@@ -70,7 +69,7 @@ export function Settings() {
             status: "OK",
             text: (
               <>
-                Mounted <Accent>po4yka.dev/settings</Accent>
+                Mounted <Em>po4yka.dev/settings</Em>
               </>
             ),
           },
@@ -80,16 +79,11 @@ export function Settings() {
 
       {/* Settings command */}
       <Cmd>
-        cat <Accent>/etc/preferences.conf</Accent>
+        cat <Em>/etc/preferences.conf</Em>
       </Cmd>
 
-      <MacWindow label="preferences.conf" titleExt="~/settings | main" sectionNumber="09" delay={0.05} statusLine>
-        <motion.div
-          className="space-y-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, ease }}
-        >
+      <OperatorPanel label="preferences.conf" titleExt="~/settings | main" sectionNumber="09" delay={0.05} statusLine>
+        <Reveal className="space-y-6" speed="slow">
           {/* Theme */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -264,8 +258,8 @@ export function Settings() {
               {resetDone ? tt("settings.defaultsRestored") : tt("settings.resetDefaults")}
             </button>
           </div>
-        </motion.div>
-      </MacWindow>
+        </Reveal>
+      </OperatorPanel>
     </div>
     </MotionProvider>
   );

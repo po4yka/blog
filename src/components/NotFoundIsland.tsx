@@ -1,25 +1,14 @@
-import { motion } from "motion/react";
-import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
+import { Panel } from "./ui/Panel";
+import { Reveal } from "./ui/Reveal";
 import { useLocale } from "@/stores/settingsStore";
-import { ease } from "@/lib/motion";
 
 export function NotFound() {
   const { t } = useLocale();
 
   return (
-    <MotionProvider>
     <div className="pt-16">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, ease }}
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "2px",
-        }}
-      >
+      <Reveal as={Panel} clip="visible" speed="slow">
         {/* Operator-console header row */}
         <div
           className="px-4 py-[10px]"
@@ -36,56 +25,38 @@ export function NotFound() {
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          <motion.div
-            className="font-mono text-mono"
-            style={{ lineHeight: 1.7 }}
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1, duration: 0.3 }}
-          >
+          <Reveal className="font-mono text-mono" style={{ lineHeight: 1.7 }} delay={0.1}>
             <span className="text-muted-foreground label-meta">ERROR ·</span>{" "}
             <span className="text-foreground/80">
               {t("notFound.error")}
             </span>
-          </motion.div>
-          <motion.div
-            className="font-mono text-mono"
-            style={{ lineHeight: 1.7 }}
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
+          </Reveal>
+          <Reveal className="font-mono text-mono" style={{ lineHeight: 1.7 }} delay={0.2}>
             <span className="text-muted-foreground label-meta">INFO ·</span>{" "}
             <span className="text-foreground/70">
               {t("notFound.info")}
             </span>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            style={{ fontSize: "2.5rem" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.4, ease }}
-          >
+          <Reveal style={{ fontSize: "2.5rem" }} delay={0.3} speed="slow">
             <span className="text-foreground/80 inline-block">404</span>
             <span className="text-muted-foreground mx-3" style={{ fontSize: "1.5rem" }}>—</span>
             <span className="text-foreground/60" style={{ fontSize: "1rem" }}>{t("notFound.pageNotFound")}</span>
-          </motion.div>
+          </Reveal>
 
-          <motion.a
-            href="/"
-            aria-label={t("notFound.goHome")}
-            title={t("notFound.goHome")}
-            className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 text-mono"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            {t("notFound.goBack")}
-          </motion.a>
+          {/* The link keeps its own colour transition, so the fade sits on a wrapper. */}
+          <Reveal className="flex" delay={0.4}>
+            <a
+              href="/"
+              aria-label={t("notFound.goHome")}
+              title={t("notFound.goHome")}
+              className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 text-mono"
+            >
+              {t("notFound.goBack")}
+            </a>
+          </Reveal>
         </div>
-      </motion.div>
+      </Reveal>
     </div>
-    </MotionProvider>
   );
 }

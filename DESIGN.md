@@ -129,7 +129,12 @@ All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so th
 
 Flat bordered containers replace the former macOS window chrome. No traffic lights, no drop shadows, no rounded corners beyond 2px.
 
-**MacWindow (operator panel mode)**
+**Primitives** (`src/components/ui/`, styles in `src/styles/primitives.css`)
+- `Panel` draws every flat panel frame: `var(--card)` (or `tone="translucent"`, `var(--panel-bg)`), `1px solid var(--border)`, 2px radius. `clip` sets overflow: `hidden` (default), `clip` (clips without a scroll container, so `position: sticky` children such as the blog TOC keep working) or `visible`. Do not hand-write the border, radius and background again.
+- `Reveal` is the entrance fade: a CSS `@starting-style` opacity fade on first render, with `delay` (seconds, for staggers) and `speed` (`fast`, `base`, `slow` = `--dur-*`). The static HTML is already in its final state, so content shows without JS, without `@starting-style` support and under reduced motion. Never ship content at `opacity: 0` in the server HTML. A `transition-*` utility on the same element replaces the fade, so its property list must include `opacity` (as the nav and the blog back link do), or the element goes inside a wrapper Reveal. `instant` skips the fade for above-the-fold LCP content.
+- `Em` is emphasis text: `--emphasis` at weight 500.
+
+**OperatorPanel**
 - Background: `var(--card)`
 - Border: `1px solid var(--border)`, `border-radius: 2px`
 - No shadow, no traffic lights, no titlebar gradient
@@ -271,8 +276,8 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | Surface | Treatment |
 |---------|-----------|
 | Page canvas | `var(--background)` — no shadow, no border |
-| Operator panel (MacWindow) | `var(--card)` + `1px solid var(--border)` |
-| PanelShell widget | `var(--card)` + `1px solid var(--border)` |
+| Operator panel (`OperatorPanel`) | `Panel`: `var(--card)` + `1px solid var(--border)` |
+| PanelShell widget | `Panel tone="translucent"`: `var(--panel-bg)` + `1px solid var(--border)` |
 | Sticky nav | `var(--background)` + `border-bottom: 1px solid var(--border)` |
 | Nested containers | `var(--muted)` — no shadow |
 | Loading indicators | `[LOADING...]` bracket cycle (`.loading-bracket`) — static mono text, no skeleton shimmer |
@@ -284,7 +289,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 ## 7. Do's and Don'ts
 
 ### Do
-- Use operator panels (`MacWindow` in flat mode, `PanelShell`) as the primary content framing unit
+- Use operator panels (`OperatorPanel`, `PanelShell`, both built on `Panel`) as the primary content framing unit
 - Use `SectionHeader` with numbered labels (`01 / IDENTITY`) at the top of every major section
 - Build hierarchy through weight (400→500), opacity layers, and hairline rules — not color
 - Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
@@ -371,7 +376,7 @@ Every home section and primary page header uses `<SectionHeader>`:
 
 **New content section:**
 ```
-Wrap in <MacWindow label="SECTION-NAME" sectionNumber="04">.
+Wrap in <OperatorPanel label="SECTION-NAME" sectionNumber="04">.
 Background var(--card), border 1px solid var(--border), border-radius 2px.
 No shadow, no traffic lights. Header row label-meta left + titleExt right.
 ```
@@ -392,7 +397,7 @@ Update on 3–10s intervals, not every frame.
 
 **Identity display:**
 ```
-Use <InfoTable fieldCodes> inside <MacWindow label="WHOIS PO4YKA" sectionNumber="01">.
+Use <InfoTable fieldCodes> inside <OperatorPanel label="WHOIS PO4YKA" sectionNumber="01">.
 Key column: --font-mono 11px muted-foreground right-aligned.
 Value column: --font-sans 14px foreground left-aligned.
 Row separator: border-bottom 1px dashed var(--rule).
@@ -413,7 +418,7 @@ Row separator: border-bottom 1px dashed var(--rule).
 Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-instant` 80ms, `--dur-fast` 150ms, `--dur-base` 240ms, `--dur-slow` 420ms, `--dur-scene` 700ms; `--ease-out`, `--ease-in-out`, `--ease-step-8`, `--ease-step-24`. `src/lib/motion.ts` mirrors them for Motion (`duration`, `ease`), and a unit test keeps the two in sync. Use a token, not a raw number, in new code.
 
 Permitted:
-- Fade-in stagger on mount (signals list structure, 120–150ms per item)
+- Fade-in stagger on mount (signals list structure, 120–150ms per item) through `Reveal`: an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel. Below-the-fold content fades at load too, before the visitor reaches it; a scroll-linked reveal is a later phase
 - Opacity shift on hover (100ms, no color change)
 - Underline clip-path animation on links (300ms ease)
 - `active:opacity-70` on button press (CSS `:active` pseudo, not Motion whileTap)
@@ -421,7 +426,7 @@ Permitted:
 - Mobile menu height/opacity `AnimatePresence` (functional state change)
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
-- `rule-draw` keyframe on SectionHeader hairline and the active nav-link underline (steps(24) left→right plotter wipe; SectionHeader plays it once on scroll-into-view, nav replays on route change)
+- `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe; SectionHeader plays it once on scroll-into-view, panels play it on first render after their Reveal delay, nav replays on route change)
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
 Not permitted:
@@ -485,6 +490,9 @@ The following components were removed during the Swiss refactor and its follow-u
 | `GitLog` (in `MobileTerminal/ci.tsx`) | `6c11ea7` | Hardcoded commit list |
 | `LanguagePanel` | _dead-code purge_ | Exported but rendered nowhere; duplicated `OpenSourcePanel` surface |
 | `ConnectionPanel` | _dead-code purge_ | Exported but rendered nowhere; browser-network sparkline |
+| `VisitorContext` | redesign Phase 2 | Never imported; browser/device state panel |
+| `activitySensor`, `activityStore` | redesign Phase 2 | Activity tracker store with no reader |
+| `MacWindow`, `Accent` | redesign Phase 2 | Renamed to `OperatorPanel` and `Em`; no compat aliases |
 | `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere |
 | `ProjectPlatformMatrix` | _dead-code purge_ | Exported but rendered nowhere; project×platform matrix |
 | `StackHeatmap` | _follow-up_ | Low-information dot-matrix — a 10×68 grid the reader can't parse at a glance |
@@ -497,7 +505,6 @@ Real-data equivalents that cover every functional use-case:
 | Recent commits | `RealGitLog` (GitHub API) |
 | Repo inventory | `OpenSourcePanel` (GitHub API) |
 | Activity heatmap | `ActivityCalendar` + `ActivitySparkline` (GitHub events) |
-| Browser / device state | `VisitorContext` (`navigator.*`) |
 | Build metadata | `BuildStats` (from `buildMeta.ts`) |
 | Latest post | `LatestPostPanel` (from `blogData`) |
 | Latest release | `LatestReleasePanel` (GitHub API) |

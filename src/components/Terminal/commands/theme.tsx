@@ -1,5 +1,5 @@
 import { registerCommand } from "./registry";
-import { Accent } from "../ui";
+import { Em } from "../ui";
 import type { Command } from "./types";
 
 const validThemes = ["dark", "light", "system"] as const;
@@ -18,7 +18,7 @@ const theme: Command = {
     if (args.length === 0) {
       return (
         <span>
-          Current theme: <Accent>{ctx.getTheme()}</Accent>
+          Current theme: <Em>{ctx.getTheme()}</Em>
         </span>
       );
     }
@@ -31,7 +31,7 @@ const theme: Command = {
     ctx.setTheme(value);
     return (
       <span>
-        Theme set to <Accent>{value}</Accent>
+        Theme set to <Em>{value}</Em>
       </span>
     );
   },

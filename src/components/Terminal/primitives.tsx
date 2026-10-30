@@ -1,12 +1,12 @@
 import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
-import { ease, duration, stagger } from "@/lib/motion";
+import { stagger } from "@/lib/motion";
+import { Reveal } from "@/components/ui/Reveal";
 import { getCommand, getCommandNames } from "./commands/registry";
 import type { CommandContext } from "./commands/types";
 import { useSettingsStore, useLocale } from "@/stores/settingsStore";
 // Re-export shared UI primitives (defined in ui.tsx to avoid import cycles)
-export { Accent, Tag } from "./ui";
+export { Em, Tag } from "./ui";
 
 /**
  * Key/value data rows. `fieldCodes` renders IBM 3270-style operator labels
@@ -21,28 +21,19 @@ export function InfoTable({
   rows: { label: string; value: ReactNode }[];
   delay?: number;
   fieldCodes?: boolean;
-  /** Skip the initial opacity fade-in. Use for above-the-fold LCP content
-   *  so the initial HTML renders already visible and Chrome can measure
-   *  paint without waiting for JS hydration + useInView + motion stagger. */
+  /** Skip the entrance fade. Use for above-the-fold LCP content. */
   instant?: boolean;
 }) {
-  const { ref, inView } = useInView(0.1);
   const maxLabelLen = fieldCodes
     ? Math.max(...rows.map((r) => r.label.length))
     : 0;
 
   return (
-    <motion.div
-      ref={ref}
-      className="space-y-0"
-      initial={instant ? false : { opacity: 0 }}
-      animate={instant || inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.base, delay, ease }}
-    >
+    <Reveal className="space-y-0" delay={delay} instant={instant}>
       {rows.map((row, i) => (
-        <motion.div
+        <Reveal
           key={row.label}
-          className="flex items-baseline py-1.5 -mx-2 px-2 transition-colors duration-150"
+          className="flex items-baseline py-1.5 -mx-2 px-2"
           style={{
             lineHeight: 1.6,
             gap: fieldCodes ? "0.5rem" : "1.5rem",
@@ -53,9 +44,8 @@ export function InfoTable({
                   : "1px solid var(--border)"
                 : undefined,
           }}
-          initial={instant ? false : { opacity: 0 }}
-          animate={instant || inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.25, delay: delay + stagger.fast + i * stagger.fast }}
+          delay={delay + stagger.fast + i * stagger.fast}
+          instant={instant}
         >
           {fieldCodes ? (
             <>
@@ -91,9 +81,9 @@ export function InfoTable({
           <span className="font-sans text-foreground text-sm min-w-0 flex-1" style={{ opacity: 0.92 }}>
             {row.value}
           </span>
-        </motion.div>
+        </Reveal>
       ))}
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -126,7 +116,6 @@ function getSuggestion(input: string): string | null {
  * Interactive shell. Minimal `~$` prompt — no hostname theatre.
  */
 export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
-  const { ref, inView } = useInView(0.1);
   const [input, setInput] = useState("");
   const [displayHistory, setDisplayHistory] = useState<{ cmd: string; output: ReactNode }[]>([]);
   const [focused, setFocused] = useState(false);
@@ -241,13 +230,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   }, []);
 
   return (
-    <motion.div
-      ref={ref}
-      className="space-y-1 font-mono text-mono"
-      initial={{ opacity: 0 }}
-      animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: duration.base, delay }}
-    >
+    <Reveal className="space-y-1 font-mono text-mono" delay={delay}>
       <div aria-live="polite">
         {displayHistory.map((h, i) => (
           <motion.div
@@ -309,6 +292,6 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
           )}
         </div>
       </form>
-    </motion.div>
+    </Reveal>
   );
 }

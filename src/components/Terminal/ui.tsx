@@ -1,21 +1,8 @@
 import type { ReactNode } from "react";
 
-/**
- * Emphasis text helper. Neutral greyscale system — emphasis is full-luminance
- * (`--emphasis`), not a chromatic accent. Kept as `Accent` for source
- * compatibility with existing call sites.
- */
-export function Accent({ children }: { children: ReactNode }) {
-  return (
-    <span
-      style={{
-        color: "var(--emphasis)",
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </span>
-  );
+/** Emphasis text: full-luminance --emphasis at weight 500. No chromatic accent. */
+export function Em({ children }: { children: ReactNode }) {
+  return <span className="text-emphasis font-medium">{children}</span>;
 }
 
 /**

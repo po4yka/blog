@@ -24,7 +24,7 @@ const dynamicRegions = (page: Page) => [
   }),
 ];
 
-// Sections reveal when they enter the viewport, so walk the page once before a full-page shot.
+// client:visible islands hydrate when they enter the viewport, so walk the page once before a full-page shot.
 async function revealAll(page: Page) {
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < height; y += 400) {

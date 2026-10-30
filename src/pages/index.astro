@@ -78,27 +78,4 @@ import { OpenSourcePanel, ActivityCalendar } from "@/components/Decorations";
       display: none;
     }
   </style>
-
-  <script>
-    import "@/stores/activitySensor";
-
-    function initSectionReveal() {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("visible");
-              observer.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.1 }
-      );
-      document.querySelectorAll(".section-reveal").forEach((el) => observer.observe(el));
-    }
-
-    // Run on initial load and on View Transition navigations
-    initSectionReveal();
-    document.addEventListener("astro:page-load", initSectionReveal);
-  </script>
 </MainLayout>

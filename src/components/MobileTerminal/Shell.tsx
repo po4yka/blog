@@ -1,5 +1,5 @@
 import { useInView } from "@/hooks/useInView";
-import { Cmd, MacWindow } from "@/components/Terminal";
+import { Cmd, OperatorPanel } from "@/components/Terminal";
 import { MotionProvider } from "@/components/MotionProvider";
 
 interface ShellProps {
@@ -11,7 +11,7 @@ interface ShellProps {
 
 /**
  * Shared scaffolding for MobileTerminal components.
- * Wraps MotionProvider + Cmd + MacWindow + useInView into a single shell
+ * Wraps MotionProvider + Cmd + OperatorPanel + useInView into a single shell
  * so each terminal block only defines its unique content.
  */
 export function Shell({
@@ -27,9 +27,9 @@ export function Shell({
       <section className="space-y-4">
         <Cmd delay={delay}>{command}</Cmd>
 
-        <MacWindow title={windowTitle} delay={delay + 0.05}>
+        <OperatorPanel label={windowTitle} delay={delay + 0.05}>
           <div ref={ref}>{children({ inView })}</div>
-        </MacWindow>
+        </OperatorPanel>
       </section>
     </MotionProvider>
   );

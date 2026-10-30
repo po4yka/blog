@@ -51,7 +51,7 @@ Every route loads about 134 KB brotli before its own content: React, Motion and 
 
 - **Motion 13 `ScrambleText`:** not present. The installed `motion` is 13.4.4 and has no scramble or text-decode export. S7 (text decode) needs a small custom function.
 - **`tw-animate-css` consumers:** only `src/components/ui/dialog.tsx` (imported once in `src/styles/tailwind.css:4`). Removing it means replacing the dialog enter and exit classes.
-- **`VisitorContext` consumers:** none. `src/components/Decorations/VisitorContext.tsx` is exported but never imported; delete in Phase 2.
+- **`VisitorContext` consumers:** none. `src/components/Decorations/VisitorContext.tsx` was never imported; deleted in Phase 2.
 - **CSP path:** prerendered pages get the static `public/_headers` policy: enforced `script-src 'self' 'unsafe-inline'`, and a Report-Only policy with `script-src 'self'` and no inline. Server-rendered responses get a per-request nonce with `'strict-dynamic'` from `src/middleware.ts:17-49`. No `worker-src` is set, so `default-src 'self'` applies: workers from `/_astro/` are allowed, `blob:` workers are not. Canvas 2D needs no CSP change. Any new inline script is flagged by the Report-Only policy.
 - **Field LCP and INP:** analytics is self-hosted Umami through a first-party proxy (`src/pages/m.js.ts`, `src/pages/api/m.ts`). Umami does not collect Web Vitals by itself. Field data needs `web-vitals` (about 2 KB) sending custom Umami events. This is an owner decision; until then the budgets rest on lab data only.
 

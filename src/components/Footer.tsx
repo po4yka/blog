@@ -1,5 +1,6 @@
 import { TerminalPrompt } from "./Terminal";
 import { MotionProvider } from "./MotionProvider";
+import { Panel } from "./ui/Panel";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useLocale } from "@/stores/settingsStore";
 
@@ -14,19 +15,12 @@ export function Footer() {
     <footer aria-label="Site footer" className="max-w-(--grid-max) mx-auto px-6 md:px-10 lg:px-12 pb-12">
       <div className="space-y-6">
         {/* Interactive terminal */}
-        <div
-          className="p-4"
-          style={{
-            borderRadius: "2px",
-            background: "var(--card)",
-            border: "1px solid var(--border)",
-          }}
-        >
+        <Panel clip="visible" className="p-4">
           <div className="label-meta text-foreground/60 pb-2">
             {t("footer.shellHelp")}
           </div>
           <TerminalPrompt />
-        </div>
+        </Panel>
 
         <div
           className="pt-5 flex items-center justify-between gap-4"

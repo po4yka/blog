@@ -1,0 +1,60 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Component primitives: Panel and Reveal (src/components/ui/).
+   In the components layer, so a caller's utility classes still win.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* Flat operator panel: 1px hairline, 2px radius, no shadow. */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .panel[data-tone="translucent"] {
+    background: var(--panel-bg);
+  }
+  .panel[data-clip="clip"] {
+    overflow: clip;
+  }
+  .panel[data-clip="visible"] {
+    overflow: visible;
+  }
+
+  /* Entrance fade. The resting state is the final state, so content is
+     visible without JS, without @starting-style support and under reduced
+     motion (tokens.css cuts the transition). A transition holds its start
+     value through the delay, so staggered items stay hidden until their turn.
+     A transition-* utility on the same element replaces this transition, so
+     its property list must include opacity (the nav and the blog back link do). */
+  [data-reveal] {
+    /* Reset, so a Reveal without its own delay does not inherit a parent's.
+       An inline --reveal-delay (Reveal's delay prop) still wins. */
+    --reveal-delay: 0ms;
+    opacity: 1;
+    transition: opacity var(--dur-base) var(--ease-out) var(--reveal-delay);
+  }
+  [data-reveal="fast"] {
+    transition-duration: var(--dur-fast);
+  }
+  [data-reveal="slow"] {
+    transition-duration: var(--dur-slow);
+  }
+
+  /* Reduced motion: no transition at all, so @starting-style has nothing to
+     animate and late-inserted content (hydrated islands) is final at once. */
+  :root[data-motion="reduce"] [data-reveal] {
+    transition: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      transition: none;
+    }
+  }
+}
+
+@starting-style {
+  [data-reveal] {
+    opacity: 0;
+  }
+}
