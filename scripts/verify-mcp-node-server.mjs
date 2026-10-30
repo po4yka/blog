@@ -6,6 +6,7 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+const nodeServerVersion = "2.1.3";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoots = [
   ".claude/cms-mcp",
@@ -28,16 +29,16 @@ async function verifyPackage(relativePackageRoot) {
 
   assert.equal(
     manifest.dependencies?.["@hono/node-server"],
-    "2.0.12",
-    `${relativePackageRoot} must declare @hono/node-server 2.0.12 directly`,
+    nodeServerVersion,
+    `${relativePackageRoot} must declare @hono/node-server ${nodeServerVersion} directly`,
   );
   assert.equal(
     manifest.overrides?.["@hono/node-server"],
-    "2.0.12",
-    `${relativePackageRoot} must apply 2.0.12 to the SDK dependency`,
+    nodeServerVersion,
+    `${relativePackageRoot} must apply ${nodeServerVersion} to the SDK dependency`,
   );
   assert.equal(manifest.engines?.node, ">=20");
-  assert.equal(nodeServerManifest.version, "2.0.12");
+  assert.equal(nodeServerManifest.version, nodeServerVersion);
 
   const [{ McpServer }, { StreamableHTTPServerTransport }, { Client }, clientTransportModule] =
     await Promise.all([
