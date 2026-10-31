@@ -1,4 +1,18 @@
+import type { CSSProperties } from "react";
 import type { Locale } from "@/lib/i18n";
+
+/**
+ * view-transition-name for a post title: a valid <custom-ident>, and a different name for every slug.
+ * Letters, digits and "-" pass through; every other code point (including "_") becomes `_<hex>_`, so no two slugs collide.
+ */
+export function postTitleTransitionName(slug: string): string {
+  return `post-title-${slug.replace(/[^a-zA-Z0-9-]/gu, (c) => `_${c.codePointAt(0)!.toString(16)}_`)}`;
+}
+
+/** Inline style that lets the list title and the post title morph into each other. The cast is needed because React's CSSProperties lacks `viewTransitionClass`. */
+export function postTitleStyle(slug: string): CSSProperties {
+  return { viewTransitionName: postTitleTransitionName(slug), viewTransitionClass: "post-title" } as CSSProperties;
+}
 
 /** Reading time in minutes from the rendered body text (220 words per minute, at least 1). */
 export function countReadingMinutes(text: string): number {

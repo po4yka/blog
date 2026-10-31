@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { m, AnimatePresence } from "motion/react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
 import { stagger } from "@/lib/motion";
+import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
 import { MotionProvider } from "./MotionProvider";
 import { Reveal } from "./ui/Reveal";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -29,7 +30,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
-  const { theme, setTheme, reduceMotion } = useSettings();
+  const { theme } = useSettings();
   const { t } = useLocale();
 
   // Update pathname on View Transition navigation (Nav is persisted)
@@ -83,17 +84,9 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
     ? currentPathname.startsWith("/blog/ru") ? "ru" : "en"
     : undefined;
 
-  const cycleTheme = () => {
-    const newTheme: ThemeMode =
-      theme === "system" ? "dark" :
-      theme === "dark"   ? "light" :
-                            "system";
-    const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
-    if (!reduceMotion && doc.startViewTransition) {
-      doc.startViewTransition(() => { setTheme(newTheme); });
-    } else {
-      setTheme(newTheme);
-    }
+  const cycleTheme = (e: MouseEvent<HTMLButtonElement>) => {
+    // targetTheme(), not the render's `theme`: a second click during a wipe must cycle from the pending theme.
+    switchTheme(nextThemeFor(targetTheme()), centerOf(e.currentTarget));
   };
 
   const ThemeIcon = theme === "light" ? Sun : Moon;
@@ -178,6 +171,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             {/* Theme toggle */}
             <button
               onClick={cycleTheme}
+              data-theme-toggle
               className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] font-mono text-label text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
               aria-label={switchThemeLabel}
               data-umami-event="theme-toggle"
@@ -193,6 +187,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           <div className="md:hidden flex items-center gap-1">
             <button
               onClick={cycleTheme}
+              data-theme-toggle
               className="flex items-center justify-center text-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
               aria-label={switchThemeLabel}
               data-umami-event="theme-toggle"

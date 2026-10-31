@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { SHORTCUTS_EVENT } from "./StatusLine";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
 
 const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
 
@@ -65,9 +66,9 @@ export function KeyboardShortcuts() {
   const shortcutsEnabled = useSettingsStore((s) => s.keyboardShortcuts);
 
   const cycleTheme = useCallback(() => {
-    const store = useSettingsStore.getState();
-    const idx = themeOrder.indexOf(store.theme);
-    store.setTheme(themeOrder[(idx + 1) % themeOrder.length] ?? "light");
+    const idx = themeOrder.indexOf(targetTheme());
+    const toggle = [...document.querySelectorAll("[data-theme-toggle]")].find((el) => el.getClientRects().length > 0);
+    switchTheme(themeOrder[(idx + 1) % themeOrder.length] ?? "light", toggle ? centerOf(toggle) : undefined);
   }, []);
 
   useEffect(() => {

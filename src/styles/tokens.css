@@ -8,9 +8,9 @@
   /* Motion durations */
   --dur-instant: 80ms;   /* hover colour, focus */
   --dur-fast: 150ms;     /* underline, toggle */
-  --dur-base: 240ms;     /* panel fade, menu, theme fade */
+  --dur-base: 240ms;     /* panel fade, menu, theme wipe, page crossfade */
   --dur-slow: 420ms;     /* reveal, draw-on */
-  --dur-scene: 700ms;    /* hero boot, page transition group */
+  --dur-scene: 700ms;    /* hero boot; not for page transitions (rule A1 caps those at 300 ms) */
 
   /* Easings. The stepped curves are the plotter / LED-meter signature. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

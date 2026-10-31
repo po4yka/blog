@@ -5,9 +5,7 @@ export interface CommandContext {
   history: string[];
   /** Navigate to a path (full page load for Astro SSG) */
   navigate: (path: string) => void;
-  /** Set the site theme */
-  setTheme: (theme: "light" | "dark" | "system") => void;
-  /** Get the current theme */
+  /** Get the current theme (commands change it through switchTheme) */
   getTheme: () => string;
 }
 

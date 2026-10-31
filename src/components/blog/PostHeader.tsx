@@ -1,6 +1,6 @@
 import { useLocale } from "@/stores/settingsStore";
 import type { Locale } from "@/lib/i18n";
-import { alsoAsLinks, formatIsoDate, isUpdated } from "@/lib/blog/format";
+import { alsoAsLinks, formatIsoDate, isUpdated, postTitleStyle } from "@/lib/blog/format";
 import type { PostMeta } from "./types";
 
 export function PostHeader({
@@ -20,7 +20,7 @@ export function PostHeader({
 
   return (
     <header className="mb-10" style={{ maxWidth: "46rem" }}>
-      <h1 className="display-2 display-serif text-foreground">
+      <h1 className="display-2 display-serif text-foreground" style={postTitleStyle(slug)}>
         {post.title}
       </h1>
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">

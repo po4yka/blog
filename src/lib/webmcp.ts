@@ -156,6 +156,7 @@ export async function registerWebMCP(): Promise<void> {
       },
       execute(input) {
         const mode = (input as { mode: ThemeMode }).mode;
+        // Plain setTheme on purpose: the agent API has no visitor gesture to wipe from.
         useSettingsStore.getState().setTheme(mode);
         return { ok: true, theme: mode };
       },

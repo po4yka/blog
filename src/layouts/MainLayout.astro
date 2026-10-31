@@ -83,7 +83,7 @@ const { nonce } = Astro.locals;
       <div class="grid-guides" aria-hidden="true">
         <div class="page-grid"><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /></div>
       </div>
-      <Nav client:idle pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
+      <Nav client:idle pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist="site-nav" />
       <main
         id="main-content"
         tabindex="-1"
@@ -92,9 +92,9 @@ const { nonce } = Astro.locals;
       >
         <slot />
       </main>
-      <Footer client:idle transition:persist />
-      <KeyboardShortcuts client:idle transition:persist />
-      <StatusLine client:idle pathname={pathname} transition:persist />
+      <Footer client:idle transition:persist="site-footer" />
+      <KeyboardShortcuts client:idle transition:persist="keyboard-shortcuts" />
+      <StatusLine client:idle pathname={pathname} transition:persist="status-line" />
     </div>
     <script>
       // WebMCP bootstrap: expose site-scoped tools to in-browser AI agents.

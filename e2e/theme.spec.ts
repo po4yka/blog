@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+import { installVtRecorder, readVt, readVtCalls, supportsVt } from "./helpers/viewTransitions";
 
 const STORAGE_KEY = "site_preferences";
 
@@ -105,5 +106,86 @@ test.describe("Reduced motion", () => {
     await page.goto("/");
     await expect(page.locator("html")).not.toHaveAttribute("data-motion");
     expect(await bodyTransition(page)).toBeCloseTo(0.24, 3);
+  });
+});
+
+test.describe("Theme wipe", () => {
+  const POST = "/blog/rag-breaks-earlier-than-people-think/";
+  const toggle = (page: Page) => page.locator("[data-theme-toggle]:visible").first();
+  const dark = (page: Page) => expect(page.locator("html")).toHaveClass(/\bdark\b/);
+
+  test.beforeEach(async ({ page }) => {
+    await installVtRecorder(page);
+  });
+
+  // A click before the client:idle Nav island hydrates does nothing, so wait for it.
+  const open = async (page: Page, path: string) => {
+    await page.goto(path);
+    await page.locator('astro-island[component-url*="Nav"]:not([ssr])').first().waitFor({ state: "attached" });
+  };
+
+  test("the nav toggle wipes from the control and cleans up", async ({ page }) => {
+    await open(page, "/");
+    await toggle(page).click();
+    await dark(page);
+    if (!(await supportsVt(page))) {
+      // Fallback: the theme changed with no transition.
+      expect(await readVtCalls(page)).toBe(0);
+      return;
+    }
+    await expect.poll(async () => (await readVt(page)).length).toBeGreaterThan(0);
+    const wipe = (await readVt(page)).find((a) => a.pseudo === "::view-transition-new(root)" && a.name === "theme-wipe");
+    expect(wipe).toBeDefined();
+    expect(Number(wipe?.duration) + (wipe?.delay ?? 0)).toBeLessThanOrEqual(300);
+    await expect(page.locator("html")).not.toHaveAttribute("data-theme-wipe");
+    expect(await page.evaluate(() => document.documentElement.style.getPropertyValue("--wipe-x"))).toBe("");
+  });
+
+  test("a second toggle during a wipe applies at once and leaves no wipe state", async ({ page }) => {
+    await open(page, "/");
+    // Two clicks in one task, so the second lands while the first 240 ms wipe still runs.
+    await toggle(page).evaluate((el: HTMLElement) => {
+      el.click();
+      el.click();
+    });
+    // system -> dark -> light: the second change must not be lost.
+    await expect(page.locator("html")).toHaveClass(/\blight\b/);
+    await expect(page.locator("html")).not.toHaveAttribute("data-theme-wipe");
+    if (await supportsVt(page)) expect(await readVtCalls(page)).toBe(1);
+  });
+
+  test("a post page wipes as one root snapshot, with no named groups", async ({ page }) => {
+    await open(page, POST);
+    const h1 = page.locator("article > header > h1");
+    await expect(h1).toBeVisible();
+    // Positive control: the title carries a name that the wipe must suppress.
+    expect(await h1.evaluate((el) => getComputedStyle(el).viewTransitionName)).not.toBe("none");
+    await toggle(page).click();
+    await dark(page);
+    if (!(await supportsVt(page))) return;
+    await expect.poll(async () => (await readVt(page)).length).toBeGreaterThan(0);
+    const groups = (await readVt(page)).map((a) => a.pseudo).filter((p) => p.startsWith("::view-transition-group("));
+    expect(groups.filter((p) => p !== "::view-transition-group(root)")).toEqual([]);
+  });
+
+  test("stored reduced-motion flag changes the theme without a transition", async ({ page }) => {
+    await page.addInitScript((key) => {
+      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 3 }));
+    }, STORAGE_KEY);
+    await open(page, "/");
+    await toggle(page).click();
+    await dark(page);
+    expect(await readVtCalls(page)).toBe(0);
+  });
+
+  test.describe("OS reduced motion", () => {
+    test.use({ reducedMotion: "reduce" });
+
+    test("changes the theme without a transition", async ({ page }) => {
+      await open(page, "/");
+      await toggle(page).click();
+      await dark(page);
+      expect(await readVtCalls(page)).toBe(0);
+    });
   });
 });
