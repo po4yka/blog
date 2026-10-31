@@ -44,7 +44,8 @@ export function SectionHeader({
   return (
     <header className={`${marks ? "reg-marks " : ""}space-y-2 pb-3 relative ${className}`}>
       <div className="flex items-baseline justify-between gap-4 min-w-0">
-        <div className="flex items-baseline gap-2.5 min-w-0 truncate">
+        {/* The number and label keep their width; a long meta (often in Russian) truncates instead. */}
+        <div className="flex items-baseline gap-2.5 shrink-0">
           <span
             aria-hidden="true"
             style={{
@@ -60,7 +61,7 @@ export function SectionHeader({
         </div>
         {meta && (
           <span
-            className="shrink-0 text-right"
+            className="min-w-0 truncate text-right"
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: 11,

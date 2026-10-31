@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import { stagger } from "@/lib/motion";
 import { Panel, type PanelProps } from "@/components/ui/Panel";
 import { Reveal } from "@/components/ui/Reveal";
+import { T, TCount } from "@/components/ui/T";
 
 /**
  * Header hairline that draws left to right on first render, the same steps(24)
@@ -161,7 +162,7 @@ export function BootBlock({
   return (
     <RevealPanel delay={delay} className="font-mono">
       <div className="relative flex items-baseline justify-between px-4 py-2">
-        <span className="label-meta">System log</span>
+        <span className="label-meta"><T k="terminal.systemLog" /></span>
         <span
           className="font-mono"
           style={{
@@ -170,7 +171,7 @@ export function BootBlock({
             letterSpacing: "0.04em",
           }}
         >
-          {lines.length} lines
+          <TCount n={lines.length} forms={{ en: ["line", "lines"], ru: ["строка", "строки", "строк"] }} />
         </span>
         <DrawnRule />
       </div>
@@ -215,7 +216,7 @@ export function LessViewer({
   instant = false,
 }: {
   filename: string;
-  meta?: string;
+  meta?: ReactNode;
   children: ReactNode;
   delay?: number;
   /** Skip the panel and body fades. Use for the LCP body of a post. */
