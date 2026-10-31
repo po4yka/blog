@@ -18,7 +18,15 @@ const renderer = unified({ rehypePlugins: [rehypeCodeCopyLabel] }).createRendere
 const render = async (source: string, path = "/repo/src/content/blog/en/post.mdx") =>
   (await (await renderer).render(source, { fileURL: new URL(`file://${path}`) })).code;
 
-const text = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&#x3C;/g, "<");
+// Repeat until stable so no tag survives a nested match.
+const text = (html: string) => {
+  let prev;
+  do {
+    prev = html;
+    html = html.replace(/<[^>]*>/g, "");
+  } while (html !== prev);
+  return html;
+};
 
 describe("parseCodeMeta", () => {
   it.each([
