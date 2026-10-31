@@ -1,0 +1,24 @@
+---
+// Reading progress rail. The CSS in scroll.css drives it where scroll timelines
+// exist; the script below is the fallback for browsers without them.
+const { nonce } = Astro.locals;
+---
+<div class="progress-rail" aria-hidden="true"></div>
+<script is:inline nonce={nonce}>
+(function () {
+  if (CSS.supports("animation-timeline: scroll()")) return;
+  var rail = document.querySelector(".progress-rail");
+  if (!rail) return;
+  var queued = false;
+  function paint() {
+    queued = false;
+    if (!rail.isConnected) { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); return; }
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    rail.style.transform = "scaleX(" + (max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0) + ")";
+  }
+  function onScroll() { if (!queued) { queued = true; requestAnimationFrame(paint); } }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>

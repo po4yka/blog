@@ -89,6 +89,36 @@
   color: var(--foreground);
 }
 
+/* Touch has no hover: keep the permalink visible and give it a 44px hit area
+   that does not move the heading (the pseudo-element overflows the link). */
+@media (hover: none) {
+  .prose-blog .heading-anchor {
+    opacity: 1;
+    position: relative;
+  }
+  .prose-blog .heading-anchor::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%); /* extends right only, so it does not cover the heading's last word */
+  }
+}
+
+/* Clearance for the fixed mobile TOC bar (below lg) at the true end of the page, footer included; md+ also clears the 28px StatusLine. */
+@media (max-width: 1023.98px) {
+  body:has(.mobile-toc-bar) {
+    padding-bottom: calc(2.75rem + env(safe-area-inset-bottom));
+  }
+}
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  body:has(.mobile-toc-bar) {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 .prose-blog h2 {
   margin-top: 2.75rem;
   margin-bottom: 1rem;

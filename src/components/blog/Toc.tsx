@@ -1,53 +1,95 @@
+import type { RefObject } from "react";
 import { cn } from "@/components/ui/utils";
-import { TOC_MIN_ITEMS, type TocItem } from "@/lib/blog/toc";
+import { TOC_MIN_ITEMS, nestToc, type TocItem } from "@/lib/blog/toc";
 
-// --- Table of contents (sticky, desktop-only) ---
+// --- Table of contents: nested list shared by the desktop sidebar and the mobile sheet ---
+
+function TocLink({
+  item,
+  activeId,
+  progress,
+  onNavigate,
+}: {
+  item: TocItem;
+  activeId: string;
+  progress: boolean;
+  onNavigate?: () => void;
+}) {
+  const isActive = activeId === item.id;
+  return (
+    <a
+      href={`#${item.id}`}
+      aria-current={isActive ? "location" : undefined}
+      onClick={onNavigate}
+      className={cn(
+        "relative block pl-3 font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
+        isActive ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {progress && isActive && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-0 left-0 w-px origin-top bg-emphasis"
+          style={{ transform: "scaleY(var(--section-progress, 0))" }}
+        />
+      )}
+      {item.text}
+    </a>
+  );
+}
+
+export function TocList({
+  items,
+  activeId,
+  progress = false,
+  onNavigate,
+}: {
+  items: TocItem[];
+  activeId: string;
+  progress?: boolean;
+  onNavigate?: () => void;
+}) {
+  const link = (item: TocItem) => (
+    <TocLink item={item} activeId={activeId} progress={progress} onNavigate={onNavigate} />
+  );
+  return (
+    <ul className="list-none m-0 p-0 space-y-1.5">
+      {nestToc(items).map(({ item, children }) => (
+        <li key={item.id}>
+          {link(item)}
+          {children.length > 0 && (
+            <ul className="list-none m-0 mt-1.5 p-0 pl-3 space-y-1.5">
+              {children.map((child) => (
+                <li key={child.id}>{link(child)}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// --- Sticky, desktop-only ---
 
 export function Toc({
   items,
   activeId,
   label,
+  progressRef,
 }: {
   items: TocItem[];
   activeId: string;
   label: string;
+  progressRef: RefObject<HTMLElement | null>;
 }) {
   if (items.length < TOC_MIN_ITEMS) return null;
 
   return (
-    <aside className="hidden lg:block">
+    <aside ref={progressRef} className="hidden lg:block">
       <nav aria-label={label} className="sticky top-24 space-y-3">
         <div className="label-meta text-muted-foreground-dim">{label}</div>
-        <ul className="list-none m-0 p-0 space-y-1.5">
-          {items.map(({ id, text, level }) => {
-            const isActive = activeId === id;
-            return (
-              <li key={id} className={cn("flex items-baseline gap-1", level === 3 && "pl-3")}>
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "shrink-0 font-mono text-muted-foreground-dim transition-opacity duration-150",
-                    isActive ? "opacity-100" : "opacity-0",
-                  )}
-                >
-                  {"›"}
-                </span>
-                <a
-                  href={`#${id}`}
-                  aria-current={isActive ? "location" : undefined}
-                  className={cn(
-                    "block font-sans text-[13px] leading-snug no-underline transition-colors duration-150",
-                    isActive
-                      ? "text-foreground font-medium"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {text}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+        <TocList items={items} activeId={activeId} progress />
       </nav>
     </aside>
   );

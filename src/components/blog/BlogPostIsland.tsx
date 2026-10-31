@@ -7,14 +7,15 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { useLocale, useSettings } from "@/stores/settingsStore";
 import { useScrollState } from "@/hooks/useScrollState";
 import { blogUrl, type Locale } from "@/lib/i18n";
+import type { TocItem } from "@/lib/blog/toc";
 import { countReadingMinutes } from "@/lib/blog/format";
 import { CodeBlockCopy } from "./CodeBlockCopy";
-import { MobileJumpNav } from "./MobileJumpNav";
+import { MobileToc } from "./MobileToc";
 import { PostFooter } from "./PostFooter";
 import { PostHeader } from "./PostHeader";
 import { PostPager } from "./PostPager";
 import { Toc } from "./Toc";
-import { useHeadings } from "./useHeadings";
+import { useScrollSpy } from "./useScrollSpy";
 import { useReadComplete } from "./useReadComplete";
 import { useResumePosition } from "./useResumePosition";
 import type { AdjacentPost, PostMeta, RelatedPost } from "./types";
@@ -25,6 +26,7 @@ interface BlogPostIslandProps {
   prev: AdjacentPost | null;
   next: AdjacentPost | null;
   related?: RelatedPost[];
+  toc: TocItem[];
   children?: ReactNode;
   lang?: Locale;
 }
@@ -43,10 +45,11 @@ function PagerStatus({ filename, percent }: { filename: string; percent: number 
 
 // --- Main Component ---
 
-export function BlogPostIsland({ post, slug, prev, next, related, children, lang: langProp }: BlogPostIslandProps) {
+export function BlogPostIsland({ post, slug, prev, next, related, toc, children, lang: langProp }: BlogPostIslandProps) {
   const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const tocRef = useRef<HTMLElement>(null);
   const [readingTime, setReadingTime] = useState(post.readingTime ?? 0);
 
   const lang = langProp ?? "en";
@@ -54,7 +57,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
   const { percent } = useScrollState();
   const { reduceMotion } = useSettings();
   const { saved: resumeAt, resume, dismiss: dismissResume } = useResumePosition(lang, slug, percent, reduceMotion);
-  const { items: tocItems, activeId } = useHeadings(contentRef);
+  const activeId = useScrollSpy(toc, contentRef, tocRef);
   const tocLabel = t("blogPost.toc");
 
   useEffect(() => {
@@ -110,13 +113,12 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
           filename={`posts/${slug}.txt`}
           meta={`${readingTime} ${t("blogPost.min")}`}
           delay={0.1}
+          instant
           statusLine={<PagerStatus filename={`posts/${slug}.txt`} percent={percent} />}
         >
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
           <article className="min-w-0">
             <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} />
-
-            <MobileJumpNav items={tocItems} activeId={activeId} label={tocLabel} />
 
             {/* MDX Content rendered by Astro, passed as children */}
             <div
@@ -130,7 +132,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
 
             <PostFooter slug={slug} lang={lang} related={related} />
           </article>
-          <Toc items={tocItems} activeId={activeId} label={tocLabel} />
+          <Toc items={toc} activeId={activeId} label={tocLabel} progressRef={tocRef} />
           </div>
         </LessViewer>
 
@@ -138,6 +140,14 @@ export function BlogPostIsland({ post, slug, prev, next, related, children, lang
 
         <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
       </div>
+      {/* Outside the space-y-8 stack: as its last child, the hidden bar would give the pager a 2rem bottom margin. */}
+      <MobileToc
+        items={toc}
+        activeId={activeId}
+        label={tocLabel}
+        openLabel={t("blogPost.tocOpen")}
+        closeLabel={t("blogPost.tocClose")}
+      />
     </MotionProvider>
   );
 }

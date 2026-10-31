@@ -168,3 +168,42 @@ test.describe("page transitions", () => {
     expect((await readVt(page)).filter((a) => a.name !== "none")).toEqual([]);
   });
 });
+
+// Reading progress rail (blog posts): scroll timeline where supported, a JS
+// fallback elsewhere. Both give the same scaleX, and it also shows under reduced motion.
+test.describe("reading progress rail", () => {
+  const POST = "/blog/rag-breaks-earlier-than-people-think/";
+  const scaleX = (page: Page) =>
+    page.locator(".progress-rail").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
+  const scrollTo = (page: Page, fraction: number) =>
+    page.evaluate((f) => window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * f), fraction);
+
+  async function expectRail(page: Page) {
+    await page.goto(POST);
+    await page.locator(".progress-rail").waitFor({ state: "attached" });
+    await expect.poll(() => scaleX(page)).toBeLessThan(0.05);
+    await scrollTo(page, 0.5);
+    await expect.poll(async () => Math.abs((await scaleX(page)) - 0.5)).toBeLessThan(0.1);
+    await scrollTo(page, 1);
+    await expect.poll(() => scaleX(page)).toBeGreaterThan(0.95);
+  }
+
+  test("tracks the scroll position", async ({ page }) => {
+    await expectRail(page);
+  });
+
+  test.describe("with the OS reduced-motion setting", () => {
+    test.use({ reducedMotion: "reduce" });
+    test("still tracks the scroll position", async ({ page }) => {
+      await expectRail(page);
+    });
+  });
+
+  test("still tracks the scroll position with the stored reduce flag", async ({ page }) => {
+    await page.addInitScript((key) => {
+      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 3 }));
+    }, STORAGE_KEY);
+    await expectRail(page);
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
+  });
+});

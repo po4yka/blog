@@ -36,3 +36,47 @@
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Reading progress rail (blog posts). Position is state, so it also shows
+   under reduced motion. Where scroll timelines exist the rail is driven by
+   the root scroll position; elsewhere ProgressRail.astro sets the transform
+   from a small script. With neither, the rail stays empty (scaleX(0)).
+   ═══════════════════════════════════════════════════════════════════ */
+
+.progress-rail {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 1px;
+  background: var(--emphasis);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress-rail {
+    animation: progress-rail linear both;
+    animation-timeline: scroll(root);
+  }
+  /* Outranks the 0.01ms reduced-motion cut in tokens.css: a scroll-driven
+     animation needs `auto` to span the timeline. */
+  :root[data-motion="reduce"] .progress-rail {
+    animation-duration: auto !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root .progress-rail {
+      animation-duration: auto !important;
+    }
+  }
+}
+
+@keyframes progress-rail {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media print {
+  .progress-rail { display: none; }
+}
