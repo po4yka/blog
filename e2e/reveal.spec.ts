@@ -97,9 +97,10 @@ test.describe("scroll-drawn rules", () => {
       expect(count).toBeGreaterThan(0);
       for (let i = 0; i < count; i++) {
         await rules.nth(i).evaluate((el) => el.scrollIntoView({ block: "center" }));
-        await page.waitForTimeout(700);
-        const clip = await rules.nth(i).evaluate((el) => getComputedStyle(el).clipPath);
-        expect(clip, `rule ${i} on ${path}`).toMatch(DRAWN);
+        // A load-time draw starts when its island hydrates (client:visible) and may wait for a reveal delay.
+        await expect
+          .poll(() => rules.nth(i).evaluate((el) => getComputedStyle(el).clipPath), { message: `rule ${i} on ${path}` })
+          .toMatch(DRAWN);
       }
     });
   }

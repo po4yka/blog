@@ -81,6 +81,8 @@ test.describe("grid guides at 1280", () => {
     await page.goto("/settings/");
     await page.evaluate((key) => localStorage.removeItem(key), STORAGE_KEY);
     await page.reload();
+    // The buttons are in the server HTML before the client:idle island hydrates; Astro drops `ssr` once it has.
+    await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
     const group = page.getByRole("group", { name: "grid_guides" });
     await group.getByRole("button", { name: "hidden", exact: true }).click();
     await expect(page.locator("html")).toHaveAttribute("data-grid", "off");
