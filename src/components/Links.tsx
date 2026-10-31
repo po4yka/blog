@@ -4,10 +4,10 @@ import type { LucideIcon } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
 import { Reveal } from "./ui/Reveal";
 import { T } from "./ui/T";
-import { GITHUB_USERNAME } from "@/lib/constants";
+import { CONTACT_EMAIL, GITHUB_USERNAME } from "@/lib/constants";
 
 const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
-  { Icon: Mail, label: "email", href: "mailto:hello@po4yka.dev" },
+  { Icon: Mail, label: "email", href: `mailto:${CONTACT_EMAIL}` },
   { Icon: Play, label: "google play", href: undefined },
   { Icon: Apple, label: "app store", href: undefined },
   { Icon: Briefcase, label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },

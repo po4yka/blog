@@ -1,7 +1,7 @@
-import { registerCommand } from "./registry";
+import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import type { Command } from "./types";
+import type { Command } from "@/lib/commands";
 
 const ls: Command = {
   name: "ls",

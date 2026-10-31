@@ -2,8 +2,12 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { SHORTCUTS_EVENT } from "./StatusLine";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
+import { PALETTE_EVENT } from "@/lib/palette";
 
 const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
+// The palette chunk loads on first open, or on idle after the first interaction.
+const loadPalette = () => import("./CommandPalette/CommandPalette");
+const CommandPalette = lazy(loadPalette);
 
 type ThemeMode = "dark" | "light" | "system";
 const themeOrder: ThemeMode[] = ["dark", "light", "system"];
@@ -60,6 +64,9 @@ function focusTerminal() {
 
 export function KeyboardShortcuts() {
   const [overlayOpen, setOverlayOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteLoaded, setPaletteLoaded] = useState(false);
+  const [paletteOpener, setPaletteOpener] = useState<HTMLElement | null>(null);
   const [pendingChord, setPendingChord] = useState<string | null>(null);
   const chordTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   // WCAG 2.1.4: single-key shortcuts must be user-disableable (Settings page).
@@ -71,19 +78,54 @@ export function KeyboardShortcuts() {
     switchTheme(themeOrder[(idx + 1) % themeOrder.length] ?? "light", toggle ? centerOf(toggle) : undefined);
   }, []);
 
+  // Prefetch the palette once the visitor interacts, so the first Cmd/Ctrl+K opens without a network wait.
   useEffect(() => {
+    const prefetch = () => {
+      cleanup();
+      if ("requestIdleCallback" in window) window.requestIdleCallback(() => void loadPalette());
+      else setTimeout(() => void loadPalette(), 200);
+    };
+    const cleanup = () => {
+      window.removeEventListener("pointerdown", prefetch, true);
+      window.removeEventListener("keydown", prefetch, true);
+    };
+    window.addEventListener("pointerdown", prefetch, true);
+    window.addEventListener("keydown", prefetch, true);
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    const openFrom = (opener: HTMLElement | null) => {
+      setPaletteOpener(opener);
+      setPaletteLoaded(true);
+      setPaletteOpen(true);
+    };
+    const onPaletteEvent = (e: Event) => openFrom((e as CustomEvent<HTMLElement | null>).detail ?? (document.activeElement as HTMLElement | null));
+
     function handleKeyDown(e: KeyboardEvent) {
+      // Modifier shortcut: not gated by the single-key toggle, and it works inside a text field.
+      // e.code, not e.key: the Cyrillic layout reports "л".
+      if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.code === "KeyK") {
+        e.preventDefault();
+        if (e.repeat || e.isComposing || overlayOpen) return;
+        if (paletteOpen) setPaletteOpen(false);
+        else openFrom(document.activeElement as HTMLElement | null);
+        return;
+      }
+
       // Escape always works
       if (e.key === "Escape") {
         if (overlayOpen) {
           setOverlayOpen(false);
           e.preventDefault();
-        } else if (isInputTarget(e.target)) {
+        } else if (isInputTarget(e.target) && !paletteOpen) {
           (e.target as HTMLElement).blur();
         }
         return;
       }
 
+      // The palette is modal: focus can sit on its panel, so single keys must not fire behind it.
+      if (paletteOpen) return;
       // Skip shortcuts when typing in inputs
       if (isInputTarget(e.target)) return;
       // Skip with modifier keys (allow browser shortcuts)
@@ -125,17 +167,18 @@ export function KeyboardShortcuts() {
     const toggleOverlay = () => setOverlayOpen((o) => !o);
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener(SHORTCUTS_EVENT, toggleOverlay);
+    window.addEventListener(PALETTE_EVENT, onPaletteEvent);
     return () => {
+      window.removeEventListener(PALETTE_EVENT, onPaletteEvent);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener(SHORTCUTS_EVENT, toggleOverlay);
     };
-  }, [pendingChord, overlayOpen, cycleTheme, shortcutsEnabled]);
-
-  if (!overlayOpen) return null;
+  }, [pendingChord, overlayOpen, paletteOpen, cycleTheme, shortcutsEnabled]);
 
   return (
     <Suspense fallback={null}>
-      <ShortcutsDialog open={overlayOpen} onOpenChange={setOverlayOpen} />
+      {overlayOpen && <ShortcutsDialog open={overlayOpen} onOpenChange={setOverlayOpen} />}
+      {paletteLoaded && <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} opener={paletteOpener} />}
     </Suspense>
   );
 }

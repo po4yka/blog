@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { m, AnimatePresence } from "motion/react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Command } from "lucide-react";
 import { useThrottledCallback } from "@/hooks/useThrottle";
 import { useSettings, useLocale, type ThemeMode } from "@/stores/settingsStore";
 import { stagger } from "@/lib/motion";
+import { openPalette } from "@/lib/palette";
 import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
 import { MotionProvider } from "./MotionProvider";
 import { Reveal } from "./ui/Reveal";
@@ -163,6 +164,16 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         <div className="flex items-center gap-3 shrink-0">
           {/* Desktop right controls */}
           <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={(e) => openPalette(e.currentTarget)}
+              className="flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] font-mono text-label text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
+              aria-label={t("nav.palette")}
+              aria-haspopup="dialog"
+            >
+              <Command size={14} strokeWidth={1.8} aria-hidden="true" />
+              <span className="hidden lg:inline">{t("nav.paletteShort")}</span>
+            </button>
+
             <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : blogPageLang} />
 
             {/* Hairline divider, mirrors the one after the wordmark */}
@@ -256,6 +267,18 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                     </m.a>
                   );
                 })}
+                <button
+                  className="flex items-center gap-2 min-h-[44px] py-3 px-3 font-sans text-mono text-muted-foreground hover:text-foreground active:opacity-70 transition-colors duration-200 cursor-pointer"
+                  aria-haspopup="dialog"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    // The menu button unmounts on close, so the hamburger takes focus back.
+                    openPalette(hamburgerRef.current);
+                  }}
+                >
+                  <Command size={16} strokeWidth={1.8} aria-hidden="true" />
+                  {t("nav.palette")}
+                </button>
                 <div className="py-3 px-3">
                   <LanguageSwitcher translationUrl={translationUrl} activeLang={translationSlug ? lang : blogPageLang} />
                 </div>

@@ -97,6 +97,11 @@ export function HeroText() {
           <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
         </a>
       </Reveal>
+
+      {/* Static text: the nav button is the clickable opener. Keyboard hints only where a keyboard is likely. */}
+      <p className="label-meta text-muted-foreground-dim hidden [@media(hover:hover)_and_(pointer:fine)]:block">
+        <T k="palette.hint" />
+      </p>
     </div>
   );
 }

@@ -196,6 +196,25 @@ const en = {
   "shortcuts.closeBlur": "Close / blur",
   "shortcuts.pressToClose": "Press ? to close",
 
+  // command palette
+  "nav.palette": "Command palette",
+  "nav.paletteShort": "palette",
+  "palette.placeholder": "Type a command or search",
+  "palette.inputLabel": "Search pages, posts, projects, and actions",
+  "palette.pages": "Pages",
+  "palette.posts": "Posts",
+  "palette.projects": "Projects",
+  "palette.actions": "Actions",
+  "palette.sections": "Sections",
+  "palette.noMatches": "No matches",
+  "palette.results": "Results",
+  "palette.words": "words",
+  "palette.theme": "Theme",
+  "palette.language": "Language",
+  "palette.copyEmail": "Copy email address",
+  "palette.hint": "\u2318K / Ctrl K: command palette \u00b7 / : shell",
+  "shortcuts.palette": "Command palette",
+
   // footer
   "footer.shellHelp": "interactive shell — try: help, ls posts/, cat ratatoskr, open blog, neofetch",
   "footer.terminalInputLabel": "Terminal command input",
@@ -403,6 +422,25 @@ const ru: TranslationKeys = {
   "shortcuts.toggleHelp": "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c/\u0441\u043a\u0440\u044b\u0442\u044c \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u0443",
   "shortcuts.closeBlur": "\u0417\u0430\u043a\u0440\u044b\u0442\u044c",
   "shortcuts.pressToClose": "\u041d\u0430\u0436\u043c\u0438\u0442\u0435 ? \u0447\u0442\u043e\u0431\u044b \u0437\u0430\u043a\u0440\u044b\u0442\u044c",
+
+  // command palette
+  "nav.palette": "\u041f\u0430\u043b\u0438\u0442\u0440\u0430 \u043a\u043e\u043c\u0430\u043d\u0434",
+  "nav.paletteShort": "\u043f\u0430\u043b\u0438\u0442\u0440\u0430",
+  "palette.placeholder": "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u043c\u0430\u043d\u0434\u0443 \u0438\u043b\u0438 \u0437\u0430\u043f\u0440\u043e\u0441",
+  "palette.inputLabel": "\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430\u043c, \u043f\u043e\u0441\u0442\u0430\u043c, \u043f\u0440\u043e\u0435\u043a\u0442\u0430\u043c \u0438 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f\u043c",
+  "palette.pages": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b",
+  "palette.posts": "\u041f\u043e\u0441\u0442\u044b",
+  "palette.projects": "\u041f\u0440\u043e\u0435\u043a\u0442\u044b",
+  "palette.actions": "\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u044f",
+  "palette.sections": "\u0420\u0430\u0437\u0434\u0435\u043b\u044b",
+  "palette.noMatches": "\u041d\u0435\u0442 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439",
+  "palette.results": "\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432",
+  "palette.words": "\u0441\u043b\u043e\u0432",
+  "palette.theme": "\u0422\u0435\u043c\u0430",
+  "palette.language": "\u042f\u0437\u044b\u043a",
+  "palette.copyEmail": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0430\u0434\u0440\u0435\u0441 \u043f\u043e\u0447\u0442\u044b",
+  "palette.hint": "\u2318K / Ctrl K: \u043f\u0430\u043b\u0438\u0442\u0440\u0430 \u043a\u043e\u043c\u0430\u043d\u0434 \u00b7 / : \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b",
+  "shortcuts.palette": "\u041f\u0430\u043b\u0438\u0442\u0440\u0430 \u043a\u043e\u043c\u0430\u043d\u0434",
 
   // footer
   "footer.shellHelp": "\u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0439 \u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b — \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435: help, ls posts/, cat ratatoskr, open blog, neofetch",
