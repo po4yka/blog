@@ -13,6 +13,7 @@ export const blogPosts: BlogPost[] = [
     isoDate: "2026-06-01",
     isoDateModified: "2026-06-01",
     wordCount: 2692,
+    headings: [2, 2, 2, 2, 2],
     summary:
       "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
     tags: ["DPI", "Network Diagnostics", "Rust", "Android"],
@@ -139,7 +140,8 @@ The same box is still on the path, behaving exactly as before: it buffers the tr
     date: "Jun 2026",
     isoDate: "2026-06-01",
     isoDateModified: "2026-06-01",
-    wordCount: 266,
+    wordCount: 2245,
+    headings: [2, 2, 2, 2, 2],
     summary:
       "Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.",
     tags: ["DPI", "Network Diagnostics", "Rust", "Android"],
@@ -267,6 +269,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
     wordCount: 4335,
+    headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],
@@ -444,7 +447,8 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     date: "Apr 2026",
     isoDate: "2026-04-01",
     isoDateModified: "2026-04-01",
-    wordCount: 314,
+    wordCount: 3884,
+    headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
     tags: ["RAG", "LLM", "Knowledge Management", "Architecture"],

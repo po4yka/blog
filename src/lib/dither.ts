@@ -125,13 +125,16 @@ export function mirrorX(pixels: Uint8Array, width: number, height: number): Uint
 }
 
 /**
- * 1-bit pixels as one SVG path, one `h` run per row segment. The SVG has no
- * fill colour of its own: it is used as a CSS mask, so the page colours it.
+ * 1-bit pixels as one SVG path: each run of ink is a 1-unit-wide horizontal
+ * stroke through the middle of its row, with relative moves inside a row. The
+ * SVG sets no colour of its own when `color` is omitted (black, used as a CSS
+ * mask, so the page colours it).
  */
-export function pixelsToSvg(pixels: Uint8Array, width: number, height: number): string {
+export function pixelsToSvg(pixels: Uint8Array, width: number, height: number, color = "#000"): string {
   let d = "";
   for (let y = 0; y < height; y++) {
     let x = 0;
+    let penX = -1;
     while (x < width) {
       if (!pixels[y * width + x]) {
         x++;
@@ -139,8 +142,9 @@ export function pixelsToSvg(pixels: Uint8Array, width: number, height: number): 
       }
       const start = x;
       while (x < width && pixels[y * width + x]) x++;
-      d += `M${start} ${y}h${x - start}v1h${start - x}z`;
+      d += penX < 0 ? `M${start} ${y}.5h${x - start}` : `m${start - penX} 0h${x - start}`;
+      penX = x;
     }
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><path d="${d}"/></svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><path d="${d}" stroke="${color}"/></svg>\n`;
 }

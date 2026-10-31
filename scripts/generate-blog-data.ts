@@ -43,11 +43,18 @@ function toIsoDateString(value: string | Date | undefined, humanDate: string): s
   return new Date().toISOString().slice(0, 10);
 }
 
-function countWords(content: string): number {
+export function countWords(content: string): number {
   // Strip fenced code blocks so long snippets don't inflate the count.
   const stripped = content.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]*`/g, " ");
-  const tokens = stripped.split(/\s+/).filter((t) => /\w/.test(t));
+  // \p{L}, not \w: \w has no Cyrillic, so Russian words were not counted.
+  const tokens = stripped.split(/\s+/).filter((t) => /[\p{L}\p{N}]/u.test(t));
   return tokens.length;
+}
+
+/** Depth (2 to 6) of each Markdown heading, in order, skipping fenced code. */
+export function headingDepths(content: string): number[] {
+  const stripped = content.replace(/```[\s\S]*?```/g, " ");
+  return [...stripped.matchAll(/^(#{2,6})\s+\S/gm)].map((m) => m[1]!.length);
 }
 
 const MONTH_ORDER: Record<string, number> = {
@@ -96,7 +103,7 @@ function decodeHtmlEntities(str: string): string {
   return str.replace(HTML_ENTITY_RE, (match) => HTML_ENTITY_MAP[match] ?? match);
 }
 
-interface BlogEntry {
+export interface BlogEntry {
   slug: string;
   lang: string;
   frontmatter: FrontMatter;
@@ -104,6 +111,7 @@ interface BlogEntry {
   isoDate: string;
   isoDateModified: string;
   wordCount: number;
+  headings: number[];
   sortKey: number;
 }
 
@@ -122,6 +130,7 @@ function readEntry(filePath: string, slug: string, lang: string): BlogEntry {
     isoDate,
     isoDateModified,
     wordCount: countWords(body),
+    headings: headingDepths(body),
     sortKey: parseDateForSort(fm.date, filePath),
   };
 }
@@ -154,7 +163,7 @@ function appendEntriesForDir(entries: BlogEntry[], dir: string, lang: string): v
   }
 }
 
-function readBlogPosts(): BlogEntry[] {
+export function readBlogPosts(): BlogEntry[] {
   const entries: BlogEntry[] = [];
 
   const langDirs = listBlogLangDirs();
@@ -176,7 +185,7 @@ function deriveCategories(entries: BlogEntry[]): string[] {
 }
 
 function generateBlogPostEntry(entry: BlogEntry, withContent = true): string {
-  const { slug, lang, frontmatter: fm, content, isoDate, isoDateModified, wordCount } = entry;
+  const { slug, lang, frontmatter: fm, content, isoDate, isoDateModified, wordCount, headings } = entry;
   const lines: string[] = [];
   lines.push("  {");
   lines.push(`    slug: "${escapeForDoubleQuotedString(slug)}",`);
@@ -186,6 +195,7 @@ function generateBlogPostEntry(entry: BlogEntry, withContent = true): string {
   lines.push(`    isoDate: "${escapeForDoubleQuotedString(isoDate)}",`);
   lines.push(`    isoDateModified: "${escapeForDoubleQuotedString(isoDateModified)}",`);
   lines.push(`    wordCount: ${wordCount},`);
+  lines.push(`    headings: [${headings.join(", ")}],`);
   lines.push("    summary:");
   lines.push(`      "${escapeForDoubleQuotedString(fm.summary)}",`);
   lines.push(`    tags: [${fm.tags.map((t) => `"${escapeForDoubleQuotedString(t)}"`).join(", ")}],`);

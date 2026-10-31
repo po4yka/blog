@@ -8,7 +8,8 @@ import { generateBlogDataSource } from "./generate-blog-data.js";
 import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
-import { generatePlateFiles, PLATES_DIR } from "./generate-plates.js";
+import { dirDrift, generatePlateFiles, PLATES_DIR } from "./generate-plates.js";
+import { COVERS_DIR, generateCoverFiles } from "./generate-covers.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 
@@ -81,20 +82,17 @@ for (const target of targets) {
   }
 }
 
-// Project plates: public/plates/ must hold exactly the generated files.
-{
-  const expected = generatePlateFiles();
-  const present = fs.existsSync(PLATES_DIR) ? fs.readdirSync(PLATES_DIR) : [];
-  const stale = present.filter((name) => !expected.has(name));
-  const wrong = [...expected].filter(([name, svg]) => {
-    const file = path.join(PLATES_DIR, name);
-    return !fs.existsSync(file) || fs.readFileSync(file, "utf-8") !== svg;
-  });
-  if (stale.length > 0 || wrong.length > 0) {
+// Generated SVG directories must hold exactly the generated files.
+for (const [label, dir, files] of [
+  ["public/plates", PLATES_DIR, generatePlateFiles()],
+  ["public/covers", COVERS_DIR, generateCoverFiles()],
+] as const) {
+  const drift = dirDrift(dir, files);
+  if (drift.length > 0) {
     failures++;
-    console.error(`public/plates: OUT OF SYNC (${[...stale, ...wrong.map(([n]) => n)].join(", ")})`);
+    console.error(`${label}: OUT OF SYNC (${drift.join(", ")})`);
   } else {
-    console.log("public/plates: in sync");
+    console.log(`${label}: in sync`);
   }
 }
 

@@ -1,12 +1,4 @@
-import type { CSSProperties } from "react";
-
-const mask = (url: string): CSSProperties => ({
-  backgroundColor: "currentColor",
-  maskImage: `url(${url})`,
-  WebkitMaskImage: `url(${url})`,
-  maskSize: "100% 100%",
-  WebkitMaskSize: "100% 100%",
-});
+import { maskStyle as mask } from "./utils";
 
 /**
  * 1-bit identity mark from `public/plates/` (scripts/generate-plates.ts). The

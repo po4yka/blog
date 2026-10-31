@@ -26,6 +26,7 @@ const blogData = {
   isoDate: generated?.isoDate,
   isoDateModified: generated?.isoDateModified,
   wordCount: generated?.wordCount,
+  headings: generated?.headings,
 };
 ---
 <MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={blogData} blogSlug={baseSlug} hasTranslation={hasTranslation} translationSlug={hasTranslation ? baseSlug : undefined}>

@@ -20,6 +20,7 @@ describe("protect-generated hook", () => {
     expect(runHook(editOf("src/data/BlogData.ts")).status).toBe(2);
     expect(runHook(editOf(".claude/worktrees/x/src/data/changelog.ts")).status).toBe(2);
     expect(runHook(editOf("public/plates/copilot.hover.svg")).status).toBe(2);
+    expect(runHook(editOf("public/covers/ru-some-post.svg")).status).toBe(2);
   });
 
   it("blocks Codex apply_patch touching a generated file", () => {
