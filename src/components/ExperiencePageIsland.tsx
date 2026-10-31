@@ -24,21 +24,29 @@ function RoleEntry({
   hoveredTag: string | null;
   onTagHover: (tag: string | null) => void;
 }) {
+  const [start, end] = role.period.split(" — ");
+  const current = end === "Present";
   return (
-    <div className="py-5 border-b border-border last:border-b-0 group">
-      <div className="flex items-baseline justify-between gap-4 flex-wrap">
-        <div className="flex items-baseline gap-3 flex-wrap">
-          <span className="text-muted-foreground text-label font-mono">
-            {role.period}
-          </span>
-          <h2 className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
-            {role.title}
-          </h2>
-        </div>
+    <div className="relative py-5 pl-7 sm:pl-0 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-x-8 group">
+      {/* Rail node: filled for a role that is still running. */}
+      <span
+        aria-hidden="true"
+        className={`absolute top-[1.6rem] left-0 sm:left-[calc(9rem+0.75rem)] size-[9px] border border-foreground/70 ${current ? "bg-foreground" : "bg-background"}`}
+      />
+      <div className="font-mono text-label text-muted-foreground sm:pt-0.5">
+        <p className="m-0 whitespace-nowrap">{start}</p>
+        {end && <p className="m-0 whitespace-nowrap">{end}</p>}
+        <p className="m-0 mt-1 hidden sm:block text-muted-foreground-dim">{role.location}</p>
+      </div>
+      <div className="min-w-0">
+      <div className="mt-1 sm:mt-0 flex items-baseline justify-between gap-x-4 gap-y-1 flex-wrap">
+        <h2 className="m-0 text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
+          {role.title}
+        </h2>
         <span className="text-muted-foreground font-mono text-mono-sm">
           {role.company}
           {role.location && (
-            <span className="text-muted-foreground ml-2">{role.location}</span>
+            <span className="text-muted-foreground ml-2 sm:hidden">{role.location}</span>
           )}
         </span>
       </div>
@@ -86,6 +94,7 @@ function RoleEntry({
           })}
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -231,13 +240,18 @@ export function ExperiencePage() {
         <OperatorPanel label="resume.log" titleExt="~/experience | main" sectionNumber="05" delay={0.05} statusLine>
           <div ref={rolesContainerRef} className="relative">
             <TagConnections containerRef={rolesContainerRef} hoveredTag={hoveredTag} />
-            <ul className="list-none m-0 p-0">
+            {/* Timeline rail: one hairline through every role's node. */}
+            <span
+              aria-hidden="true"
+              className="absolute top-8 bottom-8 left-[4px] sm:left-[calc(9rem+0.75rem+4px)] w-px bg-border"
+            />
+            <ol className="list-none m-0 p-0">
               {roles.map((role) => (
-                <li key={role.period}>
+                <li key={role.period} className="border-b border-border/50 last:border-b-0">
                   <RoleEntry role={role} hoveredTag={hoveredTag} onTagHover={handleTagHover} />
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </OperatorPanel>
       </div>

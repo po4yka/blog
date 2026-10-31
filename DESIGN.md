@@ -261,6 +261,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Motion: the flows draw in order as the diagram scrolls into view (`arch-draw`, `src/styles/scroll.css`, rule A2). The default and reduced-motion state is fully drawn
 - Budget: 0 KB JS, the SVG under 4 KB
 
+### Experience Timeline
+
+- Component: the role list in `ExperiencePageIsland.tsx` (`/experience`), an `ol` inside the `resume.log` panel
+- Rail: one 1px `var(--border)` hairline through a 9px square node per role. The node is filled with `var(--foreground)` while the role runs (`— Present`), hollow otherwise. Both are `aria-hidden`; the dates are text
+- From `sm`: a 9rem date column (start, end, location in mono) left of the rail, and the title, company and body right of it. Below `sm`: the rail sits at the left edge, and the dates stack above the title
+- No motion on the rail
+
 ### Post Covers
 
 - Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 6:1 ratio. The art is `aria-hidden`; the caption is real text
