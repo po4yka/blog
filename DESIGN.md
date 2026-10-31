@@ -258,6 +258,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Closest match: after the island mounts, it shows the requested path and up to three routes ranked by `closestRoutes` (`src/lib/routeMatch.ts`). Ranking compares the last path segment or `#anchor`, accepts a cut-off slug as a match, and breaks ties toward the language the path asks for. Below the threshold nothing is suggested
 - The "Go home" link stays; `e2e/public-pages.spec.ts` checks "Page not found" and "Go home"
 
+### Changelog Filter
+
+- Component: `ChangelogIsland.tsx` (`/changelog`), a `role="group"` of toggle buttons (`aria-pressed`) above the release list: `all`, `feat`, `fix`, `perf`, each with its real entry count from `changelog.ts`
+- Buttons follow the Settings toggles: 2px radius, 1px `var(--border)` and `var(--muted)` when pressed, a transparent border otherwise, 44px tall below `sm`
+- A filter hides entries of other types and any release left with none. A `label-meta` line (`N / total entries shown`, `aria-live="polite"`) reports the result
+- The default is `all`, on the server and on hydration, so the static HTML holds every entry
+
 ### Architecture Diagram
 
 - Component: `src/components/Architecture.tsx`, server-only (no client directive), static HTML at the end of `/changelog` (the page about the site itself), section `08 / ARCHITECTURE`
