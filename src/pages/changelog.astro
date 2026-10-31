@@ -1,7 +1,11 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
 import { ChangelogPage } from "@/components/ChangelogIsland";
+import { Architecture } from "@/components/Architecture";
 ---
 <MainLayout title="Changelog — Nikita Pochaev" description="Release notes for po4yka.dev, generated from the commit history: what shipped, when, and in which build.">
   <ChangelogPage client:load />
+  <div class="mt-16">
+    <Architecture />
+  </div>
 </MainLayout>

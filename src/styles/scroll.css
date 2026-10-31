@@ -80,3 +80,32 @@
 @media print {
   .progress-rail { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Architecture diagram (Architecture.tsx). Each request flow is one path
+   with pathLength="1"; the default is the drawn path. Where scroll timelines
+   exist and motion is allowed, the flows draw one after another as the
+   diagram scrolls into view, and are fully drawn by the time the diagram is
+   60% into the viewport. The timeline is on the figure, not the SVG: on
+   phones the SVG sits in a sideways scroller, and a view timeline binds to
+   its nearest scroll container.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes arch-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@supports (animation-timeline: view()) {
+  @media screen and (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduce"]) .arch {
+      view-timeline: --arch block;
+    }
+    :root:not([data-motion="reduce"]) .arch-flow {
+      stroke-dasharray: 1;
+      animation: arch-draw auto linear both;
+      animation-timeline: --arch;
+      animation-range: entry calc(10% + var(--i) * 10%) entry calc(40% + var(--i) * 10%);
+    }
+  }
+}
