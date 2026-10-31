@@ -232,6 +232,16 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Active link: `var(--emphasis)` weight 500 with 1px underline rule — no color jump
 - Mobile: overlay with `var(--mobile-menu-bg)` fill and a `var(--rule)` top line
 
+### Command Palette
+
+- Component: `src/components/CommandPalette/CommandPalette.tsx`, a Radix Dialog with one combobox input (`role="combobox"`, `aria-activedescendant`) and a `role="listbox"` of grouped options (Pages, Posts, Projects, Actions, Sections). A polite live region reports the result count
+- Panel: flat, 1px `var(--border)`, 2px radius, `var(--overlay-shadow)` like other dialogs, max width 40rem, placed in the top third of the viewport, full width and anchored to the top below `sm`. Rows are at least 44px high. The active row uses `bg-muted`, `var(--emphasis)` text and a 2px `var(--emphasis)` left rule, with no accent color. The input border changes to `var(--emphasis)` on focus
+- Type: Geist Sans for row titles, Geist Mono for the input, the typed command and the row fields (`label-meta` for group names)
+- Motion: opacity only on open and close, none under reduced motion
+- Shortcuts: Cmd+K or Ctrl+K (matched by physical key, so it works on any keyboard layout) opens it. This is a modifier shortcut, so the Settings toggle for single-key shortcuts does not gate it. Opener buttons are in the desktop nav and the mobile menu. The hero shows a static hint line. `/` still focuses the footer shell
+- Data rule: every row is a real entry (a route, a generated post or project, a theme or locale, the contact email, or a heading on the current page) and shows the equivalent typed command. Rows run through `run()` in `src/lib/commands.ts`, the same registry the footer shell uses. A typed command line also runs on Enter, and its output (or the unknown-command error) shows inside the palette. Post rows show the date label and word count. Project rows show the year and platforms. No invented commands, fields or counts
+- Loading: the palette chunk is requested on first open, or on idle after the first pointer or key event. It is not part of the first page load
+
 ### Tags / Platform Badges
 
 - Background: `var(--muted)`

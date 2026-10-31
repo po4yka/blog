@@ -7,7 +7,5 @@ import "./grep";
 import "./theme";
 import "./neofetch";
 import "./history";
+import "./site";
 
-// Re-export registry API
-export { getCommand, getAllCommands, getCommandNames } from "./registry";
-export type { Command, CommandContext } from "./types";

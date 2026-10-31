@@ -1,8 +1,8 @@
-import { registerCommand } from "./registry";
+import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { Em } from "../ui";
-import type { Command } from "./types";
+import type { Command } from "@/lib/commands";
 
 function highlight(text: string, keyword: string) {
   const lower = text.toLowerCase();

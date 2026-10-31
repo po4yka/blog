@@ -1,5 +1,5 @@
-import { registerCommand } from "./registry";
-import type { Command } from "./types";
+import { registerCommand } from "@/lib/commands";
+import type { Command } from "@/lib/commands";
 
 const history: Command = {
   name: "history",

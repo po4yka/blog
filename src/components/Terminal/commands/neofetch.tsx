@@ -1,9 +1,9 @@
-import { registerCommand } from "./registry";
+import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { roles, skills } from "@/data/experienceData";
 import { Em } from "../ui";
-import type { Command } from "./types";
+import type { Command } from "@/lib/commands";
 
 const ASCII_ART = [
   "┌──────────────┐",

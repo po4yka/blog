@@ -2,8 +2,7 @@ import { m } from "motion/react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { stagger } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
-import { getCommand, getCommandNames } from "./commands/registry";
-import type { CommandContext } from "./commands/types";
+import { getCommand, getCommandNames, run, type CommandContext } from "@/lib/commands";
 import { useSettingsStore, useLocale } from "@/stores/settingsStore";
 // Re-export shared UI primitives (defined in ui.tsx to avoid import cycles)
 export { Em, Tag } from "./ui";
@@ -127,7 +126,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   const suggestion = useMemo(() => getSuggestion(input), [input]);
 
   const theme = useSettingsStore((s) => s.theme);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   const ctx: CommandContext = useMemo(
     () => ({
@@ -136,8 +135,9 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
         window.location.assign(path);
       },
       getTheme: () => theme,
+      getLocale: () => locale,
     }),
-    [commandHistory, theme],
+    [commandHistory, theme, locale],
   );
 
   const handleSubmit = useCallback(
@@ -146,24 +146,11 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       const raw = input.trim();
       if (!raw) return;
 
-      const parts = raw.split(/\s+/);
-      const cmdName = (parts[0] ?? "").toLowerCase();
-      const args = parts.slice(1);
-
       setCommandHistory((h) => [...h, raw]);
       setHistoryIndex(null);
       setSavedInput("");
 
-      if (cmdName === "clear") {
-        setDisplayHistory([]);
-        setInput("");
-        return;
-      }
-
-      const cmd = getCommand(cmdName);
-      const output = cmd
-        ? cmd.execute(args, ctx)
-        : <span>shell: command not found: {cmdName}</span>;
+      const output = run(raw, ctx);
 
       if (output === "__CLEAR__") {
         setDisplayHistory([]);

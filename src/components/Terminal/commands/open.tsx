@@ -1,7 +1,8 @@
-import { registerCommand } from "./registry";
+import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import type { Command } from "./types";
+import { postPath } from "@/lib/blog/paths";
+import type { Command } from "@/lib/commands";
 
 const pages: Record<string, string> = {
   home: "/",
@@ -33,10 +34,12 @@ const open: Command = {
       return `Navigating to ${pages[target]}...`;
     }
 
-    const post = blogPosts.find((p) => p.slug === target);
-    if (post) {
-      ctx.navigate(`/blog/${post.slug}`);
-      return `Opening post: ${post.title}...`;
+    const path = postPath(blogPosts, target, ctx.getLocale());
+    if (path) {
+      ctx.navigate(path);
+      const lang = path.startsWith("/blog/ru/") ? "ru" : "en";
+      const post = blogPosts.find((p) => p.slug === target && (p.lang ?? "en") === lang);
+      return `Opening post: ${post?.title ?? target}...`;
     }
 
     const project = projects.find((p) => p.slug === target);

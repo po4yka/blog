@@ -23,6 +23,7 @@ const SHORTCUT_GROUPS: { labelKey: TranslationKey; shortcuts: { keys: string; de
   {
     labelKey: "shortcuts.utilities",
     shortcuts: [
+      { keys: "Ctrl K", descKey: "shortcuts.palette" },
       { keys: "t", descKey: "shortcuts.cycleTheme" },
       { keys: "/", descKey: "shortcuts.focusTerminal" },
       { keys: "?", descKey: "shortcuts.toggleHelp" },

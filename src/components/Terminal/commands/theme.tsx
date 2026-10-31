@@ -1,7 +1,7 @@
-import { registerCommand } from "./registry";
+import { registerCommand } from "@/lib/commands";
 import { switchTheme } from "@/lib/themeTransition";
 import { Em } from "../ui";
-import type { Command } from "./types";
+import type { Command } from "@/lib/commands";
 
 const validThemes = ["dark", "light", "system"] as const;
 type ValidTheme = (typeof validThemes)[number];
@@ -29,7 +29,7 @@ const theme: Command = {
       return `theme: invalid value "${value}". Use: dark, light, system`;
     }
 
-    switchTheme(value);
+    switchTheme(value, ctx.origin);
     return (
       <span>
         Theme set to <Em>{value}</Em>

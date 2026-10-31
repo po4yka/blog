@@ -1,5 +1,5 @@
-import { registerCommand, getAllCommands } from "./registry";
-import type { Command } from "./types";
+import { registerCommand, getAllCommands } from "@/lib/commands";
+import type { Command } from "@/lib/commands";
 
 const help: Command = {
   name: "help",
