@@ -31,12 +31,10 @@ async function loadBlogPosts(): Promise<
   return mod.blogPosts;
 }
 
-const FONT_REGULAR = path.resolve(
-  "node_modules/@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff",
-);
-const FONT_MEDIUM = path.resolve(
-  "node_modules/@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff",
-);
+// Static Geist TTFs from the `geist` package: Latin and Cyrillic, so RU titles render.
+// Satori reads TTF, OTF and WOFF only, not the site's woff2 files.
+const FONT_REGULAR = path.resolve("node_modules/geist/dist/fonts/geist-sans/Geist-Regular.ttf");
+const FONT_MEDIUM = path.resolve("node_modules/geist/dist/fonts/geist-sans/Geist-Medium.ttf");
 
 const OUTPUT_DIR = path.resolve("public/og");
 const DEFAULT_OUTPUT = path.resolve("public/og-default.png");
