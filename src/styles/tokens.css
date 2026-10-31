@@ -16,7 +16,9 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-step-8: steps(8);
-  --ease-step-24: steps(24);
+  /* jump-none: the whole last step is the full rule. With the default jump-end, WebKit can end a
+     delayed draw at a progress just under 1 and leave the rule one step (1/24) short. */
+  --ease-step-24: steps(24, jump-none);
 
   /* Fluid type steps. Each keeps today's clamp so this file changes nothing
      on screen; the hero work retunes the scale. Every value has a rem term
