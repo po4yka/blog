@@ -13,7 +13,7 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 - No chromatic accent. Emphasis = `--emphasis` (pure white dark / pure black light) + weight + underline
 - Geist Sans as the primary type voice; Geist Mono for code and operator labels only; **Piazzolla** (variable serif) exclusively for `.prose-blog` long-form reading
 - Flat operator panels: `1px solid var(--border)`, `2px border-radius`, no shadow, no window chrome
-- Numbered section system: every section except the hero opens with `SectionHeader` — `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING` (blog preview), `07 / WRITING` (blog index), `08 / CHANGELOG`, `09 / SETTINGS`, `10 / PRIVACY`, `!! / NOT FOUND`. The hero panel carries `01 / IDENTITY`
+- Numbered section system: every section except the hero opens with `SectionHeader` — `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING` (blog preview), `07 / WRITING` (blog index), `08 / CHANGELOG` and `08 / ARCHITECTURE` (both on `/changelog`), `09 / SETTINGS`, `10 / PRIVACY`, `!! / NOT FOUND`. The hero has a plain `01 / IDENTITY` label above the name and a `whois` OperatorPanel also numbered `01`
 - Hairline rules as structural dividers — `var(--rule)` token
 - 12-column grid with faint column guides and registration marks on wide screens (see "Grid guides and registration marks" in section 5)
 - Restrained motion that carries state: fade-in on mount, rules and frames that draw on, opacity shift on hover (rule A1, section 9)
@@ -43,6 +43,10 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
 | `--nav-glass-subtle` | `rgba(11,11,12,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 16px 48px rgba(0,0,0,0.5)` | Floating overlays only (dialogs, dropdowns) |
+| `--popover` | `#141416` | Dialog and popover surface |
+| `--ring` | `rgba(255,255,255,0.28)` | Focus ring |
+| `--mobile-menu-bg` | `rgba(11,11,12,0.96)` | Mobile menu overlay fill |
+| `--selection-bg` | `rgba(233,232,228,0.20)` | Text selection |
 
 ### Light Theme (warm paper + ink)
 
@@ -64,6 +68,10 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
 | `--nav-glass-subtle` | `rgba(245,243,238,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 12px 32px rgba(16,16,18,0.18)` | Floating overlays only (dialogs, dropdowns) |
+| `--popover` | `#fefefc` | Dialog and popover surface |
+| `--ring` | `rgba(0,0,0,0.32)` | Focus ring |
+| `--mobile-menu-bg` | `rgba(245,243,238,0.96)` | Mobile menu overlay fill |
+| `--selection-bg` | `rgba(16,16,18,0.20)` | Text selection |
 
 ### Emphasis Rule
 
@@ -80,6 +88,8 @@ There is no chromatic accent. The only "accent" is `--emphasis` — pure white o
 ## 3. Typography Rules
 
 ### Font Families
+
+Primary families (the full stacks add fallbacks):
 
 ```css
 --font-sans:  "Geist Variable", "Geist", system-ui, sans-serif;
@@ -110,18 +120,18 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 | `h3` | 17px | 500 | 0 | Sub-section headings |
 | `h4` | 15px | 500 | 0 | Minor labels |
 | body | 15–17px | 400 | 0 | UI copy, navigation |
-| `label-meta` | 11px mono, uppercase | 400 | 0.12em | Metadata strips, section number labels |
+| `label-meta` | 11px mono, uppercase | 500 | 0.12em | Metadata strips, section number labels |
 
-**Minimum text size: 11px**, everywhere including the admin SPA. Sizes in rem that can drop below it at the compact 15px root use `max(11px, <rem>)` (the `text-xs` and `text-label` tokens do this). The fluid sizes of `display-1` (`--step-5`), `.display-serif` (`--step-4`), `h1` (`--step-3`) and the blog prose (`--step-0` to `--step-2`) come from tokens in `src/styles/tokens.css`.
+**Minimum text size: 11px**, everywhere including the admin SPA. Sizes in rem that can drop below it at the compact 15px root (the smallest of the three) use `max(11px, <rem>)` (the `text-xs` and `text-label` tokens do this). The fluid sizes of `display-1` (`--step-5`), `.display-serif` (`--step-4`), `h1` (`--step-3`) and the blog prose (`--step-0` to `--step-2`) come from tokens in `src/styles/tokens.css`.
 
-All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The two exceptions are the post `<h1>` and the blog-index `<h2>` titles, which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at 17px, line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
+All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The two exceptions are the post `<h1>` and the blog-index `<h2>` titles, which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
 ### Hierarchy Rules
 
 - Create depth through **weight** (400 → 500), **opacity** (`/70`, `/50`, `/30`), and **rule weight** — not through font switching
 - Opacity layers: primary text full, secondary at `/70`, tertiary at `/50`, decorative at `/25`–`/35`
 - `--font-mono` appears only where its character is load-bearing: code, status output, numbered labels
-- Base font size: 15px (user-configurable: 14px compact / 15px default / 17px large via `--font-size`)
+- Base font size: 16px (user-configurable in Settings: 15px compact / 16px default / 17px large via `--font-size`, `settingsStore.ts`)
 - Line height: 1.4 for headings, 1.7 for prose, 1.5 for UI labels
 - Tabular figures on all numeric data: `font-variant-numeric: tabular-nums`
 
@@ -136,7 +146,6 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 **Primitives** (`src/components/ui/`, styles in `src/styles/primitives.css`)
 - `Panel` draws every flat panel frame: `var(--card)` (or `tone="translucent"`, `var(--panel-bg)`), `1px solid var(--border)`, 2px radius. `clip` sets overflow: `hidden` (default), `clip` (clips without a scroll container, so `position: sticky` children such as the blog TOC keep working) or `visible`. Do not hand-write the border, radius and background again.
 - `Reveal` is the entrance fade: a CSS `@starting-style` opacity fade on first render, with `delay` (seconds, for staggers) and `speed` (`fast`, `base`, `slow` = `--dur-*`). The static HTML is already in its final state, so content shows without JS, without `@starting-style` support and under reduced motion. Never ship content at `opacity: 0` in the server HTML. A `transition-*` utility on the same element replaces the fade, so its property list must include `opacity` (as the nav and the blog back link do), or the element goes inside a wrapper Reveal. `instant` skips the fade for above-the-fold LCP content.
-- `Em` is emphasis text: `--emphasis` at weight 500.
 - `T` renders a translated string in both languages for server-only sections; `html[data-locale]`, set before paint by `ThemeScript.astro` and kept in sync by `settingsStore`, shows one, so there is no wrong-language flash and no client JS. Sections with no interactive state (the home Links, Projects, Experience and Blog sections) render with no `client:*` directive and use `T`; hydrated islands keep `useLocale().t`.
 - Data panels that load on the client (commit log, open source, activity) render their full frame in every state (loading, loaded, unavailable), so the page never shifts, and say plainly when their data is unavailable.
 
@@ -149,41 +158,45 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - Header right: `titleExt` in `--font-mono` 11px `--muted-foreground-dim`
 - Opt-in props: `lineNumbers` (left gutter), `statusLine` (vim-style bottom bar)
 
+**Terminal kit** (`src/components/Terminal/`)
+- `Em` is emphasis text: `--emphasis` at weight 500 (`Terminal/ui.tsx`).
+
 **PanelShell**
-- Background: `var(--card)` — no glass, no blur on primary content
+- Background: `Panel tone="translucent"`, `var(--panel-bg)` — no blur
 - Border: `1px solid var(--border)`, `border-radius: 2px`
 - Top label row: `.label-meta` on left, mono 11px `--muted-foreground-dim` on right
 - Used for: sidebar widgets, compact real-data panels (build stats, activity, latest post, latest release)
 
 **BootBlock**
 - Status prefix format: `OK ·` / `INFO ·` / `WARN ·` — no brackets, no color coding
-- Status color: always `--muted-foreground`; font `--font-mono` 13px
+- Status prefix: `--font-mono` 11px medium uppercase in `--muted-foreground`; line text 13px (`text-mono`) in `--foreground` at /90
 - Keep to 4–6 lines maximum; do not use as filler
 
 **Cmd**
 - Renders `$ command` prompt line
-- Prompt `$`: `--emphasis` at `/70`
-- Command text: `--foreground` at `/80`
-- Font: `--font-mono`, 13px
+- Prompt `$`: `--emphasis` at full opacity, weight 500
+- Command text: `--foreground` at 0.92 opacity
+- Font: `--font-mono`, 15px (`text-mono-lg`)
+- Click or Enter copies the command; the row is 44px tall below `sm`, with `active:opacity-70`; the copied tick only fades
 - Introduces content sections; acts as a section divider
 
 **OutputBlock**
 - Indented output wrapper with fade-in stagger
-- Left border: `2px solid var(--rule)`
-- Padding-left: `1rem`
-- Font: `--font-mono` 12px at `/70`
+- Left border: `1px solid var(--rule)`
+- Padding-left: `pl-6`, `md:pl-8` (1.5rem, 2rem)
+- Font: `--font-mono`; the caller sets size and opacity
 
 **InfoTable**
 - Two-column key-value table for structured data (`whois`, project metadata)
 - `fieldCodes` mode: IBM 3270 format `[01] KEY ......: value`
-- Key column: `--font-mono` 11px `--muted-foreground` — right-aligned
+- `fieldCodes` mode: key column `--font-mono` 12px (`text-mono-sm`), left-aligned; rows separated by `1px dashed var(--rule)`
+- Plain mode: key column `--font-mono` 14px; rows separated by `1px solid var(--border)`
 - Value column: `--font-sans` 14px `--foreground` — left-aligned
-- Row separator: `border-bottom: 1px dashed var(--rule)`
 
 **SectionHeader**
-- New shared component at `src/components/SectionHeader.tsx`
-- Row 1: `.label-meta` left (`04 / PROJECTS`) + right (`8 RECORDS · 2025–26`)
-- Row 2: `<h2>` at 20px Geist Sans — visible, not `sr-only`
+- Shared component at `src/components/SectionHeader.tsx`. `level` (default 2) picks the heading element: page headers pass `level={1}` and render the `h1`
+- Row 1: `.label-meta` left (`04 / PROJECTS`) + right meta (`8 RECORDS · 2025–26`). The number and label keep their width; a long meta truncates
+- Row 2: the heading (`h2`, or `h1` with `level={1}`) at 20px Geist Sans — visible, not `sr-only`
 - Row 3: `border-bottom: 1px solid var(--rule)`. The rule draws as the header scrolls into view where scroll timelines exist, and on load otherwise (rule A2)
 - `marks` prop (default `true`) puts a registration mark on each end of the rule (see "Grid guides and registration marks" in section 5). Set `marks={false}` on narrow or nested headers, for example in `NotFoundIsland` and `PrivacyPageIsland`
 - Applied to every home section except the hero, and to every primary page header
@@ -228,7 +241,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 - Sticky nav (`src/components/Nav.tsx`): `var(--nav-glass-subtle)` at the top of the page. After the page scrolls it changes to `var(--nav-glass)` and adds `backdrop-blur-sm` (rule A7). The bottom line is `1px solid var(--rule)`
 - Rule A7: this nav blur is the single allowed backdrop blur on the public site. The admin SPA has its own `backdrop-blur-sm` on its mobile top bar (`src/admin/components/AdminLayout.tsx`). No other surface uses blur
-- Links: Geist Sans 14px, `var(--foreground)` at `/60`
+- Links: Geist Sans 12px (`text-mono-sm`), `var(--muted-foreground)`, `var(--foreground)` on hover
 - Active link: `var(--emphasis)` weight 500 with 1px underline rule — no color jump
 - Mobile: overlay with `var(--mobile-menu-bg)` fill and a `var(--rule)` top line
 
@@ -302,17 +315,17 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Tags / Platform Badges
 
-- Background: `var(--muted)`
-- Text: `var(--muted-foreground)`
-- Font: `.label-meta` (11px mono uppercase, tracking 0.12em)
-- Radius: `2px` — not pill-shaped
-- Use sparingly for: Android, iOS, KMP, MobileOps, CI/CD, blog categories, dates
+Two styles, both flat with a `2px` radius (never pill-shaped):
+
+- **Status tag** — the `Tag` primitive (`src/components/Terminal/ui.tsx`): transparent, `1px solid var(--border)`, Geist Mono 11px (`text-xs`) uppercase, tracking 0.08em, `--muted-foreground`. The `highlight` variant uses `--emphasis` text and a `var(--foreground)` border. Use it for states and types: `FEATURED`, `NEW`, changelog types (`feat`, `fix`, `perf`; `highlight` marks a breaking change)
+- **Tech chip** — `var(--muted)` fill, `--muted-foreground` text, no border, Geist Sans 11px (`text-xs` on `/projects` and `/experience`, `text-label` in the home Experience list; both tokens are 11px). Use it for stack and skill lists
+- Use both sparingly. The Tag primitive has no hover state; the `/experience` tech chips shift to `--foreground` text on hover and draw their connector lines (see `draw-line`)
 
 ### Blog List Items
 
 - Hover interaction: underline appears via `clip-path: inset(0 100% 0 0)` → `inset(0 0 0 0)`
-- Underline color: `var(--foreground)` at `/60`
-- Transition: `0.3s ease`
+- Underline: a 2px `var(--foreground)` line at 0.85 opacity
+- Transition: `clip-path` over 0.35s with `--ease-step-8` (stepped)
 - No card containers for blog lists — editorial rows only
 
 ---
@@ -327,15 +340,15 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
 **Grid column assignments:**
-- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` (`client:only`, because its day labels depend on today's date) and `LatestReleasePanel` (`client:visible`) are islands, because they fetch from GitHub; `LatestReleasePanel` does not hydrate on mobile, where it is hidden
+- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` and `LatestReleasePanel` (both `client:visible`) are islands; the sparkline draws its dated labels only after its data arrives, so the static HTML never bakes in the build date. Both fetch from GitHub, and neither hydrates on mobile, where both are hidden
 - Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem. The TOC is built at build time from the headings, so it is in the static HTML. On `lg+` the active item shows a 1px `--emphasis` line on its left edge that grows with the scroll position inside that section (`--section-progress`). Below `lg` a fixed bottom bar shows the active section and a "Contents" button that opens a native `<dialog>` bottom sheet with the same list. A 1px reading progress rail (`.progress-rail`) at the top of the viewport shows the scroll position of the post. The post body has no entrance fade (`LessViewer instant`), because it is the largest contentful paint element. On touch devices (`hover: none`) the heading permalinks are always visible and have a 44px tap target.
-- Project list: cols 1–12 single column
-- Experience timeline: cols 1–8, year column cols 9–12
+- Project list: a single-column tree list on the home page; on `/projects` a sticky index (3 cols) beside the entry list (9 cols)
+- Experience timeline: a 9rem date column left of the rail, entries right of it (see "Experience Timeline")
 
 **Good layout patterns:**
 - Split hero: identity display + operator sidebar (desktop only)
-- Alternating project rows with varying alignment
-- Timeline-style experience blocks with year on the right
+- Project rows as a tree list with a plate and a hover spec sheet
+- Experience roles on a rail with the dates on the left
 - Editorial stacked blog list with strong metadata
 
 **Avoid:**
@@ -385,7 +398,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | PanelShell widget | `Panel tone="translucent"`: `var(--panel-bg)` + `1px solid var(--border)` |
 | Sticky nav | `var(--nav-glass-subtle)`, then `var(--nav-glass)` + blur after scroll (rule A7), with `border-bottom: 1px solid var(--rule)` |
 | Nested containers | `var(--muted)` — no shadow |
-| Loading indicators | `[LOADING...]` bracket cycle (`.loading-bracket`) — static mono text, no skeleton shimmer |
+| Loading indicators | A `LOADING` readout inside the same frame, at its final height — no skeleton, no shimmer |
 
 **Zero shadows on:** panels, buttons, tags, blog list items, footer, any flat surface. Shadows are reserved for floating overlays (dialogs, dropdowns) only.
 
@@ -395,10 +408,10 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 
 ### Do
 - Use operator panels (`OperatorPanel`, `PanelShell`, both built on `Panel`) as the primary content framing unit
-- Use `SectionHeader` with numbered labels (`01 / IDENTITY`) at the top of every major section
+- Use `SectionHeader` with numbered labels (`04 / PROJECTS`) at the top of every major section except the hero
 - Build hierarchy through weight (400→500), opacity layers, and hairline rules — not color
 - Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
-- Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable
+- Hide the GitHub-fed hero panels on mobile (`hidden sm:block`) to keep content scannable
 - Use underline-on-hover via `clip-path` animation — not color jumps
 - Respect reduced motion — `<html data-motion="reduce">` is set before paint when the OS asks for it or the visitor turns motion off in Settings; `tokens.css` cuts CSS animations and transitions under it, and Motion animations follow the same setting because `MotionProvider` reads the settings store (not the attribute)
 - Use tree-branch unicode (`├──` `└──` `│`) inside panel list content for terminal density
@@ -435,13 +448,13 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 
 | Element | Mobile | Desktop |
 |---------|--------|---------|
-| Operator panel sidebar | Hidden (`hidden sm:block`) | Visible cols 9–12 |
-| PanelShell widgets | Hidden (`hidden sm:block`) | Sidebar or inline |
+| Hero `whois` panel | Stacked below the identity | Cols 8–12 |
+| Hero panel strip | Latest post and build only; the GitHub-fed sparkline and release panel are hidden below `sm` | 4-up strip below the split |
 | Hero layout | Stacked, identity-first | Split: two-line display name left + widgets right |
-| Project blocks | Single column, full-width | Alternating split rows |
-| Navigation | Hamburger → `var(--background)` overlay | Horizontal with border-bottom rule |
+| Projects | Single-column tree list (home), entry list (`/projects`) | Tree list (home); sticky index plus entry list (`/projects`) |
+| Navigation | Hamburger → `var(--mobile-menu-bg)` overlay | Horizontal with border-bottom rule |
 | Blog post body | Full width, prose capped at 46rem; fixed bottom TOC bar with a bottom sheet | Article + 14rem sticky TOC; prose capped at 46rem |
-| Font size | `14px` compact (user default) | `15px` default |
+| Font size | Same on every width: 15px compact / 16px default / 17px large (Settings) | Same |
 
 **Touch targets:** minimum `44×44px` for all interactive elements on mobile. **Mobile-first rule:** design both intentionally — do not collapse desktop into mobile.
 
@@ -467,10 +480,10 @@ Grid: 12-column, max-width 1240px
 
 ### Section number convention
 
-Every home section except the hero, and every primary page header, uses `<SectionHeader>`. The hero panel is an `OperatorPanel` with number `01`:
+Every home section except the hero, and every primary page header, uses `<SectionHeader>`. The hero has a plain `01 / IDENTITY` label (`HeroText`) and a `whois` `OperatorPanel` numbered `01` (`HeroWhois`). `/changelog` carries two headers that share `08`, one per section of the page:
 
 ```
-01 / IDENTITY    — Hero (OperatorPanel, not SectionHeader)
+01 / IDENTITY    — Hero (plain label + whois OperatorPanel, not SectionHeader)
 02 / ABOUT       — About
 03 / CONTACT     — Links
 04 / PROJECTS    — Projects
@@ -478,6 +491,7 @@ Every home section except the hero, and every primary page header, uses `<Sectio
 06 / WRITING     — Blog preview (home)
 07 / WRITING     — Blog index
 08 / CHANGELOG   — Changelog
+08 / ARCHITECTURE — Architecture diagram (second header on /changelog)
 09 / SETTINGS    — Settings
 10 / PRIVACY     — Privacy
 !! / NOT FOUND   — 404
@@ -495,23 +509,23 @@ No shadow, no traffic lights. Header row label-meta left + titleExt right.
 **Status output:**
 ```
 Use <BootBlock> lines with "OK ·" / "INFO ·" / "WARN ·" prefixes.
-All in var(--muted-foreground), font --font-mono 13px.
+Prefix --font-mono 11px medium uppercase var(--muted-foreground); text 13px foreground /90.
 No color coding. Keep to 4–6 lines.
 ```
 
 **Sidebar widget:**
 ```
-Use <PanelShell> with var(--card) background, 1px var(--border) border,
-2px radius. Top row: label-meta left, mono 11px muted-foreground-dim right.
-Update on 3–10s intervals, not every frame.
+Use <PanelShell> (Panel tone="translucent", var(--panel-bg)), 1px var(--border)
+border, 2px radius. Top row: label-meta left, mono 11px muted-foreground-dim right.
+Fetch once on hydration; never poll. Keep the frame and height while loading or on failure.
 ```
 
 **Identity display:**
 ```
-Use <InfoTable fieldCodes> inside <OperatorPanel label="WHOIS PO4YKA" sectionNumber="01">.
-Key column: --font-mono 11px muted-foreground right-aligned.
+Use <InfoTable fieldCodes> inside <OperatorPanel label="whois — po4yka" sectionNumber="01">.
+Key column: --font-mono 12px muted-foreground, left-aligned.
 Value column: --font-sans 14px foreground left-aligned.
-Row separator: border-bottom 1px dashed var(--rule).
+Row separator: border-bottom 1px dashed var(--rule) (fieldCodes mode).
 ```
 
 ### Typography guidance
@@ -535,7 +549,7 @@ Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-in
 - Hover, press and focus feedback, under rule A3
 - Page and shared-element transitions, and the theme wipe (`src/styles/transitions.css`). The root crossfade on a page change is `--dur-base` and the main content fade is 200 ms. The post body slides in at 300 ms. The title of a post morphs from the blog list to the post page at `--dur-base`. A theme change from a visitor control shows a circular wipe at `--dur-base` that grows from that control, or from the viewport centre when the change comes from the keyboard or the terminal. All of these are off under reduced motion. A browser without the View Transitions API navigates and changes theme without animation. The home blog preview has no title morph.
 
-Existing state feedback stays as it is (menu open, form flash, the terminal caret blink and the loading cycle). It is not a new class, and no new loop may use it. All other motion stays banned. A later phase adds a class (text decode, chart transitions, the hero field) only with its own amendment in the PR that first uses it.
+Existing state feedback stays as it is (menu open, form flash and the terminal caret blink). It is not a new class, and no new loop may use it. All other motion stays banned. A later phase adds a class (text decode, chart transitions, the hero field) only with its own amendment in the PR that first uses it.
 
 **Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`, except for a position-state indicator (the blog reading progress rail), which keeps tracking under reduced motion because it shows where the visitor is and not decoration. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
 
@@ -544,9 +558,9 @@ Existing state feedback stays as it is (menu open, form flash, the terminal care
 **Rule A9. Weights.** Use weights 400 and 500 for body and chrome, and 600 for emphasis (`.prose-blog strong` is 600; `.display-serif` is Piazzolla 560). The one exception is a variable-weight display moment on the hero name: the `.display-name-given` span at 300 and the `.display-name-family` span at 650 on the `wght` axis of Geist Sans (the `h1` itself stays 500). No other element uses 300 or 650.
 
 Permitted:
-- Fade-in stagger on mount (signals list structure, 120–150ms per item) through `Reveal`: an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel
+- Fade-in stagger on mount (signals list structure) through `Reveal`: terminal rows 40–60ms (`stagger.fast`, `stagger.base`), editorial list rows 120ms (`stagger.list`): an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel
 - Opacity shift on hover (100ms, no color change)
-- Underline clip-path animation on links (300ms ease)
+- Underline clip-path animation on links (0.35s, `--ease-step-8`)
 - `active:opacity-70` on button press (CSS `:active` pseudo, not Motion whileTap)
 - Background colour shift on hover for list rows (to `var(--muted)`)
 - Mobile menu height/opacity `AnimatePresence` (functional state change)
@@ -556,7 +570,8 @@ Permitted:
 - `draw-line` keyframe on the /experience tag connectors (`TagConnections`, `src/styles/theme.css`): a one-shot `--dur-base` `stroke-dashoffset` draw when a tag is hovered, delayed `stagger.base` per line. Hover enrichment only; the connector SVG is `aria-hidden`
 - `arch-draw` keyframe on the architecture diagram flows (`.arch-flow`): a scroll-linked `stroke-dashoffset` draw under rule A2, finished by default
 - `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
-- `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
+- `progress-rail` keyframe on the blog reading progress rail (`src/styles/scroll.css`, rule A2)
+- `theme-wipe` keyframe for the circular theme change (`src/styles/transitions.css`)
 
 Not permitted:
 - Parallax, cursor-follow, scroll-velocity tickers
@@ -577,9 +592,9 @@ For build-time-static panels (data from synchronous imports like `buildMeta`, `b
 
 For async-data panels (fetch `/api/*` or read `navigator.*` / `performance.*`):
 
-- **Keep lazy-loaded** — `const X = lazy(() => import("./Decorations").then(m => ({ default: m.X })))`.
-- Wrap in `<Suspense fallback={null}>`.
-- These panels hydrate on the client when their parent island becomes visible.
+- **Make the panel its own island** with `client:visible`, so it hydrates when it scrolls into view. Do not wrap it in `React.lazy()` or `Suspense`.
+- Render the full frame on the server with no date- or data-dependent text, so hydration matches, and keep that height while loading and on failure.
+- `React.lazy()` is only for UI opened on demand: the shortcuts dialog and the command palette.
 
 Admin SPA: `/admin/*` uses a catch-all Astro route that mounts React manually via `<script>import "@/admin/mount"</script>`. Because there's no Astro `client:*` island on that page, the React-Refresh preamble is injected manually in `src/pages/admin/[...path].astro` under `{isDev && (<script type="module" is:inline …>)}`. Do not remove it — admin will go blank in dev otherwise.
 
@@ -625,6 +640,8 @@ The following components were removed during the Swiss refactor and its follow-u
 | `TechTagHeatmap` | _dead-code purge_ | Exported but rendered nowhere |
 | `ProjectPlatformMatrix` | _dead-code purge_ | Exported but rendered nowhere; project×platform matrix |
 | `StackHeatmap` | _follow-up_ | Low-information dot-matrix — a 10×68 grid the reader can't parse at a glance |
+| `AnimatedNumber` (+ `_animatedNumber.utils`) | Phase 12.4 | Count-up from 0; the static HTML showed 0 and count-ups are not a permitted motion class |
+| `BlogStats` category bar chart and count summary | Phase 12.4 | A scaleX bar-grow animation outside rule A1, under an invented `wc -l` line; the tag filter stays |
 | `BlogStatsPanel` | _editorial pass_ | Statistics about the site itself (post counts, minutes of reading) under a two-post blog: self-referential, and it emphasised how little was there |
 
 Real-data equivalents that cover every functional use-case:

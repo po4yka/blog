@@ -138,14 +138,14 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 **Information density inside operator panels:**
 - IBM 3270-style field codes: `[01] FIELD ......: value` format in InfoTable (fieldCodes mode)
 - Vim/less-style line number gutter on the left of panel content (lineNumbers prop)
-- Vim-style status bar at bottom of panel: `-- NORMAL -- title | rows:col | branch` (statusLine prop)
+- Optional status bar at the bottom of a panel (statusLine prop). With `true` it shows `label · N:1 · main` (N is the `lineNumbers` count, or 1; just `1:1 · main` when there is no label); pass a string or node for real content. The `-- NORMAL --` / `-- INSERT --` mode text belongs to the global `StatusLine`, not to panels
 - Secondary metadata in panel header right slot: `title | ~/path | branch` (titleExt prop)
 
 **List and content formatting:**
 - Tree-branch unicode (`├──` `└──` `│`) as list structure in project and content lists
-- Ranked index prefixes: `001 │ date │ [tag] │ title` for blog list items
+- Ranked index prefixes on home blog rows: `001 │ date │` then a `NEW` tag for recent posts, the title, and the language codes
 - Column dividers `│` in timeline/experience layouts
-- Status markers `●` (current) / `○` (past) in timeline rows
+- Current roles are marked from the period (`— Present`): `●` / `○` on the home Experience list, a filled or hollow square node on the `/experience` rail
 - `OK ·` / `INFO ·` / `WARN ·` prefixes in status output (no brackets, no color coding)
 
 **Still forbidden:**
@@ -175,10 +175,10 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 ## Good layout patterns
 
 - split hero: text + visual / artifact
-- alternating project rows
+- project rows as a tree list with a plate and a hover spec sheet
 - editorial stacked sections
 - image-text asymmetric modules
-- timeline-style resume blocks
+- experience roles on a rail with the dates on the left
 - structured blog lists with strong metadata
 
 ## Decorative blocks as layout rhythm
@@ -210,7 +210,7 @@ Typography should carry the design.
 - **Geist Pixel** (`--font-pixel`) is for decorative counters only, never body text or labels (rule A10 in `DESIGN.md`). There is no cap on uses per page.
 - Create a clear type hierarchy using **weight** (400→500), **opacity**, and **size** -- not font switching between families.
 - Headings should feel deliberate and confident; use `display-name` (hero), `display-1` / `display-2` at display sizes with negative tracking.
-- Body prose (blog posts) uses Piazzolla (`--font-serif`) at 17px, line-height 1.7, `letter-spacing: 0`, max-width 46rem (~70ch). Headings *inside* the prose stay in Geist Sans so they match the TOC and the rest of the site.
+- Body prose (blog posts) uses Piazzolla (`--font-serif`) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, max-width 46rem (~70ch). Headings *inside* the prose stay in Geist Sans so they match the TOC and the rest of the site.
 - Avoid too many font sizes and weights.
 - Use consistent line-height and spacing rhythm.
 
@@ -252,7 +252,7 @@ Use a strictly neutral color system. There is no chromatic accent color.
 The design uses opacity layering for information depth:
 
 - **Primary text:** `/80` to `/100` -- names, roles, headings, active nav links
-- **Secondary text:** `/60` to `/70` -- body prose, focus areas, inactive nav links
+- **Secondary text:** `/60` to `/70` -- body prose, focus areas (inactive nav links use the `--muted-foreground` token)
 - **Tertiary text:** `/45` to `/55` -- supporting details, third-priority paragraphs
 - **Decorative text:** `/20` to `/35` -- panel header labels, ambient indicators
 
@@ -352,14 +352,14 @@ Cards may be used, but do not rely on them for every layout.
 The project uses a flat operator-panel kit as its primary design system. All components use `1px solid var(--border)`, `border-radius: 2px`, no shadow, no traffic lights, no window chrome gradients.
 
 - **OperatorPanel** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `lineNumbers` and `statusLine` props; replaces former macOS window mockup
-- **SectionHeader** -- new shared component; numbered label row + `<h2>` heading + `border-bottom: 1px solid var(--rule)`; applied to every home section and primary page header
+- **SectionHeader** -- shared component; numbered label row + heading (`h2`, or `h1` with `level={1}` on page headers) + `border-bottom: 1px solid var(--rule)`; applied to every home section and primary page header
 - **BootBlock** -- status output lines prefixed with `OK ·` / `INFO ·` / `WARN ·` in `--muted-foreground`; no color coding; keep to 4–6 lines
-- **Cmd** -- `$ command` prompt line in `--font-mono`; prompt `$` at `--emphasis /70`; introduces content sections
-- **OutputBlock** -- indented output wrapper with fade-in stagger; `2px solid var(--rule)` left border
-- **PanelShell** -- compact bordered block for sidebar widgets; same flat border treatment as OperatorPanel
-- **InfoTable** -- two-column key-value table; `fieldCodes` mode renders IBM 3270 `[01] KEY ......: value`; key column `--font-mono` 11px, value column `--font-sans` 14px
+- **Cmd** -- `$ command` prompt line in `--font-mono`; prompt `$` at full `--emphasis` weight 500, command at 0.92 opacity, 15px; click or Enter copies; introduces content sections
+- **OutputBlock** -- indented output wrapper with fade-in stagger; `1px solid var(--rule)` left border
+- **PanelShell** -- compact bordered block for real-data widgets; `Panel tone="translucent"` (`var(--panel-bg)`, no blur), same flat border as OperatorPanel
+- **InfoTable** -- two-column key-value table; `fieldCodes` mode renders IBM 3270 `[01] KEY ......: value`; key column `--font-mono` 12px left-aligned with dashed rows in `fieldCodes` mode (14px with solid rows otherwise), value column `--font-sans` 14px
 
-These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment (`var(--border)`), and background (`var(--card)`).
+These components are the project's equivalent of cards and panels. Keep them consistent in spacing, border treatment (`var(--border)`), and background (`var(--card)` for OperatorPanel, `var(--panel-bg)` for PanelShell).
 
 ---
 
@@ -372,14 +372,14 @@ This section should immediately explain who the site belongs to, using the termi
 ### Hero structure
 
 1. **Identity** -- name, role line, short intro, and CTAs.
-2. **`$ whois` command** -- introduces identity via an InfoTable inside an OperatorPanel.
+2. **`whois` panel** -- `$ cd ~/po4yka && cat identity.md`, then an InfoTable inside the `whois — po4yka` OperatorPanel (numbered `01`, like the plain `01 / IDENTITY` label above the name).
 3. **Operator panels** -- real-data panels (latest post, build, activity, release). Must remain secondary to the identity content.
 
 ### Must include
 
 - name: **Nikita Pochaev** -- must have visual prominence, not just buried in a data table row
 - handle: **@po4yka**
-- role statement: Mobile Developer -- Android, iOS, Kotlin Multiplatform, MobileOps
+- role statement: AI Engineer & Senior Mobile Developer -- Android, iOS, Kotlin Multiplatform, MobileOps
 - status or availability line
 - **A visible heading** (name + role) must exist beyond sr-only -- can be styled within terminal chrome but must have clear visual weight
 - **Above-fold CTAs or navigation** -- either inline action links (terminal-styled is fine) or a clear path to the Links section
@@ -513,15 +513,15 @@ Motion should add:
 - dividers and rules that draw on, including a rule that draws as its section scrolls into view
 - refined blog list hover behavior
 
-Only these motion classes are allowed today (rule A1 in `DESIGN.md`): enter reveals, draw-ons for rules, frames and SVG paths, scroll-linked progress and reveals, and hover or press feedback under rule A3.
+The allowed motion classes are listed in rule A1 in `DESIGN.md`, which is the source of truth: enter reveals, draw-ons for rules, frames and SVG paths, scroll-linked progress and reveals, hover or press feedback under rule A3, and page and shared-element transitions with the theme wipe. Its permitted list names every keyframe.
 
 Scroll effects (rule A2) use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `prefers-reduced-motion: no-preference`. The default state is the finished, visible state.
 
 ## Terminal-specific motion
 
-- Staggered line reveals for terminal output (0.03-0.05s between lines)
-- Live panels refresh on 3-10s intervals at most, never every frame
-- Terminal cursor blink animation for interactive elements
+- Staggered line reveals for terminal output (40-60ms between lines, `stagger.fast` and `stagger.base`); editorial list rows use 120ms (`stagger.list`)
+- Data panels fetch once on hydration and never poll; while loading or on failure they keep their frame and height
+- The caret blink is for the footer shell input only
 
 ## Motion rules
 
