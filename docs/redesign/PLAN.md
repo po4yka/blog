@@ -4,7 +4,7 @@ Status: shipped through Phase 12 (see "Shipped" below). `DESIGN.md` is the sourc
 
 ## Shipped
 
-Pull requests by phase, in order. #219 is open and this PR is not yet merged. Phases 7.3 and 7.4 (reading), 8.2 and 8.4 to 8.6 (decode, the hero dither field and pointer response) and 9.3 (the mobile StatusLine sheet) did not ship; `src/lib/dither.ts` from 8.3 shipped inside 10.1 (#210), and the `AnimatedNumber` that 8.2 meant to rewrite was deleted in 12.4.
+Pull requests by phase, in order. This PR (12.5) is not yet merged. Phases 7.3 and 7.4 (reading), 8.2 and 8.4 to 8.6 (decode, the hero dither field and pointer response) and 9.3 (the mobile StatusLine sheet) did not ship; `src/lib/dither.ts` from 8.3 shipped inside 10.1 (#210), and the `AnimatedNumber` that 8.2 meant to rewrite was deleted in 12.4.
 
 | Phase | PR | Notes |
 |---|---|---|
@@ -28,7 +28,7 @@ Pull requests by phase, in order. #219 is open and this PR is not yet merged. Ph
 | 12.1 | #216 | Content-aware 404 |
 | 12.2 | #217 | Changelog filter by type |
 | 12.3 | #218 | Privacy and Settings in Russian, 44px targets |
-| 12.4 | #219 (open) | Keyboard, screen-reader, Russian and motion fixes from the Phase 12 audit |
+| 12.4 | #219 | Keyboard, screen-reader, Russian and motion fixes from the Phase 12 audit |
 | 12.5 | this PR | Docs consistency pass |
 
 ## 1. Goal and design thesis
