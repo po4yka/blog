@@ -10,12 +10,10 @@ const routes: KnownRoute[] = [
   ...["/", "/projects/", "/experience/", "/blog/", "/blog/ru/", "/changelog/", "/settings/", "/privacy/"].map(
     (href) => ({ href, label: href, kind: "page" as const }),
   ),
-  ...blogPostsMeta.map((p) => ({
-    href: p.lang === "ru" ? `/blog/ru/${p.slug}/` : `/blog/${p.slug}/`,
-    label: p.title,
-    kind: "post" as const,
-    lang: p.lang,
-  })),
+  ...blogPostsMeta.map((p) => {
+    const lang: "en" | "ru" = p.lang === "ru" ? "ru" : "en";
+    return { href: lang === "ru" ? `/blog/ru/${p.slug}/` : `/blog/${p.slug}/`, label: p.title, kind: "post" as const, lang };
+  }),
   ...projects.map((p) => ({ href: `/projects/#${p.slug ?? p.id}`, label: p.name, kind: "project" as const })),
 ];
 ---
