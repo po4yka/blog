@@ -48,6 +48,8 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
     });
   }, []);
 
+  // While loading, a bare element gives client:visible something to observe; a missing release renders nothing.
+  if (release === undefined) return <div aria-hidden="true" />;
   if (!release?.url) return null;
 
   return (

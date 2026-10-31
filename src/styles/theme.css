@@ -190,6 +190,25 @@ kbd {
   color: var(--foreground);
 }
 
+/* Hero name only (DESIGN.md A9): two lines, a light given name over a heavy family name. */
+.display-name {
+  font-family: var(--font-sans);
+  font-size: var(--step-6);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  color: var(--foreground);
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+.display-name-given {
+  font-weight: 300;
+}
+
+.display-name-family {
+  font-weight: 650;
+}
+
 .display-2 {
   font-family: var(--font-sans);
   font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);

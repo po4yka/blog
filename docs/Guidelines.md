@@ -207,7 +207,7 @@ Typography should carry the design.
   - Exception: the single-line role subtitle directly beneath the hero name may render in Geist Mono (`text-mono-lg`). Anchors the terminal voice on first paint. One line max; no other prose surface uses mono.
 - **Geist Pixel** (`--font-pixel`) is for decorative counters only, never body text or labels (rule A10 in `DESIGN.md`). There is no cap on uses per page.
 - Create a clear type hierarchy using **weight** (400→500), **opacity**, and **size** -- not font switching between families.
-- Headings should feel deliberate and confident; use `display-1` / `display-2` at display sizes with negative tracking.
+- Headings should feel deliberate and confident; use `display-name` (hero), `display-1` / `display-2` at display sizes with negative tracking.
 - Body prose (blog posts) uses Piazzolla (`--font-serif`) at 17px, line-height 1.7, `letter-spacing: 0`, max-width 46rem (~70ch). Headings *inside* the prose stay in Geist Sans so they match the TOC and the rest of the site.
 - Avoid too many font sizes and weights.
 - Use consistent line-height and spacing rhythm.
@@ -216,7 +216,7 @@ Typography should carry the design.
 
 | Class | Size | Use |
 |-------|------|-----|
-| `display-1` | clamp(40–64px), wt 500, tracking -0.028em | Hero name only |
+| `display-1` | clamp(40–64px), wt 500, tracking -0.028em | Other page-level identity (the hero name uses `display-name`, `--step-6`) |
 | `display-2` | clamp(28–40px), wt 500, tracking -0.020em | Post titles, major section heads |
 | `h1` | clamp(28–36px) | Page headings |
 | `h2` | 20px | Section headings (inside SectionHeader) |

@@ -1,0 +1,27 @@
+---
+import { BuildStats, LatestPostPanel } from "@/components/Decorations";
+import { ActivitySparkline } from "@/components/Decorations/ActivitySparkline";
+import { LatestReleasePanel } from "@/components/Decorations/LatestReleasePanel";
+import { HeroText } from "./HeroText";
+import { HeroWhois } from "./HeroWhois";
+---
+<section aria-labelledby="hero-heading" class="space-y-10 pt-8 md:pt-12">
+  <!-- Split hero: identity cols 1-7, the whois spec sheet cols 8-12 (DESIGN.md 5). All static markup. -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-8 items-start">
+    <HeroText />
+    <HeroWhois />
+  </div>
+
+  <!-- Operator strip: latest post and build are static; the sparkline renders client-side only (its day labels depend on today's date, so SSR would bake in the build date) and the release panel hydrates when visible.
+       Mobile keeps the two static ones; the GitHub-fed pair returns from sm. -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <LatestPostPanel delay={0.15} />
+    <BuildStats delay={0.2} />
+    <div class="hidden sm:block">
+      <ActivitySparkline client:only="react" delay={0.25} />
+    </div>
+    <div class="hidden sm:block">
+      <LatestReleasePanel client:visible delay={0.3} />
+    </div>
+  </div>
+</section>

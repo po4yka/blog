@@ -92,7 +92,7 @@ The full stacks are defined once, in the `@theme static` block of `src/styles/ta
 
 - **`--font-sans`** — headings (including inside blog prose), navigation, labels, button text, UI copy, site chrome
 - **`--font-mono`** — code blocks, terminal output (`Cmd`, `BootBlock`, `InfoTable`), `.label-meta` metadata strips. Code blocks are syntax-highlighted in monochrome only (`src/lib/shiki-mono.ts`): keywords at `--emphasis` weight 500, identifiers at `--foreground`, strings at `--muted-foreground`, comments at `--muted-foreground-dim` italic. Never introduce a chromatic Shiki theme
-  - Exception: the single-line role subtitle directly beneath the hero `display-1` name may use `--font-mono` (`text-mono-lg`). It's load-bearing terminal voice — not body copy — and rendering it in sans dilutes the identity. Cap at one line. No other prose surface uses mono.
+  - Exception: the single-line role subtitle directly beneath the hero name (`display-name`) may use `--font-mono` (`text-mono-lg`). It's load-bearing terminal voice — not body copy — and rendering it in sans dilutes the identity. Cap at one line. No other prose surface uses mono.
 - **`--font-pixel`** — rule A10: decorative counters only, never body text or labels. There is no cap on the number of uses per page
 - **`--font-serif`** — blog post body prose only (`.prose-blog` block-level text). Variable wght 100–900. Latin + Latin-Ext + Cyrillic + Cyrillic-Ext subsets self-hosted in `public/fonts/piazzolla-*.woff2`. Never ship on non-post surfaces.
 
@@ -102,7 +102,8 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 | Class | Size | Weight | Tracking | Use |
 |-------|------|--------|----------|-----|
-| `display-1` | clamp(40px–64px) | 500 | -0.028em | Hero name, page-level identity |
+| `display-name` | `--step-6`, clamp(48px–120px) | 300 and 650 | -0.035em | Hero name only, two lines, rule A9 |
+| `display-1` | clamp(40px–64px) | 500 | -0.028em | Page-level identity |
 | `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles |
 | `h1` | clamp(28px–36px) | 500 | -0.015em | Page headings |
 | `h2` | 20px | 500 | -0.010em | Section headings |
@@ -258,7 +259,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
 **Grid column assignments:**
-- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile
+- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` (`client:only`, because its day labels depend on today's date) and `LatestReleasePanel` (`client:visible`) are islands, because they fetch from GitHub; `LatestReleasePanel` does not hydrate on mobile, where it is hidden
 - Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem. The TOC is built at build time from the headings, so it is in the static HTML. On `lg+` the active item shows a 1px `--emphasis` line on its left edge that grows with the scroll position inside that section (`--section-progress`). Below `lg` a fixed bottom bar shows the active section and a "Contents" button that opens a native `<dialog>` bottom sheet with the same list. A 1px reading progress rail (`.progress-rail`) at the top of the viewport shows the scroll position of the post. The post body has no entrance fade (`LessViewer instant`), because it is the largest contentful paint element. On touch devices (`hover: none`) the heading permalinks are always visible and have a 44px tap target.
 - Project list: cols 1–12 single column
 - Experience timeline: cols 1–8, year column cols 9–12
@@ -367,7 +368,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 |---------|--------|---------|
 | Operator panel sidebar | Hidden (`hidden sm:block`) | Visible cols 9–12 |
 | PanelShell widgets | Hidden (`hidden sm:block`) | Sidebar or inline |
-| Hero layout | Stacked, identity-first | Split: display-1 name left + widgets right |
+| Hero layout | Stacked, identity-first | Split: two-line display name left + widgets right |
 | Project blocks | Single column, full-width | Alternating split rows |
 | Navigation | Hamburger → `var(--background)` overlay | Horizontal with border-bottom rule |
 | Blog post body | Full width, prose capped at 46rem; fixed bottom TOC bar with a bottom sheet | Article + 14rem sticky TOC; prose capped at 46rem |
@@ -448,7 +449,7 @@ Row separator: border-bottom 1px dashed var(--rule).
 
 - Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
 - Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title and blog-index titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
-- Use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for the hero name only
+- Use `display-name` (`--step-6`, clamp 48–120px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
 - Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles; plain `display-2` elsewhere
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
@@ -470,6 +471,8 @@ Existing state feedback stays as it is (menu open, form flash, the terminal care
 **Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`, except for a position-state indicator (the blog reading progress rail), which keeps tracking under reduced motion because it shows where the visitor is and not decoration. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
 
 **Rule A3. Hover and tap.** Hover, press and focus states (CSS or `whileHover` and `whileTap`) may change opacity, background, underline and outline. They never change width, height, margin, position or scale.
+
+**Rule A9. Weights.** Use weights 400 and 500 for body and chrome, and 600 for emphasis (`.prose-blog strong` is 600; `.display-serif` is Piazzolla 560). The one exception is a variable-weight display moment on the hero name: the `.display-name-given` span at 300 and the `.display-name-family` span at 650 on the `wght` axis of Geist Sans (the `h1` itself stays 500). No other element uses 300 or 650.
 
 Permitted:
 - Fade-in stagger on mount (signals list structure, 120–150ms per item) through `Reveal`: an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel

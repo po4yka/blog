@@ -8,6 +8,7 @@ const STORAGE_KEY = "site_preferences";
 const RU_PROJECTS = "Избранные проекты";
 const EN_PROJECTS = "Selected Projects";
 
+const heroHeading = (page: Page) => page.locator("#hero-heading");
 const projectsHeading = (page: Page) => page.locator("#projects-heading");
 
 async function storeLocale(page: Page, locale: "en" | "ru") {
@@ -22,6 +23,7 @@ test.describe("Static sections follow the stored language", () => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-locale", "en");
     await expect(projectsHeading(page)).toHaveText(EN_PROJECTS, { useInnerText: true });
+    await expect(heroHeading(page)).toHaveText("Nikita Pochaev", { useInnerText: true });
   });
 
   test("a stored Russian preference shows Russian from the first paint, with no English flash", async ({ page }) => {
@@ -40,6 +42,7 @@ test.describe("Static sections follow the stored language", () => {
     await expect(projectsHeading(page)).toHaveText(RU_PROJECTS, { useInnerText: true });
     expect(await page.evaluate(() => (window as unknown as { __locales: string[] }).__locales)).toEqual(["ru"]);
     await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+    await expect(heroHeading(page)).toHaveText("Никита Почаев", { useInnerText: true });
   });
 
   test("the switcher changes the language in place, without a reload", async ({ page }) => {
@@ -54,8 +57,32 @@ test.describe("Static sections follow the stored language", () => {
       .click();
     await expect(page.locator("html")).toHaveAttribute("data-locale", "ru");
     await expect(projectsHeading(page)).toHaveText(RU_PROJECTS, { useInnerText: true });
+    await expect(heroHeading(page)).toHaveText("Никита Почаев", { useInnerText: true });
     expect(await page.evaluate(() => (window as unknown as { __sameDocument?: boolean }).__sameDocument)).toBe(true);
   });
+});
+
+test.describe("hero name", () => {
+  test("the h1 has no reveal ancestor, so it paints at once", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("#hero-heading").locator("xpath=ancestor-or-self::*[@data-reveal]")).toHaveCount(0);
+  });
+
+  for (const locale of ["en", "ru"] as const) {
+    for (const width of [320, 375]) {
+      test(`no horizontal overflow at ${width}px in ${locale}`, async ({ page }) => {
+        await storeLocale(page, locale);
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto("/");
+        await expect(page.locator("html")).toHaveAttribute("data-locale", locale);
+        const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+          scrollWidth: document.documentElement.scrollWidth,
+          innerWidth: window.innerWidth,
+        }));
+        expect(scrollWidth).toBeLessThanOrEqual(innerWidth);
+      });
+    }
+  }
 });
 
 test("the four static sections ship no island", async ({ page }) => {
