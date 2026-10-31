@@ -251,6 +251,14 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS, each SVG under 3 KB
 
+### Activity Heatmap and Sparkline
+
+- Components: `ActivityCalendar` (home, 13 weeks) and `ActivitySparkline` (hero strip, 14 days) in `src/components/Decorations/`. Data: `/api/github/calendar` and `/api/github/events`, both the latest 100 public GitHub events. The heatmap header says "public GitHub events"
+- Heatmap: one `aria-hidden` SVG of 16px cells on a 19px pitch, Sunday-first columns, days bucketed in the visitor's time zone; days after today are not drawn. The sparkline is one SVG path with the latest value labelled `TODAY n`
+- Readout: a mono line above the chart shows the hovered or focused day (`MAR 14 · 3 EVENTS`), and the totals otherwise. The chart is one tab stop; arrow keys, Home and End move a cursor (a 1.5px outline on a cell, or a 1px guide on the sparkline). A visually hidden table holds every value for screen readers
+- States: the frame and chart box render before data arrives, so the height never changes. Loading and fetch failure show `LOADING` or `ACTIVITY UNAVAILABLE` in the readout, inside the same frame
+- Motion: heatmap cells use `cell-in`; the sparkline path uses `rule-draw` (rule A1). Under reduced motion both show the final state at once
+
 ### Experience Timeline
 
 - Component: the role list in `ExperiencePageIsland.tsx` (`/experience`), an `ol` inside the `resume.log` panel
@@ -521,6 +529,7 @@ Permitted:
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
 - `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe). The SectionHeader rule draws as the header scrolls into view where scroll timelines exist (rule A2), and on load otherwise. Panel rules always draw on load, after their Reveal delay. The nav underline replays on route change
+- `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
 Not permitted:

@@ -1,27 +1,13 @@
-import { m } from "motion/react";
 import { GITHUB_USERNAME } from "@/lib/constants";
-import { useState, useEffect } from "react";
-import { useInView } from "@/hooks/useInView";
-import { MotionProvider } from "@/components/MotionProvider";
-import { easeStep8 } from "@/lib/motion";
+import { useState, useEffect, type KeyboardEvent, type PointerEvent } from "react";
+import { shortDay } from "@/lib/activity";
 import { PanelShell } from "./_helpers";
 import { deferIdle } from "./_utils";
 import type { GitHubActivitySummary } from "@/types";
 
 const BUCKETS = 14;
-const BAR_MAX_PX = 28;
-
-interface BucketMeta {
-  count: number;
-  date: Date;
-  label: string; // "MAR 14"
-  ariaLabel: string; // "Mar 14 — 8 events"
-}
-
-function formatShortDay(d: Date): string {
-  const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
-}
+const W = (BUCKETS - 1) * 10;
+const H = 32;
 
 function formatSinceLatest(latestIso: string | null): string | null {
   if (!latestIso) return null;
@@ -35,176 +21,162 @@ function formatSinceLatest(latestIso: string | null): string | null {
   return `${days}d AGO`;
 }
 
-function SparkBar({
-  count,
-  normalizedHeight,
-  delay,
-  inView,
-  label,
-  ariaLabel,
-  isFirst,
-  isLast,
-  onHover,
-  onLeave,
-}: {
-  count: number;
-  normalizedHeight: number;
-  delay: number;
-  inView: boolean;
-  label: string;
-  ariaLabel: string;
-  isFirst: boolean;
-  isLast: boolean;
-  onHover: () => void;
-  onLeave: () => void;
-}) {
-  const hasEvents = count > 0;
-  const opacity = hasEvents ? 0.32 + (normalizedHeight / BAR_MAX_PX) * 0.5 : 0.35;
-
-  return (
-    <div
-      className="relative flex flex-col items-center cursor-default"
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      onFocus={onHover}
-      onBlur={onLeave}
-      tabIndex={hasEvents ? 0 : -1}
-      role={hasEvents ? "img" : undefined}
-      aria-label={hasEvents ? ariaLabel : undefined}
-    >
-      <div className="flex items-end" style={{ width: "14px", height: `${BAR_MAX_PX}px` }}>
-        <m.div
-          style={{
-            width: "10px",
-            height: `${Math.max(2, normalizedHeight)}px`,
-            borderRadius: "2px 2px 0 0",
-            backgroundColor: hasEvents ? "var(--foreground)" : "var(--muted-foreground-dim)",
-            opacity,
-            transformOrigin: "bottom center",
-          }}
-          initial={{ scaleY: 0 }}
-          animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
-          transition={{ duration: 0.4, delay, ease: easeStep8 }}
-        />
-      </div>
-      {(isFirst || isLast) && (
-        <span
-          aria-hidden="true"
-          className="text-muted-foreground-dim select-none"
-          style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", lineHeight: 1, marginTop: 3 }}
-        >
-          {label.split(" ")[1]}
-        </span>
-      )}
-    </div>
-  );
-}
+const plural = (n: number) => `${n} EVENT${n === 1 ? "" : "S"}`;
 
 export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
-  const { ref, inView } = useInView(0.1);
   const [data, setData] = useState<GitHubActivitySummary | null>(null);
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
+  const [active, setActive] = useState<number | null>(null);
 
   useEffect(() => {
     // Defer decorative fetch off the critical path so it does not race LCP.
     return deferIdle(() => {
       fetch("/api/github/events")
-        .then((r) => r.json())
-        .then((d: GitHubActivitySummary) => setData(d))
-        .catch(() => {});
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then((d: GitHubActivitySummary) => {
+          if (!Array.isArray(d?.buckets) || d.buckets.length !== BUCKETS) throw new Error("unexpected payload");
+          setData(d);
+          setStatus("ready");
+        })
+        .catch(() => setStatus("unavailable"));
     });
   }, []);
 
-  const buckets = data?.buckets ?? Array<number>(BUCKETS).fill(0);
-  const maxBucket = Math.max(...buckets, 1);
-
-  // Build dated bucket metadata. bucket[0] is oldest, bucket[N-1] is today.
-  const bucketMeta: BucketMeta[] = buckets.map((count, i) => {
-    const daysAgo = BUCKETS - 1 - i;
+  // Dates exist only after data arrives, so the server HTML and the first client render match.
+  const buckets = data?.buckets ?? [];
+  const labels = buckets.map((_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - daysAgo);
-    const label = formatShortDay(d);
-    return {
-      count,
-      date: d,
-      label,
-      ariaLabel: `${label.charAt(0)}${label.slice(1).toLowerCase()} — ${count} event${count === 1 ? "" : "s"}`,
-    };
+    d.setDate(d.getDate() - (BUCKETS - 1 - i));
+    return shortDay(d);
   });
-
+  const max = Math.max(...buckets, 1);
   // sqrt scaling so single-event days stay visible vs. zero.
-  const normalizedHeights = buckets.map((count) =>
-    count === 0 ? 0 : Math.max(3, Math.sqrt(count / maxBucket) * BAR_MAX_PX),
-  );
+  const ys = buckets.map((c) => H - 2 - Math.sqrt(c / max) * (H - 4));
+  const path = ys.map((y, i) => `${i === 0 ? "M" : "L"}${i * 10} ${y.toFixed(1)}`).join(" ");
+  const latest = buckets[BUCKETS - 1] ?? 0;
 
-  const peak = maxBucket;
   const total = data?.total ?? 0;
-  const avg = data ? Math.round(total / BUCKETS) : 0;
   const sinceLatest = formatSinceLatest(data?.latest ?? null);
+  const readout =
+    active !== null && data
+      ? `${labels[active]} · ${plural(buckets[active]!)}`
+      : data
+        ? `PEAK ${max} · AVG ${Math.round(total / BUCKETS)}/D${sinceLatest ? ` · LAST ${sinceLatest}` : ""}`
+        : status === "loading"
+          ? "LOADING"
+          : "ACTIVITY UNAVAILABLE";
 
-  const hoveredMeta = hoverIdx !== null ? bucketMeta[hoverIdx] : null;
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (!data) return;
+    const cur = active ?? BUCKETS - 1;
+    const next =
+      e.key === "ArrowLeft" ? cur - 1
+      : e.key === "ArrowRight" ? cur + 1
+      : e.key === "Home" ? 0
+      : e.key === "End" ? BUCKETS - 1
+      : null;
+    if (next === null) return;
+    e.preventDefault();
+    setActive(Math.min(BUCKETS - 1, Math.max(0, next)));
+  };
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (!data) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    setActive(Math.min(BUCKETS - 1, Math.max(0, Math.round(((e.clientX - box.left) / box.width) * (BUCKETS - 1)))));
+  };
 
   return (
-    <MotionProvider>
-      <PanelShell
-        label="activity"
-        labelRight={
-          <a
-            href={`https://github.com/${GITHUB_USERNAME}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150"
-          >
-            → GH
-          </a>
-        }
-        delay={delay}
-      >
-        <div ref={ref} className="px-5 py-3">
-          {/* Tooltip overlay — anchored above bar row, revealed on hover */}
-          <div
-            className="relative"
-            style={{ minHeight: 14 }}
-            aria-live="polite"
-          >
-            {hoveredMeta && hoveredMeta.count > 0 ? (
-              <span
-                className="absolute left-0 right-0 text-label text-foreground/90 select-none"
-                style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}
-              >
-                {hoveredMeta.label} · {hoveredMeta.count} EVENT
-                {hoveredMeta.count === 1 ? "" : "S"}
-              </span>
-            ) : data ? (
-              <span className="absolute left-0 right-0 text-label text-muted-foreground-dim select-none">
-                PEAK {peak} · AVG {avg}/D
-                {sinceLatest ? ` · LAST ${sinceLatest}` : ""}
-              </span>
-            ) : null}
-          </div>
+    <PanelShell
+      label="activity"
+      labelRight={
+        <a
+          href={`https://github.com/${GITHUB_USERNAME}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150"
+        >
+          → GH
+        </a>
+      }
+      delay={delay}
+    >
+      <div className="px-5 py-3">
+        <p
+          className="text-label select-none truncate"
+          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 14, lineHeight: "14px" }}
+          aria-live="polite"
+        >
+          <span className={active !== null ? "text-foreground/90" : "text-muted-foreground-dim"}>{readout}</span>
+        </p>
 
-          <div className="flex items-end justify-between mt-2" style={{ gap: 2 }}>
-            {normalizedHeights.map((h, i) => {
-              const meta = bucketMeta[i]!;
-              return (
-                <SparkBar
-                  key={i}
-                  count={meta.count}
-                  normalizedHeight={h}
-                  delay={delay + 0.1 + i * 0.03}
-                  inView={inView}
-                  label={meta.label}
-                  ariaLabel={meta.ariaLabel}
-                  isFirst={i === 0}
-                  isLast={i === BUCKETS - 1}
-                  onHover={() => setHoverIdx(i)}
-                  onLeave={() => setHoverIdx((cur) => (cur === i ? null : cur))}
-                />
-              );
-            })}
-          </div>
+        <div
+          tabIndex={data ? 0 : -1}
+          role="group"
+          aria-label={`Public GitHub events, last ${BUCKETS} days. Arrow keys read one day at a time.`}
+          aria-keyshortcuts="ArrowLeft ArrowRight Home End"
+          className="relative mt-2"
+          style={{ height: H }}
+          onKeyDown={onKeyDown}
+          onFocus={() => data && setActive((cur) => cur ?? BUCKETS - 1)}
+          onBlur={() => setActive(null)}
+          onPointerMove={onPointerMove}
+          onPointerLeave={() => setActive(null)}
+        >
+          <svg aria-hidden="true" width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="block overflow-visible">
+            <line x1={0} y1={H - 2} x2={W} y2={H - 2} stroke="var(--border)" vectorEffect="non-scaling-stroke" />
+            {data && (
+              <path
+                d={path}
+                fill="none"
+                stroke="var(--foreground)"
+                strokeWidth={1.5}
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+                className="rule-draw"
+              />
+            )}
+          </svg>
+          {data && (
+            <span
+              aria-hidden="true"
+              className="absolute size-[5px] -translate-1/2 bg-foreground"
+              style={{ left: "100%", top: `${(ys[BUCKETS - 1]! / H) * 100}%` }}
+            />
+          )}
+          {active !== null && (
+            <span
+              aria-hidden="true"
+              className="absolute top-0 bottom-0 w-px bg-foreground/40 pointer-events-none"
+              style={{ left: `${(active / (BUCKETS - 1)) * 100}%` }}
+            />
+          )}
         </div>
-      </PanelShell>
-    </MotionProvider>
+
+        <div
+          className="flex justify-between mt-1 text-muted-foreground-dim select-none"
+          style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", lineHeight: 1, minHeight: 11 }}
+          aria-hidden="true"
+        >
+          <span>{labels[0] ?? " "}</span>
+          {data && <span className="text-foreground/80">TODAY {latest}</span>}
+        </div>
+
+        {data && (
+          <div className="sr-only">
+            <table>
+              <caption>Public GitHub events per day, last {BUCKETS} days</caption>
+              <thead>
+                <tr><th scope="col">Day</th><th scope="col">Events</th></tr>
+              </thead>
+              <tbody>
+                {buckets.map((count, i) => (
+                  <tr key={i}><th scope="row">{labels[i]}</th><td>{count}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </PanelShell>
   );
 }
