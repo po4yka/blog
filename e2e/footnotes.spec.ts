@@ -9,7 +9,7 @@ import { rehypeFootnotes } from "../src/lib/rehype-footnotes";
 // plugin, the real prose.css and the real popover script, without a route.
 const css = readFileSync("src/styles/prose.css", "utf8");
 const astroSource = readFileSync("src/components/blog/FootnotePopover.astro", "utf8");
-const script = /<script>([\s\S]*?)<\/script>/.exec(astroSource)![1];
+const script = astroSource.slice(astroSource.indexOf("<script>") + 8, astroSource.indexOf("</script>"));
 const SOURCE = `Opening paragraph with a claim[^a] and another[^b].\n\n${"Filler paragraph. ".repeat(20)}\n\n[^a]: Note alpha text.\n[^b]: Note beta text.\n`;
 
 async function load(page: import("@playwright/test").Page, width: number) {
