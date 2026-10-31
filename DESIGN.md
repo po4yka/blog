@@ -251,6 +251,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS, each SVG under 3 KB
 
+### Experience Timeline
+
+- Component: the role list in `ExperiencePageIsland.tsx` (`/experience`), an `ol` inside the `resume.log` panel
+- Rail: one 1px `var(--border)` hairline through a 9px square node per role. The node is filled with `var(--foreground)` while the role runs (`— Present`), hollow otherwise. Both are `aria-hidden`; the dates are text
+- From `sm`: a 9rem date column (start, end, location in mono) left of the rail, and the title, company and body right of it. Below `sm`: the rail sits at the left edge, and the dates stack above the title
+- No motion on the rail
+
 ### Post Covers
 
 - Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 6:1 ratio. The art is `aria-hidden`; the caption is real text
