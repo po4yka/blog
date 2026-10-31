@@ -183,6 +183,11 @@ const en = {
   "notFound.info": "Try navigating to a known route or return home",
   "notFound.pageNotFound": "Page not found",
   "notFound.goBack": "\u2190 cd ~",
+  "notFound.requested": "Requested",
+  "notFound.closest": "Closest match",
+  "notFound.pages": "Pages",
+  "notFound.posts": "Posts",
+  "notFound.projects": "Projects",
 
   // keyboard shortcuts
   "shortcuts.title": "Keyboard Shortcuts",
@@ -416,6 +421,11 @@ const ru: TranslationKeys = {
   "notFound.info": "\u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u0435\u0440\u0435\u0439\u0442\u0438 \u043d\u0430 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u044b\u0439 \u043c\u0430\u0440\u0448\u0440\u0443\u0442 \u0438\u043b\u0438 \u0432\u0435\u0440\u043d\u0438\u0442\u0435\u0441\u044c \u043d\u0430 \u0433\u043b\u0430\u0432\u043d\u0443\u044e",
   "notFound.pageNotFound": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430",
   "notFound.goBack": "\u2190 cd ~",
+  "notFound.requested": "\u0417\u0430\u043f\u0440\u043e\u0448\u0435\u043d\u043e",
+  "notFound.closest": "\u0411\u043b\u0438\u0436\u0430\u0439\u0448\u0435\u0435 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435",
+  "notFound.pages": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b",
+  "notFound.posts": "\u0421\u0442\u0430\u0442\u044c\u0438",
+  "notFound.projects": "\u041f\u0440\u043e\u0435\u043a\u0442\u044b",
 
   // keyboard shortcuts
   "shortcuts.title": "\u0413\u043e\u0440\u044f\u0447\u0438\u0435 \u043a\u043b\u0430\u0432\u0438\u0448\u0438",
