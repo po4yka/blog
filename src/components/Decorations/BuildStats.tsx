@@ -1,6 +1,6 @@
 import { buildMeta } from "@/data/buildMeta";
 import { PanelShell } from "./_helpers";
-import { useLocale } from "@/stores/settingsStore";
+import { T } from "@/components/ui/T";
 
 const GH_REPO = "po4yka/blog";
 
@@ -14,8 +14,8 @@ function pluralize(count: number, singular: string, plural: string): string {
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
+/** Server-only: the static HTML carries both languages (T). */
 export function BuildStats({ delay = 0 }: { delay?: number }) {
-  const { t } = useLocale();
   const rows: Array<{ label: string; value: React.ReactNode }> = [
     {
       label: "Deploy",
@@ -34,9 +34,12 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
           rel="noopener noreferrer"
           className="text-foreground/90 hover:text-foreground hover:underline decoration-dotted underline-offset-2 transition-colors duration-150"
           title={`View commit ${buildMeta.commitHash} on GitHub`}
-          aria-label={`View commit ${buildMeta.commitHash} on GitHub (${t("links.opensNewWindow")})`}
         >
           {buildMeta.commitHash}
+          <span className="sr-only">
+            {" ("}
+            <T k="links.opensNewWindow" />)
+          </span>
         </a>
       ),
     },

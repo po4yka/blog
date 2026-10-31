@@ -114,7 +114,7 @@ The stepped easings stay the brand signature. The same values are exported from 
 | `--step-3` | h1 | 1.65rem to 2.1rem |
 | `--step-4` | display-2 | 2rem to 2.9rem |
 | `--step-5` | display-1 (secondary hero lines) | 2.75rem to 5.25rem |
-| `--step-6` | hero name (Phase 8; may exceed `--step-5`, set after the Phase 8.1 layout test) | to be set |
+| `--step-6` | hero name (Phase 8; may exceed `--step-5`, set after the Phase 8.1 layout test) | `clamp(3rem, 1.25rem + 7.5vw, 7.5rem)` |
 
 Every preferred value contains a `rem` term so browser zoom works. The 8, 9 and 10 px custom sizes are removed; `.label-meta` becomes 11 px minimum on mobile and 12 px on desktop, and the visitor font-size setting still scales it.
 
