@@ -40,6 +40,8 @@
   --grid-pad: 1.5rem;   /* page gutter, same steps as px-6 md:px-10 lg:px-12 */
   --grid-line: color-mix(in oklab, var(--border) 55%, transparent);
   --mark-size: 7px;
+  /* Hero dither field (canvas and poster): ink opacity. Worst case is a text token over a solid ink pixel (the densest dither), with no help from the bottom fade, so it holds at every width. At 0.10 the 11px --muted-foreground-dim meta strip is 4.68:1 (dark) and 4.71:1 (light), --muted-foreground 6.6:1 and --foreground 13:1 or better. 0.12 would drop the dim label to 4.43:1 in dark. Recompute with the token values before raising it. */
+  --field-opacity: 0.10;
 }
 @media (min-width: 768px) {
   :root { --grid-pad: 2.5rem; }

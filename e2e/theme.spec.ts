@@ -80,7 +80,7 @@ test.describe("Reduced motion", () => {
 
   test("stored Settings flag sets data-motion before paint and cuts transitions", async ({ page }) => {
     await page.addInitScript((key) => {
-      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 3 }));
+      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 4 }));
     }, STORAGE_KEY);
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
@@ -170,7 +170,7 @@ test.describe("Theme wipe", () => {
 
   test("stored reduced-motion flag changes the theme without a transition", async ({ page }) => {
     await page.addInitScript((key) => {
-      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 3 }));
+      localStorage.setItem(key, JSON.stringify({ state: { reduceMotion: true }, version: 4 }));
     }, STORAGE_KEY);
     await open(page, "/");
     await toggle(page).click();

@@ -24,6 +24,13 @@
   animation-timing-function: var(--ease-in-out);
 }
 
+/* Lightbox expansion: the inline image and the lightbox image share the name
+   lightbox-figure for the length of one transition (ImageLightbox/sharedElement.ts). */
+::view-transition-group(lightbox-figure) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-in-out);
+}
+
 /* Theme wipe: a circle grows from the control that was used. The attribute and
    the --wipe-* properties exist on <html> only while a theme transition runs
    (src/lib/themeTransition.ts). */

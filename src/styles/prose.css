@@ -402,7 +402,7 @@
   accent-color: var(--emphasis);
 }
 
-/* GFM footnotes (remark-gfm emits data-footnote-* markup) */
+/* GFM footnote references (remark-gfm emits data-footnote-* markup); the section and note layout is in the Footnotes block below */
 .prose-blog a[data-footnote-ref] {
   font-family: var(--font-mono);
   font-size: max(11px, 0.6875rem);
@@ -412,17 +412,6 @@
 .prose-blog a[data-footnote-ref]:hover {
   color: var(--foreground);
   text-decoration: underline;
-}
-.prose-blog section[data-footnotes] {
-  margin-top: 2.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule);
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-}
-.prose-blog section[data-footnotes] li {
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dashed var(--rule);
 }
 
 /* Display math gets hairline framing — lighter than the code-fence card so
@@ -491,7 +480,163 @@
 }
 
 /* Print layout for prose; the print tokens and hidden chrome live in index.css. */
+/* ═══════════════════════════════════════════════════════════════════
+   Footnotes — one <li> per note (see src/lib/rehype-footnotes.ts).
+   Margin note beside its reference when the article column has room for a
+   12rem gutter and the browser has anchor positioning; otherwise the same
+   <li> is a native popover opened by its reference (FootnotePopover.astro),
+   and without JS it stays a plain list at the end of the post.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.blog-article {
+  position: relative;
+  container: article / inline-size;
+}
+
+.prose-blog sup:has(> [data-footnote-ref]) {
+  line-height: 0;
+}
+
+.prose-blog [data-footnote-ref] {
+  position: relative;
+  padding: 0 0.15em;
+  text-decoration: none;
+}
+
+/* 44px touch targets centred on the reference and on the backref, without moving them. Adjacent references overlap each other's targets; the later one in the DOM wins. */
+@media (pointer: coarse) {
+  .prose-blog [data-footnote-ref]::after,
+  .prose-blog [data-footnote-backref]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+  .prose-blog [data-footnote-backref] {
+    position: relative;
+  }
+}
+
+.prose-blog [data-footnotes] {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Once the script has made every note a popover the section is empty on screen: drop its rule and gap. */
+.prose-blog [data-footnotes]:has(li[popover]) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* :where keeps this at the margin layout's specificity, so that later rule wins. */
+.prose-blog [data-footnotes] li:where([popover]) {
+  list-style: none;
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: 70vh;
+  padding: 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.prose-blog [data-footnotes] li[popover] p {
+  margin: 0;
+}
+
+@supports (anchor-name: --a) {
+  /* 46rem prose + 1.5rem gap + 12rem note */
+  @container article (min-width: 59.5rem) {
+    /* Every note is absolutely positioned, so the section has nothing to show. */
+    .prose-blog [data-footnotes] {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .prose-blog [data-footnotes] ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: fn;
+    }
+
+    /* shortcut: notes that cite nearby references can overlap, add position-try fallbacks if a post needs it */
+    .prose-blog [data-footnotes] li {
+      counter-increment: fn;
+      display: block;
+      position: absolute;
+      inset: auto;
+      top: anchor(top);
+      left: 47.5rem;
+      width: 12rem;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      color: var(--muted-foreground);
+    }
+
+    .prose-blog [data-footnotes] li::before {
+      content: counter(fn) ". ";
+    }
+
+    .prose-blog [data-footnotes] li p {
+      display: inline;
+    }
+  }
+}
+
 @media print {
+  /* Show every note as a plain numbered list at the end, whatever the screen layout did to it. */
+  .prose-blog [data-footnotes],
+  .prose-blog [data-footnotes]:has(li[popover]) {
+    margin-top: 1.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .prose-blog [data-footnotes] ol {
+    margin: 0;
+    padding-left: 1.5em;
+    list-style: decimal;
+    counter-reset: none;
+  }
+  .prose-blog [data-footnotes] li,
+  .prose-blog [data-footnotes] li:where([popover]) {
+    display: list-item;
+    /* The screen popover rule sets list-style: none on each li; printed notes need their numbers. */
+    list-style: decimal;
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 0 0 0.25rem;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: none;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: inherit;
+  }
+  .prose-blog [data-footnotes] li::before {
+    content: none;
+  }
+  .prose-blog [data-footnotes] li p {
+    display: block;
+  }
+
   .prose-blog {
     max-width: none;
     font-family: Georgia, "Times New Roman", serif;

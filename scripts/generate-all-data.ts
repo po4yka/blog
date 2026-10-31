@@ -13,6 +13,8 @@ import { generateChangelogSource } from "./generate-changelog.js";
 import { generateOgImages } from "./generate-og-images.js";
 import { writePlates } from "./generate-plates.js";
 import { writeCovers } from "./generate-covers.js";
+import { FIELD_SEED_FILE, generateFieldSeedSource, parseFieldSeed } from "./generate-field-seed.js";
+import { writeFieldPoster } from "./generate-field-poster.js";
 
 interface GeneratorConfig {
   name: string;
@@ -56,6 +58,11 @@ const generators: GeneratorConfig[] = [
     outputFile: path.resolve("src/data/buildMeta.ts"),
     generate: generateBuildMetaSource,
   },
+  {
+    name: "fieldSeed",
+    outputFile: FIELD_SEED_FILE,
+    generate: generateFieldSeedSource,
+  },
 ];
 
 let hasError = false;
@@ -72,7 +79,10 @@ for (const gen of generators) {
   }
 }
 
-for (const [name, write] of [["plates", writePlates], ["covers", writeCovers]] as const) {
+// The poster renders from the seed file the loop above just wrote.
+const writePoster = () => writeFieldPoster(parseFieldSeed(fs.readFileSync(FIELD_SEED_FILE, "utf-8")).counts);
+
+for (const [name, write] of [["plates", writePlates], ["covers", writeCovers], ["field poster", writePoster]] as const) {
   try {
     write();
   } catch (err) {

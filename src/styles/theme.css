@@ -209,6 +209,68 @@ kbd {
   font-weight: 650;
 }
 
+/* Hero field (DESIGN.md hero field): a dithered layer behind the name. The zone is its own stacking
+   context so the layer sits above the page background and below every line of text. The poster is a
+   mask, not an image or background-image, so it is never an LCP candidate. */
+.hero-zone {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  /* Fade toward the bottom edge. Contrast does not depend on it: --field-opacity already clears 4.5:1 for every text token. */
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 90%);
+}
+
+.hero-field-poster {
+  position: absolute;
+  inset: 0;
+  background-color: var(--foreground);
+  opacity: var(--field-opacity);
+  mask-image: url("/field-poster.png");
+  mask-size: cover;
+  mask-position: left top;
+  image-rendering: pixelated;
+}
+
+.hero-field canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: var(--field-opacity);
+  image-rendering: pixelated;
+}
+
+/* The canvas replaces the poster once it has drawn its first frame. */
+.hero-field[data-field="live"] .hero-field-poster {
+  display: none;
+}
+
+/* Effects off removes the field, the poster and the caption row. Reduced and reduce-motion keep a still
+   field, so the pause control has nothing to pause: it keeps its space (no layout shift) but hides. */
+html[data-effects="off"] .hero-field,
+html[data-effects="off"] .hero-field-row {
+  display: none;
+}
+
+/* Hidden until the field is known to be live (no flash under saveData, where the mode is set on idle). */
+.hero-field-pause {
+  visibility: hidden;
+}
+.hero-zone[data-field-mode="live"] .hero-field-pause {
+  visibility: visible;
+}
+html[data-effects="reduced"] .hero-field-pause,
+html[data-motion="reduce"] .hero-field-pause {
+  visibility: hidden;
+}
+
 .display-2 {
   font-family: var(--font-sans);
   font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);

@@ -148,3 +148,144 @@ export function pixelsToSvg(pixels: Uint8Array, width: number, height: number, c
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><path d="${d}" stroke="${color}"/></svg>\n`;
 }
+
+// --- Hero field (home page): density follows the weekly commit counts, left (oldest) to right (newest). ---
+
+/** Tuning for `heroField`. Densities are the share of cells that carry ink before the Bayer threshold. */
+export const HERO_FIELD = {
+  /** Density with no commits at all, and the floor under every column. */
+  flat: 0.05,
+  /** Extra density at the busiest week. */
+  gain: 0.3,
+  /** Density inside the name glyphs (the echo); the seed adds `glyphGain` on top. */
+  glyphFloor: 0.14,
+  glyphGain: 0.5,
+  /** Pointer response: cells within `pointerRadius` sample the field up to `pointerPush` cells further out. */
+  pointerRadius: 18,
+  pointerPush: 7,
+} as const;
+
+// Slow drift: a triangle wave down the rows that moves one cycle in about 10 s at 15 fps.
+const ROW_FREQ = 0.045;
+const TIME_FREQ = 0.0067;
+
+/** Seven-day totals of a day-count series (oldest first), scaled so the busiest week is 1. Empty when there is nothing to show. */
+export function weeklyDensity(counts: readonly number[]): number[] {
+  const weeks: number[] = [];
+  for (let i = 0; i + 7 <= counts.length; i += 7) {
+    let sum = 0;
+    for (let d = 0; d < 7; d++) sum += counts[i + d]!;
+    weeks.push(sum);
+  }
+  const max = Math.max(0, ...weeks);
+  return max > 0 ? weeks.map((w) => w / max) : [];
+}
+
+/** How far the pointer pushes the sample point of a cell `distance` cells away from it: smooth to 0 at the radius, never above `pointerPush`. */
+export function pointerPush(distance: number): number {
+  const k = 1 - distance / HERO_FIELD.pointerRadius;
+  return k > 0 ? HERO_FIELD.pointerPush * k * k : 0;
+}
+
+export interface HeroFieldParams {
+  /** Per-week density in [0, 1], oldest first (`weeklyDensity`). Empty means a flat low density. */
+  weeks: ArrayLike<number>;
+  width: number;
+  height: number;
+  /** Integer frame counter; the drift is a pure function of it. */
+  step: number;
+  /** `width * height` flags, non-zero inside the name glyphs. */
+  mask?: ArrayLike<number> | null;
+  /** Pointer position in cells. */
+  pointer?: { x: number; y: number } | null;
+}
+
+/** Interpolated week density at the (fractional) column `sx`, oldest week at 0 and newest at `width - 1`. */
+function columnDensity(weeks: ArrayLike<number>, width: number, sx: number): number {
+  const n = weeks.length;
+  if (n === 0) return 0;
+  const u = width > 1 ? Math.min(n - 1, Math.max(0, (sx * (n - 1)) / (width - 1))) : 0;
+  const i = Math.floor(u);
+  return i >= n - 1 ? weeks[n - 1]! : weeks[i]! + (weeks[i + 1]! - weeks[i]!) * (u - i);
+}
+
+/** The slow drift of the row `sy`: a triangle wave scaled to [0.7, 1]. */
+function rowWave(sy: number, phase: number): number {
+  const q = sy * ROW_FREQ + phase;
+  return 0.7 + 0.3 * Math.abs(2 * (q - Math.floor(q)) - 1);
+}
+
+// Per-frame tables reused between calls: plain and glyph density per column, wave per row.
+let plainCols = new Float64Array(0);
+let glyphCols = new Float64Array(0);
+let waveRows = new Float64Array(0);
+
+/**
+ * One frame of the hero field as 1-bit pixels (1 is ink), ordered with the 8x8
+ * Bayer matrix. Pure and deterministic: the same params give the same bytes in
+ * Node (poster) and in the browser (canvas). Density never decreases when a
+ * week's value rises. Pass `out` to reuse a buffer between frames.
+ *
+ * Without a pointer the density depends on the column alone and the drift on
+ * the row alone, so both are tabled once per frame; the pointer branch runs
+ * only inside the bounding box of its radius.
+ */
+export function heroField(p: HeroFieldParams, out?: Uint8Array): Uint8Array {
+  const { weeks, width, height, step, mask, pointer } = p;
+  const size = width * height;
+  const buf = out && out.length === size ? out : new Uint8Array(size);
+  const n = weeks.length;
+  const { flat, gain, glyphFloor, glyphGain, pointerRadius } = HERO_FIELD;
+  const phase = step * TIME_FREQ;
+  const r2 = pointerRadius * pointerRadius;
+  if (plainCols.length < width) {
+    plainCols = new Float64Array(width);
+    glyphCols = new Float64Array(width);
+  }
+  if (waveRows.length < height) waveRows = new Float64Array(height);
+  for (let x = 0; x < width; x++) {
+    const col = columnDensity(weeks, width, x);
+    plainCols[x] = flat + gain * col;
+    glyphCols[x] = glyphFloor + glyphGain * col;
+  }
+  for (let y = 0; y < height; y++) waveRows[y] = n > 0 ? rowWave(y, phase) : 1;
+
+  const x0 = pointer ? Math.max(0, Math.floor(pointer.x - pointerRadius)) : 0;
+  const x1 = pointer ? Math.min(width - 1, Math.ceil(pointer.x + pointerRadius)) : -1;
+  const y0 = pointer ? Math.max(0, Math.floor(pointer.y - pointerRadius)) : 0;
+  const y1 = pointer ? Math.min(height - 1, Math.ceil(pointer.y + pointerRadius)) : -1;
+
+  for (let y = 0; y < height; y++) {
+    const bayer = BAYER_8[y & 7]!;
+    const row = y * width;
+    const wave = waveRows[y]!;
+    const inBand = y >= y0 && y <= y1;
+    for (let x = 0; x < width; x++) {
+      if (inBand && x >= x0 && x <= x1) {
+        const dx = x - pointer!.x;
+        const dy = y - pointer!.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < r2 && d2 > 0) {
+          const d = Math.sqrt(d2);
+          const push = pointerPush(d) / d;
+          const sx = x + dx * push;
+          const sy = y + dy * push;
+          const col = columnDensity(weeks, width, sx);
+          let v = flat + gain * col;
+          if (mask) {
+            const mx = Math.min(width - 1, Math.max(0, Math.round(sx)));
+            const my = Math.min(height - 1, Math.max(0, Math.round(sy)));
+            if (mask[my * width + mx]) v = glyphFloor + glyphGain * col;
+          }
+          if (n > 0) v *= rowWave(sy, phase);
+          buf[row + x] = v > bayer[x & 7]! ? 1 : 0;
+          continue;
+        }
+      }
+      let v = mask && mask[row + x] ? glyphCols[x]! : plainCols[x]!;
+      v *= wave;
+      buf[row + x] = v > bayer[x & 7]! ? 1 : 0;
+    }
+  }
+  return buf;
+}

@@ -1,0 +1,6 @@
+---
+// A <link>, not an import: a plain import is bundled into every post page,
+// while this only renders on posts whose HTML contains math.
+import katexCss from "katex/dist/katex.min.css?url";
+---
+<link rel="stylesheet" href={katexCss} />

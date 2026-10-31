@@ -117,7 +117,7 @@ export function BlogPostIsland({ post, slug, prev, next, related, toc, children,
           statusLine={<PagerStatus filename={`posts/${slug}.txt`} percent={percent} />}
         >
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
-          <article className="min-w-0">
+          <article className="blog-article min-w-0">
             <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} />
 
             {/* MDX Content rendered by Astro, passed as children */}

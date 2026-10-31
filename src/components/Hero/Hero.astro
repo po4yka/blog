@@ -2,14 +2,17 @@
 import { BuildStats, LatestPostPanel } from "@/components/Decorations";
 import { ActivitySparkline } from "@/components/Decorations/ActivitySparkline";
 import { LatestReleasePanel } from "@/components/Decorations/LatestReleasePanel";
+import { DitherField } from "./DitherField";
 import { HeroText } from "./HeroText";
 import { HeroWhois } from "./HeroWhois";
 ---
 <section aria-labelledby="hero-heading" class="space-y-10 pt-8 md:pt-12">
-  <!-- Split hero: identity cols 1-7, the whois spec sheet cols 8-12 (DESIGN.md 5). All static markup. -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-8 items-start">
+  <!-- Split hero: identity cols 1-7, the whois spec sheet cols 8-12 (DESIGN.md 5). All static markup.
+       The zone is the dither field's stacking context; the island adds the field layer and a caption row (cols 1-12). -->
+  <div class="hero-zone grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-8 items-start">
     <HeroText />
     <HeroWhois />
+    <DitherField client:idle />
   </div>
 
   <!-- Operator strip: latest post and build are static; the sparkline and the release panel hydrate when visible (the sparkline draws its dated labels only after its data arrives, so SSR never bakes in the build date).

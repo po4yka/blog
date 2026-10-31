@@ -41,3 +41,13 @@
     display: none !important;
   }
 }
+
+/* Mobile StatusLine bar (below md): clears the page end, and gives way to the blog TOC bar, which owns the bottom edge on posts. */
+@media (max-width: 767.98px) {
+  body:not(:has(.mobile-toc-bar)) {
+    padding-bottom: calc(2.75rem + env(safe-area-inset-bottom));
+  }
+  body:has(.mobile-toc-bar) .status-sheet {
+    display: none;
+  }
+}

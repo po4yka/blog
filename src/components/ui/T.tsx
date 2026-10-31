@@ -21,11 +21,11 @@ export function T({ k }: { k: TranslationKey }) {
 }
 
 /** A count with its noun in both languages, shown the same way as `T`. */
-export function TCount({ n, forms }: { n: number; forms: Parameters<typeof pluralize>[2] }) {
+export function TCount({ n, forms, decode }: { n: number; forms: Parameters<typeof pluralize>[2]; decode?: boolean }) {
   return (
     <>
-      <span data-l="en">{pluralize(n, "en", forms)}</span>{" "}
-      <span data-l="ru" lang="ru">
+      <span data-l="en" data-decode={decode || undefined}>{pluralize(n, "en", forms)}</span>{" "}
+      <span data-l="ru" lang="ru" data-decode={decode || undefined}>
         {pluralize(n, "ru", forms)}
       </span>
     </>

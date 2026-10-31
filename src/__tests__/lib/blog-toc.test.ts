@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { TOC_MIN_ITEMS, activeSection, nestToc, tocFromHeadings } from "@/lib/blog/toc";
 
 describe("tocFromHeadings", () => {
+  it("drops the screen-reader footnotes heading", () => {
+    expect(tocFromHeadings([{ depth: 2, slug: "footnote-label", text: "Footnotes #" }])).toEqual([]);
+  });
+
   it("keeps depth 2 and 3, trims text and strips the permalink '#'", () => {
     expect(
       tocFromHeadings([
