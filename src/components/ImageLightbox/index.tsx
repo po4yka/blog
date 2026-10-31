@@ -18,7 +18,7 @@ export function ImageLightbox({ contentRef }: Props) {
   const { effectiveDark, isMobile } = useVariantContext();
   const figures = useFigureRegistry(contentRef, t);
   const state = useLightboxState(figures, effectiveDark, isMobile);
-  useFigureTriggers(contentRef, state.openAt);
+  useFigureTriggers(contentRef, state.openFromTrigger);
   useFigureUrl(state.index, state.count, state.openAt);
 
   return <LightboxDialog state={state} effectiveDark={effectiveDark} isMobile={isMobile} />;

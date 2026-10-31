@@ -6,7 +6,8 @@ import { BlogPostIsland } from "@/components/blog/BlogPostIsland";
 import { buildBlogStaticPaths } from "@/lib/blogStaticPaths";
 import { parsePostId } from "@/lib/i18n";
 import { tocFromHeadings } from "@/lib/blog/toc";
-import "katex/dist/katex.min.css";
+import KatexStyles from "@/components/blog/KatexStyles.astro";
+import FootnotePopover from "@/components/blog/FootnotePopover.astro";
 import "@/styles/prose.css";
 
 export async function getStaticPaths() {
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 
 const { post, prev, next, related, hasTranslation } = Astro.props;
 const baseSlug = parsePostId(post.id).baseSlug;
-const { Content, headings } = await render(post);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const toc = tocFromHeadings(headings);
 // Pull the generated ISO date from blogData so the client gets a parseable timestamp.
 import { blogPosts } from "@/data/blogData";
@@ -30,6 +31,8 @@ const blogData = {
 };
 ---
 <MainLayout title={`${post.data.title} — Nikita Pochaev`} description={post.data.summary} blogPost={blogData} blogSlug={baseSlug} hasTranslation={hasTranslation} translationSlug={hasTranslation ? baseSlug : undefined}>
+  {remarkPluginFrontmatter.hasMath && <KatexStyles />}
+  <FootnotePopover />
   <div transition:name="blog-content" transition:animate={slide({ duration: '0.3s' })}>
     <BlogPostIsland
       client:idle

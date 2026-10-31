@@ -106,5 +106,9 @@ const { nonce } = Astro.locals;
       // No-ops in browsers that do not implement navigator.modelContext.
       import("@/lib/webmcp").then((m) => m.registerWebMCP()).catch(() => {});
     </script>
+    <script>
+      import { initDecode } from "@/lib/decode";
+      initDecode();
+    </script>
   </body>
 </html>

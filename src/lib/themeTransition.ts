@@ -14,16 +14,17 @@ export function resolveTheme(mode: ThemeMode, systemDark: boolean): "light" | "d
   return mode === "system" ? (systemDark ? "dark" : "light") : mode;
 }
 
-/** Wipe only when motion is allowed, the API exists, and the visible theme really changes. */
+/** Wipe only when motion and effects are allowed, the API exists, and the visible theme really changes. Effects "reduced" and "off" get the plain fade, like reduced motion. */
 export function shouldWipe(input: {
   reduceMotion: boolean;
   osReduceMotion: boolean;
+  reducedEffects: boolean;
   supported: boolean;
   from: "light" | "dark";
   to: "light" | "dark";
   running: boolean;
 }): boolean {
-  return !input.reduceMotion && !input.osReduceMotion && input.supported && !input.running && input.from !== input.to;
+  return !input.reduceMotion && !input.osReduceMotion && !input.reducedEffects && input.supported && !input.running && input.from !== input.to;
 }
 
 let running = false;
@@ -53,6 +54,7 @@ export function switchTheme(next: ThemeMode, origin?: WipeOrigin): void {
   const wipe = shouldWipe({
     reduceMotion,
     osReduceMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    reducedEffects: (document.documentElement.dataset.effects ?? "full") !== "full",
     supported,
     from: resolveTheme(pendingTheme ?? theme, systemDark),
     to: resolveTheme(next, systemDark),

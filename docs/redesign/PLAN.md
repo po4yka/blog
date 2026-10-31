@@ -4,7 +4,7 @@ Status: shipped through Phase 12 (see "Shipped" below). `DESIGN.md` is the sourc
 
 ## Shipped
 
-Pull requests by phase, in order. This PR (12.5) is not yet merged. Phases 7.3 and 7.4 (reading), 8.2 and 8.4 to 8.6 (decode, the hero dither field and pointer response) and 9.3 (the mobile StatusLine sheet) did not ship; `src/lib/dither.ts` from 8.3 shipped inside 10.1 (#210), and the `AnimatedNumber` that 8.2 meant to rewrite was deleted in 12.4.
+Pull requests by phase, in order. The remaining work PR is not yet merged. Every planned phase has shipped or is in it, except the owner checks in section 8: the real-device pass for the hero field and the Lighthouse error gates. `src/lib/dither.ts` from 8.3 shipped inside 10.1 (#210). 8.2 ships decode only: the `AnimatedNumber` it meant to rewrite was deleted in 12.4 (count-ups are not a permitted motion class). In 8.4 the reduced state is one still canvas frame, not "canvas absent": only data saver and effects off create no canvas (see `DESIGN.md`, "Hero Field").
 
 | Phase | PR | Notes |
 |---|---|---|
@@ -29,7 +29,8 @@ Pull requests by phase, in order. This PR (12.5) is not yet merged. Phases 7.3 a
 | 12.2 | #217 | Changelog filter by type |
 | 12.3 | #218 | Privacy and Settings in Russian, 44px targets |
 | 12.4 | #219 | Keyboard, screen-reader, Russian and motion fixes from the Phase 12 audit |
-| 12.5 | this PR | Docs consistency pass |
+| 12.5 | #220 | Docs consistency pass |
+| 7.3, 7.4, 8.2 to 8.6, 9.3 | remaining work PR | Footnotes and conditional KaTeX, lightbox morph, decode, hero field (seed, poster, canvas, pause, effects setting, name mask, pointer), mobile status sheet |
 
 ## 1. Goal and design thesis
 

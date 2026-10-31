@@ -121,6 +121,7 @@ export function LightboxDialog({ state, effectiveDark, isMobile }: Props) {
                   <img
                     src={pickVariant(figure, effectiveDark, isMobile)}
                     alt={figure.alt}
+                    data-lightbox-image=""
                     onClick={(event) => {
                       event.stopPropagation();
                       if (consumeSuppressedClick()) return;

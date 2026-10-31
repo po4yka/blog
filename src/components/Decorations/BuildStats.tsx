@@ -12,8 +12,8 @@ function LocalDate({ iso }: { iso: string }) {
   const d = new Date(iso);
   return (
     <>
-      <span data-l="en">{d.toLocaleDateString(DATE_LOCALES.en, DATE_FORMAT)}</span>{" "}
-      <span data-l="ru" lang="ru">{d.toLocaleDateString(DATE_LOCALES.ru, DATE_FORMAT)}</span>
+      <span data-l="en" data-decode>{d.toLocaleDateString(DATE_LOCALES.en, DATE_FORMAT)}</span>{" "}
+      <span data-l="ru" lang="ru" data-decode>{d.toLocaleDateString(DATE_LOCALES.ru, DATE_FORMAT)}</span>
     </>
   );
 }
@@ -39,7 +39,7 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
           rel="noopener noreferrer"
           className="text-foreground/90 hover:text-foreground hover:underline decoration-dotted underline-offset-2 transition-colors duration-150"
         >
-          {buildMeta.commitHash}
+          <span data-decode>{buildMeta.commitHash}</span>
           <span className="sr-only">
             {" ("}
             <T k="links.opensNewWindow" />)
@@ -47,16 +47,16 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
         </a>
       ),
     },
-    { label: "Astro", value: `v${buildMeta.astroVersion}` },
+    { label: "Astro", value: <span data-decode>{`v${buildMeta.astroVersion}`}</span> },
     {
       label: <T k="hero.buildContent" />,
       value: (
         <>
-          <TCount n={buildMeta.postCount} forms={{ en: ["post", "posts"], ru: ["пост", "поста", "постов"] }} />
+          <TCount decode n={buildMeta.postCount} forms={{ en: ["post", "posts"], ru: ["пост", "поста", "постов"] }} />
           {" · "}
-          <TCount n={buildMeta.projectCount} forms={{ en: ["project", "projects"], ru: ["проект", "проекта", "проектов"] }} />
+          <TCount decode n={buildMeta.projectCount} forms={{ en: ["project", "projects"], ru: ["проект", "проекта", "проектов"] }} />
           {" · "}
-          <TCount n={buildMeta.roleCount} forms={{ en: ["role", "roles"], ru: ["роль", "роли", "ролей"] }} />
+          <TCount decode n={buildMeta.roleCount} forms={{ en: ["role", "roles"], ru: ["роль", "роли", "ролей"] }} />
         </>
       ),
     },

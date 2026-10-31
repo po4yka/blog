@@ -4,6 +4,24 @@ import { duration } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedCheck } from "./AnimatedCheck";
 import { T } from "@/components/ui/T";
+import { useLocale } from "@/stores/settingsStore";
+
+/** One shared visually hidden live region, created on first use: a sibling per Cmd would add a child to space-y parents. */
+function announce(text: string) {
+  let region = document.getElementById("sr-announcer");
+  if (!region) {
+    region = document.createElement("div");
+    region.id = "sr-announcer";
+    region.className = "sr-only";
+    region.setAttribute("role", "status");
+    region.setAttribute("aria-live", "polite");
+    document.body.appendChild(region);
+  }
+  // Clear first so a repeat copy re-announces the same text.
+  region.textContent = "";
+  const el = region;
+  setTimeout(() => { el.textContent = text; }, 50);
+}
 
 /**
  * Command prompt. Static — no typing theatre. Click to copy.
@@ -17,6 +35,7 @@ export function Cmd({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const { t } = useLocale();
 
   const handleCopy = useCallback(() => {
     const el = ref.current;
@@ -29,10 +48,11 @@ export function Cmd({
     if (text) {
       navigator.clipboard.writeText(text).then(() => {
         setCopied(true);
+        announce(t("terminal.copied"));
         setTimeout(() => setCopied(false), 1200);
       });
     }
-  }, []);
+  }, [t]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

@@ -74,7 +74,7 @@ describe("gridGuides preference", () => {
       createElement: () => ({ setAttribute: () => {} }),
       head: { appendChild: () => {} },
     });
-    const base = { theme: "light", reduceMotion: false, fontSize: "default" } as const;
+    const base = { theme: "light", reduceMotion: false, fontSize: "default", effects: "full" } as const;
     applyToDOM({ ...base, gridGuides: false });
     expect(dataset.grid).toBe("off");
     applyToDOM({ ...base, gridGuides: true });

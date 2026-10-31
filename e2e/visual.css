@@ -5,6 +5,12 @@
   content-visibility: visible !important;
 }
 
+/* The hero field (canvas and poster) is drawn from the commit seed, which CI regenerates on every build,
+   so it would change the home shot on each commit. Hidden, not masked: a mask box would cover the name. */
+.hero-field {
+  visibility: hidden !important;
+}
+
 /* Fixed chrome would be painted once mid-page in a full-page shot. */
 .fixed.bottom-0 {
   display: none !important;

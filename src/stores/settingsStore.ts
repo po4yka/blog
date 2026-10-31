@@ -8,6 +8,10 @@ import { setThemeColor } from "@/lib/themeColors";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type FontSize = "default" | "large" | "compact";
+/** Visual effects: the hero field runs (full), shows as a still (reduced) or is removed (off). Independent of reduceMotion. */
+export type Effects = "full" | "reduced" | "off";
+
+const EFFECTS: readonly Effects[] = ["full", "reduced", "off"];
 
 export interface SitePreferences {
   theme: ThemeMode;
@@ -16,6 +20,7 @@ export interface SitePreferences {
   locale: Locale;
   keyboardShortcuts: boolean;
   gridGuides: boolean;
+  effects: Effects;
 }
 
 interface SettingsActions {
@@ -25,6 +30,7 @@ interface SettingsActions {
   setLocale: (locale: Locale) => void;
   setKeyboardShortcuts: (keyboardShortcuts: boolean) => void;
   setGridGuides: (gridGuides: boolean) => void;
+  setEffects: (effects: Effects) => void;
   resetPreferences: () => void;
 }
 
@@ -43,14 +49,21 @@ const defaults: SitePreferences = {
   locale: defaultLocale,
   keyboardShortcuts: true,
   gridGuides: true,
+  effects: "full",
 };
+
+/** Persisted state of any older version, brought to the current shape: every stored field is kept, new ones take their defaults. */
+export function migratePreferences(persisted: unknown): SitePreferences {
+  const p = persisted && typeof persisted === "object" ? (persisted as Partial<SitePreferences>) : {};
+  return { ...defaults, ...p, effects: EFFECTS.includes(p.effects as Effects) ? (p.effects as Effects) : "full" };
+}
 
 function getSystemTheme(): "light" | "dark" {
   if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-export function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fontSize" | "gridGuides">) {
+export function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fontSize" | "gridGuides" | "effects">) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
@@ -66,6 +79,10 @@ export function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion"
 
   if (prefs.gridGuides) delete root.dataset.grid;
   else root.dataset.grid = "off";
+
+  // No attribute means full; islands read only this attribute, never the store.
+  if (prefs.effects === "full") delete root.dataset.effects;
+  else root.dataset.effects = prefs.effects;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -79,16 +96,14 @@ export const useSettingsStore = create<SettingsStore>()(
         setLocale: (locale) => set({ locale }),
         setKeyboardShortcuts: (keyboardShortcuts) => set({ keyboardShortcuts }),
         setGridGuides: (gridGuides) => set({ gridGuides }),
+        setEffects: (effects) => set({ effects }),
         resetPreferences: () => set({ ...defaults }),
       }),
       {
         name: "site_preferences",
-        partialize: ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides }) => ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides }),
-        migrate: (persisted) => {
-          const p = persisted && typeof persisted === "object" ? persisted : {};
-          return { ...defaults, ...p };
-        },
-        version: 3,
+        partialize: ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides, effects }) => ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides, effects }),
+        migrate: migratePreferences,
+        version: 4,
       },
     ),
   ),
@@ -98,19 +113,19 @@ export const useSettingsStore = create<SettingsStore>()(
 if (typeof window !== "undefined") {
   // Apply on initial load (wait for persist middleware to rehydrate)
   if (useSettingsStore.persist.hasHydrated()) {
-    const { theme, reduceMotion, fontSize, locale, gridGuides } = useSettingsStore.getState();
-    applyToDOM({ theme, reduceMotion, fontSize, gridGuides });
+    const { theme, reduceMotion, fontSize, locale, gridGuides, effects } = useSettingsStore.getState();
+    applyToDOM({ theme, reduceMotion, fontSize, gridGuides, effects });
     applyLocale(locale);
   } else {
     useSettingsStore.persist.onFinishHydration((state) => {
-      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides });
+      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides, effects: state.effects });
       applyLocale(state.locale);
     });
   }
 
   // Subscribe to future changes
   useSettingsStore.subscribe(
-    (state) => ({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides }),
+    (state) => ({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides, effects: state.effects }),
     (prefs) => applyToDOM(prefs),
     { fireImmediately: false },
   );
@@ -120,7 +135,7 @@ if (typeof window !== "undefined") {
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     const state = useSettingsStore.getState();
     if (state.theme === "system") {
-      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides });
+      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides, effects: state.effects });
     }
   });
 
@@ -130,7 +145,7 @@ if (typeof window !== "undefined") {
 
 /** Convenience hook preserving the original useSettings() API */
 export function useSettings() {
-  const { theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides, setTheme, setReduceMotion, setFontSize, setLocale, setKeyboardShortcuts, setGridGuides, resetPreferences } =
+  const { theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides, effects, setTheme, setReduceMotion, setFontSize, setLocale, setKeyboardShortcuts, setGridGuides, setEffects, resetPreferences } =
     useSettingsStore();
 
   const resolvedTheme: "light" | "dark" = theme === "system" ? getSystemTheme() : theme;
@@ -142,6 +157,7 @@ export function useSettings() {
     locale,
     keyboardShortcuts,
     gridGuides,
+    effects,
     resolvedTheme,
     setTheme,
     setReduceMotion,
@@ -149,6 +165,7 @@ export function useSettings() {
     setLocale,
     setKeyboardShortcuts,
     setGridGuides,
+    setEffects,
     resetPreferences,
   };
 }

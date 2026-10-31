@@ -1,0 +1,51 @@
+---
+// Where notes are not placed in the margin, a footnote reference opens its own
+// note as a native popover (light dismiss and Esc). The note is the same <li>
+// the no-JS reader sees at the end of the post, so the #fn link works without JS.
+---
+<script>
+  const refSelector = "a[data-footnote-ref]";
+
+  function marginPlaced(note: HTMLElement): boolean {
+    return getComputedStyle(note).position === "absolute";
+  }
+
+  function prepare(): void {
+    for (const note of document.querySelectorAll<HTMLElement>("[data-footnotes] li")) {
+      if (note.hasAttribute("popover")) continue;
+      note.setAttribute("popover", "auto");
+      note.tabIndex = -1;
+    }
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element | null;
+    const ref = target?.closest<HTMLAnchorElement>(refSelector);
+    if (ref) {
+      const note = document.getElementById(decodeURIComponent(ref.hash.slice(1)));
+      if (!note?.hasAttribute("popover") || marginPlaced(note)) return;
+      event.preventDefault();
+      note.showPopover();
+      note.focus();
+      return;
+    }
+    target?.closest("[data-footnote-backref]")?.closest<HTMLElement>("li:popover-open")?.hidePopover();
+  });
+
+  // Light dismiss only restores focus when it was inside the popover, so return it to the reference explicitly.
+  document.addEventListener(
+    "toggle",
+    (event) => {
+      const note = event.target as HTMLElement;
+      if ((event as ToggleEvent).newState !== "closed" || !note.matches("[data-footnotes] li")) return;
+      // The toggle event is queued, so focus may already have moved on (another reference, a text field): leave it there.
+      const active = document.activeElement;
+      if (active && active !== document.body && !note.contains(active)) return;
+      document.querySelector<HTMLElement>(`${refSelector}[href="#${CSS.escape(note.id)}"]`)?.focus({ preventScroll: true });
+    },
+    true,
+  );
+
+  prepare();
+  document.addEventListener("astro:page-load", prepare);
+</script>

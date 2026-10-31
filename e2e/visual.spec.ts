@@ -19,6 +19,8 @@ const dynamicRegions = (page: Page) => [
   page.locator('[data-section-name="activity-calendar"]'),
   page.locator('[data-section-name="hero"] time'),
   page.locator('a[href*="/commit/"]'),
+  // The field caption's week count and seed hash.
+  page.locator(".hero-field-row [data-decode]"),
   page.locator('[data-section-name="hero"] div.font-mono', {
     has: page.locator("span.label-meta", { hasText: /^activity$/i }),
   }),
