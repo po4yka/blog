@@ -11,7 +11,12 @@ import type { ReactNode } from "react";
  * real <h2>; `meta` is a right-aligned technical string.
  *
  * No hooks, so it also renders inside server-only sections. The hairline draws
- * on first render (.rule-draw); its final state is the full rule.
+ * on first render (.rule-draw), or as the header scrolls into view where scroll
+ * timelines exist (.rule-scroll, scroll.css); its final state is the full rule.
+ *
+ * `marks` puts registration marks on the hairline ends. They sit on the outer
+ * guide lines only when the header spans the page grid, so narrow or nested
+ * headers pass `marks={false}`.
  */
 export function SectionHeader({
   number,
@@ -22,6 +27,7 @@ export function SectionHeader({
   id,
   level = 2,
   className = "",
+  marks = true,
 }: {
   number: string;
   label: string;
@@ -31,11 +37,12 @@ export function SectionHeader({
   id?: string;
   level?: 1 | 2;
   className?: string;
+  marks?: boolean;
 }) {
   const H = level === 1 ? "h1" : "h2";
 
   return (
-    <header className={`space-y-2 pb-3 relative ${className}`}>
+    <header className={`${marks ? "reg-marks " : ""}space-y-2 pb-3 relative ${className}`}>
       <div className="flex items-baseline justify-between gap-4 min-w-0">
         <div className="flex items-baseline gap-2.5 min-w-0 truncate">
           <span
@@ -93,7 +100,7 @@ export function SectionHeader({
       )}
       <span
         aria-hidden="true"
-        className="rule-draw absolute left-0 right-0 bottom-0 block"
+        className="rule-draw rule-scroll absolute left-0 right-0 bottom-0 block"
         style={{ height: 1, background: "var(--rule)" }}
       />
     </header>

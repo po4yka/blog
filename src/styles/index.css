@@ -3,6 +3,8 @@
 @import './tailwind.css';
 @import './theme.css';
 @import './primitives.css';
+@import './grid.css';
+@import './scroll.css';
 
 /* ═══════════════════════════════════════════════════════════════════
    Blog prose — MDX rendered content.

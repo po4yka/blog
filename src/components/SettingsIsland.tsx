@@ -1,5 +1,5 @@
 import { Reveal } from "./ui/Reveal";
-import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard } from "lucide-react";
+import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard, Grid3x3 } from "lucide-react";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
@@ -28,7 +28,7 @@ const fontSizeLabelKeys: Record<FontSize, TranslationKey> = {
 
 export function Settings() {
   const live = useSettings();
-  const { setTheme, setReduceMotion, setFontSize, setKeyboardShortcuts, resetPreferences } = live;
+  const { setTheme, setReduceMotion, setFontSize, setKeyboardShortcuts, setGridGuides, resetPreferences } = live;
   const { locale: liveLocale, setLocale, t: tt } = useLocale();
 
   // Persisted preferences rehydrate before the first client render, and
@@ -41,6 +41,7 @@ export function Settings() {
   const reduceMotion = mounted ? live.reduceMotion : false;
   const fontSize: FontSize = mounted ? live.fontSize : "default";
   const keyboardShortcuts = mounted ? live.keyboardShortcuts : true;
+  const gridGuides = mounted ? live.gridGuides : true;
   const locale = mounted ? liveLocale : "en";
 
   const [resetDone, setResetDone] = useState(false);
@@ -150,6 +151,39 @@ export function Settings() {
                   style={{ borderRadius: "2px" }}
                 >
                   {val ? tt("settings.motionReduced") : tt("settings.motionFull")}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Grid guides */}
+          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Grid3x3 size={14} className="text-muted-foreground" />
+                <span className="text-foreground/80 text-mono">
+                  {tt("settings.grid")}
+                </span>
+              </div>
+              <span className="text-muted-foreground text-label">
+                {tt(gridGuides ? "settings.gridOn" : "settings.gridOff")}
+              </span>
+            </div>
+            <p className="text-muted-foreground text-mono-sm">{tt("settings.gridDesc")}</p>
+            <div className="flex gap-2" role="group" aria-label={tt("settings.grid")}>
+              {[true, false].map((val) => (
+                <button
+                  key={String(val)}
+                  onClick={() => setGridGuides(val)}
+                  aria-pressed={gridGuides === val}
+                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
+                    gridGuides === val
+                      ? "text-foreground font-medium border-border bg-muted"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
+                  }`}
+                  style={{ borderRadius: "2px" }}
+                >
+                  {tt(val ? "settings.gridOn" : "settings.gridOff")}
                 </button>
               ))}
             </div>

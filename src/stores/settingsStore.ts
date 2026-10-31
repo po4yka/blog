@@ -15,6 +15,7 @@ export interface SitePreferences {
   fontSize: FontSize;
   locale: Locale;
   keyboardShortcuts: boolean;
+  gridGuides: boolean;
 }
 
 interface SettingsActions {
@@ -23,6 +24,7 @@ interface SettingsActions {
   setFontSize: (fontSize: FontSize) => void;
   setLocale: (locale: Locale) => void;
   setKeyboardShortcuts: (keyboardShortcuts: boolean) => void;
+  setGridGuides: (gridGuides: boolean) => void;
   resetPreferences: () => void;
 }
 
@@ -40,6 +42,7 @@ const defaults: SitePreferences = {
   fontSize: "default",
   locale: defaultLocale,
   keyboardShortcuts: true,
+  gridGuides: true,
 };
 
 function getSystemTheme(): "light" | "dark" {
@@ -47,7 +50,7 @@ function getSystemTheme(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fontSize">) {
+export function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fontSize" | "gridGuides">) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
@@ -60,6 +63,9 @@ function applyToDOM(prefs: Pick<SitePreferences, "theme" | "reduceMotion" | "fon
 
   const sizes: Record<FontSize, string> = { compact: "15px", default: "16px", large: "17px" };
   root.style.setProperty("--font-size", sizes[prefs.fontSize]);
+
+  if (prefs.gridGuides) delete root.dataset.grid;
+  else root.dataset.grid = "off";
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -72,11 +78,12 @@ export const useSettingsStore = create<SettingsStore>()(
         setFontSize: (fontSize) => set({ fontSize }),
         setLocale: (locale) => set({ locale }),
         setKeyboardShortcuts: (keyboardShortcuts) => set({ keyboardShortcuts }),
+        setGridGuides: (gridGuides) => set({ gridGuides }),
         resetPreferences: () => set({ ...defaults }),
       }),
       {
         name: "site_preferences",
-        partialize: ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts }) => ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts }),
+        partialize: ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides }) => ({ theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides }),
         migrate: (persisted) => {
           const p = persisted && typeof persisted === "object" ? persisted : {};
           return { ...defaults, ...p };
@@ -91,19 +98,19 @@ export const useSettingsStore = create<SettingsStore>()(
 if (typeof window !== "undefined") {
   // Apply on initial load (wait for persist middleware to rehydrate)
   if (useSettingsStore.persist.hasHydrated()) {
-    const { theme, reduceMotion, fontSize, locale } = useSettingsStore.getState();
-    applyToDOM({ theme, reduceMotion, fontSize });
+    const { theme, reduceMotion, fontSize, locale, gridGuides } = useSettingsStore.getState();
+    applyToDOM({ theme, reduceMotion, fontSize, gridGuides });
     applyLocale(locale);
   } else {
     useSettingsStore.persist.onFinishHydration((state) => {
-      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize });
+      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides });
       applyLocale(state.locale);
     });
   }
 
   // Subscribe to future changes
   useSettingsStore.subscribe(
-    (state) => ({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize }),
+    (state) => ({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides }),
     (prefs) => applyToDOM(prefs),
     { fireImmediately: false },
   );
@@ -113,7 +120,7 @@ if (typeof window !== "undefined") {
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     const state = useSettingsStore.getState();
     if (state.theme === "system") {
-      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize });
+      applyToDOM({ theme: state.theme, reduceMotion: state.reduceMotion, fontSize: state.fontSize, gridGuides: state.gridGuides });
     }
   });
 
@@ -123,7 +130,7 @@ if (typeof window !== "undefined") {
 
 /** Convenience hook preserving the original useSettings() API */
 export function useSettings() {
-  const { theme, reduceMotion, fontSize, locale, keyboardShortcuts, setTheme, setReduceMotion, setFontSize, setLocale, setKeyboardShortcuts, resetPreferences } =
+  const { theme, reduceMotion, fontSize, locale, keyboardShortcuts, gridGuides, setTheme, setReduceMotion, setFontSize, setLocale, setKeyboardShortcuts, setGridGuides, resetPreferences } =
     useSettingsStore();
 
   const resolvedTheme: "light" | "dark" = theme === "system" ? getSystemTheme() : theme;
@@ -134,12 +141,14 @@ export function useSettings() {
     fontSize,
     locale,
     keyboardShortcuts,
+    gridGuides,
     resolvedTheme,
     setTheme,
     setReduceMotion,
     setFontSize,
     setLocale,
     setKeyboardShortcuts,
+    setGridGuides,
     resetPreferences,
   };
 }

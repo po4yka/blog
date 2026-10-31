@@ -15,6 +15,7 @@ export function PrivacyPage() {
         label="PRIVACY"
         heading="Privacy"
         meta="last updated: 2026-06"
+        marks={false}
       />
 
       {/* Boot */}

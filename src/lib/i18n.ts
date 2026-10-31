@@ -161,6 +161,10 @@ const en = {
   "settings.shortcutsDesc": "enables single-key navigation shortcuts (j, k, g, t, ?)",
   "settings.shortcutsOn": "enabled",
   "settings.shortcutsOff": "disabled",
+  "settings.grid": "grid_guides",
+  "settings.gridDesc": "shows column lines and section marks behind the page, on wide screens only",
+  "settings.gridOn": "shown",
+  "settings.gridOff": "hidden",
   "settings.resetDefaults": "$ reset --defaults",
   "settings.defaultsRestored": "defaults restored",
 
@@ -365,6 +369,10 @@ const ru: TranslationKeys = {
   "settings.shortcutsDesc": "\u0432\u043a\u043b\u044e\u0447\u0430\u0435\u0442 \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044e \u043e\u0434\u0438\u043d\u043e\u0447\u043d\u044b\u043c\u0438 \u043a\u043b\u0430\u0432\u0438\u0448\u0430\u043c\u0438 (j, k, g, t, ?)",
   "settings.shortcutsOn": "\u0432\u043a\u043b\u044e\u0447\u0435\u043d\u044b",
   "settings.shortcutsOff": "\u0432\u044b\u043a\u043b\u044e\u0447\u0435\u043d\u044b",
+  "settings.grid": "\u043b\u0438\u043d\u0438\u0438_\u0441\u0435\u0442\u043a\u0438",
+  "settings.gridDesc": "\u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u043b\u0438\u043d\u0438\u0438 \u043a\u043e\u043b\u043e\u043d\u043e\u043a \u0438 \u043c\u0435\u0442\u043a\u0438 \u0440\u0430\u0437\u0434\u0435\u043b\u043e\u0432 \u0437\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435\u0439, \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0448\u0438\u0440\u043e\u043a\u0438\u0445 \u044d\u043a\u0440\u0430\u043d\u0430\u0445",
+  "settings.gridOn": "\u043f\u043e\u043a\u0430\u0437\u0430\u043d\u044b",
+  "settings.gridOff": "\u0441\u043a\u0440\u044b\u0442\u044b",
 
   // 404
   "notFound.goHome": "\u041d\u0430 \u0433\u043b\u0430\u0432\u043d\u0443\u044e",

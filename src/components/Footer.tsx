@@ -12,7 +12,7 @@ export function Footer() {
 
   return (
     <MotionProvider>
-    <footer aria-label="Site footer" className="max-w-(--grid-max) mx-auto px-6 md:px-10 lg:px-12 pb-12">
+    <footer aria-label="Site footer" className="max-w-(--grid-max) mx-auto px-(--grid-pad) pb-12">
       <div className="space-y-6">
         {/* Interactive terminal */}
         <Panel clip="visible" className="p-4">

@@ -17,6 +17,8 @@ const { nonce } = Astro.locals;
   if (prefs.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.setAttribute('data-motion', 'reduce');
   }
+  // Grid guides default on; only an explicit false hides them.
+  if (prefs.gridGuides === false) document.documentElement.setAttribute('data-grid', 'off');
   // Locale before paint, so static sections show the stored language with no flash.
   var locale = prefs.locale === 'ru' ? 'ru' : 'en';
   document.documentElement.setAttribute('data-locale', locale);
@@ -58,6 +60,8 @@ const { nonce } = Astro.locals;
       const prefs = stored.state || stored;
       applyReducedMotion(!!prefs.reduceMotion);
       applyLocale(prefs.locale === "ru" ? "ru" : "en");
+      if (prefs.gridGuides === false) document.documentElement.setAttribute("data-grid", "off");
+      else document.documentElement.removeAttribute("data-grid");
       if (!raw) return;
       const sizes: Record<string, string> = { compact: "15px", default: "16px", large: "17px" };
       const size = sizes[prefs.fontSize];
