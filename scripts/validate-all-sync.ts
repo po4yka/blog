@@ -8,6 +8,7 @@ import { generateBlogDataSource } from "./generate-blog-data.js";
 import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
+import { generatePlateFiles, PLATES_DIR } from "./generate-plates.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 
@@ -77,6 +78,23 @@ for (const target of targets) {
     if (diffCount > 10) {
       console.error(`  ... and ${diffCount - 10} more differences.`);
     }
+  }
+}
+
+// Project plates: public/plates/ must hold exactly the generated files.
+{
+  const expected = generatePlateFiles();
+  const present = fs.existsSync(PLATES_DIR) ? fs.readdirSync(PLATES_DIR) : [];
+  const stale = present.filter((name) => !expected.has(name));
+  const wrong = [...expected].filter(([name, svg]) => {
+    const file = path.join(PLATES_DIR, name);
+    return !fs.existsSync(file) || fs.readFileSync(file, "utf-8") !== svg;
+  });
+  if (stale.length > 0 || wrong.length > 0) {
+    failures++;
+    console.error(`public/plates: OUT OF SYNC (${[...stale, ...wrong.map(([n]) => n)].join(", ")})`);
+  } else {
+    console.log("public/plates: in sync");
   }
 }
 

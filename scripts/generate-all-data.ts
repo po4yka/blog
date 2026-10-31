@@ -11,6 +11,7 @@ import { generateSeedSource } from "./generate-seed.js";
 import { generateBuildMetaSource } from "./generate-build-meta.js";
 import { generateChangelogSource } from "./generate-changelog.js";
 import { generateOgImages } from "./generate-og-images.js";
+import { writePlates } from "./generate-plates.js";
 
 interface GeneratorConfig {
   name: string;
@@ -68,6 +69,13 @@ for (const gen of generators) {
     console.error(`Failed to generate ${gen.name}: ${err}`);
     hasError = true;
   }
+}
+
+try {
+  writePlates();
+} catch (err) {
+  console.error(`Failed to generate plates: ${err}`);
+  hasError = true;
 }
 
 if (hasError) {
