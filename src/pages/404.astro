@@ -1,7 +1,22 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
 import { NotFound } from "@/components/NotFoundIsland";
+import { blogPostsMeta } from "@/data/blogMeta";
+import { projects } from "@/data/projectsData";
+import type { KnownRoute } from "@/lib/routeMatch";
+
+// Every route the site serves, built at build time from the same data as the pages.
+const routes: KnownRoute[] = [
+  ...["/", "/projects/", "/experience/", "/blog/", "/blog/ru/", "/changelog/", "/settings/", "/privacy/"].map(
+    (href) => ({ href, label: href, kind: "page" as const }),
+  ),
+  ...blogPostsMeta.map((p) => {
+    const lang: "en" | "ru" = p.lang === "ru" ? "ru" : "en";
+    return { href: lang === "ru" ? `/blog/ru/${p.slug}/` : `/blog/${p.slug}/`, label: p.title, kind: "post" as const, lang };
+  }),
+  ...projects.map((p) => ({ href: `/projects/#${p.slug ?? p.id}`, label: p.name, kind: "project" as const })),
+];
 ---
 <MainLayout title="404 — Nikita Pochaev">
-  <NotFound client:idle />
+  <NotFound client:idle routes={routes} />
 </MainLayout>
