@@ -11,15 +11,12 @@ async function installRecorder(page: Page) {
     const log: Log = {};
     (window as unknown as { __decodeLog: Log }).__decodeLog = log;
     const ids = new WeakMap<Element, string>();
-    const boxes = new WeakMap<Element, DOMRect>();
+    let boxes = new WeakMap<Element, DOMRect>();
     let n = 0;
     const entry = (el: Element) => {
       if (!ids.has(el)) ids.set(el, `d${n++}`);
       return (log[ids.get(el)!] ??= { texts: [], labels: [], maxDelta: 0, visible: false });
     };
-    // Boxes are compared only after the web fonts load; a font swap is not a decode shift.
-    let fontsReady = false;
-    void document.fonts.ready.then(() => (fontsReady = true));
     const sample = () => {
       document.querySelectorAll("[data-decode]").forEach((el) => {
         const e = entry(el);
@@ -30,7 +27,9 @@ async function installRecorder(page: Page) {
         const r = el.getBoundingClientRect();
         if (r.width === 0 && r.height === 0) return;
         e.visible = true;
-        if (!fontsReady) return;
+        // A font swap is not a decode shift. fonts.ready can resolve before a script subset
+        // (Cyrillic) starts loading, so restart the baselines while any face is loading.
+        if (document.fonts.status !== "loaded") return void (boxes = new WeakMap());
         const first = boxes.get(el);
         if (!first) boxes.set(el, r);
         else e.maxDelta = Math.max(e.maxDelta, Math.abs(r.width - first.width), Math.abs(r.height - first.height));
@@ -78,14 +77,21 @@ test.describe("decode", () => {
     await page.goto("/");
     // The value decodes when it enters the viewport; below the tall hero it starts off-screen.
     await page.locator("[data-decode]:visible", { hasText: new RegExp(`^${hash}$`) }).first().scrollIntoViewIfNeeded();
-    await expect.poll(async () => Object.values(await readLog(page)).some((e) => e.texts.at(-1) === hash && e.texts.length > 1)).toBe(true);
-    const entry = Object.values(await readLog(page)).find((e) => e.texts.includes(hash) && e.texts.length > 1)!;
-    // It ran through scrambled frames and ended on the hash (the recorder may start mid-decode).
-    expect(entry.texts.some((t) => t !== hash)).toBe(true);
-    expect(entry.texts.at(-1)).toBe(hash);
-    expect(entry.labels.length).toBeGreaterThan(0);
-    expect(entry.labels.every((l) => l === hash)).toBe(true);
-    expect(entry.maxDelta).toBeLessThan(1);
+    // The page has more than one copy of the hash, and a copy further down can start decoding
+    // later, so wait until every copy that started has settled.
+    const started = async () => Object.values(await readLog(page)).filter((e) => e.texts.includes(hash) && e.texts.length > 1);
+    await expect.poll(async () => {
+      const entries = await started();
+      return entries.length > 0 && entries.every((e) => e.texts.at(-1) === hash);
+    }).toBe(true);
+    for (const entry of await started()) {
+      // It ran through scrambled frames and ended on the hash (the recorder may start mid-decode).
+      expect(entry.texts.some((t) => t !== hash)).toBe(true);
+      expect(entry.texts.at(-1)).toBe(hash);
+      expect(entry.labels.length).toBeGreaterThan(0);
+      expect(entry.labels.every((l) => l === hash)).toBe(true);
+      expect(entry.maxDelta).toBeLessThan(1);
+    }
     const el = page.locator("[data-decode]", { hasText: new RegExp(`^${hash}$`) }).first();
     await expect(el).not.toHaveAttribute("aria-label");
     expect(await el.evaluate((e) => (e as HTMLElement).style.cssText)).toBe("");
