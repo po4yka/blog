@@ -259,7 +259,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 **Grid column assignments:**
 - Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile
-- Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem.
+- Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem. The TOC is built at build time from the headings, so it is in the static HTML. On `lg+` the active item shows a 1px `--emphasis` line on its left edge that grows with the scroll position inside that section (`--section-progress`). Below `lg` a fixed bottom bar shows the active section and a "Contents" button that opens a native `<dialog>` bottom sheet with the same list. A 1px reading progress rail (`.progress-rail`) at the top of the viewport shows the scroll position of the post. The post body has no entrance fade (`LessViewer instant`), because it is the largest contentful paint element. On touch devices (`hover: none`) the heading permalinks are always visible and have a 44px tap target.
 - Project list: cols 1–12 single column
 - Experience timeline: cols 1–8, year column cols 9–12
 
@@ -370,7 +370,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | Hero layout | Stacked, identity-first | Split: display-1 name left + widgets right |
 | Project blocks | Single column, full-width | Alternating split rows |
 | Navigation | Hamburger → `var(--background)` overlay | Horizontal with border-bottom rule |
-| Blog post body | Full width, prose capped at 46rem | Article + 14rem sticky TOC; prose capped at 46rem |
+| Blog post body | Full width, prose capped at 46rem; fixed bottom TOC bar with a bottom sheet | Article + 14rem sticky TOC; prose capped at 46rem |
 | Font size | `14px` compact (user default) | `15px` default |
 
 **Touch targets:** minimum `44×44px` for all interactive elements on mobile. **Mobile-first rule:** design both intentionally — do not collapse desktop into mobile.
@@ -461,13 +461,13 @@ Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-in
 **Rule A1. Motion classes.** Motion is allowed when it carries state. These are the only permitted classes today:
 - Enter reveals: opacity fade on first render (`Reveal`)
 - Draw-ons for rules, frames and SVG paths
-- Scroll-linked progress and reveals, under rule A2
+- Scroll-linked progress and reveals, under rule A2. The blog reading progress rail and the per-section TOC line are scroll-linked state. The rail keeps tracking under reduced motion, because it shows position and not decoration. Browsers without scroll timelines use a script that sets the same value
 - Hover, press and focus feedback, under rule A3
 - Page and shared-element transitions, and the theme wipe (`src/styles/transitions.css`). The root crossfade on a page change is `--dur-base` and the main content fade is 200 ms. The post body slides in at 300 ms. The title of a post morphs from the blog list to the post page at `--dur-base`. A theme change from a visitor control shows a circular wipe at `--dur-base` that grows from that control, or from the viewport centre when the change comes from the keyboard or the terminal. All of these are off under reduced motion. A browser without the View Transitions API navigates and changes theme without animation. The home blog preview has no title morph.
 
 Existing state feedback stays as it is (menu open, form flash, the terminal caret blink and the loading cycle). It is not a new class, and no new loop may use it. All other motion stays banned. A later phase adds a class (text decode, chart transitions, the hero field) only with its own amendment in the PR that first uses it.
 
-**Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
+**Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`, except for a position-state indicator (the blog reading progress rail), which keeps tracking under reduced motion because it shows where the visitor is and not decoration. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
 
 **Rule A3. Hover and tap.** Hover, press and focus states (CSS or `whileHover` and `whileTap`) may change opacity, background, underline and outline. They never change width, height, margin, position or scale.
 

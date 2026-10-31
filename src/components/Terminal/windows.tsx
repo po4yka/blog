@@ -24,8 +24,8 @@ export function DrawnRule({ edge = "bottom" }: { edge?: "top" | "bottom" }) {
 export const REVEAL_AFTER_RULE = 0.2;
 
 /** A Panel that fades in on first render, after `delay` seconds. */
-export function RevealPanel({ delay = 0, ...panel }: PanelProps & { delay?: number }) {
-  return <Reveal as={Panel} delay={delay} {...panel} />;
+export function RevealPanel({ delay = 0, instant = false, ...panel }: PanelProps & { delay?: number; instant?: boolean }) {
+  return <Reveal as={Panel} delay={delay} instant={instant} {...panel} />;
 }
 
 /**
@@ -212,18 +212,21 @@ export function LessViewer({
   children,
   delay = 0,
   statusLine,
+  instant = false,
 }: {
   filename: string;
   meta?: string;
   children: ReactNode;
   delay?: number;
+  /** Skip the panel and body fades. Use for the LCP body of a post. */
+  instant?: boolean;
   /** Bottom pager bar, mirroring OperatorPanel's statusLine treatment. */
   statusLine?: ReactNode;
 }) {
   return (
     /* clip (not hidden): clips to the 2px radius without creating a scroll
        container, so position:sticky children (blog TOC) keep sticking. */
-    <RevealPanel delay={delay} clip="clip">
+    <RevealPanel delay={delay} clip="clip" instant={instant}>
       <div className="relative flex items-baseline justify-between gap-3 px-4 py-2">
         <span className="label-meta truncate">{filename}</span>
         {meta && (
@@ -240,7 +243,7 @@ export function LessViewer({
         )}
         <DrawnRule />
       </div>
-      <Reveal className="p-5 md:p-7 font-mono" delay={delay + REVEAL_AFTER_RULE}>
+      <Reveal className="p-5 md:p-7 font-mono" delay={delay + REVEAL_AFTER_RULE} instant={instant}>
         {children}
       </Reveal>
 

@@ -1,4 +1,5 @@
 ---
+import ProgressRail from "@/components/blog/ProgressRail.astro";
 import { ClientRouter } from "astro:transitions";
 import { fade } from "astro:transitions";
 import BaseHead from "./BaseHead.astro";
@@ -83,6 +84,9 @@ const { nonce } = Astro.locals;
       <div class="grid-guides" aria-hidden="true">
         <div class="page-grid"><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /></div>
       </div>
+      {/* Post pages only. Here, not inside <main>: <main> has a view-transition name, so it is a
+          stacking context and the sticky nav would paint over the rail. */}
+      {blogPost && <ProgressRail />}
       <Nav client:idle pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist="site-nav" />
       <main
         id="main-content"
