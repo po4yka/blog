@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { T } from "@/components/ui/T";
+import { useClientValue } from "@/hooks/useClientValue";
 import { fieldSeed } from "@/data/fieldSeed";
 import { heroField, weeklyDensity, type HeroFieldParams } from "@/lib/dither";
 import { t, type Locale } from "@/lib/i18n";
@@ -11,14 +12,14 @@ const WEEKS = fieldSeed.counts.length / 7;
 
 type Connection = { saveData?: boolean };
 
-/** The seed caption in one language, with its numbers marked for the decode effect. */
-function caption(lang: Locale) {
+/** The seed caption in one language; its numbers are marked for the decode effect once `decode` is set. */
+function caption(lang: Locale, decode: boolean) {
   if (WEEKS === 0) return t(lang, "hero.fieldNoData");
   return t(lang, "hero.fieldCaption")
     .split(/(\{weeks\}|\{hash\})/)
     .map((part, i) =>
       part === "{weeks}" || part === "{hash}" ? (
-        <span key={i} data-decode>
+        <span key={i} data-decode={decode || undefined}>
           {part === "{weeks}" ? WEEKS : fieldSeed.hash}
         </span>
       ) : (
@@ -43,6 +44,9 @@ export function DitherField() {
   const applyRef = useRef<() => void>(() => {});
   const pausedRef = useRef(false);
   const [paused, setPaused] = useState(false);
+  // data-decode only after hydration: React hydrates asynchronously, and a scrambled frame before it
+  // finishes is a hydration mismatch (#418).
+  const hydrated = useClientValue(() => true, false);
 
   useEffect(() => {
     const layer = layerRef.current;
@@ -276,7 +280,7 @@ export function DitherField() {
       </div>
       <div className="hero-field-row lg:col-span-12 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <p className="label-meta m-0 text-muted-foreground">
-          <span data-l="en">{caption("en")}</span> <span data-l="ru" lang="ru">{caption("ru")}</span>
+          <span data-l="en">{caption("en", hydrated)}</span> <span data-l="ru" lang="ru">{caption("ru", hydrated)}</span>
         </p>
         {/* One signal for the state: the label names the action (pause or resume), so no aria-pressed.
             The 44px hit area is a ::after, so the row keeps its one-line height and the box covers nothing else. */}

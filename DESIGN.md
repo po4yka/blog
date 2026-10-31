@@ -323,9 +323,9 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Decode
 
-- `src/lib/decode.ts`, one delegated observer started from `MainLayout.astro`. An element with `data-decode` swaps its letters and digits for mono Latin glyphs and settles left to right over `--dur-slow` (420 ms), once when it first enters the viewport and again when its value changes. Inline script, 1,012 B gzip (budget 1 KB)
+- `src/lib/decode.ts`, one delegated observer started from `MainLayout.astro`. An element with `data-decode` swaps its letters and digits for mono Latin glyphs and settles left to right over `--dur-slow` (420 ms), once when it first enters the viewport and again when its value changes. Inline script, 960 B gzip (budget 1 KB)
 - Only monospace values decode (a runtime check skips anything else): a same-length scramble then has the same width, so nothing is pinned and no layout changes. Used on the hero field caption numbers and on the build panel (date, hash, Astro version, counts) and the release tag. Not on prose, not on locale-dependent text React re-renders, never on section numbers
-- The final text is in the server HTML; during a decode the element has `role="img"` and an `aria-label` with the final text. Frames write into the existing text node. Inside an island, a decode waits until the island has hydrated, so React never sees a scrambled frame
+- The final text is in the server HTML; during a decode the element has `role="img"` and an `aria-label` with the final text. Frames write into the existing text node. React hydrates an island asynchronously, so an island never renders `data-decode` on the server: it adds the attribute after it mounts (`useClientValue`), and the observer picks it up then, so React never sees a scrambled frame
 - Off under `data-motion="reduce"` and when `data-effects` is not `full`
 
 ### Footnotes and Math (blog prose)

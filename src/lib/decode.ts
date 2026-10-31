@@ -66,26 +66,12 @@ export function initDecode(): void {
     if (!s) states.set(el, (s = { last: "", final: "", raf: 0 }));
     return s;
   };
-  // React hydrates an island against its server text; a scrambled frame there is a hydration
-  // mismatch (#418). Inside an island that has not hydrated yet, wait until Astro drops `ssr`.
-  const whenHydrated = (el: HTMLElement, run: () => void) => {
-    const island = el.closest("astro-island[ssr]");
-    if (!island) return run();
-    const mo = new MutationObserver(() => {
-      if (island.hasAttribute("ssr")) return;
-      mo.disconnect();
-      run();
-    });
-    mo.observe(island, { attributes: true, attributeFilter: ["ssr"] });
-  };
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
       const el = e.target as HTMLElement;
       io.unobserve(el);
-      whenHydrated(el, () => {
-        if (!decode(el, state(el))) io.observe(el);
-      });
+      if (!decode(el, state(el))) io.observe(el);
     }
   });
   const textWatch = new MutationObserver((records) => {
@@ -96,7 +82,7 @@ export function initDecode(): void {
       // textContent, which also holds whitespace and other nodes and would never match.
       if (el && valueNode(el)?.data !== state(el).last) changed.add(el);
     }
-    changed.forEach((el) => whenHydrated(el, () => decode(el, state(el))));
+    changed.forEach((el) => decode(el, state(el)));
   });
   const watch = (el: HTMLElement) => {
     if (states.has(el)) return;
@@ -109,8 +95,13 @@ export function initDecode(): void {
     root.querySelectorAll<HTMLElement>("[data-decode]").forEach(watch);
   };
   scan(document);
-  // Islands and page swaps add elements after load.
+  // Islands and page swaps add elements after load. React hydrates asynchronously and a scrambled
+  // frame before it finishes is a hydration mismatch (#418), so an island sets data-decode only
+  // after it mounts; watch for the attribute as well as for new nodes.
   new MutationObserver((records) => {
-    for (const r of records) r.addedNodes.forEach((n) => n instanceof HTMLElement && scan(n));
-  }).observe(document.documentElement, { childList: true, subtree: true });
+    for (const r of records) {
+      if (r.type === "attributes") scan(r.target as HTMLElement);
+      r.addedNodes.forEach((n) => n instanceof HTMLElement && scan(n));
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-decode"] });
 }
