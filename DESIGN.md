@@ -251,6 +251,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS, each SVG under 3 KB
 
+### Not Found Page
+
+- Component: `NotFoundIsland.tsx` on `src/pages/404.astro`, section `!! / NOT FOUND`
+- Content: every route the site serves is a real link in the static HTML, grouped as Pages, Posts (with their language) and Projects (`/projects/#<slug>`). `404.astro` builds the list at build time from `blogMeta.ts` and `projectsData.ts`, so it never lists a route that does not exist
+- Closest match: after the island mounts, it shows the requested path and up to three routes ranked by `closestRoutes` (`src/lib/routeMatch.ts`). Ranking compares the last path segment or `#anchor`, accepts a cut-off slug as a match, and breaks ties toward the language the path asks for. Below the threshold nothing is suggested
+- The "Go home" link stays; `e2e/public-pages.spec.ts` checks "Page not found" and "Go home"
+
 ### Changelog Filter
 
 - Component: `ChangelogIsland.tsx` (`/changelog`), a `role="group"` of toggle buttons (`aria-pressed`) above the release list: `all`, `feat`, `fix`, `perf`, each with its real entry count from `changelog.ts`
