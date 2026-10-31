@@ -251,6 +251,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS, each SVG under 3 KB
 
+### Changelog Filter
+
+- Component: `ChangelogIsland.tsx` (`/changelog`), a `role="group"` of toggle buttons (`aria-pressed`) above the release list: `all`, `feat`, `fix`, `perf`, each with its real entry count from `changelog.ts`
+- Buttons follow the Settings toggles: 2px radius, 1px `var(--border)` and `var(--muted)` when pressed, a transparent border otherwise, 44px tall below `sm`
+- A filter hides entries of other types and any release left with none. A `label-meta` line (`N / total entries shown`, `aria-live="polite"`) reports the result
+- The default is `all`, on the server and on hydration, so the static HTML holds every entry
+
 ### Architecture Diagram
 
 - Component: `src/components/Architecture.tsx`, server-only (no client directive), static HTML at the end of `/changelog` (the page about the site itself), section `08 / ARCHITECTURE`

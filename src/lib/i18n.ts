@@ -67,6 +67,9 @@ const en = {
   "architecture.admin": "Admin: /admin/* is the React SPA; its /api/admin/* calls pass withAdmin() (origin, session, capability) and read and write D1 through env.DB.",
   "changelog.latest": "latest",
   "changelog.build": "build",
+  "changelog.filter": "Filter by change type",
+  "changelog.all": "all",
+  "changelog.shown": "entries shown",
 
   // about
   "about.heading": "About",
@@ -300,6 +303,9 @@ const ru: TranslationKeys = {
   "architecture.admin": "\u0410\u0434\u043c\u0438\u043d\u043a\u0430: /admin/* \u2014 React SPA; \u0435\u0451 \u0437\u0430\u043f\u0440\u043e\u0441\u044b /api/admin/* \u043f\u0440\u043e\u0445\u043e\u0434\u044f\u0442 withAdmin() (origin, \u0441\u0435\u0441\u0441\u0438\u044f, \u043f\u0440\u0430\u0432\u0430) \u0438 \u0447\u0438\u0442\u0430\u044e\u0442 \u0438 \u043f\u0438\u0448\u0443\u0442 D1 \u0447\u0435\u0440\u0435\u0437 env.DB.",
   "changelog.latest": "\u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439",
   "changelog.build": "\u0441\u0431\u043e\u0440\u043a\u0430",
+  "changelog.filter": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u0442\u0438\u043f\u0443 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f",
+  "changelog.all": "\u0432\u0441\u0435",
+  "changelog.shown": "\u043f\u043e\u043a\u0430\u0437\u0430\u043d\u043e \u0437\u0430\u043f\u0438\u0441\u0435\u0439",
 
   // about
   "about.heading": "\u041e\u0431\u043e \u043c\u043d\u0435",
