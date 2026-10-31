@@ -22,7 +22,7 @@ describe("protect-generated hook", () => {
     expect(runHook(editOf("public/plates/copilot.hover.svg")).status).toBe(2);
     expect(runHook(editOf("public/covers/ru-some-post.svg")).status).toBe(2);
     expect(runHook(editOf("src/data/fieldSeed.ts")).status).toBe(2);
-    expect(runHook(editOf("public/field-poster.png")).status).toBe(2);
+    expect(runHook(editOf("public/field-poster-phone.png")).status).toBe(2);
   });
 
   it("blocks Codex apply_patch touching a generated file", () => {

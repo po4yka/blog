@@ -14,7 +14,7 @@ import { generateOgImages } from "./generate-og-images.js";
 import { writePlates } from "./generate-plates.js";
 import { writeCovers } from "./generate-covers.js";
 import { FIELD_SEED_FILE, generateFieldSeedSource, parseFieldSeed } from "./generate-field-seed.js";
-import { writeFieldPoster } from "./generate-field-poster.js";
+import { writeFieldPosters } from "./generate-field-poster.js";
 
 interface GeneratorConfig {
   name: string;
@@ -79,10 +79,10 @@ for (const gen of generators) {
   }
 }
 
-// The poster renders from the seed file the loop above just wrote.
-const writePoster = () => writeFieldPoster(parseFieldSeed(fs.readFileSync(FIELD_SEED_FILE, "utf-8")).counts);
+// The posters render from the seed file the loop above just wrote.
+const writePosters = () => writeFieldPosters(parseFieldSeed(fs.readFileSync(FIELD_SEED_FILE, "utf-8")).counts);
 
-for (const [name, write] of [["plates", writePlates], ["covers", writeCovers], ["field poster", writePoster]] as const) {
+for (const [name, write] of [["plates", writePlates], ["covers", writeCovers], ["field posters", writePosters]] as const) {
   try {
     write();
   } catch (err) {
