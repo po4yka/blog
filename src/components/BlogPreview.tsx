@@ -109,7 +109,7 @@ export function BlogPreview() {
           $
         </span>
         <span className="text-foreground min-w-0 break-all" style={{ opacity: 0.92 }}>
-          find <Em>./posts/</Em> -name "*.md" -mtime -30 | head -3
+          ls -t <Em>./posts/</Em> | head -3
         </span>
       </Reveal>
 

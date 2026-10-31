@@ -25,11 +25,13 @@ export function PostPager({
   const { t } = useLocale();
 
   return (
-    <div className="pt-4 font-mono text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start">
+    <nav
+      aria-label={t("blogPost.postNav")}
+      className="pt-4 font-mono text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start"
+    >
       {prev ? (
         <a
           href={blogUrl(lang, prev.slug)}
-          title={prev.title}
           className="inline-flex flex-col gap-0.5 text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline min-w-0 sm:justify-self-start"
         >
           <span className="label-meta inline-flex items-center gap-1">
@@ -39,7 +41,7 @@ export function PostPager({
           <span className="text-foreground/80 hover:text-foreground" style={titleStyle}>
             {prev.title}
           </span>
-          <span className="label-meta opacity-70">{prev.date}</span>
+          <span className="label-meta">{prev.date}</span>
         </a>
       ) : (
         <span />
@@ -54,7 +56,6 @@ export function PostPager({
       {next ? (
         <a
           href={blogUrl(lang, next.slug)}
-          title={next.title}
           className="inline-flex flex-col gap-0.5 text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline min-w-0 sm:justify-self-end sm:text-right"
         >
           <span className="label-meta inline-flex items-center gap-1 sm:justify-end">
@@ -64,11 +65,11 @@ export function PostPager({
           <span className="text-foreground/80 hover:text-foreground" style={titleStyle}>
             {next.title}
           </span>
-          <span className="label-meta opacity-70">{next.date}</span>
+          <span className="label-meta">{next.date}</span>
         </a>
       ) : (
         <span />
       )}
-    </div>
+    </nav>
   );
 }

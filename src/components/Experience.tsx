@@ -15,7 +15,9 @@ export function Experience() {
         id="experience-heading"
       />
       <div className="space-y-0">
-          {roles.slice(0, 3).map((role, i) => (
+          {roles.slice(0, 3).map((role) => {
+            const current = role.period.endsWith(" — Present");
+            return (
             <div
               key={role.period}
               className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 group hover:bg-card transition-colors duration-150 rounded-[2px]"
@@ -26,11 +28,10 @@ export function Experience() {
                     {/* Status marker: ● current, ○ past */}
                     <span
                       className="shrink-0 font-mono text-mono-sm select-none"
-                      style={{ color: "var(--foreground)", opacity: i === 0 ? 0.80 : 0.30 }}
+                      style={{ color: "var(--foreground)", opacity: current ? 0.80 : 0.30 }}
                       aria-hidden="true"
-                      title={i === 0 ? "current" : "past"}
                     >
-                      {i === 0 ? "●" : "○"}
+                      {current ? "●" : "○"}
                     </span>
                     {/* Column divider */}
                     <span
@@ -87,7 +88,8 @@ export function Experience() {
                 </span>
               </div>
             </div>
-          ))}
+            );
+          })}
       </div>
 
       <div className="pt-1">

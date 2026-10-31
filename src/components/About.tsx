@@ -1,44 +1,44 @@
 import { stagger } from "@/lib/motion";
-import { OutputBlock } from "./Terminal";
-import { MotionProvider } from "./MotionProvider";
 import { SectionHeader } from "./SectionHeader";
 import { Reveal } from "./ui/Reveal";
-import { useLocale } from "@/stores/settingsStore";
+import { T } from "./ui/T";
 
+/** Server-only (no client directive): static HTML with both languages, no JS. */
 export function About() {
-  const { t } = useLocale();
-
   return (
-    <MotionProvider>
     <section id="about" aria-labelledby="about-heading" className="space-y-5">
       <SectionHeader
         number="02"
         label="ABOUT"
-        heading={t("about.heading")}
+        heading={<T k="about.heading" />}
         meta="README.md"
         id="about-heading"
       />
-      <OutputBlock delay={0.05}>
+      <Reveal
+        speed="slow"
+        delay={0.05}
+        className="relative pl-6 md:pl-8 font-mono"
+        style={{ borderLeft: "1px solid var(--rule)" }}
+      >
         <div
           className="space-y-5 font-sans text-sm text-muted-foreground"
           style={{ lineHeight: 1.8 }}
         >
           <Reveal as="p" speed="slow" delay={0.05}>
-            {t("about.p1")}
+            <T k="about.p1" />
           </Reveal>
           <Reveal as="p" speed="slow" delay={0.05 + stagger.base}>
-            {t("about.p2prefix")}{" "}
+            <T k="about.p2prefix" />{" "}
             <span className="text-foreground font-medium">
-              {t("about.p2kmp")}
+              <T k="about.p2kmp" />
             </span>{" "}
-            {t("about.p2suffix")}
+            <T k="about.p2suffix" />
           </Reveal>
           <Reveal as="p" speed="slow" delay={0.05 + stagger.base * 2}>
-            {t("about.p3")}
+            <T k="about.p3" />
           </Reveal>
         </div>
-      </OutputBlock>
+      </Reveal>
     </section>
-    </MotionProvider>
   );
 }

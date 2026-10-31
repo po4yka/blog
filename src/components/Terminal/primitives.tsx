@@ -166,11 +166,10 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Tab") {
+      // Without a suggestion (or with Shift) Tab must move focus, or the input is a keyboard trap.
+      if (e.key === "Tab" && suggestion && !e.shiftKey) {
         e.preventDefault();
-        if (suggestion) {
-          setInput((prev) => prev + suggestion);
-        }
+        setInput((prev) => prev + suggestion);
         return;
       }
 
@@ -247,7 +246,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             aria-label={t("footer.terminalInputLabel")}
             className="w-full bg-transparent outline-none text-foreground text-mono font-mono"
             style={{ caretColor: "var(--emphasis)" }}
-            placeholder={focused ? "" : "type a command"}
+            placeholder={focused ? "" : t("footer.terminalPlaceholder")}
             autoComplete="off"
             spellCheck={false}
           />

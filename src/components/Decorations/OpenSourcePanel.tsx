@@ -3,6 +3,7 @@ import { m } from "motion/react";
 import { useInView } from "@/hooks/useInView";
 import { MotionProvider } from "@/components/MotionProvider";
 import { PanelShell } from "./_helpers";
+import { pluralize } from "@/lib/plural";
 import { useLocale } from "@/stores/settingsStore";
 import type { GitHubRepoSummary } from "@/types";
 import { ease, stagger } from "@/lib/motion";
@@ -32,7 +33,7 @@ function langGlyph(language: string | null): string {
 }
 
 export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { ref, inView } = useInView(0.1);
   const [repos, setRepos] = useState<GitHubRepoSummary[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
@@ -56,7 +57,11 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
       <div ref={ref}>
         <PanelShell
           label="po4yka / github"
-          labelRight={status === "ready" ? `${totalStars} STARS` : "\u00a0"}
+          labelRight={
+            status === "ready"
+              ? pluralize(totalStars, locale, { en: ["star", "stars"], ru: ["звезда", "звезды", "звёзд"] }).toUpperCase()
+              : "\u00a0"
+          }
           delay={delay}
         >
           <div className="space-y-0">
@@ -66,7 +71,6 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`Open ${repo.name} on GitHub (${t("links.opensNewWindow")})`}
                 className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline rounded-[2px] border-b border-border/30 last:border-b-0"
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}
@@ -75,7 +79,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 <span
                   className="label-meta shrink-0 w-[18px] text-center"
                   style={{ color: "var(--muted-foreground-dim)" }}
-                  title={repo.language ?? "Unknown"}
+                  title={repo.language ?? t("projects.unknownLanguage")}
                 >
                   {langGlyph(repo.language)}
                 </span>
@@ -83,6 +87,8 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-foreground/80 group-hover:text-foreground group-hover:underline transition-colors duration-200 text-mono-sm truncate">
                       {repo.name}
+                      {/* The visible name, stars and description stay in the link's name; this only adds the new-window note. */}
+                      <span className="sr-only"> ({t("links.opensNewWindow")})</span>
                     </span>
                     <span
                       className="text-label shrink-0"
@@ -107,7 +113,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                   <span className="label-meta shrink-0 w-[18px]">{"\u00a0"}</span>
                   <div className="flex-1 min-w-0">
                     <span className="text-muted-foreground text-mono-sm">
-                      {i === 0 && status === "unavailable" ? "repository list unavailable" : "\u00a0"}
+                      {i === 0 && status === "unavailable" ? t("projects.repoListUnavailable") : "\u00a0"}
                     </span>
                     <p className="text-label mt-0.5">{"\u00a0"}</p>
                   </div>

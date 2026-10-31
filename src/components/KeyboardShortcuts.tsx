@@ -3,6 +3,7 @@ import { SHORTCUTS_EVENT } from "./StatusLine";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
 import { PALETTE_EVENT } from "@/lib/palette";
+import { scrollBehavior } from "@/lib/motion";
 
 const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
 // The palette chunk loads on first open, or on idle after the first interaction.
@@ -51,13 +52,13 @@ function scrollToSection(direction: 1 | -1) {
   if (sections.length === 0) return;
   const current = findCurrentSectionIndex();
   const next = Math.max(0, Math.min(sections.length - 1, current + direction));
-  sections[next]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  sections[next]?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
 }
 
 function focusTerminal() {
   const input = document.getElementById("terminal-input") as HTMLInputElement | null;
   if (input) {
-    input.scrollIntoView({ behavior: "smooth", block: "center" });
+    input.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
     setTimeout(() => input.focus(), 400);
   }
 }

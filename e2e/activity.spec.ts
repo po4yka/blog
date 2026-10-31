@@ -24,10 +24,14 @@ test.describe("activity heatmap", () => {
 
     const grid = section.getByRole("group", { name: /Activity calendar/ });
     await grid.focus();
-    const readout = section.locator("p[aria-live]");
+    const readout = section.locator("[data-readout]");
+    const live = section.locator("p[aria-live]");
     await expect(readout).toHaveText(/^[A-Z]{3} \d+ · 3 EVENTS$/);
     await page.keyboard.press("ArrowUp");
     await expect(readout).toHaveText(/ · 1 EVENT$/);
+    // Keyboard moves are announced through the live region; the visible readout is not live.
+    await expect(live).toHaveText(/ · 1 EVENT$/);
+    await expect(readout).not.toHaveAttribute("aria-live", /.*/);
     await page.keyboard.press("Home");
     await expect(readout).toHaveText(/ · 0 EVENTS$/);
 

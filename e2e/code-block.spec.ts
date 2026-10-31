@@ -5,7 +5,9 @@ const POST = "/blog/network-isnt-broken-just-here";
 test("the static HTML has the code block header and a copy button", async ({ request }) => {
   const html = await (await request.get(POST)).text();
   expect(html).toContain('<span class="code-block-lang">text</span>');
-  expect(html).toMatch(/<button type="button" class="code-block-copy" data-copy-code(="")? aria-label="Copy code">copy<\/button>/);
+  expect(html).toMatch(
+    /<button type="button" class="code-block-copy" data-copy-code(="")? aria-label="Copy code" data-copied-text="copied" data-copied-label="Copied">copy<\/button>/,
+  );
   expect(html).toMatch(/<pre class="astro-code[^"]*"[^>]*tabindex="0"/);
 });
 

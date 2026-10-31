@@ -85,9 +85,9 @@ test.describe("hero name", () => {
   }
 });
 
-test("the four static sections ship no island", async ({ page }) => {
+test("the static home sections ship no island", async ({ page }) => {
   await page.goto("/");
-  for (const name of ["links", "projects", "experience", "blog"]) {
+  for (const name of ["about", "links", "projects", "experience", "blog"]) {
     await expect(page.locator(`[data-section-name="${name}"]`)).toBeAttached();
     await expect(page.locator(`[data-section-name="${name}"] astro-island`)).toHaveCount(0);
   }

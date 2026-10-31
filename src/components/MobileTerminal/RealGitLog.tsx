@@ -5,7 +5,8 @@ import { Em } from "@/components/Terminal";
 import { Shell } from "./Shell";
 import { useCopy } from "./_helpers";
 import type { CommitSummary } from "@/pages/api/github/commits";
-import { ease } from "@/lib/motion";
+import { useLocale } from "@/stores/settingsStore";
+import { duration, ease, stagger } from "@/lib/motion";
 
 // Rows the panel always reserves: /api/github/commits returns at most this many,
 // so the panel keeps one height while loading, when loaded and when the feed is down.
@@ -16,6 +17,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
   const { ref, inView } = useInView(0.1);
   const [commits, setCommits] = useState<CommitSummary[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
+  const { t } = useLocale();
   const { copy } = useCopy();
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
@@ -33,6 +35,12 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
       });
   }, []);
 
+  const copyHash = (hash: string) => {
+    copy(hash);
+    setCopiedHash(hash);
+    setTimeout(() => setCopiedHash(null), 1500);
+  };
+
   const fillers = COMMIT_ROWS - commits.length;
 
   return (
@@ -43,41 +51,30 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
     >
       {() => (
         <div ref={ref} className="space-y-0">
+          <span role="status" className="sr-only">
+            {copiedHash ? t("terminal.hashCopied") : ""}
+          </span>
           {commits.map((c, i) => (
             <m.div
               key={c.hash}
               className={ROW_CLASS}
-              style={{
-                lineHeight: 1.7,
-                transition: "background-color 0.15s ease",
-              }}
-              initial={{ opacity: 0, x: -4 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.25, delay: delay + 0.08 + i * 0.04, ease }}
-              whileHover={{ backgroundColor: "var(--muted)" }}
+              style={{ lineHeight: 1.7 }}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: duration.base, delay: delay + i * stagger.fast, ease }}
+              // Hover has its own timing, so it does not wait out the entrance delay.
+              whileHover={{ backgroundColor: "var(--muted)", transition: { duration: duration.fast, delay: 0 } }}
             >
-              <span
-                className="text-muted-foreground cursor-pointer shrink-0 text-mono-sm"
-                role="button"
-                tabIndex={0}
-                onClick={() => {
-                  copy(c.hash);
-                  setCopiedHash(c.hash);
-                  setTimeout(() => setCopiedHash(null), 1500);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    if (e.key === " ") e.preventDefault();
-                    copy(c.hash);
-                    setCopiedHash(c.hash);
-                    setTimeout(() => setCopiedHash(null), 1500);
-                  }
-                }}
-                title="Copy hash"
-                aria-label="Copy commit hash"
+              {/* min-w fits the copied label so the row does not shift; the ::after hit area
+                  gives a 44px target on touch without changing the row height. */}
+              <button
+                type="button"
+                className="relative min-w-[11ch] text-left text-muted-foreground cursor-pointer shrink-0 text-mono-sm [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:-inset-y-3 [@media(pointer:coarse)]:after:content-['']"
+                onClick={() => copyHash(c.hash)}
               >
-                {copiedHash === c.hash ? "copied!" : c.hash}
-              </span>
+                {copiedHash === c.hash ? t("terminal.hashCopied") : c.hash}
+                <span className="sr-only">, {t("terminal.copyHash")}</span>
+              </button>
               <span className="text-foreground/75 flex-1 truncate">{c.msg}</span>
               <span className="text-muted-foreground shrink-0 text-label">
                 {c.date}
@@ -87,7 +84,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
           {/* Filler rows keep the reserved height; the first says why it is empty. */}
           {Array.from({ length: fillers }, (_, i) => (
             <div key={`filler-${i}`} className={`${ROW_CLASS} text-muted-foreground`} style={{ lineHeight: 1.7 }}>
-              {i === 0 && status === "unavailable" ? "commit feed unavailable" : "\u00a0"}
+              {i === 0 && status === "unavailable" ? t("terminal.commitFeedUnavailable") : "\u00a0"}
             </div>
           ))}
         </div>

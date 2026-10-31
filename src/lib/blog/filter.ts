@@ -14,24 +14,9 @@ export function findFeatured(posts: BlogPostMeta[]): BlogPostMeta | undefined {
   return posts.find((p) => p.featured);
 }
 
-export function computeListStats(posts: BlogPostMeta[]): {
-  tagCount: number;
-  tags: string[];
-  catCounts: Record<string, number>;
-} {
-  const allTags = new Set<string>();
-  for (const p of posts) {
-    for (const tag of p.tags) allTags.add(tag);
-  }
-  const catCounts: Record<string, number> = {};
-  for (const p of posts) {
-    catCounts[p.category] = (catCounts[p.category] ?? 0) + 1;
-  }
-  return { tagCount: allTags.size, tags: [...allTags], catCounts };
-}
-
-export function categoryPercent(count: number, total: number): number {
-  return total > 0 ? Math.round((count / total) * 100) : 0;
+/** Every tag used by the posts, once each, in first-seen order. */
+export function uniqueTags(posts: BlogPostMeta[]): string[] {
+  return [...new Set(posts.flatMap((p) => p.tags))];
 }
 
 export function readTagParam(search: string): string | null {

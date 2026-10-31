@@ -30,19 +30,19 @@ export function PostFooter({
             href="https://github.com/po4yka"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`GitHub (${t("links.opensNewWindow")})`}
             className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
           >
             github.com/po4yka
+            <span className="sr-only"> ({t("links.opensNewWindow")})</span>
           </a>
           <a
             href="https://linkedin.com/in/pochaev-nikita/"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`LinkedIn (${t("links.opensNewWindow")})`}
             className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
           >
             linkedin.com/in/pochaev-nikita
+            <span className="sr-only"> ({t("links.opensNewWindow")})</span>
           </a>
           <span className="no-print inline-flex flex-wrap items-center gap-x-4 gap-y-1">
             <CopyLinkButton />
@@ -68,7 +68,7 @@ export function PostFooter({
                   <span className="flex-1 font-sans text-[0.9375rem] leading-snug text-foreground/80 group-hover:text-foreground transition-colors duration-150 min-w-0 sm:truncate">
                     {rp.title}
                   </span>
-                  <span className="label-meta text-muted-foreground-dim opacity-70 shrink-0 tabular-nums">
+                  <span className="label-meta text-muted-foreground-dim shrink-0 tabular-nums">
                     {rp.isoDate ? <time dateTime={rp.isoDate}>{rp.date}</time> : <span>{rp.date}</span>}
                   </span>
                 </a>

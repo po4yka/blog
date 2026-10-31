@@ -26,6 +26,15 @@ export function applyReducedMotion(storedPreference: boolean): void {
   else document.documentElement.removeAttribute("data-motion");
 }
 
+/**
+ * Behavior for a scripted scroll. A JS `behavior: "smooth"` overrides the CSS
+ * reduced-motion rule, so callers ask here: data-motion="reduce" is set when
+ * the OS or the visitor's Settings ask for reduced motion.
+ */
+export function scrollBehavior(): ScrollBehavior {
+  return document.documentElement.dataset.motion === "reduce" ? "auto" : "smooth";
+}
+
 export function onSystemReducedMotionChange(listener: () => void): void {
   window.matchMedia(REDUCE_QUERY).addEventListener("change", listener);
 }

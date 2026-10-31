@@ -4,6 +4,7 @@ import { ClientRouter } from "astro:transitions";
 import { fade } from "astro:transitions";
 import BaseHead from "./BaseHead.astro";
 import ThemeScript from "./ThemeScript.astro";
+import { T } from "@/components/ui/T";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
@@ -78,7 +79,7 @@ const { nonce } = Astro.locals;
   </head>
   <body>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-[2px] focus:outline focus:outline-2 focus:outline-offset-2" style="outline-color: var(--emphasis)">
-      Skip to main content
+      <T k="layout.skipToContent" />
     </a>
     <div class="isolate min-h-screen bg-background text-foreground transition-colors duration-300">
       <div class="grid-guides" aria-hidden="true">

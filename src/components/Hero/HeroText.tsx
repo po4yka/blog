@@ -59,7 +59,7 @@ export function HeroText() {
         <li>
           <a
             href={`https://github.com/${GITHUB_USERNAME}`}
-            className="hover:text-foreground transition-colors duration-200"
+            className="hover:text-foreground transition-colors duration-200 inline-flex items-center min-h-11 sm:min-h-0"
           >
             @{GITHUB_USERNAME}
           </a>

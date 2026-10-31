@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { T } from "./ui/T";
 
 function GithubIcon({ size = 16 }: { size?: number }) {
   return (
@@ -44,7 +45,7 @@ function monthYear(iso: string, locale: Locale): string {
 }
 
 /** Latest release of the project, real data from GitHub, or nothing. */
-function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; locale: Locale; t: (k: "links.opensNewWindow") => string }) {
+function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; locale: Locale; t: (k: "links.opensNewWindow" | "projects.prerelease") => string }) {
   const tag = release.tagName.match(/^(v)(.+)$/i);
   return (
     <a
@@ -63,7 +64,7 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
         ) : (
           <span className="text-foreground/85">{release.tagName}</span>
         )}
-        {release.prerelease && <span className="text-muted-foreground-dim"> pre</span>}
+        {release.prerelease && <span className="text-muted-foreground-dim"> {t("projects.prerelease")}</span>}
       </span>
       <span aria-hidden="true" className="text-muted-foreground-dim">·</span>
       <span>{pluralize(release.count, locale, RELEASE_FORMS)}</span>
@@ -112,7 +113,7 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             </span>
           )}
           {/* Caption of the plate: it names the seed. */}
-          <span className="hidden sm:inline text-muted-foreground-dim text-label" title="Identity mark seeded by the slug hash">
+          <span className="hidden sm:inline text-muted-foreground-dim text-label">
             {plateCaption(project.slug ?? project.id)}
           </span>
         </div>
@@ -194,8 +195,8 @@ export function ProjectsPage() {
         level={1}
         number="04"
         label="PROJECTS"
-        heading="Projects"
-        meta={`${projects.length} ${t("projectsPage.entries") ?? "ENTRIES"}`}
+        heading={<T k="projects.pageHeading" />}
+        meta={`${projects.length} ${t("projectsPage.entries")}`}
       />
 
       {/* Boot */}

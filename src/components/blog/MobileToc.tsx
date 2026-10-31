@@ -68,7 +68,7 @@ export function MobileToc({
           </button>
         </div>
         <nav aria-label={label} className="p-4">
-          <TocList items={items} activeId={activeId} onNavigate={close} />
+          <TocList items={items} activeId={activeId} touch onNavigate={close} />
         </nav>
       </dialog>
     </div>

@@ -2,13 +2,12 @@ import { Reveal } from "./ui/Reveal";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BootBlock, Cmd, Em, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
+import { T } from "./ui/T";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { roles, skills, type Role, type SkillGroup } from "@/data/experienceData";
 import { MotionProvider } from "./MotionProvider";
 import { stagger } from "@/lib/motion";
 import { useSettings, useLocale } from "@/stores/settingsStore";
-import { AnimatedNumber } from "./AnimatedNumber";
-import { animateNumbers } from "./_animatedNumber.utils";
 
 const TAG_HIGHLIGHT_STYLE = {
   color: "var(--foreground)",
@@ -64,7 +63,7 @@ function RoleEntry({
               className="text-foreground/80 list-disc font-sans text-mono-sm"
               style={{ lineHeight: 1.7 }}
             >
-              {animateNumbers(h)}
+              {h}
             </li>
           ))}
         </ul>
@@ -165,6 +164,7 @@ function TagConnections({
 
   return (
     <svg
+      aria-hidden="true"
       className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
       style={{ zIndex: 10 }}
     >
@@ -183,14 +183,13 @@ function TagConnections({
               reduceMotion
                 ? undefined
                 : {
-                    animation: `draw-line 300ms ease forwards`,
+                    animation: "draw-line var(--dur-base) var(--ease-out) forwards",
                     animationDelay: `${i * Math.round(stagger.base * 1000)}ms`,
                   }
             }
           />
         </g>
       ))}
-      <style>{`@keyframes draw-line { to { stroke-dashoffset: 0; } } @media (prefers-reduced-motion: reduce) { [style*="draw-line"] { animation: none !important; stroke-dashoffset: 0 !important; } }`}</style>
     </svg>
   );
 }
@@ -212,8 +211,8 @@ export function ExperiencePage() {
         level={1}
         number="05"
         label="EXPERIENCE"
-        heading="Experience"
-        meta={`${roles.length} ${t("experiencePage.positionsIndexed") ?? "POSITIONS"}`}
+        heading={<T k="experience.heading" />}
+        meta={`${roles.length} ${t("experiencePage.positionsIndexed")}`}
       />
 
       {/* Boot */}
@@ -227,7 +226,7 @@ export function ExperiencePage() {
               </>
             ),
           },
-          { status: "OK", text: <><AnimatedNumber value={roles.length} /> {t("experiencePage.positionsIndexed")}</> },
+          { status: "OK", text: <>{roles.length} {t("experiencePage.positionsIndexed")}</> },
           { status: "INFO", text: t("experiencePage.sortedByDate") },
         ]}
       />
