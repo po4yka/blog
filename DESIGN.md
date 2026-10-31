@@ -242,6 +242,15 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Data rule: every row is a real entry (a route, a generated post or project, a theme or locale, the contact email, or a heading on the current page) and shows the equivalent typed command. Rows run through `run()` in `src/lib/commands.ts`, the same registry the footer shell uses. A typed command line also runs on Enter, and its output (or the unknown-command error) shows inside the palette. Post rows show the date label and word count. Project rows show the year and platforms. No invented commands, fields or counts
 - Loading: the palette chunk is requested on first open, or on idle after the first pointer or key event. It is not part of the first page load
 
+### Project Plates
+
+- Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (48px). Hidden below `sm`
+- Source: `scripts/generate-plates.ts` writes `public/plates/<slug>.svg` and `<slug>.hover.svg` at build time (`generate:all`, checked by `validate:all`). Each is a 16x16 1-bit mark from `ditherField` in `src/lib/dither.ts` (ordered Bayer dither), mirrored on the vertical axis
+- Seed (rule A8): the FNV-1a hash of the project slug, and nothing else. A plate is an identity mark, not a metric. Its caption prints the seed as `slug#<4 hex>` (the `/projects` meta row and the `MARK` line of the home spec sheet)
+- Colour: the SVGs are CSS masks over `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
+- Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
+- Budget: 0 KB runtime JS, each SVG under 3 KB
+
 ### Tags / Platform Badges
 
 - Background: `var(--muted)`
@@ -347,6 +356,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
+- Seed generative art from real inputs only and print the seed in its caption (rule A8): the slug hash for project plates. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, heading structure and publish date
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent

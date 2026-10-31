@@ -9,7 +9,7 @@ import { resolve } from "node:path";
 
 // Suffix match (case-insensitive: APFS is) so worktrees and odd casing are caught too.
 const GENERATED =
-  /(^|\/)(src\/data\/(blogData|blogMeta|projectsData|experienceData|changelog|buildMeta)\.ts|db\/seed\.sql)$/i;
+  /(^|\/)(src\/data\/(blogData|blogMeta|projectsData|experienceData|changelog|buildMeta)\.ts|db\/seed\.sql|public\/plates\/[^/]+\.svg)$/i;
 
 let raw = "";
 for await (const chunk of process.stdin) raw += chunk;

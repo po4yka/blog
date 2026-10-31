@@ -2,6 +2,19 @@ import { projects } from "@/data/projectsData";
 import { Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { T } from "./ui/T";
+import { Plate } from "./ui/Plate";
+import { plateCaption } from "@/lib/dither";
+
+/** "owner/name" of the first GitHub link, or undefined: the spec sheet prints only real fields. */
+function repoOf(links: { href: string }[]): string | undefined {
+  for (const { href } of links) {
+    const m = /^https:\/\/github\.com\/([^/#?]+\/[^/#?]+)/.exec(href);
+    if (m) return m[1];
+  }
+  return undefined;
+}
+
+const SPEC_KEY = "text-muted-foreground-dim mr-2";
 
 /** Server-only (no client directive): static HTML with both languages, no JS. */
 export function Projects() {
@@ -27,6 +40,8 @@ export function Projects() {
               href={`/projects#${project.slug}`}
               className="group flex items-start gap-2 py-4 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]"
             >
+              <Plate slug={project.slug ?? project.id} size={32} className="hidden sm:block mt-0.5" />
+
               {/* Tree branch prefix */}
               <span
                 className="shrink-0 text-muted-foreground-dim transition-colors duration-200 font-mono text-mono-sm pt-0.5 select-none"
@@ -62,9 +77,35 @@ export function Projects() {
                   >
                     {cont} └─
                   </span>
-                  <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200 font-sans text-sm leading-[1.55] line-clamp-2">
-                    {project.description}
-                  </p>
+                  {/* Description and spec sheet share one grid cell, so the row keeps its height
+                      when hover or focus swaps them (opacity only). The spec sheet repeats
+                      /projects fields, so it is hidden from assistive tech. */}
+                  <div className="grid min-w-0 flex-1">
+                    <p className="[grid-area:1/1] text-muted-foreground group-hover:opacity-0 group-focus-visible:opacity-0 transition-opacity duration-200 font-sans text-sm leading-[1.55] line-clamp-2">
+                      {project.description}
+                    </p>
+                    <dl
+                      aria-hidden="true"
+                      className="[grid-area:1/1] m-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200 font-mono text-mono-sm leading-[1.55] text-foreground/80 min-w-0"
+                    >
+                      <div className="truncate">
+                        <dt className={`inline ${SPEC_KEY}`}>STACK</dt>
+                        <dd className="inline m-0">{project.tags.join(" · ")}</dd>
+                      </div>
+                      <div className="truncate">
+                        <dt className={`inline ${SPEC_KEY}`}>PLATFORMS</dt>
+                        <dd className="inline m-0 mr-3">{project.platforms.join(" / ")}</dd>
+                        {repoOf(project.links) && (
+                          <>
+                            <dt className={`inline ${SPEC_KEY}`}>REPO</dt>
+                            <dd className="inline m-0 mr-3">{repoOf(project.links)}</dd>
+                          </>
+                        )}
+                        <dt className={`inline ${SPEC_KEY}`}>MARK</dt>
+                        <dd className="inline m-0">{plateCaption(project.slug ?? project.id)}</dd>
+                      </div>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </a>

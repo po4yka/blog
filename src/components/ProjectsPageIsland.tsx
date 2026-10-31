@@ -9,6 +9,8 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 }
 import { BootBlock, Cmd, Em, Tag, OperatorPanel } from "./Terminal";
 import { Panel } from "./ui/Panel";
+import { Plate } from "./ui/Plate";
+import { plateCaption } from "@/lib/dither";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 
@@ -76,7 +78,9 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
   const release = repoNames(project).map((r) => releases[r]).find((r): r is GitHubProjectRelease => !!r);
 
   return (
-    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20">
+    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-4">
+      <Plate slug={project.slug ?? project.id} size={48} className="hidden sm:block mt-1" />
+      <div className="flex-1 min-w-0">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-baseline gap-3 flex-wrap">
@@ -107,6 +111,10 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
               {project.year}
             </span>
           )}
+          {/* Caption of the plate: it names the seed. */}
+          <span className="hidden sm:inline text-muted-foreground-dim text-label" title="Identity mark seeded by the slug hash">
+            {plateCaption(project.slug ?? project.id)}
+          </span>
         </div>
       </div>
 
@@ -159,6 +167,7 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             </a>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

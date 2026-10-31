@@ -65,6 +65,8 @@ The website must **not** look like a generic AI-generated portfolio.
 
 System-style panels (build stats, GitHub activity, latest post, latest release) are permitted only when they render real data from a build-time file or an API. Simulated metrics (CPU monitors, network graphs, invented CI output, hardcoded process tables or git logs) were removed and must not return; `DESIGN.md` section 10 lists them. If an idea has no real data source, leave the slot empty.
 
+Generative art (rule A8 in `DESIGN.md`) follows the same rule: it is seeded by a real input, its caption names that input, and it never poses as a metric. Project plates are seeded by the slug hash only.
+
 Real-data panels still stay secondary to content (smaller, dimmer, sidebar placement) and count toward the decorative section budget (see Layout guidelines).
 
 ## Always prefer this instead
