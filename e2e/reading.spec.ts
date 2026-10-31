@@ -65,7 +65,7 @@ test.describe("mobile 375", () => {
     await expect(button).toBeVisible();
     // The bar is in the server HTML; its click handler exists once the client:idle island hydrates.
     await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
-    const dialog = page.locator("dialog");
+    const dialog = page.getByRole("dialog", { name: "CONTENTS" });
 
     // The bar does not cover the footer at the end of the page.
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));

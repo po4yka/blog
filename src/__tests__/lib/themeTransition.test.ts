@@ -22,6 +22,7 @@ describe("switchTheme", () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
       documentElement: {
+        dataset: {},
         style: { setProperty: vi.fn(), removeProperty: vi.fn() },
         setAttribute: (k: string) => attrs.add(k),
         removeAttribute: (k: string) => attrs.delete(k),
@@ -43,6 +44,17 @@ describe("switchTheme", () => {
 
     switchTheme("dark");
     expect(startViewTransition).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(["reduced", "off"])("sets the theme directly, with no wipe, when effects are %s", (effects) => {
+    const startViewTransition = vi.fn();
+    state.setTheme.mockClear();
+    vi.stubGlobal("window", { innerWidth: 300, innerHeight: 400, matchMedia: () => ({ matches: false }) });
+    vi.stubGlobal("document", { startViewTransition, documentElement: { dataset: { effects } } });
+
+    switchTheme("dark");
+    expect(startViewTransition).not.toHaveBeenCalled();
+    expect(state.setTheme).toHaveBeenCalledWith("dark");
   });
 });
 
@@ -67,7 +79,7 @@ describe("resolveTheme", () => {
 });
 
 describe("shouldWipe", () => {
-  const base = { reduceMotion: false, osReduceMotion: false, supported: true, from: "light", to: "dark", running: false } as const;
+  const base = { reduceMotion: false, osReduceMotion: false, reducedEffects: false, supported: true, from: "light", to: "dark", running: false } as const;
 
   it("wipes when motion is allowed and the theme changes", () => {
     expect(shouldWipe(base)).toBe(true);
@@ -76,6 +88,7 @@ describe("shouldWipe", () => {
   it.each([
     ["stored reduce flag", { reduceMotion: true }],
     ["OS reduce flag", { osReduceMotion: true }],
+    ["effects reduced or off", { reducedEffects: true }],
     ["no View Transitions API", { supported: false }],
     ["same resolved theme", { to: "light" }],
     ["a wipe already running", { running: true }],

@@ -11,13 +11,17 @@
 
 import type { Element, Root } from "hast";
 
-type Parent = Root | Element;
+interface ParentNode {
+  children?: unknown[];
+}
 
-function walk(node: Parent, fn: (el: Element) => void): void {
-  for (const child of node.children) {
-    if (child.type !== "element") continue;
-    fn(child);
-    walk(child, fn);
+// Descends through every node with children, not only elements: in MDX, content wrapped in a JSX
+// component is an mdxJsxFlowElement/mdxJsxTextElement whose children would otherwise be skipped.
+function walk(node: ParentNode, fn: (el: Element) => void): void {
+  for (const child of node.children ?? []) {
+    const n = child as { type: string } & ParentNode;
+    if (n.type === "element") fn(n as unknown as Element);
+    walk(n, fn);
   }
 }
 
@@ -52,6 +56,22 @@ export function rehypeFootnotes() {
       appendStyle(ref, `anchor-name:--fn-${n}`);
       appendStyle(note, `position-anchor:--fn-${n}`);
     }
+  };
+}
+
+// remark-rehype labels the notes section and each backref in English. Posts under /blog/ru/ get Russian labels.
+export function rehypeFootnoteLabels() {
+  return (tree: Root, file: { path?: string }) => {
+    if (!file.path?.replaceAll("\\", "/").includes("/blog/ru/")) return;
+    walk(tree, (el) => {
+      if (el.tagName === "h2" && el.properties.id === "footnote-label") {
+        for (const child of el.children) if (child.type === "text") child.value = "Сноски";
+      }
+      const label = el.properties.ariaLabel;
+      if (el.tagName === "a" && el.properties.dataFootnoteBackref !== undefined && typeof label === "string") {
+        el.properties.ariaLabel = label.replace(/^Back to reference /, "Назад к ссылке ");
+      }
+    });
   };
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useScrollState } from "@/hooks/useScrollState";
 import { useClientValue } from "@/hooks/useClientValue";
+import { T } from "./ui/T";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { buildMeta } from "@/data/buildMeta";
 import { scrollBehavior } from "@/lib/motion";
@@ -68,7 +69,20 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
   }, []);
+  // The TOC bar hides this wrapper by CSS once it hydrates; close an already open modal so a hidden dialog never leaves the page inert.
+  useEffect(() => {
+    const closeIfToc = () => {
+      const dialog = dialogRef.current;
+      if (dialog?.open && document.querySelector(".mobile-toc-bar")) dialog.close();
+    };
+    closeIfToc();
+    // documentElement, not body: this bar persists across ClientRouter swaps, which replace <body>.
+    const mo = new MutationObserver(closeIfToc);
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+    return () => mo.disconnect();
+  }, []);
   const closeSheet = () => dialogRef.current?.close();
+  const sheetPad = { paddingLeft: "max(1.5rem, env(safe-area-inset-left))", paddingRight: "max(1.5rem, env(safe-area-inset-right))" };
   const sheetRow = "flex min-h-11 items-center justify-between gap-4 border-b border-rule";
   const sheetButton =
     "flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 border-b border-rule text-left text-foreground active:opacity-70";
@@ -105,7 +119,10 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
         <span aria-hidden="true">·</span>
         <span aria-hidden="true">{buildMeta.commitHash}</span>
         <span aria-hidden="true">·</span>
-        <span aria-hidden="true">{themeLabel}</span>
+        {/* Fixed slot: "system" on the server becomes "light (system)" after mount (14ch, the longest label). */}
+        <span aria-hidden="true" className="inline-block text-right" style={{ minWidth: "14ch" }}>
+          {themeLabel}
+        </span>
         <span aria-hidden="true">·</span>
         <span aria-hidden="true">{localeLabel}</span>
         <span aria-hidden="true">·</span>
@@ -141,16 +158,20 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
         ref={barRef}
         type="button"
         aria-haspopup="dialog"
-        aria-label={t("statusline.open")}
         onClick={() => dialogRef.current?.showModal()}
-        className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(2.75rem+env(safe-area-inset-bottom))] cursor-pointer items-start justify-between gap-4 border-t border-rule bg-background px-4 text-muted-foreground-dim label-meta select-none active:opacity-70"
-        style={{ fontVariantNumeric: "tabular-nums" }}
+        className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(2.75rem+env(safe-area-inset-bottom))] cursor-pointer items-start justify-between gap-4 border-t border-rule bg-background px-(--grid-pad) text-muted-foreground-dim label-meta select-none active:opacity-70"
+        style={{
+          fontVariantNumeric: "tabular-nums",
+          paddingLeft: "max(1.5rem, env(safe-area-inset-left))",
+          paddingRight: "max(1.5rem, env(safe-area-inset-right))",
+        }}
       >
         <span className="flex h-11 min-w-0 items-center gap-3">
           <span className="shrink-0 font-medium text-foreground/80">-- {mode} --</span>
           <span className="truncate">{pathLabel(pathname)}</span>
         </span>
         <span className="inline-flex h-11 items-center justify-end" style={{ minWidth: "4ch" }}>{position}</span>
+        <span className="sr-only"><T k="statusline.open" /></span>
       </button>
       <dialog
         ref={dialogRef}
@@ -160,8 +181,8 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
         className="m-0 mt-auto w-full max-w-none max-h-[70vh] overflow-y-auto overscroll-contain rounded-t-[2px] border border-b-0 border-border bg-background p-0 text-foreground backdrop:bg-black/50"
         style={{ boxShadow: "var(--overlay-shadow)" }}
       >
-        <div className="flex items-center justify-between border-b border-rule pl-4">
-          <h2 id="status-sheet-title" className="label-meta m-0 text-muted-foreground-dim">{t("statusline.title")}</h2>
+        <div className="flex items-center justify-between border-b border-rule" style={{ paddingLeft: "max(1.5rem, env(safe-area-inset-left))", paddingRight: "env(safe-area-inset-right)" }}>
+          <h2 id="status-sheet-title" className="label-meta m-0 text-muted-foreground-dim"><T k="statusline.title" /></h2>
           <button
             type="button"
             onClick={closeSheet}
@@ -171,20 +192,21 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
             <X size={16} aria-hidden="true" />
           </button>
         </div>
-        <dl className="m-0 px-4 label-meta">
-          <div className={sheetRow}><dt className="text-muted-foreground-dim">{t("statusline.mode")}</dt><dd className="m-0">{mode}</dd></div>
-          <div className={sheetRow}><dt className="text-muted-foreground-dim">{t("statusline.route")}</dt><dd className="m-0 min-w-0 truncate">{pathLabel(pathname)}</dd></div>
-          <div className={sheetRow}><dt className="text-muted-foreground-dim">{t("settings.theme")}</dt><dd className="m-0">{themeLabel}</dd></div>
-          <div className={sheetRow}><dt className="text-muted-foreground-dim">{t("settings.language")}</dt><dd className="m-0">{localeLabel}</dd></div>
-          <div className={sheetRow}><dt className="text-muted-foreground-dim">{t("statusline.scroll")}</dt><dd className="m-0">{position}</dd></div>
+        <dl className="m-0 label-meta" style={sheetPad}>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="statusline.mode" /></dt><dd className="m-0">{mode}</dd></div>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="statusline.route" /></dt><dd className="m-0 min-w-0 truncate">{pathLabel(pathname)}</dd></div>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="settings.theme" /></dt><dd className="m-0">{themeLabel}</dd></div>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="settings.language" /></dt><dd className="m-0">{localeLabel}</dd></div>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="statusline.scroll" /></dt><dd className="m-0">{position}</dd></div>
+          <div className={sheetRow}><dt className="text-muted-foreground-dim"><T k="statusline.build" /></dt><dd className="m-0">{buildMeta.commitHash}</dd></div>
         </dl>
-        <div className="px-4 pb-[env(safe-area-inset-bottom)] label-meta">
+        <div className="pb-[env(safe-area-inset-bottom)] label-meta" style={sheetPad}>
           <button
             type="button"
             className={sheetButton}
             onClick={() => { closeSheet(); window.dispatchEvent(new CustomEvent(SHORTCUTS_EVENT)); }}
           >
-            <span>{t("shortcuts.title")}</span>
+            <span><T k="shortcuts.title" /></span>
             <kbd className="not-italic">?</kbd>
           </button>
           <button
@@ -192,7 +214,7 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
             className={sheetButton}
             onClick={() => { closeSheet(); window.scrollTo({ top: 0, behavior: scrollBehavior() }); }}
           >
-            <span>{t("blogPost.scrollToTop")}</span>
+            <span><T k="blogPost.scrollToTop" /></span>
             <span aria-hidden="true">gg</span>
           </button>
         </div>

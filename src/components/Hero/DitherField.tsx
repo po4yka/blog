@@ -4,7 +4,7 @@ import { fieldSeed } from "@/data/fieldSeed";
 import { heroField, weeklyDensity, type HeroFieldParams } from "@/lib/dither";
 import { t, type Locale } from "@/lib/i18n";
 
-const CELL = 2; // CSS px per cell: half resolution
+const CELL = 2; // CSS px per cell: half resolution, coarser when the layer would pass MAX_CELLS
 const FRAME_MS = 1000 / 15;
 const MAX_CELLS = 720;
 const WEEKS = fieldSeed.counts.length / 7;
@@ -33,7 +33,9 @@ function caption(lang: Locale) {
  * pushes the dither aside) and a caption row with the pause control. The
  * server renders the poster layer and the caption; the canvas takes over after
  * idle. Effects come from <html> only: data-effects ("reduced" and "off") and
- * data-motion ("reduce"); a still state draws one frame and never loops.
+ * data-motion ("reduce"). Reduced states draw one still frame (name mask, no
+ * pointer) and never loop. saveData and effects "off" never create the canvas
+ * buffers: saveData keeps the poster, off hides the layer.
  */
 export function DitherField() {
   const layerRef = useRef<HTMLDivElement>(null);
@@ -60,6 +62,8 @@ export function DitherField() {
     let pixels: Uint32Array | null = null;
     let ink = 0;
     let step = 0;
+    // CSS px per cell for the current build; CELL unless the layer is larger than MAX_CELLS cells.
+    let cell = CELL;
     let acc = 0;
     let last = 0;
     let raf = 0;
@@ -74,7 +78,9 @@ export function DitherField() {
 
     const effects = () => root.dataset.effects ?? "full";
     const saveData = () => (navigator as Navigator & { connection?: Connection }).connection?.saveData === true;
-    const isLive = () => effects() === "full" && root.dataset.motion !== "reduce" && !saveData();
+    const isLive = () => effects() === "full" && root.dataset.motion !== "reduce";
+    // Off and saveData never allocate or draw the canvas.
+    const canvasWanted = () => effects() !== "off" && !saveData();
 
     // The canvas holds ink as one opaque colour; the CSS opacity does the rest.
     const resolveInk = () => {
@@ -95,7 +101,7 @@ export function DitherField() {
       if (!h1 || !off) return null;
       off.canvas.width = width;
       off.canvas.height = height;
-      off.scale(1 / CELL, 1 / CELL);
+      off.scale(1 / cell, 1 / cell);
       off.fillStyle = "#000";
       const range = document.createRange();
       for (const name of h1.querySelectorAll<HTMLElement>("[data-l]")) {
@@ -127,8 +133,8 @@ export function DitherField() {
     };
 
     const onMove = (e: PointerEvent) => {
-      pointer.x = (e.pageX - pageLeft) / CELL;
-      pointer.y = (e.pageY - pageTop) / CELL;
+      pointer.x = (e.pageX - pageLeft) / cell;
+      pointer.y = (e.pageY - pageTop) / cell;
       hasPointer = true;
     };
     const onEnter = () => {
@@ -164,13 +170,14 @@ export function DitherField() {
     const apply = () => {
       cancelAnimationFrame(raf);
       raf = 0;
-      if (effects() === "off") {
+      if (!canvasWanted()) {
         setPointer(false);
         return;
       }
       const live = isLive();
       zone.dataset.fieldMode = live ? "live" : "still";
-      setPointer(live && fine.matches);
+      // A paused field ignores the pointer, so any redraw while paused (resize, theme) gives the same frame.
+      setPointer(live && fine.matches && !pausedRef.current);
       draw();
       if (live && visible && !document.hidden && !pausedRef.current) {
         last = performance.now();
@@ -183,10 +190,12 @@ export function DitherField() {
     const build = async () => {
       rebuildRaf = 0;
       await document.fonts.ready;
-      if (disposed) return;
+      if (disposed || !canvasWanted()) return;
       const rect = layer.getBoundingClientRect();
-      const width = Math.min(MAX_CELLS, Math.ceil(rect.width / CELL));
-      const height = Math.min(MAX_CELLS, Math.ceil(rect.height / CELL));
+      // Mask and pointer share this cell size, so a layer past MAX_CELLS coarsens the grid instead of stretching it.
+      cell = Math.max(CELL, rect.width / MAX_CELLS, rect.height / MAX_CELLS);
+      const width = Math.ceil(rect.width / cell);
+      const height = Math.ceil(rect.height / cell);
       if (width === 0 || height === 0) return;
       canvas.width = width;
       canvas.height = height;
@@ -210,6 +219,9 @@ export function DitherField() {
       if (root.dataset.locale !== locale) {
         locale = root.dataset.locale;
         rebuild();
+      } else if (!bits && canvasWanted()) {
+        // Effects came back from off: the first build was skipped.
+        rebuild();
       }
       apply();
     });
@@ -224,6 +236,7 @@ export function DitherField() {
     const start = () => {
       if (disposed) return;
       resolveInk();
+      if (saveData()) zone.dataset.fieldMode = "still";
       mutations.observe(root, { attributes: true, attributeFilter: ["class", "data-locale", "data-effects", "data-motion"] });
       intersection.observe(layer);
       resize.observe(layer);
@@ -265,13 +278,15 @@ export function DitherField() {
         <p className="label-meta m-0 text-muted-foreground">
           <span data-l="en">{caption("en")}</span> <span data-l="ru" lang="ru">{caption("ru")}</span>
         </p>
+        {/* One signal for the state: the label names the action (pause or resume), so no aria-pressed.
+            The 44px hit area is a ::after, so the row keeps its one-line height and the box covers nothing else. */}
         <button
           type="button"
           onClick={toggle}
-          aria-pressed={paused}
-          className="hero-field-pause label-meta inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 px-1 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer active:opacity-70"
+          data-paused={paused || undefined}
+          className="hero-field-pause relative label-meta inline-flex items-center justify-center min-w-[12ch] px-2 rounded-[2px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4 data-paused:bg-muted data-paused:text-foreground transition-colors duration-150 cursor-pointer active:opacity-70 after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']"
         >
-          <T k="hero.fieldPause" />
+          <T k={paused ? "hero.fieldResume" : "hero.fieldPause"} />
         </button>
       </div>
     </>

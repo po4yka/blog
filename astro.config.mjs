@@ -13,7 +13,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { blogPosts } from "./src/data/blogData.ts";
 import { transformerNotationDiff, transformerNotationHighlight } from "@shikijs/transformers";
 import { monoDark, monoLight } from "./src/lib/shiki-mono.ts";
-import { rehypeFootnotes, rehypeMathFlag } from "./src/lib/rehype-footnotes.ts";
+import { rehypeFootnoteLabels, rehypeFootnotes, rehypeMathFlag } from "./src/lib/rehype-footnotes.ts";
 import { rehypeCodeCopyLabel, transformerCodeBlock } from "./src/lib/shiki-code-block.ts";
 
 const isAstroDev = process.argv.includes("dev");
@@ -35,6 +35,8 @@ const postLastmod = new Map(
 const autolinkConfig = [
   rehypeAutolinkHeadings,
   {
+    // The sr-only footnotes heading is not a section to link to.
+    test: (node) => node.properties?.id !== "footnote-label",
     behavior: "append",
     properties: { className: ["heading-anchor"], "aria-label": "Permalink to this section" },
     content: {
@@ -65,7 +67,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeMathFlag, rehypeFootnotes, rehypeSlug, autolinkConfig, rehypeCodeCopyLabel],
+      rehypePlugins: [rehypeKatex, rehypeMathFlag, rehypeFootnotes, rehypeFootnoteLabels, rehypeSlug, autolinkConfig, rehypeCodeCopyLabel],
     }),
     // Monochrome syntax highlighting: two greyscale themes emitted as CSS
     // variables (defaultColor: false), so no inline colour or background is

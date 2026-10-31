@@ -75,7 +75,6 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
           dateTime={release.publishedAt}
           title={formatAbsolute(release.publishedAt, locale)}
           className="text-muted-foreground-dim"
-          data-decode
         >
           {relativeTime(release.publishedAt, locale)}
         </time>

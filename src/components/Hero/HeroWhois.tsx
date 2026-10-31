@@ -12,7 +12,7 @@ function Whois({ lang }: { lang: Locale }) {
         rows={[
           {
             label: t(lang, "hero.infoRole"),
-            value: <span data-decode className="text-foreground font-medium">{t(lang, "hero.role")}</span>,
+            value: <span className="text-foreground font-medium">{t(lang, "hero.role")}</span>,
           },
           { label: t(lang, "hero.infoHandle"), value: <Em>@po4yka</Em> },
           {
@@ -32,7 +32,7 @@ function Whois({ lang }: { lang: Locale }) {
           },
           {
             label: t(lang, "hero.infoStatus"),
-            value: <span data-decode className="text-foreground/80">{t(lang, "hero.statusValue")}</span>,
+            value: <span className="text-foreground/80">{t(lang, "hero.statusValue")}</span>,
           },
         ]}
         delay={0.15}

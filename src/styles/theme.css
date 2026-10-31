@@ -223,7 +223,7 @@ kbd {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  /* Fade out toward the meta strip so small dim labels never sit on ink. */
+  /* Fade toward the bottom edge. Contrast does not depend on it: --field-opacity already clears 4.5:1 for every text token. */
   mask-image: linear-gradient(to bottom, #000 55%, transparent 90%);
 }
 
@@ -259,9 +259,15 @@ html[data-effects="off"] .hero-field-row {
   display: none;
 }
 
+/* Hidden until the field is known to be live (no flash under saveData, where the mode is set on idle). */
+.hero-field-pause {
+  visibility: hidden;
+}
+.hero-zone[data-field-mode="live"] .hero-field-pause {
+  visibility: visible;
+}
 html[data-effects="reduced"] .hero-field-pause,
-html[data-motion="reduce"] .hero-field-pause,
-.hero-zone[data-field-mode="still"] .hero-field-pause {
+html[data-motion="reduce"] .hero-field-pause {
   visibility: hidden;
 }
 

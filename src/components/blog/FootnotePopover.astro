@@ -38,6 +38,9 @@
     (event) => {
       const note = event.target as HTMLElement;
       if ((event as ToggleEvent).newState !== "closed" || !note.matches("[data-footnotes] li")) return;
+      // The toggle event is queued, so focus may already have moved on (another reference, a text field): leave it there.
+      const active = document.activeElement;
+      if (active && active !== document.body && !note.contains(active)) return;
       document.querySelector<HTMLElement>(`${refSelector}[href="#${CSS.escape(note.id)}"]`)?.focus({ preventScroll: true });
     },
     true,

@@ -29,20 +29,25 @@ test("the mobile status bar opens a sheet, focus moves in, Esc closes and focus 
 });
 
 test("the mobile status bar gives way to the blog TOC bar", async ({ page }) => {
-  await page.goto("/blog/");
-  const href = await page.locator('a[href^="/blog/"]:not([href="/blog/"])').first().getAttribute("href");
-  await page.goto(href ?? "/blog/");
+  await page.goto("/blog/rag-breaks-earlier-than-people-think/");
   await hydrated(page);
-  if (await page.locator(".mobile-toc-bar").count()) {
-    await expect(page.getByRole("button", { name: "Open status" })).toBeHidden();
-  }
+  await expect(page.locator(".mobile-toc-bar")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open status" })).toBeHidden();
+});
+
+test("a page without a TOC keeps the status bar", async ({ page }) => {
+  await page.goto("/projects/");
+  await hydrated(page);
+  await expect(page.locator(".mobile-toc-bar")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Open status" })).toBeVisible();
 });
 
 test("copying a command announces it in one shared live region", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/");
+  await page.goto("/projects/");
   const cmd = page.locator('[role="button"]:has([data-cmd-text])').first();
-  test.skip((await cmd.count()) === 0, "no Cmd on the home page");
+  await expect(cmd).toHaveCount(1);
+  await expect(cmd.locator("xpath=ancestor::astro-island")).not.toHaveAttribute("ssr", { timeout: 10_000 });
   await cmd.scrollIntoViewIfNeeded();
   await cmd.click();
   await expect(page.locator("#sr-announcer")).toHaveText("Command copied");

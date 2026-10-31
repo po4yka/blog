@@ -13,6 +13,8 @@ const canvasHash = (page: Page) =>
     return h;
   });
 
+const pauseButton = (page: Page) => page.locator(".hero-field-pause");
+
 const setPrefs = (page: Page, state: Record<string, unknown>) =>
   page.addInitScript(
     ([key, value]) => localStorage.setItem(key as string, JSON.stringify({ state: value, version: 4 })),
@@ -32,33 +34,49 @@ test.describe("hero field", () => {
   test("canvas draws and loops, pause stops it by mouse and by keyboard", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".hero-field")).toHaveAttribute("data-field", "live");
-    const pause = page.getByRole("button", { name: "pause field" });
-    await expect(pause).toHaveAttribute("aria-pressed", "false");
+    const pause = pauseButton(page);
+    // One state signal: the label names the action; no aria-pressed.
+    await expect(pause).not.toHaveAttribute("aria-pressed");
+    await expect(pause).toHaveText(/pause field/);
 
     const a = await canvasHash(page);
     await page.waitForTimeout(500);
     expect(await canvasHash(page)).not.toBe(a);
 
     await pause.click();
-    await expect(pause).toHaveAttribute("aria-pressed", "true");
+    await expect(pause).toHaveAttribute("data-paused", "true");
+    await expect(pause).toHaveText(/resume field/);
+    await expect(pause).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     const frozen = await canvasHash(page);
     await page.waitForTimeout(500);
     expect(await canvasHash(page)).toBe(frozen);
 
     await pause.focus();
     await page.keyboard.press("Enter");
-    await expect(pause).toHaveAttribute("aria-pressed", "false");
+    await expect(pause).not.toHaveAttribute("data-paused");
+    await expect(pause).toHaveText(/pause field/);
     await page.waitForTimeout(500);
     expect(await canvasHash(page)).not.toBe(frozen);
   });
 
-  test("pause control is a 44px target on a phone", async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto("/");
-    const box = await page.getByRole("button", { name: "pause field" }).boundingBox();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-    expect(box!.width).toBeGreaterThanOrEqual(44);
-  });
+  for (const width of [375, 1280]) {
+    test(`pause control is a 44px target at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/");
+      await expect(page.locator(".hero-field")).toHaveAttribute("data-field", "live");
+      const pause = pauseButton(page);
+      await expect(pause).toBeVisible();
+      const box = (await pause.boundingBox())!;
+      expect(box.width).toBeGreaterThanOrEqual(44);
+      // The 44px height comes from a ::after hit area, so points 20px above and below the label still hit the button.
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      for (const dy of [-20, 20]) {
+        const hit = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest(".hero-field-pause") !== null, [cx, cy + dy]);
+        expect(hit, `${dy}px from the centre`).toBe(true);
+      }
+    });
+  }
 
   test("does not loop under stored reduced motion, and the control is hidden", async ({ page }) => {
     await setPrefs(page, { reduceMotion: true });
@@ -68,7 +86,7 @@ test.describe("hero field", () => {
     const a = await canvasHash(page);
     await page.waitForTimeout(500);
     expect(await canvasHash(page)).toBe(a);
-    await expect(page.getByRole("button", { name: "pause field" })).toBeHidden();
+    await expect(pauseButton(page)).toBeHidden();
   });
 
   test("effects reduced draws one still frame", async ({ page }) => {
@@ -81,9 +99,23 @@ test.describe("hero field", () => {
     expect(await canvasHash(page)).toBe(a);
   });
 
+  test("saveData keeps the poster and never creates the canvas", async ({ page }) => {
+    await page.addInitScript(() => Object.defineProperty(navigator, "connection", { value: { saveData: true } }));
+    await page.goto("/");
+    await expect(page.locator(".hero-field-poster")).toBeVisible();
+    await expect(page.locator(".hero-zone")).toHaveAttribute("data-field-mode", "still");
+    await page.waitForTimeout(500);
+    await expect(page.locator(".hero-field")).not.toHaveAttribute("data-field", "live");
+    // A canvas that was never sized keeps the 300x150 default.
+    expect(await page.locator(".hero-field canvas").evaluate((c: HTMLCanvasElement) => c.width)).toBe(300);
+    await expect(pauseButton(page)).toBeHidden();
+  });
+
   test("effects off removes the field, the poster and the caption row", async ({ page }) => {
     await setPrefs(page, { effects: "off" });
     await page.goto("/");
+    await page.waitForTimeout(500);
+    expect(await page.locator(".hero-field canvas").evaluate((c: HTMLCanvasElement) => c.width)).toBe(300);
     await expect(page.locator(".hero-field")).toBeHidden();
     await expect(page.locator(".hero-field-poster")).toBeHidden();
     await expect(page.locator(".hero-field-row")).toBeHidden();
@@ -92,6 +124,7 @@ test.describe("hero field", () => {
 
   test("the effects setting changes from Settings and persists", async ({ page }) => {
     await page.goto("/settings");
+    await expect(page.locator('astro-island[component-url*="SettingsIsland"]')).not.toHaveAttribute("ssr", { timeout: 10_000 });
     const group = page.getByRole("group", { name: "effects" });
     await group.getByRole("button", { name: "off" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-effects", "off");
@@ -113,7 +146,10 @@ test.describe("hero field", () => {
   test("a paused field ignores the pointer", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".hero-field")).toHaveAttribute("data-field", "live");
-    await page.getByRole("button", { name: "pause field" }).click();
+    await pauseButton(page).click();
+    await expect(pauseButton(page)).toHaveAttribute("data-paused", "true");
+    // A frame already queued when the click landed may still draw once.
+    await page.waitForTimeout(150);
     const box = (await page.locator(".hero-field").boundingBox())!;
     const still = await canvasHash(page);
     await page.mouse.move(box.x + 200, box.y + 150);

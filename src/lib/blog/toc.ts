@@ -6,7 +6,7 @@ export type TocGroup = { item: TocItem; children: TocItem[] };
 /** Astro `render()` headings to TOC items: depth 2 and 3 only, without the trailing "#" of the appended permalink anchor. */
 export function tocFromHeadings(headings: { depth: number; slug: string; text: string }[]): TocItem[] {
   return headings
-    .filter((h) => h.depth === 2 || h.depth === 3)
+    .filter((h) => (h.depth === 2 || h.depth === 3) && h.slug !== "footnote-label")
     .map((h) => ({ id: h.slug, text: h.text.trim().replace(/\s*#$/, ""), level: h.depth as 2 | 3 }));
 }
 
