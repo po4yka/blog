@@ -81,3 +81,50 @@ test("the fade is wired: @starting-style is loaded and reveals transition opacit
   expect(transition.property).toContain("opacity");
   expect(transition.duration).toBeGreaterThan(0);
 });
+
+// Rules (.rule-draw) draw as they scroll into view where scroll timelines exist (src/styles/scroll.css)
+// and on load elsewhere. Either way the end state is the full rule.
+// A drawn rule is an inset with a zero right edge (Chromium serialises it as "inset(0px 0% 0px 0px)").
+// `none` is not accepted: every rule-draw ends with fill-mode both, so `none` means no draw ran at all.
+const DRAWN = /^inset\(0px( 0(px|%) 0px 0px)?\)$/;
+
+test.describe("scroll-drawn rules", () => {
+  for (const path of ["/", "/blog/rag-breaks-earlier-than-people-think/"]) {
+    test(`every rule on ${path} is fully drawn once scrolled to`, async ({ page }) => {
+      await page.goto(path);
+      const rules = page.locator(".rule-draw");
+      const count = await rules.count();
+      expect(count).toBeGreaterThan(0);
+      for (let i = 0; i < count; i++) {
+        await rules.nth(i).evaluate((el) => el.scrollIntoView({ block: "center" }));
+        await page.waitForTimeout(700);
+        const clip = await rules.nth(i).evaluate((el) => getComputedStyle(el).clipPath);
+        expect(clip, `rule ${i} on ${path}`).toMatch(DRAWN);
+      }
+    });
+  }
+
+  test("a section rule below the fold waits for scroll in Chromium", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "scroll timeline check is Chromium-specific");
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    const rule = page.locator(".rule-scroll").last();
+    expect(await rule.evaluate((el) => getComputedStyle(el).animationTimeline)).toBe("--section-rule");
+    // Far below the fold the header has not entered its range, so the rule is still clipped.
+    expect(await rule.evaluate((el) => getComputedStyle(el).clipPath)).toContain("100%");
+    await rule.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await expect.poll(() => rule.evaluate((el) => getComputedStyle(el).clipPath)).toMatch(DRAWN);
+  });
+
+  test.describe("under reduced motion", () => {
+    test.use({ reducedMotion: "reduce" });
+
+    test("does not use the scroll timeline", async ({ page, browserName }) => {
+      test.skip(browserName !== "chromium", "scroll timeline check is Chromium-specific");
+      await page.goto("/");
+      const rule = page.locator(".rule-scroll").last();
+      expect(await rule.evaluate((el) => getComputedStyle(el).animationTimeline)).not.toBe("--section-rule");
+      expect(await rule.evaluate((el) => getComputedStyle(el).clipPath)).toMatch(DRAWN);
+    });
+  });
+});

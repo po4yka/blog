@@ -13,9 +13,10 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 - No chromatic accent. Emphasis = `--emphasis` (pure white dark / pure black light) + weight + underline
 - Geist Sans as the primary type voice; Geist Mono for code and operator labels only; **Piazzolla** (variable serif) exclusively for `.prose-blog` long-form reading
 - Flat operator panels: `1px solid var(--border)`, `2px border-radius`, no shadow, no window chrome
-- Numbered section system: every section opens with `SectionHeader` — `01 / IDENTITY`, `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING`, `07 / WRITING` (blog index), `09 / SETTINGS`, `!! / NOT FOUND`
+- Numbered section system: every section except the hero opens with `SectionHeader` — `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING` (blog preview), `07 / WRITING` (blog index), `08 / CHANGELOG`, `09 / SETTINGS`, `10 / PRIVACY`, `!! / NOT FOUND`. The hero panel carries `01 / IDENTITY`
 - Hairline rules as structural dividers — `var(--rule)` token
-- Near-zero decorative motion: fade-in stagger on mount, opacity shift on hover, nothing else
+- 12-column grid with faint column guides and registration marks on wide screens (see "Grid guides and registration marks" in section 5)
+- Restrained motion that carries state: fade-in on mount, rules and frames that draw on, opacity shift on hover (rule A1, section 9)
 - Terminal output uses real mobile dev tool patterns: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
 
 ---
@@ -39,7 +40,8 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--code-bg` | `#16161a` | Code block backgrounds |
 | `--destructive` | `#e8634b` | Destructive actions + invalid-form flash only |
 | `--panel-bg` | `rgba(20,20,22,0.65)` | Translucent panel background (sidebar widgets) |
-| `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop (with blur) |
+| `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
+| `--nav-glass-subtle` | `rgba(11,11,12,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 16px 48px rgba(0,0,0,0.5)` | Floating overlays only (dialogs, dropdowns) |
 
 ### Light Theme (warm paper + ink)
@@ -59,7 +61,8 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--code-bg` | `#eeebe4` | Code block backgrounds |
 | `--destructive` | `#b83a28` | Destructive actions + invalid-form flash only |
 | `--panel-bg` | `rgba(255,255,255,0.70)` | Translucent panel background |
-| `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop |
+| `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
+| `--nav-glass-subtle` | `rgba(245,243,238,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 12px 32px rgba(16,16,18,0.18)` | Floating overlays only (dialogs, dropdowns) |
 
 ### Emphasis Rule
@@ -90,7 +93,7 @@ The full stacks are defined once, in the `@theme static` block of `src/styles/ta
 - **`--font-sans`** — headings (including inside blog prose), navigation, labels, button text, UI copy, site chrome
 - **`--font-mono`** — code blocks, terminal output (`Cmd`, `BootBlock`, `InfoTable`), `.label-meta` metadata strips. Code blocks are syntax-highlighted in monochrome only (`src/lib/shiki-mono.ts`): keywords at `--emphasis` weight 500, identifiers at `--foreground`, strings at `--muted-foreground`, comments at `--muted-foreground-dim` italic. Never introduce a chromatic Shiki theme
   - Exception: the single-line role subtitle directly beneath the hero `display-1` name may use `--font-mono` (`text-mono-lg`). It's load-bearing terminal voice — not body copy — and rendering it in sans dilutes the identity. Cap at one line. No other prose surface uses mono.
-- **`--font-pixel`** — decorative counters and numbered section prefixes only; maximum 6 uses per page
+- **`--font-pixel`** — rule A10: decorative counters only, never body text or labels. There is no cap on the number of uses per page
 - **`--font-serif`** — blog post body prose only (`.prose-blog` block-level text). Variable wght 100–900. Latin + Latin-Ext + Cyrillic + Cyrillic-Ext subsets self-hosted in `public/fonts/piazzolla-*.woff2`. Never ship on non-post surfaces.
 
 Fira Code is an optional fallback in the mono stack for code blocks where programming ligatures help. Do not ship it unless ligatures are intentionally enabled.
@@ -180,8 +183,9 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - New shared component at `src/components/SectionHeader.tsx`
 - Row 1: `.label-meta` left (`04 / PROJECTS`) + right (`8 RECORDS · 2025–26`)
 - Row 2: `<h2>` at 20px Geist Sans — visible, not `sr-only`
-- Row 3: `border-bottom: 1px solid var(--rule)`
-- Applied to every home section and primary page header
+- Row 3: `border-bottom: 1px solid var(--rule)`. The rule draws as the header scrolls into view where scroll timelines exist, and on load otherwise (rule A2)
+- `marks` prop (default `true`) puts a registration mark on each end of the rule (see "Grid guides and registration marks" in section 5). Set `marks={false}` on narrow or nested headers, for example in `NotFoundIsland` and `PrivacyPageIsland`
+- Applied to every home section except the hero, and to every primary page header
 
 **Error flash** (`form-flash` keyframe — for invalid form feedback)
 - One-shot `@keyframes form-flash { from { outline-color: var(--destructive); } to { outline-color: transparent; } }`
@@ -213,6 +217,7 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 
 **Press feedback (all button variants)**
 - Use Tailwind `active:opacity-70` for click / tap feedback — a brief 30 % dim on press
+- Rule A3: hover and tap states may change opacity, background, underline and outline. They never change width, height, margin, position or scale
 - Do NOT use `whileTap={{ scale: 0.9N }}` / `rotate: ±180` / spring bounce — these are AI-slop tells
 - Do NOT use `animation: "pulse-scale …"` on status dots — keep ambient dots static
 
@@ -220,10 +225,11 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Navigation
 
-- Sticky nav: `var(--background)` with `border-bottom: 1px solid var(--border)`
+- Sticky nav (`src/components/Nav.tsx`): `var(--nav-glass-subtle)` at the top of the page. After the page scrolls it changes to `var(--nav-glass)` and adds `backdrop-blur-sm` (rule A7). The bottom line is `1px solid var(--rule)`
+- Rule A7: this nav blur is the single allowed backdrop blur on the public site. The admin SPA has its own `backdrop-blur-sm` on its mobile top bar (`src/admin/components/AdminLayout.tsx`). No other surface uses blur
 - Links: Geist Sans 14px, `var(--foreground)` at `/60`
 - Active link: `var(--emphasis)` weight 500 with 1px underline rule — no color jump
-- Mobile: overlay with `var(--background)` fill
+- Mobile: overlay with `var(--mobile-menu-bg)` fill and a `var(--rule)` top line
 
 ### Tags / Platform Badges
 
@@ -244,10 +250,10 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ## 5. Layout Principles
 
-- **Max content width:** `--grid-max` (1160px) in `src/styles/tokens.css`, used by the page shell, nav and footer
-- **Grid:** 12-column CSS grid (`.page-grid`), `gap: var(--grid-gap)` (1.5rem), `padding: 0 clamp(1.25rem, 2vw + 0.5rem, 3rem)`
+- **Max content width:** `--grid-max` (1240px) in `src/styles/tokens.css`, used by the page shell, nav and footer
+- **Grid:** 12-column CSS grid primitive (`.page-grid` in `src/styles/theme.css`): `grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr))` and `gap: var(--grid-gap)` (1.5rem). It has no padding. The page gutter is `--grid-pad` on the page shell (`MainLayout` `<main>`, `Nav`, `Footer`, `StatusLine`): 1.5rem, 2.5rem from 768px and 3rem from 1024px
 - **Base radius:** `2px` — sharp, Swiss-derived; no soft rounded corners on panels
-- **Decorative section budget:** Maximum 6–8 atmospheric blocks on the homepage, each backed by real data (see section 10). Each must relate to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint). Never stack two without a content section between them.
+- **Atmosphere (rule A11):** one signature per viewport, never two decorative blocks adjacent. Each decorative block is backed by real data (see section 10) and relates to a real mobile dev tool (adb, gradle, xcode, fastlane, git, ktlint). There is no fixed count of decorative blocks per page.
 - **Asymmetric over symmetric:** editorial, off-center compositions. Vary section layout while keeping the same design language.
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
@@ -269,6 +275,34 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Full-width background fills on every section
 - Atmospheric blocks hidden behind primary content
 
+### Grid guides and registration marks
+
+The page shows its 12-column grid as faint vertical hairlines (guides) and a small crosshair (registration mark) on each end of a `SectionHeader` rule. Styles are in `src/styles/grid.css`. Both are decoration only.
+
+**Tokens** (`src/styles/tokens.css`, "Layout grid" block)
+- `--grid-max`: 1240px
+- `--grid-cols`: 12
+- `--grid-gap`: 1.5rem. It equals the `gap-6` of the 12-column grid on `/projects`, so its columns line up with the guides
+- `--grid-pad`: the page gutter, 1.5rem, 2.5rem from 768px, 3rem from 1024px
+- `--grid-line`: `color-mix(in oklab, var(--border) 55%, transparent)`, the guide colour in both themes
+- `--mark-size`: 7px
+
+**Guides.** `MainLayout.astro` renders a `.grid-guides` layer before `<main>`: `position: fixed`, `inset: 0`, `z-index: -1`, `pointer-events: none`, `aria-hidden="true"`, with 12 empty `<span>` elements in a `.page-grid`. It is plain markup with no island and no JavaScript. Its content box equals the content box of `<main>`, so the first and last guide sit on the panel edges. The layer paints above the page background and below every panel, so panels hide the lines and transparent sections show them.
+
+**Marks.** A `SectionHeader` with `marks` (default `true`) gets the `.reg-marks` class. Two 7px crosshairs (`::before` and `::after`, `--muted-foreground-dim`) sit on the bottom corners of the header, centred on the outer guides. `marks={false}` turns them off for narrow or nested headers.
+
+**When shown.** Guides and marks show only from 1024px (`lg`), where the 12 columns exist. Below 1024px the layouts have one column and a line would cross running text.
+
+**Toggle.** The Settings page has a "grid guides" setting (`gridGuides`, default on). `ThemeScript.astro` sets `data-grid="off"` on `<html>` before first paint when the visitor turns it off, and `settingsStore` keeps the attribute in sync. Under `html[data-grid="off"]` both guides and marks are hidden.
+
+**Print and forced colors.** Guides and marks are hidden in `@media print` and in `@media (forced-colors: active)`. The hiding is on purpose: in those modes the lines add noise and no meaning.
+
+**Hero exception (rule A11).** The hero does not use `SectionHeader`, so the hero panel has no marks. The first marks are on the About header below it, which shows in the first viewport only on tall screens.
+
+**Guides and marks are the baseline (rule A11).** They are the page grid, not a signature: they do not count toward the one signature per viewport, and a signature (for example the hero field) sits on top of them.
+
+**Alignment rule.** Full-width panels and the 12-column grid on `/projects` sit on the guides. A new layout uses the same gutter (`--grid-pad`), the same gap (`--grid-gap`) and column spans of the `.page-grid`. Do not add a second grid with other values.
+
 ---
 
 ## 6. Depth & Elevation
@@ -280,7 +314,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 | Page canvas | `var(--background)` — no shadow, no border |
 | Operator panel (`OperatorPanel`) | `Panel`: `var(--card)` + `1px solid var(--border)` |
 | PanelShell widget | `Panel tone="translucent"`: `var(--panel-bg)` + `1px solid var(--border)` |
-| Sticky nav | `var(--background)` + `border-bottom: 1px solid var(--border)` |
+| Sticky nav | `var(--nav-glass-subtle)`, then `var(--nav-glass)` + blur after scroll (rule A7), with `border-bottom: 1px solid var(--rule)` |
 | Nested containers | `var(--muted)` — no shadow |
 | Loading indicators | `[LOADING...]` bracket cycle (`.loading-bracket`) — static mono text, no skeleton shimmer |
 
@@ -297,28 +331,28 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
 - Hide excess decoration on mobile (`hidden sm:block`) to keep content scannable
 - Use underline-on-hover via `clip-path` animation — not color jumps
-- Respect reduced motion — `<html data-motion="reduce">` is set before paint when the OS asks for it or the visitor turns motion off in Settings; `tokens.css` cuts CSS animations and transitions under it, and Motion animations check it through `MotionProvider`
+- Respect reduced motion — `<html data-motion="reduce">` is set before paint when the OS asks for it or the visitor turns motion off in Settings; `tokens.css` cuts CSS animations and transitions under it, and Motion animations follow the same setting because `MotionProvider` reads the settings store (not the attribute)
 - Use tree-branch unicode (`├──` `└──` `│`) inside panel list content for terminal density
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
-- Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and section number prefixes
+- Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent
 - No gradient backgrounds or buttons
 - No drop shadows on flat panels or cards
-- No glassmorphism on any surface
+- No glassmorphism on any surface. The one backdrop blur is the nav blur (rule A7, plus the admin top bar)
 - No pill-shaped buttons or container radii beyond 2px
 - No generic SaaS card grids
 - No fake metrics or KPI cards presented as real data — if there is no real data source, do not render the widget
 - No Matrix/hacker aesthetic — no green-on-black, no code rain, no CRT bezels
 - No phosphor glow, no scanlines, no cursor-glow, no parallax, no mouse-follow
-- No more than 6–8 atmospheric sections on a single page
+- No more than one decorative signature per viewport (rule A11)
 - No stacking two decorative blocks back-to-back
 - No ASCII art illustrations — box-drawing characters for structure are fine; character art is not
 - No `--font-mono` for body text or headings — monospace is demoted to code and operator labels only
-- No `whileTap={{ scale }}` / `whileTap={{ rotate }}` — bounce-on-press is an AI tell; use `active:opacity-70`
-- No `whileHover={{ y }}` / `whileHover={{ scale }}` / `whileHover={{ rotate }}` — hover feedback is colour / underline / background only
+- No `whileTap={{ scale }}` / `whileTap={{ rotate }}` — bounce-on-press is an AI tell; use `active:opacity-70` (rule A3)
+- No hover or tap state that changes width, height, margin, position or scale (`whileHover` and `whileTap` included) — hover feedback is opacity, background, underline and outline only (rule A3)
 - No `animation: "pulse-scale …"` on status dots or anywhere else — status dots stay static
 - No legacy tokens: `--accent`, `--accent-N`, `--phosphor-glow`, `--titlebar*`, `--window-shadow*`, `--dot-dim`, `--signal-*` were all deleted — do not re-introduce them
 - No `text-accent` / `bg-accent` / `hover:text-accent` classes — use `text-foreground font-medium` / `bg-muted` / `hover:underline` instead
@@ -351,27 +385,32 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 Stack: Astro 7 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
 Primary font: Geist Sans (all UI + headings, including h2/h3/h4 inside blog prose)
 Mono font: Geist Mono (code, terminal output, label-meta strips)
-Pixel font: Geist Pixel (decorative counters only, ≤6 uses/page)
+Pixel font: Geist Pixel (decorative counters only, never body or labels)
 Serif font: Piazzolla (blog post body prose only — .prose-blog block text)
 Dark bg: #0b0b0c | Card: #141416 | Emphasis: #ffffff
 Light bg: #f5f3ee | Card: #fefefc  | Emphasis: #000000
 Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.16) light
 Rule:   rgba(233,232,228,0.14) dark | rgba(16,16,18,0.20) light
 Radius: 2px base | Body: 15–17px Geist Sans | label-meta: 11px Geist Mono caps
-Grid: 12-column, max-width 1160px
+Grid: 12-column, max-width 1240px
 ```
 
 ### Section number convention
 
-Every home section and primary page header uses `<SectionHeader>`:
+Every home section except the hero, and every primary page header, uses `<SectionHeader>`. The hero panel is an `OperatorPanel` with number `01`:
 
 ```
-01 / IDENTITY    — Hero
+01 / IDENTITY    — Hero (OperatorPanel, not SectionHeader)
 02 / ABOUT       — About
 03 / CONTACT     — Links
 04 / PROJECTS    — Projects
 05 / EXPERIENCE  — Experience
-06 / WRITING     — Blog preview / blog index
+06 / WRITING     — Blog preview (home)
+07 / WRITING     — Blog index
+08 / CHANGELOG   — Changelog
+09 / SETTINGS    — Settings
+10 / PRIVACY     — Privacy
+!! / NOT FOUND   — 404
 ```
 
 ### Operator panel prompts
@@ -419,8 +458,20 @@ Row separator: border-bottom 1px dashed var(--rule).
 
 Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-instant` 80ms, `--dur-fast` 150ms, `--dur-base` 240ms, `--dur-slow` 420ms, `--dur-scene` 700ms; `--ease-out`, `--ease-in-out`, `--ease-step-8`, `--ease-step-24`. `src/lib/motion.ts` mirrors them for Motion (`duration`, `ease`), and a unit test keeps the two in sync. Use a token, not a raw number, in new code.
 
+**Rule A1. Motion classes.** Motion is allowed when it carries state. These are the only permitted classes today:
+- Enter reveals: opacity fade on first render (`Reveal`)
+- Draw-ons for rules, frames and SVG paths
+- Scroll-linked progress and reveals, under rule A2
+- Hover, press and focus feedback, under rule A3
+
+Existing state feedback stays as it is (menu open, form flash, the terminal caret blink and the loading cycle). It is not a new class, and no new loop may use it. All other motion stays banned. A later phase adds a class (page transitions, text decode, chart transitions, the hero field) only with its own amendment in the PR that first uses it.
+
+**Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
+
+**Rule A3. Hover and tap.** Hover, press and focus states (CSS or `whileHover` and `whileTap`) may change opacity, background, underline and outline. They never change width, height, margin, position or scale.
+
 Permitted:
-- Fade-in stagger on mount (signals list structure, 120–150ms per item) through `Reveal`: an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel. Below-the-fold content fades at load too, before the visitor reaches it; a scroll-linked reveal is a later phase
+- Fade-in stagger on mount (signals list structure, 120–150ms per item) through `Reveal`: an `@starting-style` opacity fade on first render at `--dur-fast`, `--dur-base` or `--dur-slow`, no travel
 - Opacity shift on hover (100ms, no color change)
 - Underline clip-path animation on links (300ms ease)
 - `active:opacity-70` on button press (CSS `:active` pseudo, not Motion whileTap)
@@ -428,7 +479,7 @@ Permitted:
 - Mobile menu height/opacity `AnimatePresence` (functional state change)
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
-- `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe; SectionHeader plays it once on scroll-into-view, panels play it on first render after their Reveal delay, nav replays on route change)
+- `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe). The SectionHeader rule draws as the header scrolls into view where scroll timelines exist (rule A2), and on load otherwise. Panel rules always draw on load, after their Reveal delay. The nav underline replays on route change
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
 Not permitted:
@@ -436,7 +487,7 @@ Not permitted:
 - Color jumps or accent flash on hover
 - Blob physics, floating elements, intro animations
 - `whileTap` scale / rotate / translate — use `active:opacity-70`
-- `whileHover` scale / y-shift / rotate — stick to opacity / background / underline
+- `whileHover` or `:hover` that changes width, height, margin, position or scale (rule A3) — stick to opacity / background / underline / outline
 - Pulse / breathe loops on dots, panels, or atmospheric widgets
 - Any keyframe named `shake`, `wobble`, `bounce`, `jiggle`, `float`, `pulse-scale` — hard banned
 
@@ -466,11 +517,11 @@ Before finalizing any UI output, verify:
 - [ ] Terminal output contains real mobile dev tool names
 - [ ] WCAG AA contrast on all functional text
 - [ ] Reduced motion respected on all animations
-- [ ] Atmospheric terminal blocks do not exceed 6–8 on a single page
+- [ ] One decorative signature per viewport; no two decorative blocks adjacent (rule A11)
 - [ ] Mobile layout is intentionally designed, not a collapsed desktop
 - [ ] Press feedback via `active:opacity-70`, not `whileTap` scale/rotate
 - [ ] Status dots, online indicators, traffic-light analogues: static — no pulse loops
-- [ ] No `whileHover` that mutates geometry (y, x, scale, rotate)
+- [ ] No hover or tap state that changes width, height, margin, position or scale (rule A3)
 - [ ] If the widget has no real data source, it does not exist
 
 ---

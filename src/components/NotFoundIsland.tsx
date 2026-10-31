@@ -20,6 +20,7 @@ export function NotFound() {
             label="NOT FOUND"
             heading={t("notFound.windowTitle")}
             className="pb-0"
+            marks={false}
           />
         </div>
 

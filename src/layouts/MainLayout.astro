@@ -79,12 +79,15 @@ const { nonce } = Astro.locals;
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-[2px] focus:outline focus:outline-2 focus:outline-offset-2" style="outline-color: var(--emphasis)">
       Skip to main content
     </a>
-    <div class="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div class="isolate min-h-screen bg-background text-foreground transition-colors duration-300">
+      <div class="grid-guides" aria-hidden="true">
+        <div class="page-grid"><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /></div>
+      </div>
       <Nav client:idle pathname={pathname} lang={lang} translationSlug={translationSlug} transition:persist />
       <main
         id="main-content"
         tabindex="-1"
-        class="max-w-(--grid-max) mx-auto px-6 md:px-10 lg:px-12 pt-16 pb-20"
+        class="max-w-(--grid-max) mx-auto px-(--grid-pad) pt-16 pb-20"
         transition:animate={fade({ duration: '0.2s' })}
       >
         <slot />

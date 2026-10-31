@@ -27,11 +27,12 @@ The site should not feel corporate, over-marketed, gimmicky, or visually overdes
 - Every section should have a clear purpose.
 - Use **responsive layouts** by default.
 - Prefer **grid and flex layouts** over unnecessary absolute positioning.
+- On screens 1024px and wider the page shows its 12-column grid as faint guides, with registration marks on the ends of section rules, and a Settings toggle turns them off. The hero panel has no marks. Guides and marks are the page grid, not a signature, so they do not count toward one signature per viewport. Full-width panels and the 12-column grid on `/projects` sit on the guides (see "Grid guides and registration marks" in `DESIGN.md`).
 - Keep the structure modular and reusable.
 - Keep code and layout clean and easy to extend.
 - Use a small number of reusable components with consistent spacing and behavior.
 - Avoid adding sections just to “fill” the page. Decorative terminal blocks serve as rhythm dividers, not standalone content.
-- **Decorative section budget:** Maximum 6-8 terminal-styled blocks on the homepage. Each must show real data or real tool output (never invented logs, counts, or metrics) and relate to mobile engineering tools. Quality over quantity.
+- **Atmosphere (rule A11 in `DESIGN.md`):** one signature per viewport, never two decorative blocks adjacent. Each decorative block must show real data or real tool output (never invented logs, counts, or metrics) and relate to mobile engineering tools. Quality over quantity.
 - Avoid fake product UI, fake metrics presented as real data, fake testimonials, or meaningless visual fillers. Every operator panel must show real data (see `DESIGN.md` section 10).
 - Do not generate generic startup copy or vague marketing language.
 - Prefer fewer, better-designed elements over many average ones.
@@ -50,7 +51,7 @@ The website must **not** look like a generic AI-generated portfolio.
 - no cliche “building digital experiences” copy
 - no meaningless KPI cards presented as real data
 - no generic SaaS landing page sections
-- no overuse of glassmorphism
+- no glassmorphism; the nav blur is the single allowed backdrop blur on the public site (rule A7 in `DESIGN.md`; the admin has its own on its mobile top bar)
 - no excessive glow or neon styling
 - no giant soft pill radii everywhere
 - no random floating chips and decorative tags
@@ -119,7 +120,7 @@ The visual language combines:
 - neutral greyscale palette — dark graphite (`#0b0b0c`) / warm paper (`#f5f3ee`)
 - numbered section labels (`01 / IDENTITY`, `04 / PROJECTS`) with hairline dividers
 - calm whitespace between operator panels
-- near-zero decorative motion; fade-in on mount and opacity shift on hover only
+- restrained motion that carries state: fade-in on mount, rules that draw on (also while scrolling into view), opacity shift on hover
 - real-data operator panels (build, activity, latest post, latest release) that reinforce the workstation feel
 
 The terminal metaphor must stay grounded and credible:
@@ -191,7 +192,7 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 - too much center alignment
 - excessive symmetry
 - template-looking feature grids
-- more than 6-8 decorative sections on a single page
+- more than one decorative signature in a single viewport
 - stacking decorative blocks without content sections between them
 
 ---
@@ -204,7 +205,7 @@ Typography should carry the design.
 - **Piazzolla** (`--font-serif`) is reserved for the blog: body prose plus the post title and blog-index titles (`.display-serif`) — a variable-weight high-contrast serif with native Cyrillic. It gives long-form reading surfaces editorial warmth while site chrome stays geometric.
 - **Geist Mono** (`--font-mono`) is demoted to code blocks, terminal output components (`Cmd`, `BootBlock`, `InfoTable`), and `.label-meta` metadata strips.
   - Exception: the single-line role subtitle directly beneath the hero name may render in Geist Mono (`text-mono-lg`). Anchors the terminal voice on first paint. One line max; no other prose surface uses mono.
-- **Geist Pixel** (`--font-pixel`) is reserved for decorative numbered section prefixes only — maximum 6 uses per page.
+- **Geist Pixel** (`--font-pixel`) is for decorative counters only, never body text or labels (rule A10 in `DESIGN.md`). There is no cap on uses per page.
 - Create a clear type hierarchy using **weight** (400→500), **opacity**, and **size** -- not font switching between families.
 - Headings should feel deliberate and confident; use `display-1` / `display-2` at display sizes with negative tracking.
 - Body prose (blog posts) uses Piazzolla (`--font-serif`) at 17px, line-height 1.7, `letter-spacing: 0`, max-width 46rem (~70ch). Headings *inside* the prose stay in Geist Sans so they match the TOC and the rest of the site.
@@ -506,11 +507,13 @@ Motion should add:
 - subtle reveal on first load
 - staggered text entrances
 - underline or line-draw hover interactions
-- smooth project hover transitions
-- animated dividers or separators
-- elegant section transitions
+- hover transitions that change only opacity, background, underline or outline (rule A3: never width, height, margin, position or scale)
+- dividers and rules that draw on, including a rule that draws as its section scrolls into view
 - refined blog list hover behavior
-- gentle motion on hero artifact or visual support
+
+Only these motion classes are allowed today (rule A1 in `DESIGN.md`): enter reveals, draw-ons for rules, frames and SVG paths, scroll-linked progress and reveals, and hover or press feedback under rule A3.
+
+Scroll effects (rule A2) use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `prefers-reduced-motion: no-preference`. The default state is the finished, visible state.
 
 ## Terminal-specific motion
 
@@ -529,7 +532,8 @@ Motion should add:
 
 ## Avoid
 
-- scroll-jacking
+- scroll-jacking and smooth-scroll libraries
+- content that waits at opacity 0 for a scroll position
 - dramatic cinematic intros
 - floating blobs
 - noisy particles

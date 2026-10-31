@@ -29,8 +29,18 @@
   --step-5: clamp(2.5rem, 1.6rem + 3.5vw, 4rem);            /* display-1 */
 
   /* Layout grid */
-  --grid-max: 1160px;
-  --grid-gap: 1.5rem;
+  --grid-max: 1240px;
+  --grid-gap: 1.5rem;   /* equals gap-6, the gap of the /projects 12-column grid */
+  --grid-cols: 12;
+  --grid-pad: 1.5rem;   /* page gutter, same steps as px-6 md:px-10 lg:px-12 */
+  --grid-line: color-mix(in oklab, var(--border) 55%, transparent);
+  --mark-size: 7px;
+}
+@media (min-width: 768px) {
+  :root { --grid-pad: 2.5rem; }
+}
+@media (min-width: 1024px) {
+  :root { --grid-pad: 3rem; }
 }
 
 /* ─── Reduced motion ──────────────────────────────────────────────

@@ -1,0 +1,38 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Scroll-linked rules (DESIGN.md A2). theme.css draws .rule-draw on load;
+   that stays the fallback, and it is the only draw for rules inside panels.
+   Where scroll timelines exist, motion is allowed and the visitor has not
+   turned it off, a SectionHeader rule (.rule-scroll) draws as its header
+   scrolls into view instead. The rule finishes over the first 48px of scroll
+   after its header is fully on screen, so a header that sits 48px or more
+   above the bottom of the viewport is fully drawn. Every header has at least
+   that much content and footer below it, so a page that cannot scroll still
+   shows each rule drawn.
+
+   The timeline subject is the header, not the 1px rule: a 1px subject gives a
+   range of under one pixel of scroll, so the rule would snap. A subject-less
+   view() would also bind to the nearest scroll container, and a panel's
+   overflow: hidden is one, so a rule inside a panel would get an inactive
+   timeline. The header is named as the subject and the rule follows it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@supports (animation-timeline: view()) {
+  @media screen and (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduce"]) header:has(> .rule-scroll) {
+      view-timeline: --section-rule block;
+    }
+    /* :root:not(...) outranks `.panel .rule-draw`. The range starts when the
+       header is fully on screen, where its bottom rule first shows, and ends
+       48px of scroll later (a length, not a percentage, so it does not grow
+       with the viewport). */
+    :root:not([data-motion="reduce"]) .rule-scroll {
+      animation-name: rule-draw;
+      animation-duration: auto;
+      animation-timing-function: var(--ease-step-24);
+      animation-fill-mode: both;
+      animation-delay: 0s;
+      animation-timeline: --section-rule;
+      animation-range: contain 0px contain 48px;
+    }
+  }
+}

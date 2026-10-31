@@ -1,0 +1,75 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Grid guides and registration marks (DESIGN.md, "Grid guides and
+   registration marks"). Both show only where the 12 columns exist
+   (>= 1024px), and both hide with the Settings toggle
+   (html[data-grid="off"]), in print and in forced-colors mode.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .grid-guides,
+  .reg-marks::before,
+  .reg-marks::after {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    /* Column hairlines. z-index -1 inside the layout's isolated stacking
+       context: above the page background, below every panel and all text. */
+    .grid-guides {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* Its content box equals <main>'s, so guides sit on the panel edges. */
+    .grid-guides .page-grid {
+      height: 100%;
+      max-width: var(--grid-max);
+      margin-inline: auto;
+      padding-inline: var(--grid-pad);
+      box-sizing: border-box;
+    }
+    .grid-guides span {
+      border-inline-start: 1px solid var(--grid-line);
+    }
+    .grid-guides span:last-child {
+      border-inline-end: 1px solid var(--grid-line);
+    }
+
+    /* 7px crosshair on each end of the SectionHeader hairline, centred on
+       the corner so it sits on the outermost guides. */
+    .reg-marks::before,
+    .reg-marks::after {
+      content: "";
+      display: block;
+      position: absolute;
+      bottom: -3px;
+      width: var(--mark-size);
+      height: var(--mark-size);
+      background-color: var(--muted-foreground-dim);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7'%3E%3Cpath d='M3 0h1v7H3zM0 3h7v1H0z'/%3E%3C/svg%3E") center / contain no-repeat;
+      pointer-events: none;
+    }
+    .reg-marks::before {
+      left: -3px;
+    }
+    .reg-marks::after {
+      right: -3px;
+    }
+
+    html[data-grid="off"] .grid-guides,
+    html[data-grid="off"] .reg-marks::before,
+    html[data-grid="off"] .reg-marks::after {
+      display: none;
+    }
+  }
+
+  @media print, (forced-colors: active) {
+    .grid-guides,
+    .reg-marks::before,
+    .reg-marks::after {
+      display: none;
+    }
+  }
+}

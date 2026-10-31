@@ -1,8 +1,9 @@
-/* Hallmark · design-system: DESIGN.md · stack: Astro 7 + React 19 + Tailwind v4
- * type: Geist Sans + Geist Mono + Piazzolla (blog prose only)
+/* Design system source: DESIGN.md · stack: Astro 7 + React 19 + Tailwind v4
+ * type: Geist Sans + Geist Mono + Geist Pixel (decorative counters) + Piazzolla (blog prose only)
  * accent: emphasis-only (no chromatic accent — pure white on dark / pure black on light)
- * macrostructure: long-document + operator-panel kit (SectionHeader + OperatorPanel + Cmd + BootBlock)
- * radius: 2px · motion: cut to fade-in mount + opacity on hover · prefers-reduced-motion respected
+ * macrostructure: long-document + operator-panel kit (SectionHeader + Panel + Cmd + BootBlock)
+ * radius: 2px · motion (DESIGN.md A1): enter reveals, draw-ons for rules, frames and SVG paths,
+ * scroll-linked progress and reveals; opacity and background on hover · reduced motion respected
  */
 @custom-variant dark (&:is(.dark *));
 
@@ -243,10 +244,11 @@ kbd {
   border-color: var(--rule);
 }
 
-/* 12-column page grid */
+/* 12-column grid primitive. No padding of its own: the gutter (--grid-pad) lives
+   on the page shell, so the columns span the shell's content box. */
 .page-grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--grid-gap);
 }
 

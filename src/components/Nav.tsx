@@ -117,7 +117,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         paddingRight: "env(safe-area-inset-right)",
       }}
     >
-      <div className="max-w-(--grid-max) mx-auto px-6 md:px-10 lg:px-12 flex items-center justify-between h-11">
+      <div className="max-w-(--grid-max) mx-auto px-(--grid-pad) flex items-center justify-between h-11">
         {/* Left group: wordmark + divider + desktop tabs */}
         <div className="flex items-center gap-0 min-w-0 shrink">
           {/* Logo / prefix */}
@@ -230,7 +230,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             transition={{ duration: 0.2 }}
           >
             <div className="min-h-0">
-              <div className="max-w-(--grid-max) mx-auto px-6 py-3 flex flex-col gap-0.5">
+              <div className="max-w-(--grid-max) mx-auto px-(--grid-pad) py-3 flex flex-col gap-0.5">
                 {navLinks.map((link, i) => {
                   const active = isActive(link);
                   return (
