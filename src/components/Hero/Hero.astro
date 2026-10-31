@@ -12,13 +12,13 @@ import { HeroWhois } from "./HeroWhois";
     <HeroWhois />
   </div>
 
-  <!-- Operator strip: latest post and build are static; the sparkline renders client-side only (its day labels depend on today's date, so SSR would bake in the build date) and the release panel hydrates when visible.
+  <!-- Operator strip: latest post and build are static; the sparkline and the release panel hydrate when visible (the sparkline draws its dated labels only after its data arrives, so SSR never bakes in the build date).
        Mobile keeps the two static ones; the GitHub-fed pair returns from sm. -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <LatestPostPanel delay={0.15} />
     <BuildStats delay={0.2} />
     <div class="hidden sm:block">
-      <ActivitySparkline client:only="react" delay={0.25} />
+      <ActivitySparkline client:visible delay={0.25} />
     </div>
     <div class="hidden sm:block">
       <LatestReleasePanel client:visible delay={0.3} />

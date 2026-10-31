@@ -1,88 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
-import { m } from "motion/react";
-import { useInView } from "@/hooks/useInView";
-import { MotionProvider } from "@/components/MotionProvider";
+import { useState, useEffect, useMemo, type CSSProperties, type KeyboardEvent } from "react";
 import { PanelShell } from "./_helpers";
-import { easeStep8 } from "@/lib/motion";
+import { buildCalendar, DAYS_PER_WEEK, TOTAL_DAYS, WEEKS } from "@/lib/activity";
 
-// Variants for the grid wrapper — one animation registration drives all cells
-// via staggerChildren instead of 91 individual m.div registrations.
-const gridVariants = {
-  hidden: {},
-  visible: (baseDelay: number) => ({
-    transition: {
-      delayChildren: baseDelay + 0.05,
-      staggerChildren: 0.002,
-    },
-  }),
-};
-
-const cellVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.15, ease: easeStep8 },
-  },
-};
-
-const WEEKS = 13; // ~3 months
-const DAYS_PER_WEEK = 7;
-const TOTAL_DAYS = WEEKS * DAYS_PER_WEEK;
-const ACTIVE_WINDOW = 91; // 13 weeks * 7 days
 const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const MONTHS = [
-  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
-];
-
-interface DayCell {
-  date: string; // YYYY-MM-DD
-  count: number;
-  level: 0 | 1 | 2 | 3 | 4;
-  label: string;   // "MAR 14"
-  ariaLabel: string; // "Mar 14 — 8 events"
-}
-
-function buildCalendar(events: Array<{ created_at: string }>): DayCell[] {
-  const now = new Date();
-  const counts = new Map<string, number>();
-
-  for (const event of events) {
-    const d = new Date(event.created_at);
-    const key = d.toISOString().slice(0, 10);
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-
-  const cells: DayCell[] = [];
-  const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dayOfWeek = endDate.getDay();
-  const startOffset = TOTAL_DAYS - 1 + (DAYS_PER_WEEK - 1 - dayOfWeek);
-
-  for (let i = startOffset; i >= 0; i--) {
-    const d = new Date(endDate);
-    d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
-    const count = counts.get(key) ?? 0;
-    const mon = MONTHS[d.getMonth()]!;
-    const label = `${mon} ${d.getDate()}`;
-    const ariaLabel = `${mon.charAt(0)}${mon.slice(1).toLowerCase()} ${d.getDate()} — ${count} event${count === 1 ? "" : "s"}`;
-    cells.push({ date: key, count, level: 0, label, ariaLabel });
-  }
-
-  const trimmed = cells.slice(cells.length - TOTAL_DAYS);
-
-  const max = Math.max(1, ...trimmed.map((c) => c.count));
-  for (const cell of trimmed) {
-    if (cell.count === 0) cell.level = 0;
-    else if (cell.count <= max * 0.25) cell.level = 1;
-    else if (cell.count <= max * 0.5) cell.level = 2;
-    else if (cell.count <= max * 0.75) cell.level = 3;
-    else cell.level = 4;
-  }
-
-  return trimmed;
-}
+// SVG geometry, in px (the SVG renders at 1:1).
+const CELL = 16;
+const PITCH = CELL + 3;
+const LABEL_W = 28;
+const HEAD_H = 16;
+const SVG_W = LABEL_W + WEEKS * PITCH - 3;
+const SVG_H = HEAD_H + DAYS_PER_WEEK * PITCH - 3;
 
 // Grayscale ramp using foreground/muted-foreground tokens
 const LEVEL_COLORS = [
@@ -93,11 +22,12 @@ const LEVEL_COLORS = [
   "var(--foreground)",
 ];
 
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "S"}`;
+
 export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
-  const { ref, inView } = useInView(0.1);
   const [events, setEvents] = useState<Array<{ created_at: string }>>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [active, setActive] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/github/calendar`)
@@ -114,206 +44,165 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   // render match, and the height never changes.
   const ready = status === "ready";
 
-  const cells = useMemo(() => buildCalendar(events), [events]);
-
+  const cells = useMemo(() => (ready ? buildCalendar(events) : []), [ready, events]);
+  const lastPast = cells.findLastIndex((c) => !c.future);
   const totalEvents = cells.reduce((sum, c) => sum + c.count, 0);
   const activeDays = cells.filter((c) => c.count > 0).length;
 
-  const weeks = useMemo(() => {
-    const nextWeeks: DayCell[][] = [];
-    for (let w = 0; w < WEEKS; w++) {
-      nextWeeks.push(cells.slice(w * DAYS_PER_WEEK, (w + 1) * DAYS_PER_WEEK));
-    }
-    return nextWeeks;
-  }, [cells]);
-
   const monthLabels = useMemo(() => {
     const labels: { col: number; label: string }[] = [];
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let lastMonth = -1;
-    for (let w = 0; w < weeks.length; w++) {
-      const firstDay = weeks[w]?.[0];
-      if (!firstDay) continue;
-      const m = new Date(firstDay.date).getMonth();
-      if (m !== lastMonth) {
-        // A label needs three columns; drop a partial month that would collide.
-        const prev = labels[labels.length - 1];
-        if (prev && w - prev.col < 3) labels.pop();
-        labels.push({ col: w, label: months[m]! });
-        lastMonth = m;
-      }
+    let lastMonth = "";
+    for (let w = 0; w < WEEKS; w++) {
+      const month = cells[w * DAYS_PER_WEEK]?.label.split(" ")[0];
+      if (!month || month === lastMonth) continue;
+      // A label needs three columns; drop a partial month that would collide.
+      const prev = labels[labels.length - 1];
+      if (prev && w - prev.col < 3) labels.pop();
+      labels.push({ col: w, label: month });
+      lastMonth = month;
     }
     return labels;
-  }, [weeks]);
+  }, [cells]);
 
-  const hoveredCell = hoveredIdx !== null ? cells[hoveredIdx] ?? null : null;
+  const activeCell = active !== null ? cells[active] : undefined;
+  const readout = activeCell
+    ? `${activeCell.label} · ${plural(activeCell.count, "EVENT")}`
+    : ready
+      ? `${plural(totalEvents, "EVENT")} · ${activeDays}/${lastPast + 1} DAYS ACTIVE`
+      : status === "loading"
+        ? "LOADING"
+        : "ACTIVITY UNAVAILABLE";
 
-  const baselineLabel = ready
-    ? `${totalEvents} EVENT${totalEvents === 1 ? "" : "S"} · ${activeDays}/${ACTIVE_WINDOW} ACTIVE`
-    : status === "loading"
-      ? "LOADING"
-      : "ACTIVITY UNAVAILABLE";
-  const hoverLabel = hoveredCell && hoveredCell.count > 0
-    ? `${hoveredCell.label} · ${hoveredCell.count} EVENT${hoveredCell.count === 1 ? "" : "S"}`
-    : null;
+  // Arrow keys move a cursor over the grid: left/right by week, up/down by day.
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (!ready) return;
+    const step: Record<string, number> = { ArrowLeft: -7, ArrowRight: 7, ArrowUp: -1, ArrowDown: 1 };
+    const cur = active ?? lastPast;
+    let next: number;
+    if (e.key in step) next = cur + step[e.key]!;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = lastPast;
+    else return;
+    e.preventDefault();
+    setActive(Math.min(lastPast, Math.max(0, next)));
+  };
+
+  const pos = (i: number) => ({
+    x: LABEL_W + Math.floor(i / DAYS_PER_WEEK) * PITCH,
+    y: HEAD_H + (i % DAYS_PER_WEEK) * PITCH,
+  });
 
   return (
-    <MotionProvider>
-      <PanelShell
-        label="ACTIVITY"
-        labelRight={`${WEEKS} weeks`}
-        delay={delay}
-      >
-        <div ref={ref} className="px-5 py-3">
-          {/* Hover overlay / baseline strip */}
-          <div
-            className="relative"
-            style={{ minHeight: 14, marginBottom: 4 }}
-            aria-live="polite"
+    <PanelShell label="ACTIVITY" labelRight="public GitHub events" delay={delay}>
+      <div className="px-5 py-3">
+        <p
+          className="text-label select-none mb-2 truncate"
+          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 14, lineHeight: "14px" }}
+          aria-live="polite"
+        >
+          <span className={activeCell ? "text-foreground/90" : "text-muted-foreground-dim"}>{readout}</span>
+        </p>
+
+        <div
+          tabIndex={ready ? 0 : -1}
+          role="group"
+          aria-label={`Activity calendar, last ${WEEKS} weeks. Arrow keys read one day at a time.`}
+          aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"
+          className="w-fit max-w-full overflow-x-auto"
+          onKeyDown={onKeyDown}
+          onFocus={() => ready && setActive((cur) => cur ?? lastPast)}
+          onBlur={() => setActive(null)}
+          onMouseLeave={() => setActive(null)}
+        >
+          <svg
+            aria-hidden="true"
+            width={SVG_W}
+            height={SVG_H}
+            viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+            className="block text-muted-foreground"
+            style={{ fontFamily: "var(--font-mono)", fontSize: 11 }}
           >
-            {hoverLabel ? (
-              <span
-                className="absolute left-0 right-0 select-none"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 11,
-                  letterSpacing: "0.08em",
-                  color: "var(--foreground)",
-                  opacity: 0.9,
-                  lineHeight: 1,
-                }}
-              >
-                {hoverLabel}
-              </span>
-            ) : (
-              <span
-                className="absolute left-0 right-0 text-muted-foreground-dim select-none"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 11,
-                  letterSpacing: "0.08em",
-                  lineHeight: 1,
-                }}
-              >
-                {baselineLabel}
-              </span>
-            )}
-          </div>
-
-          {/* Calendar grid — presented as a single image to screen readers; summary announced via aria-live region above */}
-          <div
-            role="img"
-            aria-label={
-              ready
-                ? `Activity calendar: ${totalEvents} event${totalEvents === 1 ? "" : "s"} across ${activeDays} active day${activeDays === 1 ? "" : "s"} in the past ${WEEKS} weeks`
-                : `Activity calendar: ${baselineLabel.toLowerCase()}`
-            }
-          >
-          {/* Month labels */}
-          <div className="flex gap-[3px] mb-1 ml-[30px]" aria-hidden="true">
-            {Array.from({ length: WEEKS }).map((_, w) => {
-              const label = ready ? monthLabels.find((m) => m.col === w) : undefined;
-              return (
-                <span
-                  key={w}
-                  className="text-muted-foreground whitespace-nowrap"
-                  style={{ width: 11, fontSize: "max(11px, 0.6875rem)", lineHeight: "11px" }}
-                >
-                  {label?.label ?? ""}
-                </span>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-0">
-            {/* Day labels */}
-            <div aria-hidden="true" className="flex flex-col gap-[3px] mr-1.5 shrink-0">
-              {DAY_LABELS.map((label, i) => (
-                <span
-                  key={i}
-                  className="text-muted-foreground-dim"
-                  style={{ height: 11, lineHeight: "11px", fontSize: "max(11px, 0.6875rem)", width: 22, textAlign: "right" }}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            {/* Grid — one motion wrapper drives all cells via staggerChildren */}
-            {!ready ? (
-              <div className="flex gap-[3px]" aria-hidden="true">
-                {Array.from({ length: WEEKS }, (_, w) => (
-                  <div key={w} className="flex flex-col gap-[3px]">
-                    {Array.from({ length: DAYS_PER_WEEK }, (_, d) => (
-                      <div
-                        key={d}
-                        className="rounded-[2px]"
-                        style={{ width: 11, height: 11, backgroundColor: LEVEL_COLORS[0] }}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ) : (
-            <m.div
-              className="flex gap-[3px]"
-              variants={gridVariants}
-              custom={delay}
-              initial="hidden"
-              animate={inView ? "visible" : "hidden"}
-            >
-              {weeks.map((week, w) => (
-                <div key={w} className="flex flex-col gap-[3px]">
-                  {week.map((day, d) => {
-                    const cellIdx = w * DAYS_PER_WEEK + d;
-                    return (
-                      <m.div
-                        key={day.date}
-                        aria-hidden="true"
-                        className="rounded-[2px] cursor-default"
-                        style={{
-                          width: 11,
-                          height: 11,
-                          backgroundColor: LEVEL_COLORS[day.level],
-                        }}
-                        variants={cellVariants}
-                        title={`${day.date}: ${day.count} event${day.count === 1 ? "" : "s"}`}
-                        onMouseEnter={() => setHoveredIdx(cellIdx)}
-                        onMouseLeave={() => setHoveredIdx((cur) => (cur === cellIdx ? null : cur))}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </m.div>
-            )}
-          </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex items-center gap-1.5 mt-2">
-            <span
-              className="text-muted-foreground-dim"
-              style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.08em", textTransform: "uppercase" }}
-            >
-              less
-            </span>
-            {LEVEL_COLORS.map((color, i) => (
-              <div
-                key={i}
-                className="rounded-[2px]"
-                style={{ width: 11, height: 11, backgroundColor: color, flexShrink: 0 }}
-              />
+            {monthLabels.map(({ col, label }) => (
+              <text key={col} x={LABEL_W + col * PITCH} y={11} fill="currentColor">
+                {label.charAt(0) + label.slice(1).toLowerCase()}
+              </text>
             ))}
-            <span
-              className="text-muted-foreground-dim"
-              style={{ fontFamily: "var(--font-mono)", fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.08em", textTransform: "uppercase" }}
-            >
-              more
-            </span>
-          </div>
+            {DAY_LABELS.map((label, d) =>
+              label ? (
+                <text key={d} x={LABEL_W - 6} y={HEAD_H + d * PITCH + 12} textAnchor="end" fill="currentColor" opacity={0.7}>
+                  {label}
+                </text>
+              ) : null,
+            )}
+            {ready
+              ? cells.map((day, i) =>
+                  day.future ? null : (
+                    <rect
+                      key={day.date}
+                      {...pos(i)}
+                      width={CELL}
+                      height={CELL}
+                      rx={2}
+                      fill={LEVEL_COLORS[day.level]}
+                      className="cell-in"
+                      style={{ "--col": Math.floor(i / DAYS_PER_WEEK) } as CSSProperties}
+                      onMouseEnter={() => setActive(i)}
+                    />
+                  ),
+                )
+              : Array.from({ length: TOTAL_DAYS }, (_, i) => (
+                  <rect key={i} {...pos(i)} width={CELL} height={CELL} rx={2} fill={LEVEL_COLORS[0]} />
+                ))}
+            {active !== null && (
+              <rect
+                x={pos(active).x - 2}
+                y={pos(active).y - 2}
+                width={CELL + 4}
+                height={CELL + 4}
+                rx={3}
+                fill="none"
+                stroke="var(--foreground)"
+                strokeWidth={1.5}
+                pointerEvents="none"
+              />
+            )}
+          </svg>
         </div>
-      </PanelShell>
-    </MotionProvider>
+
+        {ready && (
+          <div className="sr-only">
+            <table>
+              <caption>Public GitHub events per day, last {WEEKS} weeks (the API returns the latest 100 events)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Week of</th>
+                  {WEEKDAYS.map((d) => <th key={d} scope="col">{d}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: WEEKS }, (_, w) => {
+                  const week = cells.slice(w * DAYS_PER_WEEK, (w + 1) * DAYS_PER_WEEK);
+                  return (
+                    <tr key={w}>
+                      <th scope="row">{week[0]!.date}</th>
+                      {week.map((day) => <td key={day.date}>{day.future ? "" : day.count}</td>)}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Legend */}
+        <div className="flex items-center gap-1.5 mt-2" aria-hidden="true">
+          <span className="text-muted-foreground-dim label-meta">less</span>
+          {LEVEL_COLORS.map((color, i) => (
+            <div key={i} className="rounded-[2px] shrink-0" style={{ width: 11, height: 11, backgroundColor: color }} />
+          ))}
+          <span className="text-muted-foreground-dim label-meta">more</span>
+        </div>
+      </div>
+    </PanelShell>
   );
 }
