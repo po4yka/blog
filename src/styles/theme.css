@@ -285,6 +285,15 @@ kbd {
   animation-delay: var(--reveal-delay, 0ms);
 }
 
+/* Activity heatmap cells fade in once by column (--col), after data arrives. */
+@keyframes cell-in {
+  from { opacity: 0; }
+}
+.cell-in {
+  animation: cell-in var(--dur-fast) var(--ease-step-8) both;
+  animation-delay: calc(var(--col, 0) * 20ms);
+}
+
 /* Terminal-authentic loading marker. Replaces skeleton shimmer.
    Cycles '[ .   ]' → '[ ..  ]' → '[ ... ]' → '[....]' in mono. */
 @keyframes loading-cycle {
