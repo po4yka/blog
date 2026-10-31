@@ -232,10 +232,31 @@ kbd {
   inset: 0;
   background-color: var(--foreground);
   opacity: var(--field-opacity);
-  mask-image: url("/field-poster.png");
-  mask-size: cover;
+  /* One poster per layout range, 1 image px per cell, drawn at the canvas's 2 CSS px per cell (never
+     stretched). Ranges and widths mirror POSTERS in scripts/generate-field-poster.ts. */
+  mask-image: url("/field-poster-phone.png");
+  mask-size: 432px auto;
+  mask-repeat: no-repeat;
   mask-position: left top;
   image-rendering: pixelated;
+}
+@media (min-width: 480px) {
+  .hero-field-poster {
+    mask-image: url("/field-poster-small.png");
+    mask-size: 720px auto;
+  }
+}
+@media (min-width: 768px) {
+  .hero-field-poster {
+    mask-image: url("/field-poster-tablet.png");
+    mask-size: 944px auto;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-field-poster {
+    mask-image: url("/field-poster-desktop.png");
+    mask-size: 1144px auto;
+  }
 }
 
 .hero-field canvas {

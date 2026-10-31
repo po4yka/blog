@@ -11,7 +11,7 @@ import { generateSeedSource } from "./generate-seed.js";
 import { dirDrift, generatePlateFiles, PLATES_DIR } from "./generate-plates.js";
 import { COVERS_DIR, generateCoverFiles } from "./generate-covers.js";
 import { FIELD_SEED_FILE, parseFieldSeed } from "./generate-field-seed.js";
-import { POSTER_FILE, posterDrift } from "./generate-field-poster.js";
+import { posterDrift } from "./generate-field-poster.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 
@@ -99,16 +99,14 @@ for (const [label, dir, files] of [
 }
 
 // The field seed refreshes only in CI (like buildMeta.ts), so it is checked for shape, not against git.
-// The poster is checked against the committed seed, so a refreshed seed alone cannot fail it.
+// The posters are checked against the committed seed, so a refreshed seed alone cannot fail them.
 try {
   const seed = parseFieldSeed(fs.readFileSync(FIELD_SEED_FILE, "utf-8"));
   console.log("fieldSeed.ts: valid");
-  if (posterDrift(seed.counts)) {
-    failures++;
-    console.error(`${path.relative(process.cwd(), POSTER_FILE)}: OUT OF SYNC. Run "npm run generate:all".`);
-  } else {
-    console.log("field-poster.png: in sync");
-  }
+  const drifted = posterDrift(seed.counts);
+  for (const file of drifted) console.error(`${file}: OUT OF SYNC. Run "npm run generate:all".`);
+  failures += drifted.length;
+  if (!drifted.length) console.log("field posters: in sync");
 } catch (err) {
   failures++;
   console.error(`fieldSeed.ts: INVALID (${err instanceof Error ? err.message : err})`);
