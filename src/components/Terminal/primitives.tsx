@@ -127,7 +127,6 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
   const suggestion = useMemo(() => getSuggestion(input), [input]);
 
   const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
   const { t } = useLocale();
 
   const ctx: CommandContext = useMemo(
@@ -136,10 +135,9 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
       navigate: (path: string) => {
         window.location.assign(path);
       },
-      setTheme,
       getTheme: () => theme,
     }),
-    [commandHistory, setTheme, theme],
+    [commandHistory, theme],
   );
 
   const handleSubmit = useCallback(

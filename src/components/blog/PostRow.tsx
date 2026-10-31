@@ -1,5 +1,6 @@
 import { Tag } from "@/components/Terminal";
 import { blogUrl, type Locale } from "@/lib/i18n";
+import { postTitleStyle } from "@/lib/blog/format";
 import type { BlogPostMeta } from "@/types";
 
 /** One row of the blog list page (not the home preview, which has its own PreviewRow). */
@@ -31,7 +32,7 @@ export function PostRow({
       {/* Title + summary */}
       <div className="flex-1 min-w-0 relative">
         <div className="flex items-center gap-2 flex-wrap">
-          <h2 className="display-2 display-serif text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative">
+          <h2 className="display-2 display-serif text-foreground/85 group-hover:text-foreground transition-colors duration-150 inline-block relative" style={postTitleStyle(post.slug)}>
             {post.title}
             <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
           </h2>

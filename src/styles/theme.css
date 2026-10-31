@@ -93,15 +93,9 @@
   outline-offset: 3px;
 }
 
-/* View Transition (theme wipe) — simple fade, no radial clip theatre */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--dur-base);
-  mix-blend-mode: normal;
-}
-
 /* Theme-change fade for the page and every background surface. In the base
-   layer, so an element's own transition-* utility still wins over it. */
+   layer, so an element's own transition-* utility still wins over it. The
+   theme wipe (transitions.css) turns this fade off while it runs. */
 html {
   transition: background-color var(--dur-base) ease, color var(--dur-base) ease;
 }

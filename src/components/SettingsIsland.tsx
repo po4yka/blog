@@ -1,5 +1,6 @@
 import { Reveal } from "./ui/Reveal";
 import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard, Grid3x3 } from "lucide-react";
+import { switchTheme, centerOf } from "@/lib/themeTransition";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
@@ -28,7 +29,7 @@ const fontSizeLabelKeys: Record<FontSize, TranslationKey> = {
 
 export function Settings() {
   const live = useSettings();
-  const { setTheme, setReduceMotion, setFontSize, setKeyboardShortcuts, setGridGuides, resetPreferences } = live;
+  const { setReduceMotion, setFontSize, setKeyboardShortcuts, setGridGuides, resetPreferences } = live;
   const { locale: liveLocale, setLocale, t: tt } = useLocale();
 
   // Persisted preferences rehydrate before the first client render, and
@@ -107,7 +108,7 @@ export function Settings() {
               {themeOptions.map(({ value, icon: Icon, labelKey }) => (
                 <button
                   key={value}
-                  onClick={() => setTheme(value)}
+                  onClick={(e) => switchTheme(value, centerOf(e.currentTarget))}
                   aria-pressed={theme === value}
                   className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
                     theme === value

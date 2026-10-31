@@ -1,0 +1,52 @@
+/* Page and shared-element transitions, and the theme wipe (DESIGN.md rule A1).
+   Every animation here is at or under 300 ms. The reduced-motion cuts in
+   tokens.css use !important and stay the source of truth: nothing here may
+   re-enable motion under data-motion="reduce" or the OS flag. */
+
+/* Root crossfade for page navigations, --dur-base. The group is set too, so no
+   duration here depends on a browser default. */
+::view-transition-group(root) {
+  animation-duration: var(--dur-base);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+  mix-blend-mode: normal;
+}
+
+/* List-to-post title morph. Each title has its own view-transition-name
+   (post-title-<slug>) and the shared view-transition-class "post-title", because
+   CSS cannot select groups by a name prefix. Where view-transition-class is not
+   supported the group keeps the UA default duration (250 ms), which is still
+   under 300 ms. */
+::view-transition-group(*.post-title) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-in-out);
+}
+
+/* Theme wipe: a circle grows from the control that was used. The attribute and
+   the --wipe-* properties exist on <html> only while a theme transition runs
+   (src/lib/themeTransition.ts). */
+html[data-theme-wipe]::view-transition-old(root) {
+  animation: none;
+}
+html[data-theme-wipe]::view-transition-new(root) {
+  animation: theme-wipe var(--dur-base) var(--ease-in-out) both;
+}
+@keyframes theme-wipe {
+  from {
+    clip-path: circle(0px at var(--wipe-x) var(--wipe-y));
+  }
+  to {
+    clip-path: circle(var(--wipe-r) at var(--wipe-x) var(--wipe-y));
+  }
+}
+/* Named elements join the root snapshot, so the circle clips them. */
+html[data-theme-wipe] * {
+  view-transition-name: none !important;
+}
+/* The colour fade in theme.css must not run inside the new snapshot. */
+html[data-theme-wipe],
+html[data-theme-wipe] * {
+  transition: none !important;
+}
