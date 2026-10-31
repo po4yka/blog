@@ -1,64 +1,49 @@
 import { useEffect, type RefObject } from "react";
 import { useLocale } from "@/stores/settingsStore";
 
-// --- Copy-to-clipboard affordance for code fences ---
+// --- Copy-to-clipboard for code fences ---
 
-// Enhances already-rendered <pre> blocks inside the prerendered MDX body
-// with a small copy button. The code text itself is already static HTML by
-// the time this runs — only the button (chrome, not content) is added
-// client-side, so nodes are built via createElement + textContent only
-// (never innerHTML) and the effect fully tears down what it attached.
+// The copy button is static HTML rendered at build time by transformerCodeBlock
+// (src/lib/shiki-code-block.ts). This binds one delegated click handler on the
+// prose root; it only swaps the clicked button's label, never builds DOM.
 export function CodeBlockCopy({ contentRef }: { contentRef: RefObject<HTMLDivElement | null> }) {
   const { t } = useLocale();
 
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
+    const timers = new Map<HTMLButtonElement, ReturnType<typeof setTimeout>>();
 
-    const pres = Array.from(root.querySelectorAll<HTMLPreElement>("pre")).filter(
-      (pre) => !pre.dataset.copyAttached,
-    );
+    // the build sets the post's own locale label; keep it to restore after "copied"
+    const setLabel = (btn: HTMLButtonElement, copied: boolean) => {
+      btn.dataset.label ??= btn.getAttribute("aria-label") ?? t("blogPost.copyCode");
+      btn.textContent = copied ? "copied" : "copy";
+      btn.setAttribute("aria-label", copied ? t("blogPost.copied") : btn.dataset.label);
+    };
 
-    const cleanups = pres.map((pre) => {
-      pre.dataset.copyAttached = "true";
+    const handleClick = (event: MouseEvent) => {
+      const btn = (event.target as Element).closest<HTMLButtonElement>("button[data-copy-code]");
+      if (!btn || !root.contains(btn) || !navigator.clipboard) return;
+      // line numbers are CSS counters, so the code text holds only the code
+      const code = btn.closest(".code-block")?.querySelector("pre code")?.textContent ?? "";
+      navigator.clipboard
+        .writeText(code)
+        .then(() => {
+          setLabel(btn, true);
+          clearTimeout(timers.get(btn));
+          timers.set(btn, setTimeout(() => setLabel(btn, false), 1500));
+        })
+        .catch(() => { /* clipboard unavailable */ });
+    };
 
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className =
-        "absolute top-2 right-2 px-1.5 py-0.5 border border-border rounded-[2px] font-mono text-[11px] leading-none text-muted-foreground-dim hover:text-foreground cursor-pointer active:opacity-70 transition-colors duration-150";
-      btn.style.background = "var(--code-bg)";
-      btn.textContent = "copy";
-      btn.setAttribute("aria-label", t("blogPost.copyCode"));
-
-      let resetTimer: ReturnType<typeof setTimeout> | undefined;
-      const handleClick = () => {
-        // read from the code child, not pre — the button itself lives inside
-        // the pre, so pre.textContent would append its "copy" label
-        navigator.clipboard
-          .writeText(pre.querySelector("code")?.textContent ?? "")
-          .then(() => {
-            btn.textContent = "copied";
-            btn.setAttribute("aria-label", t("blogPost.copied"));
-            clearTimeout(resetTimer);
-            resetTimer = setTimeout(() => {
-              btn.textContent = "copy";
-              btn.setAttribute("aria-label", t("blogPost.copyCode"));
-            }, 1500);
-          })
-          .catch(() => { /* clipboard unavailable */ });
-      };
-      btn.addEventListener("click", handleClick);
-      pre.appendChild(btn);
-
-      return () => {
-        clearTimeout(resetTimer);
-        btn.removeEventListener("click", handleClick);
-        btn.remove();
-        delete pre.dataset.copyAttached;
-      };
-    });
-
-    return () => cleanups.forEach((fn) => fn());
+    root.addEventListener("click", handleClick);
+    return () => {
+      root.removeEventListener("click", handleClick);
+      timers.forEach((timer, btn) => {
+        clearTimeout(timer);
+        setLabel(btn, false);
+      });
+    };
   }, [contentRef, t]);
 
   return null;
