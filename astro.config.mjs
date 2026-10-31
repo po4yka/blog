@@ -69,7 +69,7 @@ export default defineConfig({
     // Monochrome syntax highlighting: two greyscale themes emitted as CSS
     // variables (defaultColor: false), so no inline colour or background is
     // written on <pre> and the --code-bg / --foreground tokens stay
-    // authoritative. index.css maps the variables to the active site theme.
+    // authoritative. prose.css maps the variables to the active site theme.
     // `// [!code ++]`, `// [!code --]` and `// [!code highlight]` mark lines;
     // transformerCodeBlock adds the header row (see src/lib/shiki-code-block.ts).
     syntaxHighlight: "shiki",
