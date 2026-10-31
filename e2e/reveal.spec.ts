@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 // Reveal (src/components/ui/Reveal.tsx) must never hide content: the server
 // HTML is final, and the @starting-style fade is only an enhancement.
 
-const PAGES = ["/", "/blog/", "/projects/", "/experience/", "/this-page-does-not-exist/"];
+const PAGES = ["/", "/blog/", "/blog/rag-breaks-earlier-than-people-think/", "/projects/", "/experience/", "/this-page-does-not-exist/"];
 
 async function revealOpacities(page: Page) {
   const reveals = page.locator("[data-reveal]");

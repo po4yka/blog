@@ -54,7 +54,7 @@ These are load-bearing; keep them working when changing pages, layouts, or conte
 - JSON-LD in `src/components/JsonLd.astro` and `src/components/ProjectsJsonLd.astro` (ISO dates, `inLanguage`, `wordCount`, `mainEntityOfPage`).
 - `src/layouts/BaseHead.astro` owns canonical, OG/Twitter tags (including `og:locale` and `og:site_name`), RSS links, and `hreflang` + `x-default` on every post; pages without a per-post image fall back to `/og-default.png`.
 - Per-post OG images are rendered at build time by `scripts/generate-og-images.ts` (Satori + Resvg; Workers cannot render them at runtime).
-- `src/components/BlogPostIsland.tsx` keeps `<article>` > `<header>` > `<h1>` + `<time dateTime>`; the admin layout keeps `noindex,nofollow`.
+- `src/components/blog/BlogPostIsland.tsx` keeps `<article>` > `<header>` > `<h1>` + `<time dateTime>`; the admin layout keeps `noindex,nofollow`.
 
 A new page type or content collection should get a JSON-LD node, an `llms-full.txt` entry, a `.md` variant, and a sitemap entry where they make sense.
 
