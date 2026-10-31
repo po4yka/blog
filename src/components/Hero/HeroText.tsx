@@ -59,7 +59,8 @@ export function HeroText() {
         <li>
           <a
             href={`https://github.com/${GITHUB_USERNAME}`}
-            className="hover:text-foreground transition-colors duration-200 inline-flex items-center min-h-11 sm:min-h-0"
+            // A 44px touch area from ::after keeps the one-line meta strip at its height.
+            className="relative hover:text-foreground transition-colors duration-200 [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:-inset-y-4 [@media(pointer:coarse)]:after:content-['']"
           >
             @{GITHUB_USERNAME}
           </a>
