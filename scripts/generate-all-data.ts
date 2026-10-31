@@ -12,6 +12,7 @@ import { generateBuildMetaSource } from "./generate-build-meta.js";
 import { generateChangelogSource } from "./generate-changelog.js";
 import { generateOgImages } from "./generate-og-images.js";
 import { writePlates } from "./generate-plates.js";
+import { writeCovers } from "./generate-covers.js";
 
 interface GeneratorConfig {
   name: string;
@@ -71,11 +72,13 @@ for (const gen of generators) {
   }
 }
 
-try {
-  writePlates();
-} catch (err) {
-  console.error(`Failed to generate plates: ${err}`);
-  hasError = true;
+for (const [name, write] of [["plates", writePlates], ["covers", writeCovers]] as const) {
+  try {
+    write();
+  } catch (err) {
+    console.error(`Failed to generate ${name}: ${err}`);
+    hasError = true;
+  }
 }
 
 if (hasError) {

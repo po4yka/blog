@@ -11,6 +11,8 @@ export interface BlogPost {
   isoDateModified?: string;
   /** Word count of the post body; fed into JSON-LD wordCount. */
   wordCount?: number;
+  /** Depth (2 to 6) of each heading in document order; seeds the generative cover. */
+  headings?: number[];
   summary: string;
   tags: string[];
   category: string;

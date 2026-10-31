@@ -32,13 +32,27 @@ export function generatePlateFiles(): Map<string, string> {
   return files;
 }
 
-/** Rewrite public/plates/ so it holds exactly the current projects' plates. */
-export function writePlates(): void {
-  const files = generatePlateFiles();
-  fs.mkdirSync(PLATES_DIR, { recursive: true });
-  for (const name of fs.readdirSync(PLATES_DIR)) {
-    if (!files.has(name)) fs.rmSync(path.join(PLATES_DIR, name));
+/** Make `dir` hold exactly `files`: write each one and delete anything else. */
+export function syncDir(dir: string, files: Map<string, string>): void {
+  fs.mkdirSync(dir, { recursive: true });
+  for (const name of fs.readdirSync(dir)) {
+    if (!files.has(name)) fs.rmSync(path.join(dir, name));
   }
-  for (const [name, svg] of files) fs.writeFileSync(path.join(PLATES_DIR, name), svg, "utf-8");
-  console.log(`Generated ${files.size} plates in ${PLATES_DIR}`);
+  for (const [name, svg] of files) fs.writeFileSync(path.join(dir, name), svg, "utf-8");
+  console.log(`Generated ${files.size} files in ${dir}`);
 }
+
+/** Names of files in `dir` that are missing, stale or extra compared with `files`. */
+export function dirDrift(dir: string, files: Map<string, string>): string[] {
+  const present = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
+  const extra = present.filter((name) => !files.has(name));
+  const wrong = [...files]
+    .filter(([name, svg]) => {
+      const file = path.join(dir, name);
+      return !fs.existsSync(file) || fs.readFileSync(file, "utf-8") !== svg;
+    })
+    .map(([name]) => name);
+  return [...extra, ...wrong];
+}
+
+export const writePlates = () => syncDir(PLATES_DIR, generatePlateFiles());

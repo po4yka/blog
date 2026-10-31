@@ -2,6 +2,8 @@ import { useLocale } from "@/stores/settingsStore";
 import type { Locale } from "@/lib/i18n";
 import { alsoAsLinks, formatIsoDate, isUpdated, postTitleStyle } from "@/lib/blog/format";
 import type { PostMeta } from "./types";
+import { COVER_H, COVER_W, coverCaption, coverPath } from "@/lib/cover";
+import { maskStyle } from "@/components/ui/utils";
 
 export function PostHeader({
   post,
@@ -14,7 +16,7 @@ export function PostHeader({
   lang: Locale;
   listHref: string;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const tagsLabel = t("blogPost.tags");
   const showUpdated = isUpdated(post);
 
@@ -87,6 +89,19 @@ export function PostHeader({
           </span>
         ))}
       </div>
+      {/* Generative cover (rule A8): 1-bit art from this post's own fields; the caption names them. */}
+      {post.wordCount !== undefined && post.headings && post.isoDate && (
+        <figure className="mt-8 mb-0 mx-0">
+          <div
+            aria-hidden="true"
+            className="w-full text-foreground/45"
+            style={{ aspectRatio: `${COVER_W} / ${COVER_H}`, ...maskStyle(coverPath(lang, slug)) }}
+          />
+          <figcaption className="mt-2 label-meta text-muted-foreground-dim">
+            {t("blogPost.cover")}: {coverCaption({ slug, wordCount: post.wordCount, headings: post.headings, isoDate: post.isoDate }, locale)}
+          </figcaption>
+        </figure>
+      )}
     </header>
   );
 }

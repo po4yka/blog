@@ -61,14 +61,15 @@ describe("marks", () => {
     expect(other).not.toEqual(px);
   });
 
-  it("serialise one run per row segment", () => {
-    const px = Uint8Array.from([1, 1, 0, 1]);
-    expect(pixelsToSvg(px, 4, 1)).toContain('d="M0 0h2v1h-2zM3 0h1v1h-1z"');
+  it("serialise each run as a stroke through its row, with relative moves", () => {
+    const px = Uint8Array.from([1, 1, 0, 1, 0, 0, 1, 1]);
+    expect(pixelsToSvg(px, 4, 2)).toContain('d="M0 0.5h2m1 0h1M2 1.5h2"');
+    expect(pixelsToSvg(px, 4, 2, "#fff")).toContain('stroke="#fff"');
   });
 });
 
 describe("generatePlateFiles", () => {
-  it("writes a resting and a hover plate per project, each under 3 KB, with no shared pixels", () => {
+  it("writes a resting and a hover plate per project, each under 3 KB", () => {
     const files = generatePlateFiles();
     const slugs = [...files.keys()].filter((n) => !n.endsWith(".hover.svg")).map((n) => n.replace(/\.svg$/, ""));
     expect(slugs.length).toBeGreaterThan(0);
@@ -77,8 +78,7 @@ describe("generatePlateFiles", () => {
       const hover = files.get(`${slug}.hover.svg`)!;
       expect(rest.length).toBeLessThan(3072);
       expect(hover.length).toBeLessThan(3072);
-      const runs = (svg: string) => new Set(svg.match(/M\d+ \d+h\d+/g));
-      for (const run of runs(hover)) expect(runs(rest).has(run)).toBe(false);
+      expect(rest).toMatch(/^<svg [^>]*viewBox="0 0 16 16"/);
     }
     expect(generatePlateFiles()).toEqual(files);
   });

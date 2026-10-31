@@ -6,6 +6,9 @@ import fs from "node:fs";
 import path from "node:path";
 import satori, { type SatoriOptions } from "satori";
 import { Resvg } from "@resvg/resvg-js";
+import { COVER_H, COVER_W, coverPixels } from "../src/lib/cover.js";
+import { pixelsToSvg } from "../src/lib/dither.js";
+import { coverInputs } from "./generate-covers.js";
 
 // Satori accepts plain VDOM objects `{ type, props }` at runtime, but its
 // TypeScript signature uses `ReactNode` which includes `ReactPortal`
@@ -38,8 +41,8 @@ const FONT_MEDIUM = path.resolve(
 const OUTPUT_DIR = path.resolve("public/og");
 const DEFAULT_OUTPUT = path.resolve("public/og-default.png");
 
-/** Section label shown on every blog post OG card. */
-const OG_WRITING_LABEL = "06 / WRITING";
+/** Section label of a post card: posts belong to the blog index, 07 in the DESIGN.md section number list. */
+const OG_WRITING_LABEL = "07 / WRITING";
 
 const SATORI_FONTS_CACHE: { regular?: Buffer; medium?: Buffer } = {};
 
@@ -53,12 +56,16 @@ function svgToPng(svg: string): Buffer {
   return Buffer.from(new Resvg(svg, { fitTo: { mode: "width", value: 1200 } }).render().asPng());
 }
 
+/** Cover band of the card: 992px wide, the full inner width, in the meta grey. */
+const OG_COVER_W = 992;
+const OG_COVER_H = Math.round((OG_COVER_W * COVER_H) / COVER_W);
+
 async function renderCard(post: {
   slug: string;
   lang?: string;
   title: string;
   date: string;
-}): Promise<Buffer> {
+}, cover: string | undefined): Promise<Buffer> {
   const { regular: fontRegular, medium: fontMedium } = loadFonts();
 
   const svg = await renderSvg(
@@ -115,7 +122,7 @@ async function renderCard(post: {
                   props: {
                     style: {
                       display: "flex",
-                      fontSize: "64px",
+                      fontSize: "56px",
                       lineHeight: "1.1",
                       letterSpacing: "-0.02em",
                       fontWeight: 500,
@@ -126,6 +133,19 @@ async function renderCard(post: {
                     children: post.title,
                   },
                 },
+                ...(cover
+                  ? [
+                      {
+                        type: "img",
+                        props: {
+                          src: `data:image/svg+xml;base64,${Buffer.from(cover).toString("base64")}`,
+                          width: OG_COVER_W,
+                          height: OG_COVER_H,
+                          style: { display: "flex", marginBottom: "24px" },
+                        },
+                      },
+                    ]
+                  : []),
                 {
                   type: "div",
                   props: {
@@ -294,10 +314,13 @@ export async function generateOgImages(): Promise<void> {
   const posts = await loadBlogPosts();
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
+  const covers = new Map(coverInputs().map((c) => [`${c.lang}-${c.slug}`, c]));
   for (const post of posts) {
     const lang = post.lang ?? "en";
     const outFile = path.join(OUTPUT_DIR, `${lang}-${post.slug}.png`);
-    const png = await renderCard(post);
+    const input = covers.get(`${lang}-${post.slug}`);
+    const cover = input && pixelsToSvg(coverPixels(input), COVER_W, COVER_H, "#6f6f75");
+    const png = await renderCard(post, cover);
     fs.writeFileSync(outFile, png);
     console.log(`Generated ${outFile}`);
   }
