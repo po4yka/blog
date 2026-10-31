@@ -251,6 +251,16 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS, each SVG under 3 KB
 
+### Architecture Diagram
+
+- Component: `src/components/Architecture.tsx`, server-only (no client directive), static HTML at the end of `/changelog` (the page about the site itself), section `08 / ARCHITECTURE`
+- Content: one inline SVG of the real request paths: browser, the Cloudflare edge route `po4yka.dev/*`, static assets (`dist/client`), the Worker `po4yka-blog`, `caches.default`, `api.github.com` and D1 `blog-db` (`env.DB`). Three numbered flows: a prerendered page, `/api/github/*` through the cache to GitHub on a miss, and `/admin/*` plus `/api/admin/*` through `withAdmin()` to D1. Every label names code in `wrangler.toml`, `astro.config.mjs`, `src/lib/cf-cache.ts`, `src/pages/api/github/*` or `src/lib/admin-handler.ts`
+- No latency, throughput or uptime numbers: the site has no source for them. The only number is `CACHE_TTL_S`, read from the routes
+- Text: the SVG is `role="img"` with a summary label; the figcaption is a real, bilingual numbered list (`T`), one item per flow
+- Style: 1px `var(--border)` boxes with square corners, the edge as a dashed frame, flows in `currentColor` at 1.5px, labels in Geist Mono 11px
+- Motion: the flows draw in order as the diagram scrolls into view (`arch-draw`, `src/styles/scroll.css`, rule A2). The default and reduced-motion state is fully drawn
+- Budget: 0 KB JS, the SVG under 4 KB
+
 ### Activity Heatmap and Sparkline
 
 - Components: `ActivityCalendar` (home, 13 weeks) and `ActivitySparkline` (hero strip, 14 days) in `src/components/Decorations/`. Data: `/api/github/calendar` and `/api/github/events`, both the latest 100 public GitHub events. The heatmap header says "public GitHub events"
@@ -529,6 +539,7 @@ Permitted:
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
 - `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe). The SectionHeader rule draws as the header scrolls into view where scroll timelines exist (rule A2), and on load otherwise. Panel rules always draw on load, after their Reveal delay. The nav underline replays on route change
+- `arch-draw` keyframe on the architecture diagram flows (`.arch-flow`): a scroll-linked `stroke-dashoffset` draw under rule A2, finished by default
 - `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)
 
