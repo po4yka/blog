@@ -553,6 +553,7 @@ Permitted:
 - `.form-flash` one-shot outline for invalid form submission (450ms)
 - `blink` keyframe on TerminalPrompt caret (focused-input indicator)
 - `rule-draw` keyframe on SectionHeader hairline, the panel header hairline (`DrawnRule`) and the active nav-link underline (steps(24) left→right plotter wipe). The SectionHeader rule draws as the header scrolls into view where scroll timelines exist (rule A2), and on load otherwise. Panel rules always draw on load, after their Reveal delay. The nav underline replays on route change
+- `draw-line` keyframe on the /experience tag connectors (`TagConnections`, `src/styles/theme.css`): a one-shot `--dur-base` `stroke-dashoffset` draw when a tag is hovered, delayed `stagger.base` per line. Hover enrichment only; the connector SVG is `aria-hidden`
 - `arch-draw` keyframe on the architecture diagram flows (`.arch-flow`): a scroll-linked `stroke-dashoffset` draw under rule A2, finished by default
 - `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
 - `loading-cycle` keyframe on `.loading-bracket` (`[ .   ]` → `[ ..  ]` → `[ ... ]` → `[....]` cycle in mono)

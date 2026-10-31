@@ -31,11 +31,11 @@ export function LanguageSwitcher({ translationUrl, activeLang, className = "" }:
       {langs.map((lang, i) => (
         <span key={lang} className="inline-flex items-center gap-0.5">
           {i > 0 && (
-            <span className="text-muted-foreground/20 select-none">|</span>
+            <span aria-hidden="true" className="text-muted-foreground/20 select-none">|</span>
           )}
           <button
             onClick={() => handleSwitch(lang)}
-            className="relative inline-flex items-center px-1.5 py-0.5 min-h-11 min-w-11 justify-center md:min-h-0 md:min-w-0 cursor-pointer overflow-hidden transition-colors duration-200"
+            className="relative inline-flex items-center px-1.5 py-0.5 min-h-11 min-w-11 justify-center md:min-h-6 md:min-w-6 cursor-pointer overflow-hidden transition-colors duration-200"
             style={{
               borderRadius: 2,
               color: displayLang === lang ? "var(--foreground)" : "var(--muted-foreground)",

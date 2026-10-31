@@ -49,6 +49,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-md bg-card border border-border"
+        aria-describedby={undefined}
       >
         <DialogHeader>
           <DialogTitle className="text-sm text-muted-foreground uppercase tracking-widest font-medium">

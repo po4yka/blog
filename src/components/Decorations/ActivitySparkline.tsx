@@ -1,6 +1,9 @@
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { useState, useEffect, type KeyboardEvent, type PointerEvent } from "react";
-import { shortDay } from "@/lib/activity";
+import { EVENT_FORMS, shortDay } from "@/lib/activity";
+import { useLocale } from "@/stores/settingsStore";
+import { pluralize } from "@/lib/plural";
+import type { TranslationKey } from "@/lib/i18n";
 import { PanelShell } from "./_helpers";
 import { deferIdle } from "./_utils";
 import type { GitHubActivitySummary } from "@/types";
@@ -9,21 +12,24 @@ const BUCKETS = 14;
 const W = (BUCKETS - 1) * 10;
 const H = 32;
 
-function formatSinceLatest(latestIso: string | null): string | null {
+function formatSinceLatest(latestIso: string | null, t: (key: TranslationKey) => string): string | null {
   if (!latestIso) return null;
   const diffMs = Date.now() - new Date(latestIso).getTime();
   if (diffMs < 0) return null;
   const mins = Math.floor(diffMs / 60_000);
-  if (mins < 60) return `${mins}m AGO`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h AGO`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d AGO`;
+  const [n, unit] =
+    mins < 60 ? [mins, "activity.unitMin"] as const
+    : hrs < 24 ? [hrs, "activity.unitHour"] as const
+    : [Math.floor(hrs / 24), "activity.unitDay"] as const;
+  return `${n}${t(unit)} ${t("activity.ago")}`;
 }
 
-const plural = (n: number) => `${n} EVENT${n === 1 ? "" : "S"}`;
-
 export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
+  const { locale, t } = useLocale();
+  const up = (key: TranslationKey) => t(key).toLocaleUpperCase(locale);
+  const plural = (n: number) => pluralize(n, locale, EVENT_FORMS).toLocaleUpperCase(locale);
+  const [announce, setAnnounce] = useState("");
   const [data, setData] = useState<GitHubActivitySummary | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [active, setActive] = useState<number | null>(null);
@@ -47,7 +53,7 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
   const labels = buckets.map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (BUCKETS - 1 - i));
-    return shortDay(d);
+    return shortDay(d, locale);
   });
   const max = Math.max(...buckets, 1);
   // sqrt scaling so single-event days stay visible vs. zero.
@@ -56,15 +62,14 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
   const latest = buckets[BUCKETS - 1] ?? 0;
 
   const total = data?.total ?? 0;
-  const sinceLatest = formatSinceLatest(data?.latest ?? null);
+  const sinceLatest = formatSinceLatest(data?.latest ?? null, t)?.toLocaleUpperCase(locale) ?? null;
+  const bucketText = (i: number) => `${labels[i]} · ${plural(buckets[i]!)}`;
   const readout =
     active !== null && data
-      ? `${labels[active]} · ${plural(buckets[active]!)}`
+      ? bucketText(active)
       : data
-        ? `PEAK ${max} · AVG ${Math.round(total / BUCKETS)}/D${sinceLatest ? ` · LAST ${sinceLatest}` : ""}`
-        : status === "loading"
-          ? "LOADING"
-          : "ACTIVITY UNAVAILABLE";
+        ? `${up("activity.peak")} ${max} · ${up("activity.avg")} ${Math.round(total / BUCKETS)}${up("activity.perDay")}${sinceLatest ? ` · ${up("activity.last")} ${sinceLatest}` : ""}`
+        : up(status === "loading" ? "activity.loading" : "activity.unavailable");
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!data) return;
@@ -77,7 +82,10 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
       : null;
     if (next === null) return;
     e.preventDefault();
-    setActive(Math.min(BUCKETS - 1, Math.max(0, next)));
+    const clamped = Math.min(BUCKETS - 1, Math.max(0, next));
+    setActive(clamped);
+    // Only keyboard moves are announced; pointer moves just update the visible readout.
+    setAnnounce(bucketText(clamped));
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!data) return;
@@ -104,7 +112,6 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
         <p
           className="text-label select-none truncate"
           style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 14, lineHeight: "14px" }}
-          aria-live="polite"
         >
           <span className={active !== null ? "text-foreground/90" : "text-muted-foreground-dim"}>{readout}</span>
         </p>
@@ -112,13 +119,22 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
         <div
           tabIndex={data ? 0 : -1}
           role="group"
-          aria-label={`Public GitHub events, last ${BUCKETS} days. Arrow keys read one day at a time.`}
+          aria-label={t("activity.sparkLabel").replace("{n}", String(BUCKETS))}
           aria-keyshortcuts="ArrowLeft ArrowRight Home End"
           className="relative mt-2"
           style={{ height: H }}
           onKeyDown={onKeyDown}
-          onFocus={() => data && setActive((cur) => cur ?? BUCKETS - 1)}
-          onBlur={() => setActive(null)}
+          onFocus={() => {
+            if (!data) return;
+            // Focus lands on today and announces it, so keyboard reading starts from a known day.
+            const start = active ?? BUCKETS - 1;
+            setActive(start);
+            setAnnounce(bucketText(start));
+          }}
+          onBlur={() => {
+            setActive(null);
+            setAnnounce("");
+          }}
           onPointerMove={onPointerMove}
           onPointerLeave={() => setActive(null)}
         >
@@ -158,15 +174,19 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
           aria-hidden="true"
         >
           <span>{labels[0] ?? " "}</span>
-          {data && <span className="text-foreground/80">TODAY {latest}</span>}
+          {data && <span className="text-foreground/80">{up("activity.today")} {latest}</span>}
         </div>
+
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {announce}
+        </p>
 
         {data && (
           <div className="sr-only">
             <table>
-              <caption>Public GitHub events per day, last {BUCKETS} days</caption>
+              <caption>{t("activity.sparkCaption").replace("{n}", String(BUCKETS))}</caption>
               <thead>
-                <tr><th scope="col">Day</th><th scope="col">Events</th></tr>
+                <tr><th scope="col">{t("activity.day")}</th><th scope="col">{t("activity.events")}</th></tr>
               </thead>
               <tbody>
                 {buckets.map((count, i) => (

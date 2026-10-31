@@ -1,9 +1,22 @@
 import { useState, useEffect, useMemo, type CSSProperties, type KeyboardEvent } from "react";
 import { PanelShell } from "./_helpers";
-import { buildCalendar, DAYS_PER_WEEK, TOTAL_DAYS, WEEKS } from "@/lib/activity";
+import { T } from "@/components/ui/T";
+import { useLocale } from "@/stores/settingsStore";
+import { pluralize } from "@/lib/plural";
+import {
+  buildCalendar,
+  dayFromKey,
+  shortMonth,
+  shortWeekday,
+  DAYS_PER_WEEK,
+  EVENT_FORMS,
+  TOTAL_DAYS,
+  WEEKS,
+} from "@/lib/activity";
 
-const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// Rows labelled in the grid (Mon, Wed, Fri); every day is in the hidden table.
+const LABELLED_DAYS = [1, 3, 5];
+const WEEKDAY_INDEXES = [0, 1, 2, 3, 4, 5, 6];
 
 // SVG geometry, in px (the SVG renders at 1:1).
 const CELL = 16;
@@ -13,18 +26,21 @@ const HEAD_H = 16;
 const SVG_W = LABEL_W + WEEKS * PITCH - 3;
 const SVG_H = HEAD_H + DAYS_PER_WEEK * PITCH - 3;
 
-// Grayscale ramp using foreground/muted-foreground tokens
+// Level 0 is the border token; the rest are foreground-only mixes so each step
+// is visibly darker than the last in both themes (the old muted-foreground
+// mixes started below the border's own ink in light).
 const LEVEL_COLORS = [
   "var(--border)",
-  "color-mix(in srgb, var(--muted-foreground) 20%, transparent)",
-  "color-mix(in srgb, var(--muted-foreground) 40%, transparent)",
+  "color-mix(in srgb, var(--foreground) 30%, transparent)",
   "color-mix(in srgb, var(--foreground) 50%, transparent)",
+  "color-mix(in srgb, var(--foreground) 72%, transparent)",
   "var(--foreground)",
 ];
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "S"}`;
-
 export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
+  const { locale, t } = useLocale();
+  const plural = (n: number) => pluralize(n, locale, EVENT_FORMS).toLocaleUpperCase(locale);
+  const [announce, setAnnounce] = useState("");
   const [events, setEvents] = useState<Array<{ created_at: string }>>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
   const [active, setActive] = useState<number | null>(null);
@@ -44,7 +60,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   // render match, and the height never changes.
   const ready = status === "ready";
 
-  const cells = useMemo(() => (ready ? buildCalendar(events) : []), [ready, events]);
+  const cells = useMemo(() => (ready ? buildCalendar(events, new Date(), locale) : []), [ready, events, locale]);
   const lastPast = cells.findLastIndex((c) => !c.future);
   const totalEvents = cells.reduce((sum, c) => sum + c.count, 0);
   const activeDays = cells.filter((c) => c.count > 0).length;
@@ -53,25 +69,25 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
     const labels: { col: number; label: string }[] = [];
     let lastMonth = "";
     for (let w = 0; w < WEEKS; w++) {
-      const month = cells[w * DAYS_PER_WEEK]?.label.split(" ")[0];
-      if (!month || month === lastMonth) continue;
+      const first = cells[w * DAYS_PER_WEEK];
+      const month = first?.date.slice(0, 7);
+      if (!first || !month || month === lastMonth) continue;
       // A label needs three columns; drop a partial month that would collide.
       const prev = labels[labels.length - 1];
       if (prev && w - prev.col < 3) labels.pop();
-      labels.push({ col: w, label: month });
+      labels.push({ col: w, label: shortMonth(dayFromKey(first.date), locale) });
       lastMonth = month;
     }
     return labels;
-  }, [cells]);
+  }, [cells, locale]);
 
+  const cellText = (i: number) => `${cells[i]!.label} · ${plural(cells[i]!.count)}`;
   const activeCell = active !== null ? cells[active] : undefined;
   const readout = activeCell
-    ? `${activeCell.label} · ${plural(activeCell.count, "EVENT")}`
+    ? cellText(active!)
     : ready
-      ? `${plural(totalEvents, "EVENT")} · ${activeDays}/${lastPast + 1} DAYS ACTIVE`
-      : status === "loading"
-        ? "LOADING"
-        : "ACTIVITY UNAVAILABLE";
+      ? `${plural(totalEvents)} · ${activeDays}/${lastPast + 1} ${t("activity.daysActive").toLocaleUpperCase(locale)}`
+      : (status === "loading" ? t("activity.loading") : t("activity.unavailable")).toLocaleUpperCase(locale);
 
   // Arrow keys move a cursor over the grid: left/right by week, up/down by day.
   const onKeyDown = (e: KeyboardEvent) => {
@@ -84,7 +100,10 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
     else if (e.key === "End") next = lastPast;
     else return;
     e.preventDefault();
-    setActive(Math.min(lastPast, Math.max(0, next)));
+    const clamped = Math.min(lastPast, Math.max(0, next));
+    setActive(clamped);
+    // Only keyboard moves are announced; pointer hover just updates the visible readout.
+    setAnnounce(cellText(clamped));
   };
 
   const pos = (i: number) => ({
@@ -93,12 +112,12 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
   });
 
   return (
-    <PanelShell label="ACTIVITY" labelRight="public GitHub events" delay={delay}>
+    <PanelShell label="ACTIVITY" labelRight={<T k="activity.publicEvents" />} delay={delay}>
       <div className="px-5 py-3">
         <p
+          data-readout
           className="text-label select-none mb-2 truncate"
           style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 14, lineHeight: "14px" }}
-          aria-live="polite"
         >
           <span className={activeCell ? "text-foreground/90" : "text-muted-foreground-dim"}>{readout}</span>
         </p>
@@ -106,12 +125,21 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
         <div
           tabIndex={ready ? 0 : -1}
           role="group"
-          aria-label={`Activity calendar, last ${WEEKS} weeks. Arrow keys read one day at a time.`}
+          aria-label={t("activity.calendarLabel").replace("{n}", String(WEEKS))}
           aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"
           className="w-fit max-w-full overflow-x-auto"
           onKeyDown={onKeyDown}
-          onFocus={() => ready && setActive((cur) => cur ?? lastPast)}
-          onBlur={() => setActive(null)}
+          onFocus={() => {
+            if (!ready) return;
+            // Focus lands on today and announces it, so keyboard reading starts from a known day.
+            const start = active ?? lastPast;
+            setActive(start);
+            setAnnounce(cellText(start));
+          }}
+          onBlur={() => {
+            setActive(null);
+            setAnnounce("");
+          }}
           onMouseLeave={() => setActive(null)}
         >
           <svg
@@ -124,16 +152,14 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
           >
             {monthLabels.map(({ col, label }) => (
               <text key={col} x={LABEL_W + col * PITCH} y={11} fill="currentColor">
-                {label.charAt(0) + label.slice(1).toLowerCase()}
+                {label}
               </text>
             ))}
-            {DAY_LABELS.map((label, d) =>
-              label ? (
-                <text key={d} x={LABEL_W - 6} y={HEAD_H + d * PITCH + 12} textAnchor="end" fill="currentColor" opacity={0.7}>
-                  {label}
-                </text>
-              ) : null,
-            )}
+            {LABELLED_DAYS.map((d) => (
+              <text key={d} x={LABEL_W - 6} y={HEAD_H + d * PITCH + 12} textAnchor="end" fill="currentColor" opacity={0.7}>
+                {shortWeekday(d, locale)}
+              </text>
+            ))}
             {ready
               ? cells.map((day, i) =>
                   day.future ? null : (
@@ -169,14 +195,18 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
           </svg>
         </div>
 
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {announce}
+        </p>
+
         {ready && (
           <div className="sr-only">
             <table>
-              <caption>Public GitHub events per day, last {WEEKS} weeks (the API returns the latest 100 events)</caption>
+              <caption>{t("activity.calendarCaption").replace("{n}", String(WEEKS))}</caption>
               <thead>
                 <tr>
-                  <th scope="col">Week of</th>
-                  {WEEKDAYS.map((d) => <th key={d} scope="col">{d}</th>)}
+                  <th scope="col">{t("activity.weekOf")}</th>
+                  {WEEKDAY_INDEXES.map((d) => <th key={d} scope="col">{shortWeekday(d, locale)}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -196,11 +226,11 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
 
         {/* Legend */}
         <div className="flex items-center gap-1.5 mt-2" aria-hidden="true">
-          <span className="text-muted-foreground-dim label-meta">less</span>
+          <span className="text-muted-foreground-dim label-meta">{t("activity.less")}</span>
           {LEVEL_COLORS.map((color, i) => (
             <div key={i} className="rounded-[2px] shrink-0" style={{ width: 11, height: 11, backgroundColor: color }} />
           ))}
-          <span className="text-muted-foreground-dim label-meta">more</span>
+          <span className="text-muted-foreground-dim label-meta">{t("activity.more")}</span>
         </div>
       </div>
     </PanelShell>

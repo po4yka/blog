@@ -3,6 +3,7 @@ import { useScrollState } from "@/hooks/useScrollState";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useSettings, useLocale } from "@/stores/settingsStore";
 import { buildMeta } from "@/data/buildMeta";
+import { scrollBehavior } from "@/lib/motion";
 
 /** Custom event KeyboardShortcuts listens for; lets chrome open the overlay. */
 export const SHORTCUTS_EVENT = "po4yka:shortcuts";
@@ -108,7 +109,7 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
           <button
             type="button"
             className={buttonClass}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => window.scrollTo({ top: 0, behavior: scrollBehavior() })}
             aria-label={t("blogPost.scrollToTop")}
           >
             <span aria-hidden="true">gg</span>

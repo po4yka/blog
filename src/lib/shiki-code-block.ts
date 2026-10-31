@@ -68,6 +68,10 @@ export function rehypeCodeCopyLabel() {
     const walk = (node: Root | RootContent) => {
       if (node.type === "element" && node.tagName === "button" && "dataCopyCode" in node.properties) {
         node.properties.ariaLabel = t(locale, "blogPost.copyCode");
+        node.children = [{ type: "text", value: t(locale, "blogPost.copyShort") }];
+        // The copied state uses the post's language too, not the visitor's stored locale.
+        node.properties.dataCopiedText = t(locale, "blogPost.copiedShort");
+        node.properties.dataCopiedLabel = t(locale, "blogPost.copied");
       }
       if ("children" in node) node.children.forEach(walk);
     };

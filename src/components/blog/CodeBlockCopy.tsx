@@ -1,5 +1,4 @@
 import { useEffect, type RefObject } from "react";
-import { useLocale } from "@/stores/settingsStore";
 
 // --- Copy-to-clipboard for code fences ---
 
@@ -7,18 +6,18 @@ import { useLocale } from "@/stores/settingsStore";
 // (src/lib/shiki-code-block.ts). This binds one delegated click handler on the
 // prose root; it only swaps the clicked button's label, never builds DOM.
 export function CodeBlockCopy({ contentRef }: { contentRef: RefObject<HTMLDivElement | null> }) {
-  const { t } = useLocale();
-
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
     const timers = new Map<HTMLButtonElement, ReturnType<typeof setTimeout>>();
 
-    // the build sets the post's own locale label; keep it to restore after "copied"
+    // Every label comes from the build (rehypeCodeCopyLabel), in the post's own
+    // language; keep the idle ones to restore after "copied".
     const setLabel = (btn: HTMLButtonElement, copied: boolean) => {
-      btn.dataset.label ??= btn.getAttribute("aria-label") ?? t("blogPost.copyCode");
-      btn.textContent = copied ? "copied" : "copy";
-      btn.setAttribute("aria-label", copied ? t("blogPost.copied") : btn.dataset.label);
+      btn.dataset.label ??= btn.getAttribute("aria-label") ?? "";
+      btn.dataset.text ??= btn.textContent ?? "";
+      btn.textContent = copied ? (btn.dataset.copiedText ?? "") : btn.dataset.text;
+      btn.setAttribute("aria-label", copied ? (btn.dataset.copiedLabel ?? "") : btn.dataset.label);
     };
 
     const handleClick = (event: MouseEvent) => {
@@ -44,7 +43,7 @@ export function CodeBlockCopy({ contentRef }: { contentRef: RefObject<HTMLDivEle
         setLabel(btn, false);
       });
     };
-  }, [contentRef, t]);
+  }, [contentRef]);
 
   return null;
 }

@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  categoryPercent,
-  computeListStats,
-  filterPosts,
-  findFeatured,
-  readTagParam,
-  withTagParam,
-} from "@/lib/blog/filter";
+import { filterPosts, findFeatured, readTagParam, uniqueTags, withTagParam } from "@/lib/blog/filter";
 import type { BlogPostMeta } from "@/types";
 
 const post = (slug: string, category: string, tags: string[], featured?: boolean): BlogPostMeta => ({
@@ -48,21 +41,10 @@ describe("findFeatured", () => {
   });
 });
 
-describe("computeListStats", () => {
-  it("dedupes tags and counts categories", () => {
-    expect(computeListStats(posts)).toEqual({
-      tagCount: 3,
-      tags: ["rag", "llm", "kotlin"],
-      catCounts: { AI: 2, Android: 1 },
-    });
-  });
-});
-
-describe("categoryPercent", () => {
-  it("rounds and is 0 for an empty list", () => {
-    expect(categoryPercent(1, 3)).toBe(33);
-    expect(categoryPercent(2, 3)).toBe(67);
-    expect(categoryPercent(0, 0)).toBe(0);
+describe("uniqueTags", () => {
+  it("lists each tag once, in first-seen order", () => {
+    expect(uniqueTags(posts)).toEqual(["rag", "llm", "kotlin"]);
+    expect(uniqueTags([])).toEqual([]);
   });
 });
 

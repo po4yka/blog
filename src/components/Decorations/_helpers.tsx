@@ -8,7 +8,7 @@ export function PanelShell({
   children,
   delay = 0,
 }: {
-  label: string;
+  label: React.ReactNode;
   labelRight?: React.ReactNode;
   children: React.ReactNode;
   delay?: number;

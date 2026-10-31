@@ -12,7 +12,7 @@ export function Footer() {
 
   return (
     <MotionProvider>
-    <footer aria-label="Site footer" className="max-w-(--grid-max) mx-auto px-(--grid-pad) pb-12">
+    <footer aria-label={t("footer.label")} className="max-w-(--grid-max) mx-auto px-(--grid-pad) pb-12">
       <div className="space-y-6">
         {/* Interactive terminal */}
         <Panel clip="visible" className="p-4">
@@ -32,15 +32,15 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <a
               href="/changelog"
-              className="label-meta text-muted-foreground hover:text-foreground transition-colors"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"
             >
-              Changelog
+              {t("footer.changelog")}
             </a>
             <a
               href="/privacy"
-              className="label-meta text-muted-foreground hover:text-foreground transition-colors"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"
             >
-              Privacy
+              {t("footer.privacy")}
             </a>
           </div>
         </div>

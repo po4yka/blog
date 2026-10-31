@@ -52,7 +52,9 @@ describe("transformerCodeBlock", () => {
     const html = await render("```ts\nconst a = 1;\n```");
     expect(html).toMatch(/^<div class="code-block"><div class="code-block-head">/);
     expect(html).toContain('<span class="code-block-lang">ts</span>');
-    expect(html).toContain('<button type="button" class="code-block-copy" data-copy-code="" aria-label="Copy code">copy</button>');
+    expect(html).toContain(
+      '<button type="button" class="code-block-copy" data-copy-code="" aria-label="Copy code" data-copied-text="copied" data-copied-label="Copied">copy</button>',
+    );
     expect(html).not.toContain("code-block-file");
     expect(html).not.toContain("data-line-numbers");
     // Shiki keeps the scrollable pre keyboard-focusable
@@ -72,6 +74,9 @@ describe("transformerCodeBlock", () => {
   it("localizes the copy label on Russian posts", async () => {
     const html = await render("```sh\nls\n```", "/repo/src/content/blog/ru/post.mdx");
     expect(html).toContain('aria-label="Копировать код"');
+    // The copied state is built in the post's language too, not taken from the visitor's locale.
+    expect(html).toMatch(/data-copied-text="[^"a-z]+"/);
+    expect(html).toMatch(/data-copied-label="[^"a-z]+"/);
   });
 
   it("marks diff and highlighted lines and removes the notation from the code", async () => {

@@ -6,6 +6,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useLocale } from "@/stores/settingsStore";
 import type { BlogPostMeta } from "@/types";
 
+import { T, TCount } from "@/components/ui/T";
+import { pluralize } from "@/lib/plural";
 import { ease, duration, stagger } from "@/lib/motion";
 import type { Locale } from "@/lib/i18n";
 import { BlogStats } from "./BlogStats";
@@ -19,8 +21,13 @@ interface BlogListIslandProps {
   lang?: string;
 }
 
+const POST_FORMS: Parameters<typeof pluralize>[2] = {
+  en: ["post", "posts"],
+  ru: ["пост", "поста", "постов"],
+};
+
 export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIslandProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered, featured } =
     usePostFilters(posts);
   const lang = (langProp ?? "en") as Locale;
@@ -33,8 +40,8 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         level={1}
         number="07"
         label="WRITING"
-        heading="Posts"
-        meta={`${posts.length} POSTS`}
+        heading={<T k="blog.heading" />}
+        meta={<TCount n={posts.length} forms={POST_FORMS} />}
       />
 
       {/* Boot block — compressed to 2 lines; the "{n} POSTS" meta in
@@ -46,7 +53,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
             status: "OK",
             text: (
               <>
-                Mounted <Em>po4yka.dev/blog</Em>
+                <T k="terminal.mounted" /> <Em>{lang === "ru" ? "po4yka.dev/blog/ru" : "po4yka.dev/blog"}</Em>
               </>
             ),
           },
@@ -72,6 +79,11 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         <CategoryFilter categories={categories} activeCategory={activeCategory} onSelect={setActiveCategory} />
 
         {activeTag && <ActiveTagChip tag={activeTag} onClear={clearTag} />}
+
+        {/* Announces the result count after a filter change (live regions skip their first render). */}
+        <p role="status" className="sr-only">
+          {filtered.length === 0 ? t("blog.noPosts") : pluralize(filtered.length, locale, POST_FORMS)}
+        </p>
 
         {/* Posts list — flat, no OperatorPanel wrapping */}
         <div>
@@ -101,30 +113,14 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
                   />
                 </m.li>
               ))}
-              {filtered.length === 0 && (
-                <li className="py-8 flex items-baseline gap-3 font-mono text-mono">
-                  <span
-                    className="shrink-0 font-mono font-medium"
-                    style={{
-                      color: "var(--muted-foreground)",
-                      fontSize: 11,
-                      letterSpacing: "0.10em",
-                      textTransform: "uppercase",
-                      paddingTop: "2px",
-                    }}
-                  >
-                    WARN ·
-                  </span>
-                  <span className="text-foreground/70">{t("blog.noPosts")}</span>
-                </li>
-              )}
             </m.ul>
           </AnimatePresence>
+          {filtered.length === 0 && <BootBlock lines={[{ status: "WARN", text: t("blog.noPosts") }]} />}
         </div>
       </div>
 
       {/* Blog stats */}
-      <BlogStats posts={posts} categories={categories} activeTag={activeTag} onTagClick={selectTag} />
+      <BlogStats posts={posts} activeTag={activeTag} onTagClick={selectTag} />
     </div>
     </MotionProvider>
     </ErrorBoundary>
