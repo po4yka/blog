@@ -1,6 +1,35 @@
 # po4yka.dev redesign plan
 
-Status: proposal for owner review, revision 2 (after an independent critique). No site code has been changed. Research is in `docs/redesign/research.md`. This plan reads source only; no build, bundle measurement, Lighthouse run or browser check was done, so every size and score below is an estimate until Phase 0 measures it.
+Status: shipped through Phase 12 (see "Shipped" below). `DESIGN.md` is the source of truth for every rule and token; where this plan's values differ (the grid tokens, the rule A1 wording, which allows opacity-only reveals), `DESIGN.md` wins. The original status line read: proposal for owner review, revision 2 (after an independent critique). Research is in `docs/redesign/research.md`. This plan reads source only; no build, bundle measurement, Lighthouse run or browser check was done, so every size and score below is an estimate until Phase 0 measures it.
+
+## Shipped
+
+Pull requests by phase, in order. #219 is open and this PR is not yet merged. Phases 7.3 and 7.4 (reading), 8.2 and 8.4 to 8.6 (decode, the hero dither field and pointer response) and 9.3 (the mobile StatusLine sheet) did not ship; `src/lib/dither.ts` from 8.3 shipped inside 10.1 (#210), and the `AnimatedNumber` that 8.2 meant to rewrite was deleted in 12.4.
+
+| Phase | PR | Notes |
+|---|---|---|
+| 0 | #188 | Baseline: homepage GitHub panels, visual regression tests |
+| 1 | #197 | Design tokens, one reduced-motion mechanism |
+| 2 | #199 | `Panel` and `Reveal` primitives, dead code removed |
+| 3 | #200 | Static home sections without JS |
+| 4 | #201, #202 | Blog island and image lightbox split into modules |
+| 5 | #203 | Grid guides, registration marks, scroll-drawn rules |
+| 6 | #204 | Title morph and circular theme wipe |
+| 7.1 | #205 | Reading progress rail, section-aware contents |
+| 7.2 | #206 | Code block language label, filename and line marks |
+| 8.1 | #207 | Large hero name, static hero |
+| — | #209 | A quarter less CSS before first paint |
+| 9.1, 9.2 | #208 | Command palette |
+| 10.1 | #210 | Project plates |
+| 10.2 | #211, #212 | Post covers and OG cards; Cyrillic OG titles |
+| 10.3 | #213 | Readable SVG heatmap and sparkline |
+| 10.4 | #214 | Experience timeline rail |
+| 11 | #215 | Architecture diagram on `/changelog` |
+| 12.1 | #216 | Content-aware 404 |
+| 12.2 | #217 | Changelog filter by type |
+| 12.3 | #218 | Privacy and Settings in Russian, 44px targets |
+| 12.4 | #219 (open) | Keyboard, screen-reader, Russian and motion fixes from the Phase 12 audit |
+| 12.5 | this PR | Docs consistency pass |
 
 ## 1. Goal and design thesis
 
@@ -17,7 +46,7 @@ Design principles:
 5. **Cheapest tool first.** CSS, then Motion already in the bundle, then a small custom script, then Canvas 2D. WebGL is a deferred option that needs a failed measurement first.
 6. **Real data only.** Every generative piece is seeded by a real input and its caption names the input.
 
-## 2. Current state summary
+## 2. Current state summary (as of the plan, before Phase 0; superseded by the shipped code)
 
 - **Stack:** Astro 7 static pages with React 19 islands, Tailwind 4 (CSS-first, no config file), Motion 13, Astro `ClientRouter` for every navigation. Nav, Footer, KeyboardShortcuts and StatusLine are persisted (`src/layouts/MainLayout.astro` lines 76 to 94).
 - **Home:** `src/pages/index.astro` is a flat stack of nine islands. Only `Hero` is `client:load`. Eight are `client:visible`, and four of those (`Projects`, `Experience`, `Links`, `BlogPreview`) have no motion of their own yet still ship React, Motion and the settings store. Selectors `[data-section-name]` and `:has(> astro-island:empty)` are load-bearing for e2e tests.
@@ -303,7 +332,7 @@ Each phase is one small PR where feasible (target under about 400 changed lines;
 
 **Acceptance gate for "stunning":** each phase that adds a visible effect (Phases 5, 6, 7, 8, 9, 10, 11) attaches a before and after screen recording (desktop and a phone-size viewport) to its PR. The owner reviews the recording and approves it as part of the phase gate. A phase whose recording does not look clearly better does not merge, even when all automated checks pass.
 
-**Rule-change step:** every phase that edits `DESIGN.md` or `docs/Guidelines.md` ends with `bash scripts/apply-skill-policy.sh` and `npm run validate:skills`, and commits the result, because the pre-commit `validate:skills` check fails until this is done.
+**Rule-change step:** when a phase adds or lifts a `DESIGN.md` ban that a design skill's defaults contradict, re-check the `MANUAL_ONLY` list in `scripts/apply-skill-policy.sh` and run `npm run validate:skills`. A doc edit alone cannot fail the pre-commit check; it fails only after a skill update until the script is re-run.
 
 ### Phase 0: Baseline and test scaffolding (no site code change)
 

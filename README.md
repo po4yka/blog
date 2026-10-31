@@ -82,7 +82,7 @@ flowchart LR
 
 Swiss / International Typographic Style fused with an operator-console industrial layer -- the site reads as a well-configured developer workstation, not a startup landing page. Neutral greyscale: near-black graphite (`#0b0b0c`) dark / warm paper (`#f5f3ee`) light. No chromatic accent — emphasis is pure white/black via `--emphasis` plus weight and hairline underline. Geist Sans carries site chrome, Geist Mono is demoted to code and operator labels, and Piazzolla (variable serif with native Cyrillic) carries blog post body prose.
 
-Custom terminal component kit: OperatorPanel, BootBlock, Cmd, OutputBlock, PanelShell, InfoTable. Atmospheric decorations fetch real data from GitHub APIs (activity sparkline, language distribution, latest release). See `DESIGN.md` for the full visual specification and `docs/Guidelines.md` for quality rules.
+Custom terminal component kit: OperatorPanel, BootBlock, Cmd, OutputBlock, PanelShell, InfoTable. Atmospheric decorations fetch real data from GitHub APIs (activity sparkline and calendar, open-source repos, latest release). See `DESIGN.md` for the full visual specification and `docs/Guidelines.md` for quality rules.
 
 ## Development
 

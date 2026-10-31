@@ -300,24 +300,6 @@ kbd {
   animation-delay: calc(var(--col, 0) * 20ms);
 }
 
-/* Terminal-authentic loading marker. Replaces skeleton shimmer.
-   Cycles '[ .   ]' → '[ ..  ]' → '[ ... ]' → '[....]' in mono. */
-@keyframes loading-cycle {
-  0%   { content: "[ .   ]"; }
-  25%  { content: "[ ..  ]"; }
-  50%  { content: "[ ... ]"; }
-  75%  { content: "[....]";  }
-  100% { content: "[ .   ]"; }
-}
-.loading-bracket::before {
-  content: "[ .   ]";
-  animation: loading-cycle 1.2s steps(1, end) infinite;
-  font-family: var(--font-mono);
-  letter-spacing: 0.04em;
-  color: var(--muted-foreground);
-  white-space: pre;
-}
-
 /* One-shot outline flash — invalid form feedback.
    Wrapper must have `outline: 1px solid transparent; outline-offset: N` at rest. */
 @keyframes form-flash {
