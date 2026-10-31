@@ -1,13 +1,14 @@
 import { Reveal } from "./ui/Reveal";
-import { Zap, ZapOff, RotateCcw, Check, Sun, Moon, Monitor, Keyboard, Grid3x3 } from "lucide-react";
+import { Zap, ZapOff, RotateCcw, Sun, Moon, Monitor, Keyboard, Grid3x3, type LucideIcon } from "lucide-react";
 import { switchTheme, centerOf } from "@/lib/themeTransition";
 import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
-import { useState } from "react";
+import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import { Cmd, Em, BootBlock, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
+import { T } from "./ui/T";
 
 const themeOptions: { value: ThemeMode; icon: typeof Sun; labelKey: TranslationKey }[] = [
   { value: "dark", icon: Moon, labelKey: "settings.dark" },
@@ -26,6 +27,65 @@ const fontSizeLabelKeys: Record<FontSize, TranslationKey> = {
   default: "settings.default",
   large: "settings.large",
 };
+
+/** One toggle in a settings group: 44px square minimum on phones, opacity press feedback. */
+function OptionButton({
+  pressed,
+  onClick,
+  children,
+}: {
+  pressed: boolean;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={pressed}
+      className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-[2px] border cursor-pointer text-sm transition-colors duration-150 active:opacity-70 ${
+        pressed
+          ? "text-foreground font-medium border-border bg-muted"
+          : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** One setting: icon, label, current value, description, then its toggle group. */
+function SettingRow({
+  icon: Icon,
+  label,
+  value,
+  description,
+  first = false,
+  children,
+}: {
+  icon?: LucideIcon;
+  label: string;
+  value: string;
+  description: string;
+  first?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`space-y-3 ${first ? "" : "border-t border-border pt-6"}`}>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon size={14} className="text-muted-foreground" aria-hidden="true" />}
+          <span className="text-foreground/80 text-base">{label}</span>
+        </div>
+        <span className="text-muted-foreground text-sm">{value}</span>
+      </div>
+      <p className="m-0 text-muted-foreground text-sm">{description}</p>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={label}>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export function Settings() {
   const live = useSettings();
@@ -46,11 +106,15 @@ export function Settings() {
   const locale = mounted ? liveLocale : "en";
 
   const [resetDone, setResetDone] = useState(false);
+  useEffect(() => {
+    if (!resetDone) return;
+    const id = setTimeout(() => setResetDone(false), 1500);
+    return () => clearTimeout(id);
+  }, [resetDone]);
 
   const handleReset = () => {
     resetPreferences();
     setResetDone(true);
-    setTimeout(() => setResetDone(false), 1500);
   };
 
   return (
@@ -60,8 +124,8 @@ export function Settings() {
         level={1}
         number="09"
         label="SETTINGS"
-        heading={tt("settings.heading") ?? "Preferences"}
-        meta={tt("settings.storedLocally") ?? undefined}
+        heading={<T k="settings.heading" />}
+        meta={<T k="settings.storedLocally" />}
       />
 
       {/* Boot */}
@@ -71,11 +135,11 @@ export function Settings() {
             status: "OK",
             text: (
               <>
-                Mounted <Em>po4yka.dev/settings</Em>
+                <T k="terminal.mounted" /> <Em>po4yka.dev/settings</Em>
               </>
             ),
           },
-          { status: "INFO", text: tt("settings.storedLocally") },
+          { status: "INFO", text: <T k="settings.storedLocally" /> },
         ]}
       />
 
@@ -84,214 +148,104 @@ export function Settings() {
         cat <Em>/etc/preferences.conf</Em>
       </Cmd>
 
-      <OperatorPanel label="preferences.conf" titleExt="~/settings | main" sectionNumber="09" delay={0.05} statusLine>
-        <Reveal className="space-y-6" speed="slow">
-          {/* Theme */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {resolvedTheme === "dark" ? (
-                  <Moon size={14} className="text-muted-foreground" />
-                ) : (
-                  <Sun size={14} className="text-muted-foreground" />
-                )}
-                <span className="text-foreground/80 text-mono">
-                  {tt("settings.theme")}
-                </span>
-              </div>
-              <span className="text-muted-foreground text-label">
-                {theme === "system" ? `${tt("settings.system")} (${resolvedTheme})` : tt(themeLabelKeys[theme])}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.themeDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.theme")}>
-              {themeOptions.map(({ value, icon: Icon, labelKey }) => (
-                <button
-                  key={value}
-                  onClick={(e) => switchTheme(value, centerOf(e.currentTarget))}
-                  aria-pressed={theme === value}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    theme === value
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  <Icon size={11} strokeWidth={2} />
-                  {tt(labelKey)}
-                </button>
-              ))}
-            </div>
-          </div>
+      <OperatorPanel label="preferences.conf" titleExt="~/settings" delay={0.05}>
+        {/* OperatorPanel's body is mono; settings are UI copy, so they are sans (DESIGN.md: mono only for code and terminal output). */}
+        <Reveal className="space-y-6 font-sans" speed="slow">
+          <SettingRow
+            first
+            icon={resolvedTheme === "dark" ? Moon : Sun}
+            label={tt("settings.theme")}
+            value={
+              theme === "system"
+                ? `${tt("settings.system")} (${tt(resolvedTheme === "dark" ? "settings.dark" : "settings.light")})`
+                : tt(themeLabelKeys[theme])
+            }
+            description={tt("settings.themeDesc")}
+          >
+            {themeOptions.map(({ value, icon: Icon, labelKey }) => (
+              <OptionButton key={value} pressed={theme === value} onClick={(e) => switchTheme(value, centerOf(e.currentTarget))}>
+                <Icon size={11} strokeWidth={2} aria-hidden="true" />
+                {tt(labelKey)}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Motion */}
-          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {reduceMotion ? <ZapOff size={14} className="text-muted-foreground" /> : <Zap size={14} className="text-muted-foreground" />}
-                <span className="text-foreground/80 text-mono">
-                  {tt("settings.motion")}
-                </span>
-              </div>
-              <span className="text-muted-foreground text-label">
-                {tt(reduceMotion ? "settings.motionReduced" : "settings.motionFull")}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.motionDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.motion")}>
-              {[false, true].map((val) => (
-                <button
-                  key={String(val)}
-                  onClick={() => setReduceMotion(val)}
-                  aria-pressed={reduceMotion === val}
-                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    reduceMotion === val
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  {val ? tt("settings.motionReduced") : tt("settings.motionFull")}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SettingRow
+            icon={reduceMotion ? ZapOff : Zap}
+            label={tt("settings.motion")}
+            value={tt(reduceMotion ? "settings.motionReduced" : "settings.motionFull")}
+            description={tt("settings.motionDesc")}
+          >
+            {[false, true].map((val) => (
+              <OptionButton key={String(val)} pressed={reduceMotion === val} onClick={() => setReduceMotion(val)}>
+                {tt(val ? "settings.motionReduced" : "settings.motionFull")}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Grid guides */}
-          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Grid3x3 size={14} className="text-muted-foreground" />
-                <span className="text-foreground/80 text-mono">
-                  {tt("settings.grid")}
-                </span>
-              </div>
-              <span className="text-muted-foreground text-label">
-                {tt(gridGuides ? "settings.gridOn" : "settings.gridOff")}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.gridDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.grid")}>
-              {[true, false].map((val) => (
-                <button
-                  key={String(val)}
-                  onClick={() => setGridGuides(val)}
-                  aria-pressed={gridGuides === val}
-                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    gridGuides === val
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  {tt(val ? "settings.gridOn" : "settings.gridOff")}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SettingRow
+            icon={Grid3x3}
+            label={tt("settings.grid")}
+            value={tt(gridGuides ? "settings.gridOn" : "settings.gridOff")}
+            description={tt("settings.gridDesc")}
+          >
+            {[true, false].map((val) => (
+              <OptionButton key={String(val)} pressed={gridGuides === val} onClick={() => setGridGuides(val)}>
+                {tt(val ? "settings.gridOn" : "settings.gridOff")}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Font size */}
-          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
-            <div className="flex items-center justify-between">
-              <span className="text-foreground/80 text-mono">
-                {tt("settings.fontSize")}
-              </span>
-              <span className="text-muted-foreground text-label">
-                {fontSize}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.fontSizeDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.fontSize")}>
-              {(["compact", "default", "large"] as FontSize[]).map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setFontSize(size)}
-                  aria-pressed={fontSize === size}
-                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    fontSize === size
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  {tt(fontSizeLabelKeys[size])}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SettingRow
+            label={tt("settings.fontSize")}
+            value={tt(fontSizeLabelKeys[fontSize])}
+            description={tt("settings.fontSizeDesc")}
+          >
+            {(["compact", "default", "large"] as FontSize[]).map((size) => (
+              <OptionButton key={size} pressed={fontSize === size} onClick={() => setFontSize(size)}>
+                {tt(fontSizeLabelKeys[size])}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Language */}
-          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
-            <div className="flex items-center justify-between">
-              <span className="text-foreground/80 text-mono">
-                {tt("settings.language")}
-              </span>
-              <span className="text-muted-foreground text-label">
-                {locale}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.languageDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.language")}>
-              {(["en", "ru"] as const).map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => setLocale(loc)}
-                  aria-pressed={locale === loc}
-                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    locale === loc
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  {loc.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SettingRow
+            label={tt("settings.language")}
+            value={locale.toUpperCase()}
+            description={tt("settings.languageDesc")}
+          >
+            {(["en", "ru"] as const).map((loc) => (
+              <OptionButton key={loc} pressed={locale === loc} onClick={() => setLocale(loc)}>
+                {loc.toUpperCase()}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Keyboard shortcuts */}
-          <div className="space-y-3" style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem" }}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Keyboard size={14} className="text-muted-foreground" />
-                <span className="text-foreground/80 text-mono">
-                  {tt("settings.shortcuts")}
-                </span>
-              </div>
-              <span className="text-muted-foreground text-label">
-                {tt(keyboardShortcuts ? "settings.shortcutsOn" : "settings.shortcutsOff")}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-mono-sm">{tt("settings.shortcutsDesc")}</p>
-            <div className="flex gap-2" role="group" aria-label={tt("settings.shortcuts")}>
-              {[true, false].map((val) => (
-                <button
-                  key={String(val)}
-                  onClick={() => setKeyboardShortcuts(val)}
-                  aria-pressed={keyboardShortcuts === val}
-                  className={`inline-flex items-center justify-center px-3 py-1.5 min-h-11 sm:min-h-0 transition-all duration-150 cursor-pointer text-label border ${
-                    keyboardShortcuts === val
-                      ? "text-foreground font-medium border-border bg-muted"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
-                  }`}
-                  style={{ borderRadius: "2px" }}
-                >
-                  {tt(val ? "settings.shortcutsOn" : "settings.shortcutsOff")}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SettingRow
+            icon={Keyboard}
+            label={tt("settings.shortcuts")}
+            value={tt(keyboardShortcuts ? "settings.shortcutsOn" : "settings.shortcutsOff")}
+            description={tt("settings.shortcutsDesc")}
+          >
+            {[true, false].map((val) => (
+              <OptionButton key={String(val)} pressed={keyboardShortcuts === val} onClick={() => setKeyboardShortcuts(val)}>
+                {tt(val ? "settings.shortcutsOn" : "settings.shortcutsOff")}
+              </OptionButton>
+            ))}
+          </SettingRow>
 
-          {/* Reset */}
-          <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+          {/* Reset: the label stays constant; the result is announced in a status line beside it. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
             <button
+              type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 cursor-pointer text-mono-sm"
+              className="inline-flex items-center gap-2 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer font-mono text-mono-sm active:opacity-70"
             >
-              {resetDone ? <Check size={12} /> : <RotateCcw size={12} />}
-              {resetDone ? tt("settings.defaultsRestored") : tt("settings.resetDefaults")}
+              <RotateCcw size={12} aria-hidden="true" />
+              {tt("settings.resetDefaults")}
             </button>
+            <span role="status" className="label-meta text-muted-foreground">
+              {resetDone ? tt("settings.defaultsRestored") : ""}
+            </span>
           </div>
         </Reveal>
       </OperatorPanel>

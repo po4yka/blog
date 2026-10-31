@@ -1,9 +1,104 @@
+import type { ReactNode } from "react";
 import { Em, BootBlock, Cmd, LessViewer } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
+import { T } from "./ui/T";
 
-const MONO_INLINE = { fontFamily: "var(--font-mono)", fontSize: "0.875rem" } as const;
-const SECTION_HEADING = { fontWeight: 500, letterSpacing: "-0.01em" } as const;
+const LINK = "underline underline-offset-2 hover:text-foreground transition-colors duration-150";
+
+/** A technical literal (host, attribute, path): mono, never translated. */
+const Code = ({ children }: { children: ReactNode }) => <code className="font-mono text-[0.875rem]">{children}</code>;
+
+const Section = ({ title, children }: { title: string; children: ReactNode }) => (
+  <section className="space-y-3">
+    <h2 className="m-0 text-foreground font-medium tracking-[-0.01em]">{title}</h2>
+    {children}
+  </section>
+);
+
+const umami = (
+  <a href="https://umami.is" className={LINK} rel="noopener noreferrer" target="_blank">
+    Umami
+  </a>
+);
+const mail = (
+  <a href="mailto:hello@po4yka.dev" className={LINK}>
+    hello@po4yka.dev
+  </a>
+);
+
+/**
+ * The policy in both languages. Both are in the static HTML and html[data-locale]
+ * (set before paint) shows one, like `T`, so a Russian visitor never sees the
+ * English text first.
+ */
+function PolicyEn() {
+  return (
+    <div data-l="en" className="space-y-8">
+      <Section title="Analytics">
+        <p>
+          This site uses {umami}, a self-hosted, open-source analytics tool running at <Code>analytics.po4yka.dev</Code>. No data leaves the site's own infrastructure. Umami is configured with <Code>data-do-not-track="true"</Code>, which means it honors the browser Do-Not-Track header: visitors with DNT enabled are not counted.
+        </p>
+        <p>
+          As a server-side fallback, the Cloudflare Worker middleware records a single pageview to the same Umami instance when the client-side script is blocked or has not yet run. These server-side events are tagged <Code>"edge"</Code> in the Umami dashboard so the two streams are distinguishable.
+        </p>
+        <p>
+          Umami does not use cookies for analytics. It derives a session signal from a first-party hash of the IP address and user-agent string, which is not stored or linked to any identity. The raw IP address is not retained.
+        </p>
+      </Section>
+      <Section title="Third-party trackers and advertising">
+        <p>There are no third-party trackers, advertising networks, or affiliate scripts on this site. No visitor data is sold, rented, or shared with third parties.</p>
+      </Section>
+      <Section title="Admin area">
+        <p>
+          The <Code>/admin</Code> area is secured with WebAuthn passkeys and is excluded from analytics collection entirely. Admin sessions are stored as short-lived tokens in a Cloudflare D1 database and are not visible to site visitors.
+        </p>
+      </Section>
+      <Section title="Visitor preferences">
+        <p>
+          Theme, font size, and locale preferences you set via the Settings page are stored in your browser's <Code>localStorage</Code> only. They never leave your device.
+        </p>
+      </Section>
+      <Section title="Contact">
+        <p>Questions about data handling can be sent to {mail}.</p>
+      </Section>
+    </div>
+  );
+}
+
+function PolicyRu() {
+  return (
+    <div data-l="ru" lang="ru" className="space-y-8">
+      <Section title="Аналитика">
+        <p>
+          Сайт использует {umami}, самостоятельно размещённый инструмент аналитики с открытым исходным кодом, который работает на <Code>analytics.po4yka.dev</Code>. Данные не покидают инфраструктуру сайта. Umami настроен с <Code>data-do-not-track="true"</Code>: он учитывает заголовок браузера Do-Not-Track, и посетители с включённым DNT не учитываются.
+        </p>
+        <p>
+          Если клиентский скрипт заблокирован или ещё не выполнился, промежуточный слой Cloudflare Worker записывает один просмотр страницы в тот же экземпляр Umami. Эти серверные события помечены в панели Umami как <Code>"edge"</Code>, чтобы два потока можно было различить.
+        </p>
+        <p>
+          Umami не использует cookie для аналитики. Признак сессии он получает из собственного хеша IP-адреса и строки user-agent; этот хеш не хранится и не связывается с личностью. Исходный IP-адрес не сохраняется.
+        </p>
+      </Section>
+      <Section title="Сторонние трекеры и реклама">
+        <p>На сайте нет сторонних трекеров, рекламных сетей и партнёрских скриптов. Данные посетителей не продаются, не сдаются в аренду и не передаются третьим лицам.</p>
+      </Section>
+      <Section title="Административный раздел">
+        <p>
+          Раздел <Code>/admin</Code> защищён ключами доступа WebAuthn и полностью исключён из сбора аналитики. Сессии администратора хранятся как краткоживущие токены в базе данных Cloudflare D1 и не видны посетителям сайта.
+        </p>
+      </Section>
+      <Section title="Настройки посетителя">
+        <p>
+          Тема, размер шрифта и язык, выбранные на странице настроек, хранятся только в <Code>localStorage</Code> вашего браузера и никогда не покидают ваше устройство.
+        </p>
+      </Section>
+      <Section title="Контакты">
+        <p>Вопросы об обработке данных можно отправить на {mail}.</p>
+      </Section>
+    </div>
+  );
+}
 
 export function PrivacyPage() {
   return (
@@ -13,8 +108,8 @@ export function PrivacyPage() {
         level={1}
         number="10"
         label="PRIVACY"
-        heading="Privacy"
-        meta="last updated: 2026-06"
+        heading={<T k="privacy.heading" />}
+        meta={<T k="privacy.lastUpdated" />}
         marks={false}
       />
 
@@ -25,11 +120,11 @@ export function PrivacyPage() {
             status: "OK",
             text: (
               <>
-                Loaded <Em>po4yka.dev/privacy</Em>
+                <T k="terminal.loaded" /> <Em>po4yka.dev/privacy</Em>
               </>
             ),
           },
-          { status: "INFO", text: "No third-party trackers, no ads, no data sold" },
+          { status: "INFO", text: <T k="privacy.noTrackers" /> },
         ]}
       />
 
@@ -38,57 +133,12 @@ export function PrivacyPage() {
         cat <Em>privacy.log</Em>
       </Cmd>
 
-      <LessViewer filename="privacy.log" meta="5 sections">
-        {/* Explicit font-sans override: LessViewer's content wrapper defaults to
-            font-mono, and prose-blog would force the serif blog voice — neither
-            applies to this page's body copy. */}
-        <div className="font-sans space-y-8 text-foreground/80" style={{ fontSize: "0.9375rem", lineHeight: 1.7 }}>
-
-          <section className="space-y-3">
-            <h2 className="text-foreground" style={SECTION_HEADING}>Analytics</h2>
-            <p>
-              This site uses{" "}
-              <a href="https://umami.is" className="underline underline-offset-2 hover:text-foreground transition-colors" rel="noopener noreferrer" target="_blank">Umami</a>,
-              {" "}a self-hosted, open-source analytics tool running at{" "}
-              <span style={MONO_INLINE}>analytics.po4yka.dev</span>. No data leaves the site's own infrastructure. Umami is configured with{" "}
-              <span style={MONO_INLINE}>data-do-not-track="true"</span>, which means it honors the browser Do-Not-Track header — visitors with DNT enabled are not counted.
-            </p>
-            <p>
-              As a server-side fallback, the Cloudflare Worker middleware records a single pageview to the same Umami instance when the client-side script is blocked or has not yet run. These server-side events are tagged{" "}
-              <span style={MONO_INLINE}>"edge"</span> in the Umami dashboard so the two streams are distinguishable.
-            </p>
-            <p>
-              Umami does not use cookies for analytics. It derives a session signal from a first-party hash of the IP address and user-agent string, which is not stored or linked to any identity. The raw IP address is not retained.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-foreground" style={SECTION_HEADING}>Third-party trackers and advertising</h2>
-            <p>There are no third-party trackers, advertising networks, or affiliate scripts on this site. No visitor data is sold, rented, or shared with third parties.</p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-foreground" style={SECTION_HEADING}>Admin area</h2>
-            <p>
-              The <span style={MONO_INLINE}>/admin</span> area is secured with WebAuthn passkeys and is excluded from analytics collection entirely. Admin sessions are stored as short-lived tokens in a Cloudflare D1 database and are not visible to site visitors.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-foreground" style={SECTION_HEADING}>Visitor preferences</h2>
-            <p>
-              Theme, font size, and locale preferences you set via the Settings page are stored in your browser's <span style={MONO_INLINE}>localStorage</span> only. They never leave your device.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-foreground" style={SECTION_HEADING}>Contact</h2>
-            <p>
-              Questions about data handling can be sent to{" "}
-              <a href="mailto:hello@po4yka.dev" className="underline underline-offset-2 hover:text-foreground transition-colors">hello@po4yka.dev</a>.
-            </p>
-          </section>
-
+      <LessViewer filename="privacy.log" meta={<T k="privacy.sections" />}>
+        {/* Explicit font-sans: LessViewer's content wrapper is mono, and
+            prose-blog would force the serif blog voice. Neither fits this page. */}
+        <div className="font-sans text-foreground/80 text-[0.9375rem] leading-[1.7]">
+          <PolicyEn />
+          <PolicyRu />
         </div>
       </LessViewer>
     </div>
