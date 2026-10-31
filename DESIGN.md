@@ -259,6 +259,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - States: the frame and chart box render before data arrives, so the height never changes. Loading and fetch failure show `LOADING` or `ACTIVITY UNAVAILABLE` in the readout, inside the same frame
 - Motion: heatmap cells use `cell-in`; the sparkline path uses `rule-draw` (rule A1). Under reduced motion both show the final state at once
 
+### Experience Timeline
+
+- Component: the role list in `ExperiencePageIsland.tsx` (`/experience`), an `ol` inside the `resume.log` panel
+- Rail: one 1px `var(--border)` hairline through a 9px square node per role. The node is filled with `var(--foreground)` while the role runs (`— Present`), hollow otherwise. Both are `aria-hidden`; the dates are text
+- From `sm`: a 9rem date column (start, end, location in mono) left of the rail, and the title, company and body right of it. Below `sm`: the rail sits at the left edge, and the dates stack above the title
+- No motion on the rail
+
 ### Post Covers
 
 - Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 6:1 ratio. The art is `aria-hidden`; the caption is real text
