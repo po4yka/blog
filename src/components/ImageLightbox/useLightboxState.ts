@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 import { pickVariant, wrapIndex } from "@/lib/blog/lightbox";
+import { runSharedElement } from "./sharedElement";
 import type { Figure, IndexedFigure } from "./types";
 
 export interface LightboxState {
@@ -13,6 +14,7 @@ export interface LightboxState {
   triggerRef: RefObject<HTMLImageElement | null>;
   thumbSrcs: string[];
   openAt: (i: number) => void;
+  openFromTrigger: (i: number) => void;
   onOpenChange: (open: boolean) => void;
   nav: (delta: number) => void;
 }
@@ -88,11 +90,22 @@ export function useLightboxState(
     };
   }, [index, count, effectiveDark, isMobile, figures]);
 
+  // Only a click on an inline image expands from it; ?fig= deep links and
+  // in-lightbox navigation use openAt and do not animate.
+  const openFromTrigger = useCallback(
+    (i: number) => {
+      const img = figures[i]?.img ?? null;
+      runSharedElement(img, "open", () => openAt(i));
+    },
+    [figures, openAt],
+  );
+
   const onOpenChange = useCallback((open: boolean) => {
-    if (!open) {
+    if (open) return;
+    runSharedElement(triggerRef.current, "close", () => {
       setIndex(null);
       setNaturalSize(false);
-    }
+    });
   }, []);
 
   const nav = useCallback(
@@ -115,6 +128,7 @@ export function useLightboxState(
     triggerRef,
     thumbSrcs,
     openAt,
+    openFromTrigger,
     onOpenChange,
     nav,
   };

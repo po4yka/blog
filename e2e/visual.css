@@ -5,6 +5,14 @@
   content-visibility: visible !important;
 }
 
+/* The hero field loops on a canvas; screenshots show its poster instead, the same field at frame 0. */
+.hero-field canvas {
+  display: none !important;
+}
+.hero-field[data-field="live"] .hero-field-poster {
+  display: block !important;
+}
+
 /* Fixed chrome would be painted once mid-page in a full-page shot. */
 .fixed.bottom-0 {
   display: none !important;

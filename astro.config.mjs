@@ -13,6 +13,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { blogPosts } from "./src/data/blogData.ts";
 import { transformerNotationDiff, transformerNotationHighlight } from "@shikijs/transformers";
 import { monoDark, monoLight } from "./src/lib/shiki-mono.ts";
+import { rehypeFootnotes, rehypeMathFlag } from "./src/lib/rehype-footnotes.ts";
 import { rehypeCodeCopyLabel, transformerCodeBlock } from "./src/lib/shiki-code-block.ts";
 
 const isAstroDev = process.argv.includes("dev");
@@ -64,7 +65,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig, rehypeCodeCopyLabel],
+      rehypePlugins: [rehypeKatex, rehypeMathFlag, rehypeFootnotes, rehypeSlug, autolinkConfig, rehypeCodeCopyLabel],
     }),
     // Monochrome syntax highlighting: two greyscale themes emitted as CSS
     // variables (defaultColor: false), so no inline colour or background is

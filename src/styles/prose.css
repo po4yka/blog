@@ -491,6 +491,101 @@
 }
 
 /* Print layout for prose; the print tokens and hidden chrome live in index.css. */
+/* ═══════════════════════════════════════════════════════════════════
+   Footnotes — one <li> per note (see src/lib/rehype-footnotes.ts).
+   Margin note beside its reference when the article column has room for a
+   12rem gutter and the browser has anchor positioning; otherwise the same
+   <li> is a native popover opened by its reference (FootnotePopover.astro),
+   and without JS it stays a plain list at the end of the post.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.blog-article {
+  position: relative;
+  container: article / inline-size;
+}
+
+.prose-blog sup:has(> [data-footnote-ref]) {
+  line-height: 0;
+}
+
+.prose-blog [data-footnote-ref] {
+  position: relative;
+  padding: 0 0.15em;
+  text-decoration: none;
+}
+
+/* 44px touch target without moving the superscript. */
+@media (pointer: coarse) {
+  .prose-blog [data-footnote-ref]::after {
+    content: "";
+    position: absolute;
+    inset: -14px -12px;
+  }
+}
+
+.prose-blog [data-footnotes] {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+/* :where keeps this at the margin layout's specificity, so that later rule wins. */
+.prose-blog [data-footnotes] li:where([popover]) {
+  list-style: none;
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: 70vh;
+  padding: 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.prose-blog [data-footnotes] li[popover] p {
+  margin: 0;
+}
+
+@supports (anchor-name: --a) {
+  /* 46rem prose + 1.5rem gap + 12rem note */
+  @container article (min-width: 59.5rem) {
+    .prose-blog [data-footnotes] ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: fn;
+    }
+
+    /* shortcut: notes that cite nearby references can overlap, add position-try fallbacks if a post needs it */
+    .prose-blog [data-footnotes] li {
+      counter-increment: fn;
+      display: block;
+      position: absolute;
+      inset: auto;
+      top: anchor(top);
+      left: 47.5rem;
+      width: 12rem;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      border: 0;
+      background: none;
+      font-size: 0.8125rem;
+      line-height: 1.4;
+      color: var(--muted-foreground);
+    }
+
+    .prose-blog [data-footnotes] li::before {
+      content: counter(fn) ". ";
+    }
+
+    .prose-blog [data-footnotes] li p {
+      display: inline;
+    }
+  }
+}
+
 @media print {
   .prose-blog {
     max-width: none;

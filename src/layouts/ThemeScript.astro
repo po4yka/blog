@@ -1,7 +1,7 @@
 ---
 // Inline script that runs synchronously before paint to prevent FOUC.
 // Reads preferences from localStorage and applies .dark/.light, data-motion
-// and the font size to <html>.
+// the effects level and the font size to <html>.
 import { THEME_COLORS } from "@/lib/themeColors";
 const { nonce } = Astro.locals;
 ---
@@ -19,6 +19,8 @@ const { nonce } = Astro.locals;
   }
   // Grid guides default on; only an explicit false hides them.
   if (prefs.gridGuides === false) document.documentElement.setAttribute('data-grid', 'off');
+  // Effects: no attribute means full. Islands read only this attribute.
+  if (prefs.effects === 'reduced' || prefs.effects === 'off') document.documentElement.setAttribute('data-effects', prefs.effects);
   // Locale before paint, so static sections show the stored language with no flash.
   var locale = prefs.locale === 'ru' ? 'ru' : 'en';
   document.documentElement.setAttribute('data-locale', locale);
@@ -62,6 +64,8 @@ const { nonce } = Astro.locals;
       applyLocale(prefs.locale === "ru" ? "ru" : "en");
       if (prefs.gridGuides === false) document.documentElement.setAttribute("data-grid", "off");
       else document.documentElement.removeAttribute("data-grid");
+      if (prefs.effects === "reduced" || prefs.effects === "off") document.documentElement.setAttribute("data-effects", prefs.effects);
+      else document.documentElement.removeAttribute("data-effects");
       if (!raw) return;
       const sizes: Record<string, string> = { compact: "15px", default: "16px", large: "17px" };
       const size = sizes[prefs.fontSize];

@@ -40,6 +40,8 @@
   --grid-pad: 1.5rem;   /* page gutter, same steps as px-6 md:px-10 lg:px-12 */
   --grid-line: color-mix(in oklab, var(--border) 55%, transparent);
   --mark-size: 7px;
+  /* Hero dither field (canvas and poster): ink opacity. 0.16 keeps text at 11:1 and 11px muted labels at 5.5:1 or better over the worst single pixel in both themes. */
+  --field-opacity: 0.16;
 }
 @media (min-width: 768px) {
   :root { --grid-pad: 2.5rem; }

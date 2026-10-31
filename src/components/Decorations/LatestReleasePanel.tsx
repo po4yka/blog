@@ -18,11 +18,11 @@ function formatAbsolute(iso: string, locale: Locale): string {
 /** Split a semver-ish tag "v2.3.1" into muted prefix + foreground body. */
 function TagDisplay({ tag }: { tag: string }) {
   const match = tag.match(/^(v)(.+)$/i);
-  if (!match) return <span className="text-foreground/90">{tag}</span>;
+  if (!match) return <span data-decode className="text-foreground/90">{tag}</span>;
   return (
     <>
       <span className="text-muted-foreground-dim">{match[1]}</span>
-      <span className="text-foreground/90">{match[2]}</span>
+      <span data-decode className="text-foreground/90">{match[2]}</span>
     </>
   );
 }
@@ -75,6 +75,7 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
           dateTime={release.publishedAt}
           title={formatAbsolute(release.publishedAt, locale)}
           className="text-muted-foreground-dim"
+          data-decode
         >
           {relativeTime(release.publishedAt, locale)}
         </time>

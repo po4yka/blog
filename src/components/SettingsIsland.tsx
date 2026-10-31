@@ -1,7 +1,7 @@
 import { Reveal } from "./ui/Reveal";
-import { Zap, ZapOff, RotateCcw, Sun, Moon, Monitor, Keyboard, Grid3x3, type LucideIcon } from "lucide-react";
+import { Zap, ZapOff, RotateCcw, Sun, Moon, Monitor, Keyboard, Grid3x3, Sparkles, type LucideIcon } from "lucide-react";
 import { switchTheme, centerOf } from "@/lib/themeTransition";
-import { useSettings, useLocale, type FontSize, type ThemeMode } from "@/stores/settingsStore";
+import { useSettings, useLocale, type Effects, type FontSize, type ThemeMode } from "@/stores/settingsStore";
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
@@ -20,6 +20,12 @@ const themeLabelKeys: Record<ThemeMode, TranslationKey> = {
   dark: "settings.dark",
   light: "settings.light",
   system: "settings.system",
+};
+
+const effectsLabelKeys: Record<Effects, TranslationKey> = {
+  full: "settings.effectsFull",
+  reduced: "settings.effectsReduced",
+  off: "settings.effectsOff",
 };
 
 const fontSizeLabelKeys: Record<FontSize, TranslationKey> = {
@@ -89,7 +95,7 @@ function SettingRow({
 
 export function Settings() {
   const live = useSettings();
-  const { setReduceMotion, setFontSize, setKeyboardShortcuts, setGridGuides, resetPreferences } = live;
+  const { setReduceMotion, setEffects, setFontSize, setKeyboardShortcuts, setGridGuides, resetPreferences } = live;
   const { locale: liveLocale, setLocale, t: tt } = useLocale();
 
   // Persisted preferences rehydrate before the first client render, and
@@ -103,6 +109,7 @@ export function Settings() {
   const fontSize: FontSize = mounted ? live.fontSize : "default";
   const keyboardShortcuts = mounted ? live.keyboardShortcuts : true;
   const gridGuides = mounted ? live.gridGuides : true;
+  const effects: Effects = mounted ? live.effects : "full";
   const locale = mounted ? liveLocale : "en";
 
   const [resetDone, setResetDone] = useState(false);
@@ -179,6 +186,19 @@ export function Settings() {
             {[false, true].map((val) => (
               <OptionButton key={String(val)} pressed={reduceMotion === val} onClick={() => setReduceMotion(val)}>
                 {tt(val ? "settings.motionReduced" : "settings.motionFull")}
+              </OptionButton>
+            ))}
+          </SettingRow>
+
+          <SettingRow
+            icon={Sparkles}
+            label={tt("settings.effects")}
+            value={tt(effectsLabelKeys[effects])}
+            description={tt("settings.effectsDesc")}
+          >
+            {(["full", "reduced", "off"] as Effects[]).map((level) => (
+              <OptionButton key={level} pressed={effects === level} onClick={() => setEffects(level)}>
+                {tt(effectsLabelKeys[level])}
               </OptionButton>
             ))}
           </SettingRow>
