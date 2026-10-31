@@ -1,0 +1,43 @@
+@import './tokens.css';
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+@import './transitions.css';
+@import './primitives.css';
+@import './grid.css';
+@import './scroll.css';
+
+/* Mobile font size floor */
+@media (max-width: 640px) {
+  .text-label { font-size: 0.75rem; }
+  .text-mono-sm { font-size: 0.8125rem; }
+}
+
+/* Print: paper is always light — force ink-on-paper tokens regardless of the
+   active theme so a dark-mode visitor never prints white-on-black. Chrome
+   (nav, footer, floating UI) is dropped; external link targets are spelled
+   out so they survive on paper. */
+@media print {
+  :root,
+  :root.dark,
+  :root.light {
+    --background: #ffffff;
+    --foreground: #101012;
+    --card: #ffffff;
+    --secondary: #f2f0ea;
+    --muted: #eceae4;
+    --muted-foreground: #4a4a50;
+    --muted-foreground-dim: #6a6a70;
+    --border: rgba(16, 16, 18, 0.25);
+    --rule: rgba(16, 16, 18, 0.3);
+    --emphasis: #000000;
+    --code-bg: #f2f0ea;
+  }
+
+  nav,
+  footer,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+}

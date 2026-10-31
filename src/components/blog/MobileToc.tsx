@@ -36,7 +36,7 @@ export function MobileToc({
 
   return (
     <div className="no-print lg:hidden">
-      {/* Page-end clearance for this bar is `body:has(.mobile-toc-bar)` in index.css; md+ sits above the 28px StatusLine. */}
+      {/* Page-end clearance for this bar is `body:has(.mobile-toc-bar)` in prose.css; md+ sits above the 28px StatusLine. */}
       <div className="mobile-toc-bar fixed inset-x-0 bottom-0 z-40 flex h-[calc(2.75rem+env(safe-area-inset-bottom))] items-start gap-3 border-t border-rule bg-background pl-4 pr-1 label-meta md:bottom-7">
         <span className="min-w-0 flex-1 self-center truncate text-muted-foreground">{current?.text}</span>
         <button

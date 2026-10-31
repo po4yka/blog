@@ -1,0 +1,513 @@
+/* Loaded only by pages that render .prose-blog (posts, privacy, admin preview),
+   so the shared stylesheet stays small for every other page. */
+
+/* ═══════════════════════════════════════════════════════════════════
+   Blog prose — MDX rendered content.
+   Body runs in Piazzolla serif (Swiss reading column ~62ch); code in Geist Mono.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.prose-blog {
+  font-family: var(--font-serif);
+  letter-spacing: 0;
+  max-width: 46rem; /* ~70 ch with Piazzolla 17px */
+  font-feature-settings: "kern", "liga", "clig", "calt";
+}
+
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.prose-blog code,
+.prose-blog pre {
+  font-family: var(--font-mono);
+}
+
+.prose-blog p,
+.prose-blog ul,
+.prose-blog ol,
+.prose-blog blockquote {
+  max-width: 46rem;
+}
+
+.prose-blog a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--emphasis);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: text-decoration-thickness 0.2s ease, color 0.2s ease;
+}
+
+.prose-blog a:hover {
+  color: var(--emphasis);
+  text-decoration-thickness: 2px;
+}
+
+.prose-blog a:visited {
+  color: var(--foreground);
+  opacity: 0.75;
+}
+
+.prose-blog a:visited:hover {
+  color: var(--emphasis);
+  opacity: 1;
+}
+
+.prose-blog :is(h2, h3, h4) {
+  scroll-margin-top: 3rem;
+}
+
+/* Clears the sticky nav when the j/k shortcuts jump between homepage sections. */
+[data-section-name] {
+  scroll-margin-top: 4rem;
+}
+
+.prose-blog .heading-anchor {
+  opacity: 0;
+  margin-left: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  background-image: none;
+  font-weight: 400;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.prose-blog :is(h2, h3, h4):hover .heading-anchor,
+.prose-blog .heading-anchor:focus-visible {
+  opacity: 1;
+  color: var(--foreground);
+}
+
+/* Touch has no hover: keep the permalink visible and give it a 44px hit area
+   that does not move the heading (the pseudo-element overflows the link). */
+@media (hover: none) {
+  .prose-blog .heading-anchor {
+    opacity: 1;
+    position: relative;
+  }
+  .prose-blog .heading-anchor::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%); /* extends right only, so it does not cover the heading's last word */
+  }
+}
+
+/* Clearance for the fixed mobile TOC bar (below lg) at the true end of the page, footer included; md+ also clears the 28px StatusLine. */
+@media (max-width: 1023.98px) {
+  body:has(.mobile-toc-bar) {
+    padding-bottom: calc(2.75rem + env(safe-area-inset-bottom));
+  }
+}
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  body:has(.mobile-toc-bar) {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+.prose-blog h2 {
+  margin-top: 2.75rem;
+  margin-bottom: 1rem;
+  font-size: var(--step-2); /* 19→22px */
+  font-weight: 500;
+}
+
+.prose-blog h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.prose-blog p {
+  margin-bottom: 1rem;
+  font-size: var(--step-0);
+  line-height: 1.7;
+  color: var(--foreground);
+  opacity: 0.88;
+}
+
+/* Editorial lede: the opening paragraph sits directly under the display-2
+   title and reads one quiet step larger. Capped at 18px so it never
+   outweighs h3 (17px) deeper in the scale. */
+.prose-blog > p:first-of-type {
+  font-size: var(--step-1);
+  opacity: 0.94;
+}
+
+/* lang-aware via <html lang>; Piazzolla + long technical words benefit most */
+.prose-blog p,
+.prose-blog li,
+.prose-blog blockquote p {
+  hyphens: auto;
+  text-wrap: pretty;
+}
+
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  text-wrap: balance;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+  list-style-position: outside;
+}
+.prose-blog ul { list-style-type: disc; }
+.prose-blog ol { list-style-type: decimal; }
+
+.prose-blog li {
+  font-size: var(--step-0);
+  line-height: 1.7;
+  color: var(--foreground);
+  opacity: 0.88;
+  margin-bottom: 0.375rem;
+}
+
+.prose-blog li::marker {
+  color: var(--muted-foreground);
+}
+
+/* Inline code: background-only chip. A border here chops dense technical
+   paragraphs into visual confetti — kbd keeps the bordered key-cap look. */
+.prose-blog code {
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.125em 0.375em;
+  border-radius: 2px;
+  color: var(--foreground);
+}
+
+.prose-blog pre {
+  position: relative;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  overflow-x: auto;
+  background: var(--code-bg);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+/* Code block panel (src/lib/shiki-code-block.ts): header row with filename,
+   language label and the copy button, then the scrollable <pre>. */
+.prose-blog .code-block {
+  margin-bottom: 1.25rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.prose-blog .code-block pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.code-block-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.375rem 0.5rem 0.375rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted-foreground-dim);
+}
+.code-block-file {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--foreground);
+}
+.code-block-lang {
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.code-block-copy {
+  margin-left: auto;
+  padding: 0.25rem 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--code-bg);
+  font: inherit;
+  color: var(--muted-foreground-dim);
+  cursor: pointer;
+  transition: color 150ms;
+}
+.code-block-copy:hover { color: var(--foreground); }
+.code-block-copy:active { opacity: 0.7; }
+
+/* Lines span the scroll width so highlight and diff backgrounds reach the edge. */
+.prose-blog .code-block pre code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+}
+.code-block .line {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  min-height: 1lh;
+}
+
+/* Line numbers are CSS counters, so they stay out of the copied text. */
+.code-block pre[data-line-numbers] code { counter-reset: line; }
+.code-block pre[data-line-numbers] .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 3ch;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--muted-foreground-dim);
+  user-select: none;
+}
+
+/* Highlighted lines and diff lines: a background step plus, for diff, a +/-
+   glyph in the gutter and a strike-through on removed lines, so the mark does
+   not rely on tone alone. */
+.code-block .line.highlighted,
+.code-block .line.diff.add {
+  background: color-mix(in oklab, var(--foreground) 9%, transparent);
+}
+.code-block pre.has-diff .line { padding-left: 2ch; }
+.code-block .line.diff::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--muted-foreground);
+  user-select: none;
+}
+.code-block .line.diff.remove {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted-foreground-dim);
+}
+.code-block .line.diff.add::after { content: "+"; }
+.code-block .line.diff.remove::after { content: "-"; }
+
+.prose-blog pre code {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--foreground);
+  opacity: 0.92;
+}
+
+/* Shiki monochrome highlighting (see src/lib/shiki-mono.ts). Colours arrive
+   as --shiki-light / --shiki-dark variables; the site theme class decides
+   which one applies, so a manual theme override wins over the OS setting.
+   Keyword tokens are marked bold in the theme; Geist Mono at 700 is too
+   loud next to 400 body code, so bold is remapped to 500 here. */
+.prose-blog .astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style, normal);
+}
+.dark .prose-blog .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style, normal);
+}
+.prose-blog .astro-code span[style*="font-weight:bold"] {
+  font-weight: 500;
+}
+
+.prose-blog strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.prose-blog blockquote {
+  margin: 1.5rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--rule);
+  color: var(--muted-foreground);
+}
+
+.prose-blog blockquote p {
+  color: var(--muted-foreground);
+}
+
+/* Attribution in the label-meta voice; em dash supplied here so authors
+   write plain <cite>Name</cite> */
+.prose-blog blockquote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground-dim);
+}
+.prose-blog blockquote cite::before {
+  content: "\2014  ";
+}
+
+.prose-blog hr {
+  margin: 2.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* GFM tables */
+.prose-blog table {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose-blog thead {
+  border-bottom: 1px solid var(--rule);
+}
+
+.prose-blog th,
+.prose-blog td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Table headers speak InfoTable's field-code vocabulary (DESIGN.md section 4) */
+.prose-blog th {
+  font-family: var(--font-mono);
+  font-size: max(11px, 0.6875rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.prose-blog td {
+  opacity: 0.88;
+}
+
+.prose-blog li input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: var(--emphasis);
+}
+
+/* GFM footnotes (remark-gfm emits data-footnote-* markup) */
+.prose-blog a[data-footnote-ref] {
+  font-family: var(--font-mono);
+  font-size: max(11px, 0.6875rem);
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+.prose-blog a[data-footnote-ref]:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+.prose-blog section[data-footnotes] {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+.prose-blog section[data-footnotes] li {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--rule);
+}
+
+/* Display math gets hairline framing — lighter than the code-fence card so
+   math and code stay distinguishable block voices */
+.prose-blog .katex-display {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.prose-blog .katex-display > .katex {
+  font-size: 1.05em;
+}
+
+.prose-blog img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  margin: 1.25rem 0;
+  cursor: zoom-in;
+}
+.prose-blog img:focus-visible {
+  outline: 2px solid var(--emphasis);
+  outline-offset: 3px;
+}
+/* Captions open with the authored figure number lifted into a field code
+   (BlogFigure.astro): FIG 02  caption. Same voice as InfoTable labels. */
+.prose-blog figure.blog-figure {
+  margin: 1.25rem 0;
+}
+.prose-blog figure.blog-figure img {
+  margin: 0;
+}
+.prose-blog figure.blog-figure figcaption {
+  margin-top: 0.625rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+  max-width: 46rem;
+}
+.prose-blog figure.blog-figure figcaption .fig-code {
+  display: inline-block;
+  margin-right: 0.75rem;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.12em;
+  color: var(--muted-foreground-dim);
+  font-variant-numeric: tabular-nums;
+  vertical-align: 0.05em;
+}
+.prose-blog figure.blog-figure figcaption em {
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .prose-blog pre code {
+    font-size: 0.75rem;
+  }
+  .prose-blog code {
+    font-size: 0.9em;
+  }
+}
+
+/* Print layout for prose; the print tokens and hidden chrome live in index.css. */
+@media print {
+  .prose-blog {
+    max-width: none;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .prose-blog a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: var(--muted-foreground);
+  }
+
+  .prose-blog pre,
+  .prose-blog img,
+  .prose-blog table {
+    break-inside: avoid;
+  }
+}
