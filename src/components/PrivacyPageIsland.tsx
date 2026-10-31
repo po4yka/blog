@@ -40,9 +40,6 @@ function PolicyEn() {
           This site uses {umami}, a self-hosted, open-source analytics tool running at <Code>analytics.po4yka.dev</Code>. No data leaves the site's own infrastructure. Umami is configured with <Code>data-do-not-track="true"</Code>, which means it honors the browser Do-Not-Track header: visitors with DNT enabled are not counted.
         </p>
         <p>
-          As a server-side fallback, the Cloudflare Worker middleware records a single pageview to the same Umami instance when the client-side script is blocked or has not yet run. These server-side events are tagged <Code>"edge"</Code> in the Umami dashboard so the two streams are distinguishable.
-        </p>
-        <p>
           Umami does not use cookies for analytics. It derives a session signal from a first-party hash of the IP address and user-agent string, which is not stored or linked to any identity. The raw IP address is not retained.
         </p>
       </Section>
@@ -72,9 +69,6 @@ function PolicyRu() {
       <Section title="Аналитика">
         <p>
           Сайт использует {umami}, самостоятельно размещённый инструмент аналитики с открытым исходным кодом, который работает на <Code>analytics.po4yka.dev</Code>. Данные не покидают инфраструктуру сайта. Umami настроен с <Code>data-do-not-track="true"</Code>: он учитывает заголовок браузера Do-Not-Track, и посетители с включённым DNT не учитываются.
-        </p>
-        <p>
-          Если клиентский скрипт заблокирован или ещё не выполнился, промежуточный слой Cloudflare Worker записывает один просмотр страницы в тот же экземпляр Umami. Эти серверные события помечены в панели Umami как <Code>"edge"</Code>, чтобы два потока можно было различить.
         </p>
         <p>
           Umami не использует cookie для аналитики. Признак сессии он получает из собственного хеша IP-адреса и строки user-agent; этот хеш не хранится и не связывается с личностью. Исходный IP-адрес не сохраняется.
