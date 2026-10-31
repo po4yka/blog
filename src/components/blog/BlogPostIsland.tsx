@@ -139,15 +139,15 @@ export function BlogPostIsland({ post, slug, prev, next, related, toc, children,
         <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />
 
         <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
-
-        <MobileToc
-          items={toc}
-          activeId={activeId}
-          label={tocLabel}
-          openLabel={t("blogPost.tocOpen")}
-          closeLabel={t("blogPost.tocClose")}
-        />
       </div>
+      {/* Outside the space-y-8 stack: as its last child, the hidden bar would give the pager a 2rem bottom margin. */}
+      <MobileToc
+        items={toc}
+        activeId={activeId}
+        label={tocLabel}
+        openLabel={t("blogPost.tocOpen")}
+        closeLabel={t("blogPost.tocClose")}
+      />
     </MotionProvider>
   );
 }
