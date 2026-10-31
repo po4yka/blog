@@ -204,6 +204,103 @@
   border: 1px solid var(--border);
 }
 
+/* Code block panel (src/lib/shiki-code-block.ts): header row with filename,
+   language label and the copy button, then the scrollable <pre>. */
+.prose-blog .code-block {
+  margin-bottom: 1.25rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.prose-blog .code-block pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.code-block-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.375rem 0.5rem 0.375rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted-foreground-dim);
+}
+.code-block-file {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--foreground);
+}
+.code-block-lang {
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.code-block-copy {
+  margin-left: auto;
+  padding: 0.25rem 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--code-bg);
+  font: inherit;
+  color: var(--muted-foreground-dim);
+  cursor: pointer;
+  transition: color 150ms;
+}
+.code-block-copy:hover { color: var(--foreground); }
+.code-block-copy:active { opacity: 0.7; }
+
+/* Lines span the scroll width so highlight and diff backgrounds reach the edge. */
+.prose-blog .code-block pre code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+}
+.code-block .line {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  min-height: 1lh;
+}
+
+/* Line numbers are CSS counters, so they stay out of the copied text. */
+.code-block pre[data-line-numbers] code { counter-reset: line; }
+.code-block pre[data-line-numbers] .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 3ch;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--muted-foreground-dim);
+  user-select: none;
+}
+
+/* Highlighted lines and diff lines: a background step plus, for diff, a +/-
+   glyph in the gutter and a strike-through on removed lines, so the mark does
+   not rely on tone alone. */
+.code-block .line.highlighted,
+.code-block .line.diff.add {
+  background: color-mix(in oklab, var(--foreground) 9%, transparent);
+}
+.code-block pre.has-diff .line { padding-left: 2ch; }
+.code-block .line.diff::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--muted-foreground);
+  user-select: none;
+}
+.code-block .line.diff.remove {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted-foreground-dim);
+}
+.code-block .line.diff.add::after { content: "+"; }
+.code-block .line.diff.remove::after { content: "-"; }
+
 .prose-blog pre code {
   background: transparent;
   padding: 0;

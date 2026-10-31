@@ -11,7 +11,9 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { blogPosts } from "./src/data/blogData.ts";
+import { transformerNotationDiff, transformerNotationHighlight } from "@shikijs/transformers";
 import { monoDark, monoLight } from "./src/lib/shiki-mono.ts";
+import { rehypeCodeCopyLabel, transformerCodeBlock } from "./src/lib/shiki-code-block.ts";
 
 const isAstroDev = process.argv.includes("dev");
 
@@ -62,16 +64,19 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkGfm, remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig],
+      rehypePlugins: [rehypeKatex, rehypeSlug, autolinkConfig, rehypeCodeCopyLabel],
     }),
     // Monochrome syntax highlighting: two greyscale themes emitted as CSS
     // variables (defaultColor: false), so no inline colour or background is
     // written on <pre> and the --code-bg / --foreground tokens stay
     // authoritative. index.css maps the variables to the active site theme.
+    // `// [!code ++]`, `// [!code --]` and `// [!code highlight]` mark lines;
+    // transformerCodeBlock adds the header row (see src/lib/shiki-code-block.ts).
     syntaxHighlight: "shiki",
     shikiConfig: {
       themes: { light: monoLight, dark: monoDark },
       defaultColor: false,
+      transformers: [transformerNotationHighlight(), transformerNotationDiff(), transformerCodeBlock()],
     },
   },
   integrations: [
