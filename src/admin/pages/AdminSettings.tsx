@@ -22,7 +22,7 @@ export function AdminSettings() {
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[700px]">
       <AdminPageHeader
-        number="05"
+        number="06"
         label="SETTINGS"
         meta="IN D1"
         title="Settings"

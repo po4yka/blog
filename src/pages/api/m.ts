@@ -5,8 +5,9 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { UMAMI_ORIGIN } from "@/lib/constants";
 
-const UPSTREAM = "https://analytics.po4yka.dev/api/send";
+const UPSTREAM = `${UMAMI_ORIGIN}/api/send`;
 const SITE_ORIGIN = "https://po4yka.dev";
 const MAX_BODY_BYTES = 64 * 1024; // 64 KB
 

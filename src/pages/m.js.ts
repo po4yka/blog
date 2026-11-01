@@ -7,8 +7,9 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { UMAMI_ORIGIN } from "@/lib/constants";
 
-const UPSTREAM = "https://analytics.po4yka.dev/script.js";
+const UPSTREAM = `${UMAMI_ORIGIN}/script.js`;
 
 export const GET: APIRoute = async () => {
   const upstream = await fetch(UPSTREAM, { cf: { cacheTtl: 3600 } } as RequestInit);

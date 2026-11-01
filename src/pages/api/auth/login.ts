@@ -7,6 +7,7 @@ import {
   makeSessionCookie,
   validateOrigin,
   checkRateLimit,
+  countFailedSignIn,
   timingSafeEqual,
   recordLoginAttempt,
   clearLoginAttempts,
@@ -43,6 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const allowed = await checkRateLimit(db, ip);
   if (!allowed) {
+    await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many login attempts. Try again in 15 minutes." }), {
       status: 429,
       headers: {

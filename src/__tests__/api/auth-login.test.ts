@@ -106,6 +106,8 @@ describe("POST /api/auth/login", () => {
     expect(response.headers.get("Retry-After")).toBe("900");
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Too many login attempts/i);
+    // A throttled attempt still counts toward the Telemetry failed sign-ins.
+    expect(db.prepare).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO auth_failures_daily"));
   });
 
   it("returns 400 when cf-connecting-ip is absent in PROD", async () => {

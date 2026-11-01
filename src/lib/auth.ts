@@ -56,6 +56,28 @@ export async function checkRateLimit(db: D1Database, ip: string): Promise<boolea
 
 export async function recordLoginAttempt(db: D1Database, ip: string): Promise<void> {
   await db.prepare("INSERT INTO login_attempts (ip_address) VALUES (?)").bind(ip).run();
+  await countFailedSignIn(db);
+}
+
+/**
+ * Add one to today's (UTC) failed sign-in count for the Telemetry page. Called for rejected
+ * credentials and for attempts the rate limit throttles, so an attack is not hidden by the 429s.
+ */
+export async function countFailedSignIn(db: D1Database): Promise<void> {
+  try {
+    await db
+      .prepare(
+        "INSERT INTO auth_failures_daily (day, count) VALUES (date('now'), 1) ON CONFLICT(day) DO UPDATE SET count = count + 1",
+      )
+      .run();
+  } catch (err) {
+    // Until migration 007 reaches a database, sign-in and rate limiting must keep working without the counter.
+    if (err instanceof Error && /no such table/i.test(err.message)) {
+      console.error("[auth] auth_failures_daily is missing; apply db/migrations/007_auth_failures_daily.sql");
+      return;
+    }
+    throw err;
+  }
 }
 
 export async function clearLoginAttempts(db: D1Database, ip: string): Promise<void> {

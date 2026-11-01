@@ -88,11 +88,13 @@ describe("checkRateLimit", () => {
 });
 
 describe("recordLoginAttempt", () => {
-  it("inserts IP into login_attempts", async () => {
-    const db = createWriteMockDb();
+  it("inserts IP into login_attempts and counts the failure for the day", async () => {
+    const db = createMockDb();
     await recordLoginAttempt(db, "10.0.0.1");
-    expect(db._bind).toHaveBeenCalledWith("10.0.0.1");
-    expect(db._run).toHaveBeenCalled();
+    expect(db.prepare).toHaveBeenCalledWith("INSERT INTO login_attempts (ip_address) VALUES (?)");
+    expect(db.bind).toHaveBeenCalledWith("10.0.0.1");
+    expect(db.prepare).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO auth_failures_daily"));
+    expect(db.run).toHaveBeenCalledTimes(2);
   });
 });
 
