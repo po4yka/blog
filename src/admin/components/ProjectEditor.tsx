@@ -26,7 +26,7 @@ export function ProjectEditor({ editing, isExisting, isPending, onSave, onClose,
   // Escape key closes the editor
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !e.defaultPrevented) onClose();
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { m } from "motion/react";
+import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
+import { useSaveShortcut, useUnsavedGuard } from "@/admin/hooks/useFormKeys";
 import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
 import type { SiteSettings } from "@/admin/api";
 import {
@@ -39,11 +41,15 @@ export function AdminSettings() {
     if (settings) setForm(settings);
   }, [settings]);
 
+  const dirty = !!settings && JSON.stringify(form) !== JSON.stringify(settings);
+  useUnsavedGuard(dirty);
+
   const updateField = (key: keyof SiteSettings, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
+    if (!dirty || updateSettingsMutation.isPending) return;
     updateSettingsMutation.mutate(form, {
       onSuccess: () => {
         setSaved(true);
@@ -52,10 +58,12 @@ export function AdminSettings() {
     });
   };
 
-  const handleReset = () => {
+  useSaveShortcut(handleSave, dirty);
+
+  const handleDiscard = () => {
     if (confirmReset) {
       setConfirmReset(false);
-      window.location.reload();
+      if (settings) setForm(settings);
     } else {
       setConfirmReset(true);
       setTimeout(() => setConfirmReset(false), 4000);
@@ -74,25 +82,18 @@ export function AdminSettings() {
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[700px]">
-      {/* Header */}
-      <m.div
-        className="mb-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
-          Settings
-        </h1>
-        <p className="text-muted-foreground/40 mt-0.5" style={{ fontSize: "0.8125rem" }}>
-          Site profile and configuration
-        </p>
-      </m.div>
+      <AdminPageHeader
+        number="05"
+        label="SETTINGS"
+        meta={updateSettingsMutation.isPending ? "SAVING" : dirty ? "UNSAVED CHANGES" : saved ? "SAVED" : "SAVED IN D1"}
+        title="Settings"
+        description="Site profile, social links and blog categories."
+      />
 
       <m.div
         className="space-y-8"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {/* Profile section */}
@@ -240,34 +241,37 @@ export function AdminSettings() {
         {/* Actions */}
         <div className="flex items-center justify-between pt-6 border-t border-border/40">
           <button
-            onClick={handleReset}
+            onClick={handleDiscard}
+            disabled={!dirty}
             className={`inline-flex items-center gap-2 px-3 py-1.5 border transition-colors duration-200 cursor-pointer ${
               confirmReset
                 ? "border-destructive/40 text-destructive bg-destructive/[0.04]"
-                : "border-border/50 text-muted-foreground/40 hover:text-foreground hover:border-border"
+                : "border-border text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-default"
             }`}
             style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
             {confirmReset ? (
               <>
                 <AlertTriangle size={13} />
-                Click again to confirm reset
+                Click again to discard
               </>
             ) : (
               <>
                 <RotateCcw size={13} />
-                Reset to defaults
+                Discard changes
               </>
             )}
           </button>
 
           <button
             onClick={handleSave}
-            className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
+            disabled={!dirty || updateSettingsMutation.isPending}
+            className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:opacity-90 active:opacity-70 disabled:opacity-40 disabled:cursor-default transition-opacity duration-100 cursor-pointer"
             style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
           >
             {saved ? <Check size={14} /> : <Save size={14} />}
-            {saved ? "Saved!" : "Save settings"}
+            {updateSettingsMutation.isPending ? "Saving…" : saved ? "Saved" : "Save settings"}
+            <kbd className="font-mono opacity-60" style={{ fontSize: 11 }} aria-label="shortcut Command or Control S">⌘S</kbd>
           </button>
         </div>
       </m.div>

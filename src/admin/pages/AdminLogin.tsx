@@ -32,15 +32,23 @@ export function AdminLogin() {
   const [revealPassword, setRevealPassword] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
   const [busy, setBusy] = useState<Busy>(null);
-  const { login, loginWithPasskey, isAuthenticated } = useAuthContext();
+  const { login, loginWithPasskey, logout, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const target = returnPath(location.state);
   const webAuthn = browserSupportsWebAuthn();
 
+  const signingOut = (location.state as { signOut?: boolean } | null)?.signOut === true;
+
   useEffect(() => {
-    if (isAuthenticated) navigate(target, { replace: true });
-  }, [isAuthenticated, navigate, target]);
+    if (!signingOut) return;
+    // Clear the flag so a reload or a later sign-in does not sign out again.
+    void logout().then(() => navigate(location.pathname, { replace: true, state: null }));
+  }, [signingOut, logout, navigate, location.pathname]);
+
+  useEffect(() => {
+    if (isAuthenticated && !signingOut) navigate(target, { replace: true });
+  }, [isAuthenticated, signingOut, navigate, target]);
 
   useEffect(() => {
     getPasskeyStatus()

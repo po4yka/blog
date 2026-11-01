@@ -1,27 +1,13 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import { useEffect, Suspense } from "react";
 import { useAuthContext } from "@/admin/contexts/AuthContext";
-import {
-  LayoutDashboard,
-  FileText,
-  FolderKanban,
-  Briefcase,
-  Settings,
-  LogOut,
-  ChevronRight,
-} from "lucide-react";
-
-const sidebarLinks = [
-  { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
-  { label: "Blog Posts", path: "/admin/blog", icon: FileText },
-  { label: "Projects", path: "/admin/projects", icon: FolderKanban },
-  { label: "Experience", path: "/admin/experience", icon: Briefcase },
-  { label: "Settings", path: "/admin/settings", icon: Settings },
-];
-
+import { LogOut } from "lucide-react";
+import { AdminShortcuts } from "@/admin/components/AdminShortcuts";
+import { adminNav as sidebarLinks } from "@/admin/nav";
+import { buildMeta } from "@/data/buildMeta";
 
 export function AdminLayout() {
-  const { isAuthenticated, logout } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,6 +17,9 @@ export function AdminLayout() {
     }
   }, [isAuthenticated, navigate, location.pathname, location.search]);
 
+  // Navigate first so an unsaved-changes prompt can cancel; the login page ends the session.
+  const signOut = () => navigate("/admin/login", { state: { signOut: true } });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -39,7 +28,7 @@ export function AdminLayout() {
 
   return (
     <div
-      className="min-h-screen bg-background text-foreground flex"
+      className="min-h-screen bg-background text-foreground flex flex-col md:flex-row"
     >
       {/* Skip link */}
       <a
@@ -59,11 +48,10 @@ export function AdminLayout() {
           >
             po4yka.dev
           </a>
-          <div
-            className="mt-1 font-mono text-muted-foreground/40"
-            style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.1em" }}
-          >
-            ADMIN PANEL
+          <div className="mt-1 label-meta">
+            <span className="text-foreground">00</span>
+            <span className="text-muted-foreground-dim"> / </span>
+            ADMIN
           </div>
         </div>
 
@@ -94,9 +82,14 @@ export function AdminLayout() {
                     {isActive && <span className="sr-only">(current page)</span>}
                     <Icon size={15} className={isActive ? "text-foreground" : ""} aria-hidden="true" />
                     {link.label}
-                    {isActive && (
-                      <ChevronRight size={11} className="ml-auto text-muted-foreground/50" aria-hidden="true" />
-                    )}
+                    <span
+                      className={`ml-auto font-mono ${isActive ? "text-foreground" : "text-muted-foreground-dim"}`}
+                      style={{ fontSize: 11 }}
+                      title={`Shortcut: g ${link.key}`}
+                      aria-hidden="true"
+                    >
+                      {link.number}
+                    </span>
                   </>
                 )}
               </NavLink>
@@ -105,13 +98,29 @@ export function AdminLayout() {
         </nav>
 
         {/* Footer */}
-        <div className="px-3 pb-5 mt-auto">
+        <div className="px-3 pb-5 mt-auto space-y-1">
+          <dl
+            className="mx-3 mb-3 pt-3 font-mono text-muted-foreground-dim space-y-0.5"
+            style={{ fontSize: 11, letterSpacing: "0.04em", borderTop: "1px solid var(--rule)" }}
+          >
+            <div className="flex justify-between gap-2">
+              <dt>BUILD</dt>
+              <dd className="text-muted-foreground">{buildMeta.commitHash}</dd>
+            </div>
+            <div className="flex justify-between gap-2">
+              <dt>DEPLOYED</dt>
+              <dd className="text-muted-foreground">
+                <time dateTime={buildMeta.deployDate}>{buildMeta.deployDate.slice(0, 10)}</time>
+              </dd>
+            </div>
+          </dl>
+          <AdminShortcuts />
           <button
-            onClick={() => { logout(); navigate("/admin/login"); }}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-muted-foreground/60 hover:text-foreground/80 transition-colors duration-200 cursor-pointer"
+            onClick={signOut}
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
             style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
-            <LogOut size={14} />
+            <LogOut size={14} aria-hidden="true" />
             Sign out
           </button>
         </div>
@@ -119,7 +128,7 @@ export function AdminLayout() {
 
       {/* Mobile top bar */}
       <div
-        className="md:hidden fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b border-border/40 px-4 py-3"
+        className="md:hidden sticky top-0 z-50 backdrop-blur-sm border-b border-border/40 px-4 py-3"
         style={{ background: "var(--nav-glass)" }}
       >
         <div className="flex items-center justify-between">
@@ -138,7 +147,7 @@ export function AdminLayout() {
             </span>
           </div>
           <button
-            onClick={() => { logout(); navigate("/admin/login"); }}
+            onClick={signOut}
             aria-label="Sign out"
             className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
           >
@@ -173,7 +182,7 @@ export function AdminLayout() {
       </div>
 
       {/* Main content */}
-      <main id="admin-main" className="flex-1 min-w-0 md:p-0 pt-[72px] md:pt-0">
+      <main id="admin-main" className="flex-1 min-w-0">
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-32">
