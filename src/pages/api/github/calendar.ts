@@ -5,50 +5,72 @@ import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
 
-interface GitHubEvent {
-  created_at: string;
+export interface ContributionDay {
+  date: string; // YYYY-MM-DD
+  count: number;
 }
 
-const CACHE_TTL_S = 900; // 15 minutes
-// Shared Cache API key for the GitHub events endpoint — calendar and events
-// hit the same upstream URL so they share a single cached response.
-const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
+interface ContributionsResponse {
+  data?: {
+    user?: {
+      contributionsCollection: {
+        contributionCalendar: {
+          weeks: Array<{ contributionDays: Array<{ date: string; contributionCount: number }> }>;
+        };
+      };
+    } | null;
+  };
+}
+
+const CACHE_TTL_S = 3600; // 1 hour
+const GRAPHQL_URL = "https://api.github.com/graphql";
+// The Cache API needs a GET URL as its key; GraphQL is a POST, so key on a synthetic URL.
+const CACHE_KEY = `${GRAPHQL_URL}?contributions=${GITHUB_USERNAME}`;
+// The same year of contributions that the GitHub profile graph shows.
+const QUERY = `query($login: String!) {
+  user(login: $login) {
+    contributionsCollection {
+      contributionCalendar { weeks { contributionDays { date contributionCount } } }
+    }
+  }
+}`;
+
+const unavailable = () =>
+  Response.json({ error: "contributions unavailable" }, { status: 503, headers: { "Cache-Control": "public, max-age=60" } });
 
 export const GET: APIRoute = async () => {
-  const cached = await cfCacheGet(UPSTREAM_URL);
+  const cached = await cfCacheGet(CACHE_KEY);
   if (cached) {
-    const events = (await cached.json()) as GitHubEvent[];
-    const dates = events.map((e) => ({ created_at: e.created_at }));
-    return Response.json(dates, {
+    return Response.json(await cached.json(), {
       headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "HIT" },
     });
   }
 
-  const requestHeaders: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "User-Agent": `${GITHUB_USERNAME}-blog`,
-  };
-  if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
+  // GitHub GraphQL rejects anonymous requests.
+  if (!env.GITHUB_TOKEN) return unavailable();
 
-  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
+  const res = await fetch(GRAPHQL_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+      "Content-Type": "application/json",
+      "User-Agent": `${GITHUB_USERNAME}-blog`,
+    },
+    body: JSON.stringify({ query: QUERY, variables: { login: GITHUB_USERNAME } }),
+  });
+  if (!res.ok) return unavailable();
 
-  if (!res.ok) {
-    return Response.json([], {
-      headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
-    });
-  }
+  const body = (await res.json()) as ContributionsResponse;
+  const weeks = body.data?.user?.contributionsCollection.contributionCalendar.weeks;
+  if (!weeks) return unavailable();
 
-  const events = (await res.json()) as GitHubEvent[];
-
-  // Store the raw events array under the shared cache key so events.ts can
-  // reuse the same upstream response without a second fetch.
-  await cfCachePut(
-    UPSTREAM_URL,
-    Response.json(events, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }),
+  const days: ContributionDay[] = weeks.flatMap((w) =>
+    w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount })),
   );
 
-  const dates = events.map((e) => ({ created_at: e.created_at }));
-  return Response.json(dates, {
+  await cfCachePut(CACHE_KEY, Response.json(days, { headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}` } }));
+
+  return Response.json(days, {
     headers: { "Cache-Control": `public, max-age=${CACHE_TTL_S}`, "X-Cache": "MISS" },
   });
 };

@@ -292,9 +292,9 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Activity Heatmap and Sparkline
 
-- Components: `ActivityCalendar` (home, 13 weeks) and `ActivitySparkline` (hero strip, 14 days) in `src/components/Decorations/`. Data: `/api/github/calendar` and `/api/github/events`, both the latest 100 public GitHub events. The heatmap header says "public GitHub events"
-- Heatmap: one `aria-hidden` SVG of 16px cells on a 19px pitch, Sunday-first columns, days bucketed in the visitor's time zone; days after today are not drawn. The sparkline is one SVG path with the latest value labelled `TODAY n`
-- Readout: a mono line above the chart shows the hovered or focused day (`MAR 14 · 3 EVENTS`), and the totals otherwise. The chart is one tab stop; arrow keys, Home and End move a cursor (a 1.5px outline on a cell, or a 1px guide on the sparkline). A visually hidden table holds every value for screen readers
+- Components: `ActivityCalendar` (home, 53 weeks) and `ActivitySparkline` (hero strip, 14 days) in `src/components/Decorations/`. Data: `/api/github/calendar` is the GitHub contribution calendar (GraphQL `contributionsCollection`, needs `GITHUB_TOKEN`; dates are in the GitHub profile time zone, so the grid can differ from the profile graph by a day at the edges); `/api/github/events` is the latest 100 public GitHub events. The heatmap header says "GitHub contributions"
+- Heatmap: one `aria-hidden` SVG of 13px cells on a 16px pitch, Sunday-first columns; days after today are not drawn. The SVG stretches to the panel width and never renders below 1:1; a narrower panel scrolls the grid, starting at today. A month label that starts in the last two columns is dropped so it is never cut off. The sparkline is one SVG path with the latest value labelled `TODAY n`
+- Readout: a mono line above the chart shows the hovered or focused day (`MAR 14 · 3 CONTRIBUTIONS` on the heatmap, `· 3 EVENTS` on the sparkline), and the totals otherwise. The chart is one tab stop; arrow keys, Home and End move a cursor (a 1.5px outline on a cell, or a 1px guide on the sparkline). A visually hidden table holds every value for screen readers
 - States: the frame and chart box render before data arrives, so the height never changes. Loading and fetch failure show `LOADING` or `ACTIVITY UNAVAILABLE` in the readout, inside the same frame
 - Motion: heatmap cells use `cell-in`; the sparkline path uses `rule-draw` (rule A1). Under reduced motion both show the final state at once
 

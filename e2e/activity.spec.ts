@@ -1,10 +1,15 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const day = (daysAgo: number) => new Date(Date.now() - daysAgo * 86_400_000).toISOString();
+// Local YYYY-MM-DD; the browser runs in the same time zone as the test.
+const date = (daysAgo: number) => {
+  const d = new Date(Date.now() - daysAgo * 86_400_000);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 
 async function mockGitHub(page: Page) {
   await page.route("**/api/github/calendar", (r) =>
-    r.fulfill({ json: [day(0), day(0), day(0), day(1), day(9)].map((created_at) => ({ created_at })) }),
+    r.fulfill({ json: [{ date: date(0), count: 3 }, { date: date(1), count: 1 }, { date: date(9), count: 1 }] }),
   );
   await page.route("**/api/github/events", (r) =>
     r.fulfill({ json: { buckets: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 3], total: 5, latest: day(0) } }),
@@ -19,25 +24,32 @@ test.describe("activity heatmap", () => {
     await page.goto("/");
     const section = page.locator('[data-section-name="activity-calendar"]');
     await section.scrollIntoViewIfNeeded();
-    await expect(section).toContainText("public GitHub events");
-    await expect(section).toContainText("5 EVENTS · 3/");
+    await expect(section).toContainText("GitHub contributions");
+    await expect(section).toContainText("5 CONTRIBUTIONS · 3 DAYS ACTIVE");
 
     const grid = section.getByRole("group", { name: /Activity calendar/ });
+    // The year scrolls inside the panel, starting at today.
+    await expect.poll(() => grid.evaluate((el) => el.scrollLeft + el.clientWidth >= el.scrollWidth - 1)).toBe(true);
     await grid.focus();
     const readout = section.locator("[data-readout]");
     const live = section.locator("p[aria-live]");
-    await expect(readout).toHaveText(/^[A-Z]{3} \d+ · 3 EVENTS$/);
+    await expect(readout).toHaveText(/^[A-Z]{3} \d+ · 3 CONTRIBUTIONS$/);
     await page.keyboard.press("ArrowUp");
-    await expect(readout).toHaveText(/ · 1 EVENT$/);
+    await expect(readout).toHaveText(/ · 1 CONTRIBUTION$/);
     // Keyboard moves are announced through the live region; the visible readout is not live.
-    await expect(live).toHaveText(/ · 1 EVENT$/);
+    await expect(live).toHaveText(/ · 1 CONTRIBUTION$/);
     await expect(readout).not.toHaveAttribute("aria-live", /.*/);
     await page.keyboard.press("Home");
-    await expect(readout).toHaveText(/ · 0 EVENTS$/);
+    await expect(readout).toHaveText(/ · 0 CONTRIBUTIONS$/);
+    // The cursor's column scrolls into view with it.
+    const [box, cursor] = [(await grid.boundingBox())!, (await grid.locator("rect[stroke]").boundingBox())!];
+    expect(cursor.x).toBeGreaterThanOrEqual(box.x - 2);
+    expect(cursor.x + cursor.width).toBeLessThanOrEqual(box.x + box.width + 2);
 
     const table = section.locator(".sr-only table");
-    await expect(table.locator("tbody tr")).toHaveCount(13);
-    await expect(table.locator("caption")).toContainText("Public GitHub events");
+    await expect(table.locator("tbody tr")).toHaveCount(53);
+    await expect(table.locator("caption")).toContainText("GitHub contributions");
+    // The page itself never scrolls sideways.
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(375);
   });
 

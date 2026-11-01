@@ -12,7 +12,7 @@ interface GitHubEvent {
 
 const CACHE_TTL_S = 900; // 15 minutes
 const BUCKET_DAYS = 14;
-// Shared with calendar.ts — one upstream call fills both.
+// Latest 100 public events; the hero sparkline buckets them by day.
 const UPSTREAM_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
 
 function buildBuckets(events: GitHubEvent[]): GitHubActivitySummary {

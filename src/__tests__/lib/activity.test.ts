@@ -5,7 +5,7 @@ describe("buildCalendar", () => {
   // Wednesday 2026-10-28, local time.
   const now = new Date(2026, 9, 28, 15, 0);
 
-  it("covers 13 whole Sunday-first weeks ending this Saturday, with later days marked future", () => {
+  it("covers WEEKS whole Sunday-first weeks ending this Saturday, with later days marked future", () => {
     const cells = buildCalendar([], now);
     expect(cells).toHaveLength(TOTAL_DAYS);
     expect(new Date(`${cells[0]!.date}T12:00`).getDay()).toBe(0);
@@ -14,9 +14,8 @@ describe("buildCalendar", () => {
     expect(cells.findLast((c) => !c.future)!.label).toBe("OCT 28");
   });
 
-  it("counts events on the visitor's local day and ranks levels against the busiest day", () => {
-    const at = (h: number, d = 27) => ({ created_at: new Date(2026, 9, d, h).toISOString() });
-    const cells = buildCalendar([at(0), at(23), at(1, 26), at(2, 26), at(3, 26), at(4, 26)], now);
+  it("places each day's count on its date and ranks levels against the busiest day", () => {
+    const cells = buildCalendar([{ date: "2026-10-27", count: 2 }, { date: "2026-10-26", count: 4 }], now);
     const byDate = (date: string) => cells.find((c) => c.date === date)!;
     expect(byDate("2026-10-27")).toMatchObject({ count: 2, level: 2 });
     expect(byDate("2026-10-26")).toMatchObject({ count: 4, level: 4 });
