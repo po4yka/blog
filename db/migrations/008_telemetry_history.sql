@@ -1,5 +1,5 @@
--- History for the admin Telemetry page, written by the deploy job (.github/workflows/ci-cd.yml),
--- which runs this file first, so the tables exist on first use.
+-- History for the admin Telemetry page, written by the deploy job (.github/workflows/ci-cd.yml)
+-- after `wrangler d1 migrations apply` has created these tables.
 --   deploys: one row per commit that `wrangler deploy` put live (the deploy markers)
 --   lighthouse_runs: Lighthouse results per deploy (scripts/lighthouse-to-sql.ts)
 CREATE TABLE IF NOT EXISTS deploys (

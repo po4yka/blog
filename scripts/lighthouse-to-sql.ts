@@ -7,7 +7,6 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const FORM_FACTORS = ["desktop", "mobile"] as const;
-const MIGRATION = path.resolve("db/migrations/008_telemetry_history.sql");
 const RETENTION_DAYS = 180;
 
 interface ManifestEntry {
@@ -24,7 +23,8 @@ interface Lhr {
 const sqlString = (s: string) => `'${s.replaceAll("'", "''")}'`;
 const sqlNumber = (n: number | null | undefined) => (typeof n === "number" && Number.isFinite(n) ? String(n) : "NULL");
 
-export function lighthouseSql(reportsDir: string, commit: string, measuredAt: string, migrationSql: string): string {
+/** SQL for one deploy's results. The lighthouse_runs table comes from migration 008. */
+export function lighthouseSql(reportsDir: string, commit: string, measuredAt: string): string {
   if (!/^[0-9a-f]{7,40}$/.test(commit)) throw new Error(`Not a commit SHA: ${commit}`);
   const inserts: string[] = [];
   for (const formFactor of FORM_FACTORS) {
@@ -59,7 +59,6 @@ export function lighthouseSql(reportsDir: string, commit: string, measuredAt: st
   }
   if (inserts.length === 0) throw new Error(`No Lighthouse manifests under ${reportsDir}`);
   return [
-    migrationSql.trim(),
     // A re-run deploy of the same commit replaces its rows instead of failing on the primary key.
     `DELETE FROM lighthouse_runs WHERE commit_sha = ${sqlString(commit)};`,
     ...inserts,
@@ -76,5 +75,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
   // SQLite datetime format, so the retention DELETE compares like with like.
   const measuredAt = new Date().toISOString().replace("T", " ").slice(0, 19);
-  process.stdout.write(lighthouseSql(reportsDir, commit, measuredAt, fs.readFileSync(MIGRATION, "utf8")));
+  process.stdout.write(lighthouseSql(reportsDir, commit, measuredAt));
 }

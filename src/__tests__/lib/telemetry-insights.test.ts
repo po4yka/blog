@@ -213,7 +213,7 @@ describe("lighthouseSql", () => {
     fs.writeFileSync(manifestPath, JSON.stringify(manifest));
   }
 
-  it("writes the migration, replaces the commit's rows and inserts one row per page and device", () => {
+  it("replaces the commit's rows and inserts one row per page and device", () => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), "lh-"));
     report("desktop", "http://localhost:4321/", "home.json", { performance: 0.98, accessibility: 1, "best-practices": 0.96 }, {
       "largest-contentful-paint": 900,
@@ -223,10 +223,9 @@ describe("lighthouseSql", () => {
     report("desktop", "http://localhost:4321/blog/it's/", "post.json", { performance: 0.9, accessibility: 0.95, "best-practices": 1 }, {
       "largest-contentful-paint": 1200,
     });
-    const sql = lighthouseSql(dir, "0123abc", "2026-11-01 10:00:00", "CREATE TABLE IF NOT EXISTS lighthouse_runs (x);");
+    const sql = lighthouseSql(dir, "0123abc", "2026-11-01 10:00:00");
     const lines = sql.trim().split("\n");
-    expect(lines[0]).toBe("CREATE TABLE IF NOT EXISTS lighthouse_runs (x);");
-    expect(lines[1]).toBe("DELETE FROM lighthouse_runs WHERE commit_sha = '0123abc';");
+    expect(lines[0]).toBe("DELETE FROM lighthouse_runs WHERE commit_sha = '0123abc';");
     expect(lines.filter((l) => l.startsWith("INSERT"))).toEqual([
       "INSERT INTO lighthouse_runs (commit_sha, measured_at, form_factor, path, performance, accessibility, best_practices, lcp_ms, cls, tbt_ms) VALUES ('0123abc', '2026-11-01 10:00:00', 'desktop', '/', 0.98, 1, 0.96, 900, 0.002, 10);",
       "INSERT INTO lighthouse_runs (commit_sha, measured_at, form_factor, path, performance, accessibility, best_practices, lcp_ms, cls, tbt_ms) VALUES ('0123abc', '2026-11-01 10:00:00', 'desktop', '/blog/it''s/', 0.9, 0.95, 1, 1200, NULL, NULL);",
@@ -236,7 +235,7 @@ describe("lighthouseSql", () => {
 
   it("refuses a value that is not a commit SHA, and an empty report directory", () => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), "lh-"));
-    expect(() => lighthouseSql(dir, "main; DROP TABLE x", "2026-11-01 10:00:00", "")).toThrow(/Not a commit SHA/);
-    expect(() => lighthouseSql(dir, "0123abc", "2026-11-01 10:00:00", "")).toThrow(/No Lighthouse manifests/);
+    expect(() => lighthouseSql(dir, "main; DROP TABLE x", "2026-11-01 10:00:00")).toThrow(/Not a commit SHA/);
+    expect(() => lighthouseSql(dir, "0123abc", "2026-11-01 10:00:00")).toThrow(/No Lighthouse manifests/);
   });
 });
