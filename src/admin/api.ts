@@ -55,37 +55,17 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
   return res.json();
 }
 
-// --- Posts ---
+// --- Content (read-only mirror of the deployed repo content) ---
 export const getPosts = () => adminFetch<BlogPost[]>("posts");
-export const getPost = (slug: string) => adminFetch<BlogPost>(`posts/${slug}`);
-export const savePost = (post: BlogPost) => adminFetch<{ ok: true }>("posts", { method: "POST", body: JSON.stringify(post) });
-export const deletePost = (slug: string) => adminFetch<{ ok: true }>(`posts/${slug}`, { method: "DELETE" });
-
-// --- Projects ---
 export const getProjects = () => adminFetch<Project[]>("projects");
-export const saveProject = (project: Project) =>
-  adminFetch<{ ok: true }>("projects", { method: "POST", body: JSON.stringify(project) });
-export const deleteProject = (id: string) => adminFetch<{ ok: true }>(`projects/${id}`, { method: "DELETE" });
-
-// --- Roles ---
 export const getRoles = () => adminFetch<Role[]>("roles");
-export const saveRole = (role: Role) => adminFetch<{ ok: true }>("roles", { method: "POST", body: JSON.stringify(role) });
-export const deleteRole = (id: string) => adminFetch<{ ok: true }>(`roles/${id}`, { method: "DELETE" });
-
-// --- Categories ---
 export const getCategories = () => adminFetch<string[]>("categories");
-export const addCategory = (name: string) =>
-  adminFetch<{ ok: true }>("categories", { method: "POST", body: JSON.stringify({ name }) });
-export const deleteCategory = (name: string) =>
-  adminFetch<{ ok: true }>(`categories/${encodeURIComponent(name)}`, { method: "DELETE" });
 
 // --- Telemetry ---
 export const getTelemetry = (range: TelemetryRange) => adminFetch<Telemetry>(`telemetry?range=${range}`);
 
 // --- Settings ---
 export const getSettings = () => adminFetch<SiteSettings>("settings");
-export const updateSettings = (settings: SiteSettings) =>
-  adminFetch<{ ok: true }>("settings", { method: "PUT", body: JSON.stringify(settings) });
 
 // --- Auth (different base path) ---
 export async function logout(): Promise<void> {

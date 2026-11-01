@@ -3,7 +3,6 @@ import { RouterProvider } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { LazyMotion, MotionConfig } from "motion/react";
-import { Toaster } from "@/components/ui/sonner";
 import { router } from "./routes";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -44,7 +43,6 @@ export default function AdminApp() {
           </Suspense>
         </AuthProvider>
         <ReactQueryDevtools initialIsOpen={false} />
-        <Toaster />
       </MotionConfig>
       </LazyMotion>
     </QueryClientProvider>

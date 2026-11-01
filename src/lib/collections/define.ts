@@ -1,8 +1,7 @@
 // Collection definition library.
-// Derives DB operations, Zod schema, API routes, client functions, and React Query hooks
-// from a single field-level definition.
+// Derives read-only DB operations and admin GET routes from a single field-level definition.
+// The admin is a read-only mirror of the repo content; writes happen only via db/seed.sql.
 
-import { z } from "astro/zod";
 import { withAdmin, type Capability } from "@/lib/admin-handler";
 import { jsonError } from "@/lib/validation";
 
@@ -13,7 +12,6 @@ type FieldType = "text" | "integer" | "boolean" | "json";
 export interface FieldDef {
   column: string;
   type: FieldType;
-  zod: z.ZodType;
   default?: unknown;
   optional?: boolean;
 }
@@ -24,12 +22,9 @@ export interface CollectionConfig<T> {
   name: string;
   table: string;
   primaryKey: keyof T & string;
-  /** Override the ON CONFLICT target columns when the PK is composite. */
-  conflictColumns?: string[];
   paramName?: string;
   orderBy: string;
-  idGeneration?: "uuid";
-  capabilities: { read: Capability; write: Capability };
+  capabilities: { read: Capability };
   fields: FieldDefs;
 }
 
@@ -93,73 +88,22 @@ function buildRowMapper<T>(fields: FieldDefs): (row: Record<string, unknown>) =>
   };
 }
 
-// --- SQL builders ---
-
-function buildColumns(fields: FieldDefs): string[] {
-  return Object.values(fields).map((f) => f.column);
-}
-
-function buildUpsertSQL(table: string, fields: FieldDefs, primaryKey: string, conflictColumns?: string[]): string {
-  const pkColumn = fields[primaryKey]!.column;
-  const conflictTarget = conflictColumns ? conflictColumns.join(", ") : pkColumn;
-  const pkColumns = conflictColumns ?? [pkColumn];
-  const columns = [...buildColumns(fields), "updated_at"];
-  const placeholders = [...Object.keys(fields).map(() => "?"), "datetime('now')"];
-  const updateSet = columns
-    .filter((c) => !pkColumns.includes(c))
-    .map((c) => `${c} = excluded.${c}`)
-    .join(", ");
-
-  return `INSERT INTO ${table} (${columns.join(", ")}) VALUES (${placeholders.join(", ")}) ON CONFLICT(${conflictTarget}) DO UPDATE SET ${updateSet}`;
-}
-
-function buildBindParams(fields: FieldDefs, input: Record<string, unknown>): unknown[] {
-  return Object.entries(fields).map(([domainKey, field]) => {
-    const val = input[domainKey];
-    switch (field.type) {
-      case "json":
-        return JSON.stringify(val);
-      case "boolean":
-        return val ? 1 : 0;
-      default:
-        return val ?? null;
-    }
-  });
-}
-
-// --- Zod schema builder ---
-
-function buildSchema(fields: FieldDefs): z.ZodObject<Record<string, z.ZodType>> {
-  const shape: Record<string, z.ZodType> = {};
-  for (const [key, field] of Object.entries(fields)) {
-    shape[key] = field.zod;
-  }
-  return z.object(shape);
-}
-
 // --- Collection object ---
 
 export interface Collection<T> {
   name: string;
   table: string;
   primaryKey: string;
-  schema: z.ZodObject<Record<string, z.ZodType>>;
   getAll(db: D1Database): Promise<T[]>;
   getByPk(db: D1Database, pk: string): Promise<T | null>;
-  /** Accept the domain type directly — avoids `as unknown as Record<string,unknown>` at every call site. */
-  upsert(db: D1Database, input: T): Promise<void>;
-  remove(db: D1Database, pk: string): Promise<void>;
   routes: {
     list: ReturnType<typeof withAdmin>;
-    create: ReturnType<typeof withAdmin>;
     get: ReturnType<typeof withAdmin>;
-    update: ReturnType<typeof withAdmin>;
-    delete: ReturnType<typeof withAdmin>;
   };
 }
 
 export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> {
-  const { name, table, primaryKey, conflictColumns, paramName, orderBy, idGeneration, capabilities, fields } = config;
+  const { name, table, primaryKey, paramName, orderBy, capabilities, fields } = config;
 
   // Validate SQL identifiers at definition time so a misconfiguration fails
   // loudly at startup rather than producing a runtime SQL injection vector.
@@ -171,14 +115,11 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
 
   const pkColumn = fields[primaryKey]!.column;
   const mapRow = buildRowMapper<T>(fields);
-  const upsertSQL = buildUpsertSQL(table, fields, primaryKey, conflictColumns);
-  const schema = buildSchema(fields);
 
   const collection: Collection<T> = {
     name,
     table,
     primaryKey,
-    schema,
 
     async getAll(db: D1Database): Promise<T[]> {
       const { results } = await db
@@ -195,33 +136,12 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
       return row ? mapRow(row) : null;
     },
 
-    async upsert(db: D1Database, input: T): Promise<void> {
-      const record = input as Record<string, unknown>;
-      const data = idGeneration === "uuid" && !record[primaryKey]
-        ? { ...record, [primaryKey]: crypto.randomUUID() }
-        : record;
-      const params = buildBindParams(fields, data);
-      await db.prepare(upsertSQL).bind(...params).run();
-    },
-
-    async remove(db: D1Database, pk: string): Promise<void> {
-      await db.prepare(`DELETE FROM ${table} WHERE ${pkColumn} = ?`).bind(pk).run();
-    },
-
     routes: {
       list: withAdmin(
         { capability: capabilities.read },
         async ({ db }) => {
           const items = await collection.getAll(db);
           return Response.json(items);
-        },
-      ),
-
-      create: withAdmin(
-        { capability: capabilities.write, schema },
-        async ({ db, data }) => {
-          await collection.upsert(db, data as T);
-          return Response.json({ ok: true });
         },
       ),
 
@@ -233,24 +153,6 @@ export function defineCollection<T>(config: CollectionConfig<T>): Collection<T> 
           const item = await collection.getByPk(db, pk);
           if (!item) return jsonError("Not found", 404);
           return Response.json(item);
-        },
-      ),
-
-      update: withAdmin(
-        { capability: capabilities.write, schema },
-        async ({ db, data }) => {
-          await collection.upsert(db, data as T);
-          return Response.json({ ok: true });
-        },
-      ),
-
-      delete: withAdmin(
-        { capability: capabilities.write },
-        async ({ db, params }) => {
-          const pk = params[paramName ?? primaryKey];
-          if (!pk) return jsonError("Missing identifier", 400);
-          await collection.remove(db, pk);
-          return Response.json({ ok: true });
         },
       ),
     },

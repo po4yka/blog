@@ -1,93 +1,32 @@
-import { useState, useEffect } from "react";
 import { m } from "motion/react";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
-import { useSaveShortcut, useUnsavedGuard } from "@/admin/hooks/useFormKeys";
-import { Save, RotateCcw, AlertTriangle, Plus, Check } from "lucide-react";
-import type { SiteSettings } from "@/admin/api";
-import {
-  useAdminSettings,
-  useUpdateSettings,
-  useCategories,
-  useAddCategory,
-  useRemoveCategory,
-} from "@/admin/hooks/useAdminQueries";
-import { FieldBlock } from "@/admin/components/FormPrimitives";
-
-const defaultSettings: SiteSettings = {
-  name: "", handle: "", role: "", bio: "", github: "", email: "", telegram: "", linkedin: "",
-};
-
-/**
- * Shared className for all settings text inputs. Uses design-system outline
- * (`focus-visible:outline-*`) rather than a box-shadow ring.
- */
-const adminInputCn =
-  "w-full px-3 py-2 rounded-[2px] border border-border bg-card text-foreground text-[0.8125rem] font-normal leading-normal focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none transition-[border-color] duration-200 placeholder:text-muted-foreground/30 focus:border-foreground/40";
+import { useAdminSettings, useCategories } from "@/admin/hooks/useAdminQueries";
 
 export function AdminSettings() {
   const { data: settings } = useAdminSettings();
   const { data: categories = [] } = useCategories();
-  const updateSettingsMutation = useUpdateSettings();
-  const addCategoryMutation = useAddCategory();
-  const removeCategoryMutation = useRemoveCategory();
 
-  const [form, setForm] = useState<SiteSettings>(settings ?? defaultSettings);
-  const [newCat, setNewCat] = useState("");
-  const [saved, setSaved] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional sync from server data; settings is external state loaded async
-    if (settings) setForm(settings);
-  }, [settings]);
-
-  const dirty = !!settings && JSON.stringify(form) !== JSON.stringify(settings);
-  useUnsavedGuard(dirty);
-
-  const updateField = (key: keyof SiteSettings, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSave = () => {
-    if (!dirty || updateSettingsMutation.isPending) return;
-    updateSettingsMutation.mutate(form, {
-      onSuccess: () => {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      },
-    });
-  };
-
-  useSaveShortcut(handleSave, dirty);
-
-  const handleDiscard = () => {
-    if (confirmReset) {
-      setConfirmReset(false);
-      if (settings) setForm(settings);
-    } else {
-      setConfirmReset(true);
-      setTimeout(() => setConfirmReset(false), 4000);
-    }
-  };
-
-  const handleAddCategory = () => {
-    const cat = newCat.trim();
-    if (cat && cat !== "All") {
-      addCategoryMutation.mutate(cat);
-      setNewCat("");
-    }
-  };
-
-  const editableCategories = categories.filter((c) => c !== "All");
+  const profile: [string, string | undefined][] = [
+    ["Display Name", settings?.name],
+    ["Handle", settings?.handle],
+    ["Role / Tagline", settings?.role],
+    ["Bio", settings?.bio],
+  ];
+  const links: [string, string | undefined][] = [
+    ["GitHub", settings?.github],
+    ["Email", settings?.email],
+    ["Telegram", settings?.telegram],
+    ["LinkedIn", settings?.linkedin],
+  ];
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[700px]">
       <AdminPageHeader
         number="06"
         label="SETTINGS"
-        meta={updateSettingsMutation.isPending ? "SAVING" : dirty ? "UNSAVED CHANGES" : saved ? "SAVED" : "SAVED IN D1"}
+        meta="IN D1"
         title="Settings"
-        description="Site profile, social links and blog categories."
+        description="Site profile, social links and blog categories. Content is edited in the repository."
       />
 
       <m.div
@@ -96,191 +35,53 @@ export function AdminSettings() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        {/* Profile section */}
         <Section title="Profile">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FieldBlock label="Display Name">
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  autoComplete="off"
-                  className={adminInputCn}
-                />
-              </FieldBlock>
-              <FieldBlock label="Handle">
-                <input
-                  type="text"
-                  value={form.handle}
-                  onChange={(e) => updateField("handle", e.target.value)}
-                  autoComplete="off"
-                  className={`${adminInputCn} font-mono`}
-                />
-              </FieldBlock>
-            </div>
-
-            <FieldBlock label="Role / Tagline">
-              <input
-                type="text"
-                value={form.role}
-                onChange={(e) => updateField("role", e.target.value)}
-                autoComplete="off"
-                className={adminInputCn}
-              />
-            </FieldBlock>
-
-            <FieldBlock label="Bio">
-              <textarea
-                value={form.bio}
-                onChange={(e) => updateField("bio", e.target.value)}
-                rows={3}
-                autoComplete="off"
-                className={`${adminInputCn} resize-y`}
-                style={{ lineHeight: 1.6 }}
-              />
-            </FieldBlock>
-          </div>
+          <Fields rows={profile} />
         </Section>
 
-        {/* Links section */}
         <Section title="Social Links">
-          <div className="space-y-4">
-            <FieldBlock label="GitHub">
-              <input
-                type="text"
-                value={form.github}
-                onChange={(e) => updateField("github", e.target.value)}
-                placeholder="https://github.com/..."
-                autoComplete="off"
-                className={`${adminInputCn} font-mono`}
-              />
-            </FieldBlock>
-            <FieldBlock label="Email">
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => updateField("email", e.target.value)}
-                placeholder="hello@example.dev"
-                autoComplete="email"
-                inputMode="email"
-                required
-                className={`${adminInputCn} font-mono`}
-              />
-            </FieldBlock>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FieldBlock label="Telegram">
-                <input
-                  type="text"
-                  value={form.telegram}
-                  onChange={(e) => updateField("telegram", e.target.value)}
-                  placeholder="https://t.me/..."
-                  autoComplete="off"
-                  className={`${adminInputCn} font-mono`}
-                />
-              </FieldBlock>
-              <FieldBlock label="LinkedIn">
-                <input
-                  type="text"
-                  value={form.linkedin}
-                  onChange={(e) => updateField("linkedin", e.target.value)}
-                  placeholder="https://linkedin.com/in/..."
-                  autoComplete="off"
-                  className={`${adminInputCn} font-mono`}
-                />
-              </FieldBlock>
-            </div>
-          </div>
+          <Fields rows={links} mono />
         </Section>
 
-        {/* Blog categories */}
         <Section title="Blog Categories">
-          <div className="flex flex-wrap gap-2 mb-3">
-            {editableCategories.map((cat) => (
-              <span
-                key={cat}
-                className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 bg-secondary/60 text-foreground/60 border border-border/40"
-                style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}
-              >
-                {cat}
-                <button
-                  onClick={() => removeCategoryMutation.mutate(cat)}
-                  aria-label={`Remove ${cat} category`}
-                  className="inline-flex h-11 w-11 -my-3 -ml-2 -mr-3 items-center justify-center text-muted-foreground/30 hover:text-destructive transition-colors cursor-pointer"
-                  style={{ fontSize: "0.75rem", lineHeight: 1 }}
+          <div className="flex flex-wrap gap-2">
+            {categories
+              .filter((c) => c !== "All")
+              .map((cat) => (
+                <span
+                  key={cat}
+                  className="font-mono px-2.5 py-1 bg-secondary/60 text-foreground/80 border border-border/40"
+                  style={{ fontSize: "max(11px, 0.6875rem)", borderRadius: "2px" }}
                 >
-                  &times;
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={newCat}
-              onChange={(e) => setNewCat(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCategory(); } }}
-              placeholder="New category"
-              aria-label="New category"
-              autoComplete="off"
-              className={`${adminInputCn} flex-1`}
-              style={{ maxWidth: "200px" }}
-            />
-            <button
-              onClick={handleAddCategory}
-              disabled={!newCat.trim()}
-              className="inline-flex items-center gap-1 px-3 py-2 border border-border/50 text-muted-foreground/50 hover:text-foreground hover:border-border transition-colors cursor-pointer disabled:opacity-30"
-              style={{ fontSize: "0.75rem", borderRadius: "2px" }}
-            >
-              <Plus size={13} />
-              Add
-            </button>
+                  {cat}
+                </span>
+              ))}
           </div>
         </Section>
-
-        {/* Actions */}
-        <div className="flex items-center justify-between pt-6 border-t border-border/40">
-          <button
-            onClick={handleDiscard}
-            disabled={!dirty}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 border transition-colors duration-200 cursor-pointer ${
-              confirmReset
-                ? "border-destructive/40 text-destructive bg-destructive/[0.04]"
-                : "border-border text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-default"
-            }`}
-            style={{ fontSize: "0.75rem", borderRadius: "2px" }}
-          >
-            {confirmReset ? (
-              <>
-                <AlertTriangle size={13} />
-                Click again to discard
-              </>
-            ) : (
-              <>
-                <RotateCcw size={13} />
-                Discard changes
-              </>
-            )}
-          </button>
-
-          <button
-            onClick={handleSave}
-            disabled={!dirty || updateSettingsMutation.isPending}
-            className="inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background hover:opacity-90 active:opacity-70 disabled:opacity-40 disabled:cursor-default transition-opacity duration-100 cursor-pointer"
-            style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
-          >
-            {saved ? <Check size={14} /> : <Save size={14} />}
-            {updateSettingsMutation.isPending ? "Saving…" : saved ? "Saved" : "Save settings"}
-            <kbd className="font-mono opacity-60" style={{ fontSize: 11 }} aria-label="shortcut Command or Control S">⌘S</kbd>
-          </button>
-        </div>
       </m.div>
-
     </div>
   );
 }
 
-// --- Sub-components ---
+function Fields({ rows, mono }: { rows: [string, string | undefined][]; mono?: boolean }) {
+  return (
+    <dl className="space-y-4">
+      {rows.map(([label, value]) => (
+        <div key={label}>
+          <dt className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
+            {label}
+          </dt>
+          <dd
+            className={`text-foreground mt-0.5 ${mono ? "font-mono break-all" : ""}`}
+            style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}
+          >
+            {value || "-"}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

@@ -5,9 +5,7 @@ import { adminNav } from "@/admin/nav";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 const otherShortcuts = [
-  { keys: ["n"], label: "New blog post" },
   { keys: ["/"], label: "Focus search" },
-  { keys: ["⌘", "S"], label: "Save the open form" },
   { keys: ["?"], label: "Show this list" },
 ];
 
@@ -23,9 +21,8 @@ function isTyping(target: EventTarget | null): boolean {
 }
 
 /**
- * Global admin keys: `g` then a section key navigates, `n` opens a new post,
- * `/` focuses the page's search field, `?` opens the list. Keys typed into a
- * field are ignored. Cmd/Ctrl+S is handled by each form (useSaveShortcut).
+ * Global admin keys: `g` then a section key navigates, `/` focuses the page's
+ * search field, `?` opens the list. Keys typed into a field are ignored.
  * Renders the sidebar "Shortcuts" button; the listener works while the
  * sidebar is hidden on mobile, since the component stays mounted.
  */
@@ -57,13 +54,10 @@ export function AdminShortcuts() {
           navigate(item.path);
           return;
         }
-        // Not a section key: handle it as a fresh key, so `g g` re-arms and `g n` still opens a post.
+        // Not a section key: handle it as a fresh key, so `g g` re-arms.
       }
       if (e.key === "g") {
         pendingG.current = Date.now();
-      } else if (e.key === "n") {
-        e.preventDefault();
-        navigate("/admin/blog/new");
       } else if (e.key === "/") {
         const search = document.querySelector<HTMLInputElement>("#admin-main input[type=search]");
         if (search) {
@@ -94,14 +88,7 @@ export function AdminShortcuts() {
         <kbd className="ml-auto font-mono text-muted-foreground-dim" style={{ fontSize: 11 }}>?</kbd>
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          className="sm:max-w-md"
-          onEscapeKeyDown={(e) => {
-            // Mark Escape as used so the project and role editors underneath stay open.
-            e.preventDefault();
-            setOpen(false);
-          }}
-        >
+        <DialogContent className="sm:max-w-md">
           <DialogTitle className="label-meta" style={{ fontSize: 11 }}>
             <span className="text-foreground">??</span>
             <span className="text-muted-foreground-dim"> / </span>

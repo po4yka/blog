@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { z } from "astro/zod";
 import { setMockEnv } from "../mocks/cloudflare-workers";
 
 // Stub withAdmin so defineCollection doesn't require a real auth session
@@ -42,14 +41,13 @@ function makeTestCollection() {
     table: "test_items",
     primaryKey: "id",
     orderBy: "label ASC",
-    idGeneration: "uuid",
-    capabilities: { read: "read:posts", write: "write:posts" },
+    capabilities: { read: "read:posts" },
     fields: {
-      id: { column: "id", type: "text", zod: z.string().optional().default("") },
-      label: { column: "label", type: "text", zod: z.string() },
-      count: { column: "count", type: "integer", zod: z.number(), optional: true },
-      active: { column: "active", type: "boolean", zod: z.boolean() },
-      tags: { column: "tags", type: "json", zod: z.array(z.string()), default: [] },
+      id: { column: "id", type: "text" },
+      label: { column: "label", type: "text" },
+      count: { column: "count", type: "integer", optional: true },
+      active: { column: "active", type: "boolean" },
+      tags: { column: "tags", type: "json", default: [] },
     },
   });
 }
@@ -82,8 +80,8 @@ describe("defineCollection()", () => {
         table: "bad table; DROP",
         primaryKey: "id",
         orderBy: "id ASC",
-        capabilities: { read: "read:posts", write: "write:posts" },
-        fields: { id: { column: "id", type: "text", zod: z.string() } },
+        capabilities: { read: "read:posts" },
+        fields: { id: { column: "id", type: "text" } },
       }),
     ).toThrow(/Unsafe SQL identifier/);
   });
@@ -95,8 +93,8 @@ describe("defineCollection()", () => {
         table: "safe_table",
         primaryKey: "id",
         orderBy: "id; DROP TABLE safe_table",
-        capabilities: { read: "read:posts", write: "write:posts" },
-        fields: { id: { column: "id", type: "text", zod: z.string() } },
+        capabilities: { read: "read:posts" },
+        fields: { id: { column: "id", type: "text" } },
       }),
     ).toThrow(/Unsafe ORDER BY/);
   });
@@ -145,47 +143,5 @@ describe("defineCollection()", () => {
 
     const item = await col.getByPk(db, "nonexistent");
     expect(item).toBeNull();
-  });
-
-  it("upsert generates a uuid when id is not provided", async () => {
-    const col = makeTestCollection();
-    const db = makeFullMockDb();
-    const mockBind = vi.fn().mockReturnValue({ run: vi.fn().mockResolvedValue({ success: true }) });
-    (db.prepare as ReturnType<typeof vi.fn>).mockReturnValue({ bind: mockBind });
-
-    const input: TestItem = { id: "", label: "new item", count: 0, active: true, tags: [] };
-    await col.upsert(db, input);
-
-    // The first positional argument to bind() is the id; it should be a UUID
-    const bindArgs = mockBind.mock.calls[0] as unknown[];
-    const generatedId = bindArgs[0] as string;
-    expect(generatedId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-    );
-  });
-
-  it("remove calls DELETE with the correct primary key", async () => {
-    const col = makeTestCollection();
-    const db = makeFullMockDb();
-    const mockBind = vi.fn().mockReturnValue({ run: vi.fn().mockResolvedValue({ success: true }) });
-    (db.prepare as ReturnType<typeof vi.fn>).mockReturnValue({ bind: mockBind });
-
-    await col.remove(db, "target-id");
-
-    const sql = (db.prepare as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
-    expect(sql).toMatch(/DELETE FROM test_items/);
-    expect(mockBind).toHaveBeenCalledWith("target-id");
-  });
-
-  it("schema validates a complete item correctly", () => {
-    const col = makeTestCollection();
-    const valid = col.schema.safeParse({
-      id: "x",
-      label: "test",
-      count: 1,
-      active: false,
-      tags: ["go"],
-    });
-    expect(valid.success).toBe(true);
   });
 });

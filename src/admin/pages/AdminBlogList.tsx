@@ -1,18 +1,12 @@
-import { useNavigate } from "react-router";
 import { useState } from "react";
 import { m } from "motion/react";
-import { Plus, Trash2, TriangleAlert, Star, StarOff, Search, FileText } from "lucide-react";
-import { usePosts, useDeletePost, useSavePost } from "@/admin/hooks/useAdminQueries";
+import { Star, Search, FileText } from "lucide-react";
+import { usePosts } from "@/admin/hooks/useAdminQueries";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
-import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 
 export function AdminBlogList() {
   const { data: blogPosts = [] } = usePosts();
-  const deletePostMutation = useDeletePost();
-  const savePostMutation = useSavePost();
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { confirmingId: confirmDelete, requestDelete } = useConfirmDelete();
 
   const filtered = search
     ? blogPosts.filter(
@@ -23,18 +17,6 @@ export function AdminBlogList() {
       )
     : blogPosts;
 
-  const handleToggleFeatured = (slug: string) => {
-    const post = blogPosts.find((p) => p.slug === slug);
-    if (!post) return;
-    savePostMutation.mutate({ ...post, featured: !post.featured });
-  };
-
-  const handleDelete = (slug: string) => {
-    requestDelete(slug, () => {
-      deletePostMutation.mutate(slug);
-    });
-  };
-
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
       <AdminPageHeader
@@ -42,17 +24,7 @@ export function AdminBlogList() {
         label="BLOG POSTS"
         meta={<>{blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} in D1</>}
         title="Blog Posts"
-        description="English posts stored in D1."
-        actions={
-            <button
-              onClick={() => navigate("/admin/blog/new")}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer shrink-0"
-              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
-            >
-              <Plus size={15} />
-              New post
-            </button>
-        }
+        description="English posts stored in D1. Content is edited in the repository."
       />
 
       {/* Search */}
@@ -97,25 +69,11 @@ export function AdminBlogList() {
             className="flex items-center gap-3 px-4 py-3.5 hover:bg-foreground/[0.015] transition-colors duration-200 group"
             style={{ borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none" }}
           >
-            {/* Featured toggle */}
-            <button
-              onClick={() => handleToggleFeatured(post.slug)}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
-              aria-label={post.featured ? `Remove ${post.title} from featured` : `Set ${post.title} as featured`}
-              title={post.featured ? "Remove from featured" : "Set as featured"}
-            >
-              {post.featured ? (
-                <Star size={14} className="fill-foreground/20" />
-              ) : (
-                <StarOff size={14} />
-              )}
-            </button>
+            {post.featured && (
+              <Star size={14} className="shrink-0 fill-foreground/20" aria-label="Featured" />
+            )}
 
-            {/* Content - clickable */}
-            <button
-              onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}
-              className="flex-1 min-w-0 text-left cursor-pointer"
-            >
+            <div className="flex-1 min-w-0 text-left">
               <h3
                 className="text-foreground truncate group-hover:text-foreground transition-colors duration-200"
                 style={{ fontSize: "0.8125rem", fontWeight: 500 }}
@@ -136,21 +94,7 @@ export function AdminBlogList() {
                   </span>
                 ))}
               </div>
-            </button>
-
-            {/* Delete */}
-            <button
-              onClick={() => handleDelete(post.slug)}
-              className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors duration-200 cursor-pointer ${
-                confirmDelete === post.slug
-                  ? "text-destructive"
-                  : "text-muted-foreground hover:text-destructive/80"
-              }`}
-              aria-label={confirmDelete === post.slug ? `Confirm delete ${post.title}` : `Delete ${post.title}`}
-              title={confirmDelete === post.slug ? "Click again to confirm" : "Delete post"}
-            >
-              {confirmDelete === post.slug ? <TriangleAlert size={14} /> : <Trash2 size={14} />}
-            </button>
+            </div>
           </div>
         ))}
       </m.div>

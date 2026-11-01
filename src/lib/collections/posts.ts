@@ -1,44 +1,30 @@
-import { z } from "astro/zod";
 import type { BlogPost } from "@/types";
 import { defineCollection, parseJson } from "./define.js";
 
-// Admin manages English posts only. Russian posts are havamal-synced and never
-// admin-edited. The composite PK (slug, lang) on blog_posts requires the conflict
-// target to cover both columns; lang is fixed to 'en' for all admin writes.
-//
-// lang is placed last in the fields map so it does not shift the positional bind
-// indices that the existing test suite asserts against (indices 0-8 remain stable).
+// The admin mirrors English posts only; Russian posts are in the table too (composite PK slug + lang)
+// but are not shown. The seed is the only writer.
 
 export const posts = defineCollection<BlogPost>({
   name: "posts",
   table: "blog_posts",
   primaryKey: "slug",
-  conflictColumns: ["slug", "lang"],
   orderBy: "date DESC",
-  capabilities: { read: "read:posts", write: "write:posts" },
+  capabilities: { read: "read:posts" },
   fields: {
-    slug: { column: "slug", type: "text", zod: z.string().min(1) },
-    title: { column: "title", type: "text", zod: z.string().min(1) },
-    date: {
-      column: "date",
-      type: "text",
-      zod: z.string().min(1).regex(/^\w{3,9}\s+\d{4}$/, "Expected format: 'Mon YYYY' (e.g. 'Jan 2025')"),
-    },
-    summary: { column: "summary", type: "text", zod: z.string() },
-    tags: { column: "tags", type: "json", zod: z.array(z.string()), default: [] },
-    category: { column: "category", type: "text", zod: z.string() },
-    content: { column: "content", type: "text", zod: z.string() },
-    featured: { column: "featured", type: "boolean", zod: z.boolean().optional() },
-    readingTime: { column: "reading_time", type: "integer", zod: z.number().optional(), optional: true },
-    // lang comes last to preserve the existing positional bind arg indices (0-8).
-    // The default ensures callers that omit lang get 'en' automatically.
-    lang: { column: "lang", type: "text", zod: z.literal("en").default("en"), default: "en" },
+    slug: { column: "slug", type: "text" },
+    title: { column: "title", type: "text" },
+    date: { column: "date", type: "text" },
+    summary: { column: "summary", type: "text" },
+    tags: { column: "tags", type: "json", default: [] },
+    category: { column: "category", type: "text" },
+    content: { column: "content", type: "text" },
+    featured: { column: "featured", type: "boolean" },
+    readingTime: { column: "reading_time", type: "integer", optional: true },
+    lang: { column: "lang", type: "text", default: "en" },
   },
 });
 
-// Scope read and delete operations to lang='en' so the admin panel only sees
-// and mutates English posts. Upsert always writes lang='en' because the field
-// above defaults to 'en'.
+// Scope reads to lang='en' so the admin panel only sees English posts.
 
 function mapRow(row: Record<string, unknown>): BlogPost {
   return {
@@ -68,11 +54,4 @@ posts.getByPk = async (db: D1Database, slug: string): Promise<BlogPost | null> =
     .bind(slug)
     .first<Record<string, unknown>>();
   return row ? mapRow(row) : null;
-};
-
-posts.remove = async (db: D1Database, slug: string): Promise<void> => {
-  await db
-    .prepare("DELETE FROM blog_posts WHERE slug = ? AND lang = 'en'")
-    .bind(slug)
-    .run();
 };

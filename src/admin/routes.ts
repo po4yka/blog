@@ -19,9 +19,6 @@ const AdminDashboard = lazy(() =>
 const AdminBlogList = lazy(() =>
   import("./pages/AdminBlogList").then((m) => ({ default: m.AdminBlogList }))
 );
-const AdminBlogEdit = lazy(() =>
-  import("./pages/AdminBlogEdit").then((m) => ({ default: m.AdminBlogEdit }))
-);
 const AdminProjects = lazy(() =>
   import("./pages/AdminProjects").then((m) => ({ default: m.AdminProjects }))
 );
@@ -47,8 +44,6 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: AdminDashboard },
           { path: "blog", Component: AdminBlogList },
-          { path: "blog/new", Component: AdminBlogEdit },
-          { path: "blog/edit/:slug", Component: AdminBlogEdit },
           { path: "projects", Component: AdminProjects },
           { path: "experience", Component: AdminExperience },
           { path: "telemetry", Component: AdminTelemetry },
