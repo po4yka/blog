@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const allowed = await checkRateLimit(db, ip);
   if (!allowed) {
-    return new Response(JSON.stringify({ error: "Too many login attempts" }), {
+    return new Response(JSON.stringify({ error: "Too many login attempts. Try again in 15 minutes." }), {
       status: 429,
       headers: {
         "Content-Type": "application/json",

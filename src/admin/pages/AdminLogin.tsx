@@ -54,7 +54,7 @@ export function AdminLogin() {
     if (result.success) {
       navigate("/admin");
     } else {
-      setError("Invalid password");
+      setError(result.error ?? "Login failed");
       setInvalidCount((c) => c + 1);
     }
   };

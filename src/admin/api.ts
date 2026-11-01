@@ -105,8 +105,9 @@ export async function login(password: string): Promise<void> {
     body: JSON.stringify({ password }),
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new ApiError(res.status, text || "Invalid password");
+    // The server explains a refusal (wrong password, rate limit, password login off) in `error`.
+    const data = (await res.json().catch(() => null)) as { error?: string } | null;
+    throw new ApiError(res.status, data?.error ?? "Login failed");
   }
   setAuthFlag(true);
 }
