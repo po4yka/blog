@@ -118,8 +118,9 @@ Nothing in the data plane crosses into Java. SOCKS5 sessions, the TUN packet pum
 
 Why Rust, specifically, for code that parses untrusted bytes straight off the wire is the subject of the next piece.
 
-The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.', 0, 14),
+The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.', 0, 14);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('rag-breaks-earlier-than-people-think', 'en', 'RAG breaks earlier than people think', 'Apr 2026',
  'Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',
@@ -286,8 +287,9 @@ The choice between RAG and a wiki is a choice about where to pay. RAG stands up 
 
 What the failure modes in this piece share is where compute gets paid. The move from query time to ingest time is the underlying bet. Whether the output lands as markdown pages, typed edges in a temporal graph, or pre-computed community summaries depends on what the artefact is for. A wiki is read by humans; a graph is queried by systems. Both sit downstream of the same decision: compile once, read many.
 
-I don''t have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That''s the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I''d want — same query, same corpus, six months apart, do the answers agree — isn''t something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.', 1, 22),
+I don''t have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That''s the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I''d want — same query, same corpus, six months apart, do the answers agree — isn''t something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.', 1, 22);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('network-isnt-broken-just-here', 'ru', 'Сброс конкретных соединений при исправной сети: точечная диагностика', 'Jun 2026',
  'Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.',
  '["DPI","Network Diagnostics","Rust","Android"]', 'Networking',
@@ -403,8 +405,9 @@ tcp_16kb_blocked   16680      3            server_rst  high
 
 Зачем именно Rust для кода, который разбирает недоверенные байты прямо из сети, — тема следующего текста.
 
-Та самая коробка на пути никуда не делась и ведёт себя как прежде: буферизует трафик и рвёт соединение при превышении порога, независимо от того, какое приложение его открыло. Меняется поведение телефона. Он больше не считает все сбои одинаковыми: выносит вердикт, потом пробует минимальное вмешательство, которое снимает затык, и запоминает, помогло ли. В следующий раз, когда это соединение зависнет в той же сети, в хранилище уже записана сработавшая политика.', 0, 2),
+Та самая коробка на пути никуда не делась и ведёт себя как прежде: буферизует трафик и рвёт соединение при превышении порога, независимо от того, какое приложение его открыло. Меняется поведение телефона. Он больше не считает все сбои одинаковыми: выносит вердикт, потом пробует минимальное вмешательство, которое снимает затык, и запоминает, помогло ли. В следующий раз, когда это соединение зависнет в той же сети, в хранилище уже записана сработавшая политика.', 0, 2);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('rag-breaks-earlier-than-people-think', 'ru', 'RAG ломается раньше, чем кажется', 'Apr 2026',
  'У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',

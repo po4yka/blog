@@ -103,12 +103,10 @@ function generateBlogSeed(entries: BlogSeedEntry[]): string {
     );
   }
 
-  return (
-    "-- Blog posts\n" +
-    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES\n" +
-    values.join(",\n\n") +
-    ";\n"
-  );
+  // One statement per post: D1 rejects a single statement over 100 KB (SQLITE_TOOBIG).
+  const insert =
+    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES\n";
+  return "-- Blog posts\n" + values.map((v) => `${insert}${v};\n`).join("\n");
 }
 
 function generateCategoriesSeed(blogCategories: string[]): string {
