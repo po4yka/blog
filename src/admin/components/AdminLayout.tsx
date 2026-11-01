@@ -27,9 +27,9 @@ export function AdminLayout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/admin/login", { replace: true });
+      navigate("/admin/login", { replace: true, state: { from: location.pathname + location.search } });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location.pathname, location.search]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

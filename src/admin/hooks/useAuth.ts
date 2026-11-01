@@ -30,7 +30,11 @@ export function useAuth() {
       setIsAuthenticated(true);
       return { success: true };
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Passkey authentication failed";
+      // The browser reports a closed or timed-out prompt as NotAllowedError with a long generic message.
+      const message =
+        e instanceof Error
+          ? e.name === "NotAllowedError" ? "Passkey prompt closed or timed out" : e.message
+          : "Passkey authentication failed";
       return { success: false, error: message };
     }
   }, []);

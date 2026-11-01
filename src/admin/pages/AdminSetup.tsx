@@ -4,6 +4,7 @@ import { m } from "motion/react";
 import { Fingerprint, CheckCircle, AlertCircle } from "lucide-react";
 import { getPasskeyRegisterOptions, verifyPasskeyRegister } from "@/admin/api";
 import { startRegistration } from "@simplewebauthn/browser";
+import { AuthShell } from "@/admin/components/AuthShell";
 
 type SetupState = "ready" | "registering" | "success" | "error";
 
@@ -16,11 +17,11 @@ export function AdminSetup() {
 
   if (!setupToken) {
     return (
-      <SetupShell>
-        <p className="font-mono text-muted-foreground/60" style={{ fontSize: "0.75rem" }}>
+      <AuthShell label="PASSKEY SETUP" status="SETUP · NO TOKEN">
+        <p className="font-mono text-muted-foreground" style={{ fontSize: "0.75rem" }}>
           Missing setup token. Run <code className="text-foreground/60">npm run setup:passkey</code> to generate one.
         </p>
-      </SetupShell>
+      </AuthShell>
     );
   }
 
@@ -40,7 +41,7 @@ export function AdminSetup() {
   };
 
   return (
-    <SetupShell>
+    <AuthShell label="PASSKEY SETUP" status={`SETUP · ${state.toUpperCase()}`}>
       {state === "ready" && (
         <>
           <p className="font-mono text-muted-foreground/60 mb-6" style={{ fontSize: "0.75rem", lineHeight: 1.7 }}>
@@ -104,47 +105,6 @@ export function AdminSetup() {
           </button>
         </div>
       )}
-    </SetupShell>
-  );
-}
-
-function SetupShell({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="min-h-screen bg-background flex items-center justify-center px-6"
-    >
-      <m.div
-        className="w-full max-w-[340px]"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      >
-        <div className="mb-10">
-          <a
-            href="/"
-            className="font-mono text-foreground/80 hover:text-foreground transition-colors duration-200"
-            style={{ fontSize: "0.75rem", letterSpacing: "0.02em" }}
-          >
-            po4yka.dev
-          </a>
-        </div>
-
-        <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-7 h-7 border border-border/60 flex items-center justify-center" style={{ borderRadius: "2px" }}>
-            <Fingerprint size={13} className="text-muted-foreground/50" />
-          </div>
-          <div>
-            <h1 className="text-foreground" style={{ fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.2 }}>
-              Setup
-            </h1>
-            <p className="font-mono text-muted-foreground/40" style={{ fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.05em" }}>
-              Register admin passkey
-            </p>
-          </div>
-        </div>
-
-        {children}
-      </m.div>
-    </div>
+    </AuthShell>
   );
 }
