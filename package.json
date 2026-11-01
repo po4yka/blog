@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "tsx scripts/generate-all-data.ts && astro build",
+    "build": "tsx scripts/generate-all-data.ts && astro build && tsx scripts/inject-csp-hashes.ts",
     "preview": "astro preview",
     "lint": "eslint .",
     "typecheck": "npm run typecheck:ts6 && npm run typecheck:ts7 && npm run typecheck:astro",
