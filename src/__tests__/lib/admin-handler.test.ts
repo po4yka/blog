@@ -76,7 +76,7 @@ describe("withAdmin() capability scoping", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
-  it("re-throws Response errors from requireAuth (401 propagates)", async () => {
+  it("returns the 401 Response from requireAuth instead of throwing", async () => {
     const { withAdmin } = await import("@/lib/admin-handler");
     requireAuthMock.mockRejectedValueOnce(
       new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }),
@@ -91,6 +91,7 @@ describe("withAdmin() capability scoping", () => {
       headers: { Authorization: "Bearer bad-token" },
     });
 
-    await expect(route({ request: req, params: {}, db } as unknown as Parameters<typeof route>[0])).rejects.toBeInstanceOf(Response);
+    const res = await route({ request: req, params: {}, db } as unknown as Parameters<typeof route>[0]);
+    expect(res.status).toBe(401);
   });
 });
