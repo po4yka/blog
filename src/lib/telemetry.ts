@@ -83,22 +83,32 @@ async function loadVisits(env: TelemetryEnv, range: TelemetryRange, f: Fetch): P
   const endAt = Date.now();
   const startAt = endAt - RANGE_DAYS[range] * 86_400_000;
   const base = `${UMAMI_ORIGIN}/api/websites/${encodeURIComponent(env.UMAMI_WEBSITE_ID!)}`;
+  const request = (path: string) =>
+    f(`${base}${path}`, { headers: { Authorization: `Bearer ${env.UMAMI_API_TOKEN}`, Accept: "application/json" } });
   const get = async (path: string): Promise<unknown> => {
-    const res = await f(`${base}${path}`, { headers: { Authorization: `Bearer ${env.UMAMI_API_TOKEN}`, Accept: "application/json" } });
+    const res = await request(path);
     if (!res.ok) throw new Error(`Umami ${path.split("?")[0] || "/"} returned ${res.status}`);
     return res.json();
   };
   const window = `startAt=${startAt}&endAt=${endAt}`;
-  const metric = async (type: string): Promise<Top[]> => {
-    const rows = await get(`/metrics?${window}&type=${type}&limit=8`);
-    if (!Array.isArray(rows)) throw new Error(`Umami /metrics?type=${type} did not return a list`);
-    return (rows as { x: string | null; y: number }[]).slice(0, 8).map((r) => ({ label: r.x || "(none)", count: r.y }));
+  /** Tries each metric type name in turn while Umami answers 400 (an unsupported type). */
+  const metric = async (...types: string[]): Promise<Top[]> => {
+    for (const [i, type] of types.entries()) {
+      const res = await request(`/metrics?${window}&type=${type}&limit=8`);
+      if (res.status === 400 && i < types.length - 1) continue;
+      if (!res.ok) throw new Error(`Umami /metrics?type=${type} returned ${res.status}`);
+      const rows: unknown = await res.json();
+      if (!Array.isArray(rows)) throw new Error(`Umami /metrics?type=${type} did not return a list`);
+      return (rows as { x: string | null; y: number }[]).slice(0, 8).map((r) => ({ label: r.x || "(none)", count: r.y }));
+    }
+    return [];
   };
 
   const [stats, active, pages, referrers, countries, events] = await Promise.all([
     get(`/stats?${window}&compare=prev`) as Promise<Record<string, unknown>>,
     get("/active").catch(() => null) as Promise<{ visitors?: number; x?: number } | null>,
-    metric("path"),
+    // Current Umami calls the page dimension "path"; Umami 2.x calls it "url" and rejects "path" with 400.
+    metric("path", "url"),
     metric("referrer"),
     metric("country"),
     metric("event"),

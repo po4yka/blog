@@ -20,6 +20,12 @@ export const useCategories = () => useQuery({ queryKey: adminKeys.categories, qu
 export const useAdminSettings = () => useQuery({ queryKey: adminKeys.settings, queryFn: api.getSettings });
 
 export function useTelemetry(range: TelemetryRange) {
-  // The server caches a range for up to 5 minutes; refetching within a minute would return the same data.
-  return useQuery({ queryKey: adminKeys.telemetry(range), queryFn: () => api.getTelemetry(range), staleTime: 60_000 });
+  // Poll while the page is open (the app turns off refetch on focus). The server caches each range,
+  // so a poll costs no upstream call until that cache expires.
+  return useQuery({
+    queryKey: adminKeys.telemetry(range),
+    queryFn: () => api.getTelemetry(range),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+  });
 }

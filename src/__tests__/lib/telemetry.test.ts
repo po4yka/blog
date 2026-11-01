@@ -118,6 +118,23 @@ describe("collectTelemetry", () => {
     expect(t.d1.status === "ok" && t.d1.data.failures).toEqual([{ day: "2026-11-01", count: 4 }]);
   });
 
+  it("asks Umami 2.x for the page metric as url when it rejects path", async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.includes("type=path")) return json({ error: "Bad request" }, 400);
+      if (u.includes("type=url")) return json([{ x: "/blog", y: 9 }]);
+      if (u.includes("/metrics")) return json([]);
+      if (u.includes("/stats")) return json({ pageviews: { value: 9, prev: 3 } });
+      return json({ x: 1 });
+    });
+    const t = await collectTelemetry({ UMAMI_API_TOKEN: "x", UMAMI_WEBSITE_ID: "y" }, fakeDb({}), "7d", f as typeof fetch);
+    expect(t.visits.status === "ok" && t.visits.data).toMatchObject({
+      pageviews: { now: 9, prev: 3 },
+      active: 1,
+      pages: [{ label: "/blog", count: 9 }],
+    });
+  });
+
   it("turns an upstream HTTP error into a section error", async () => {
     const f = vi.fn(async () => json({}, 401));
     const t = await collectTelemetry({ UMAMI_API_TOKEN: "x", UMAMI_WEBSITE_ID: "y" }, fakeDb({}), "24h", f as typeof fetch);
