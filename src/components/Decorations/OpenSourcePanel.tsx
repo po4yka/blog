@@ -71,7 +71,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-start gap-3 py-2.5 -mx-2 px-2 no-underline rounded-[2px] border-b border-border/30 last:border-b-0"
+                className="group flex items-start gap-3 py-2.5 px-5 no-underline border-b border-border/30 last:border-b-0"
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.3, delay: delay + i * stagger.fast, ease }}
@@ -109,7 +109,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                 placeholder rows of the usual one-line-description height. */}
             {status !== "ready" &&
               Array.from({ length: MAX_REPOS }, (_, i) => (
-                <div key={`placeholder-${i}`} className="flex items-start gap-3 py-2.5 -mx-2 px-2 border-b border-border/30 last:border-b-0">
+                <div key={`placeholder-${i}`} className="flex items-start gap-3 py-2.5 px-5 border-b border-border/30 last:border-b-0">
                   <span className="label-meta shrink-0 w-[18px]">{"\u00a0"}</span>
                   <div className="flex-1 min-w-0">
                     <span className="text-muted-foreground text-mono-sm">
