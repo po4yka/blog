@@ -38,7 +38,7 @@ function PostEditor({ slug }: { slug: string | undefined }) {
 
   const existing = isNew ? null : blogPosts.find((p) => p.slug === slug);
 
-  const [form, setForm] = useState<BlogPost>({
+  const [initialForm] = useState<BlogPost>(() => ({
     slug: "",
     title: "",
     date: currentDateLabel(),
@@ -47,7 +47,8 @@ function PostEditor({ slug }: { slug: string | undefined }) {
     category: categories[1] || "Architecture",
     content: "",
     featured: false,
-  });
+  }));
+  const [form, setForm] = useState<BlogPost>(initialForm);
 
   const [preview, setPreview] = useState(false);
 
@@ -69,9 +70,7 @@ function PostEditor({ slug }: { slug: string | undefined }) {
     });
   };
 
-  const dirty = existing
-    ? JSON.stringify(form) !== JSON.stringify(existing)
-    : !!(form.title.trim() || form.summary.trim() || form.content.trim());
+  const dirty = JSON.stringify(form) !== JSON.stringify(existing ?? initialForm);
   const allowNavigation = useUnsavedGuard(dirty);
 
   const handleSave = () => {

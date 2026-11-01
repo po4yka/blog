@@ -94,20 +94,27 @@ export function AdminShortcuts() {
         <kbd className="ml-auto font-mono text-muted-foreground-dim" style={{ fontSize: 11 }}>?</kbd>
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className="sm:max-w-md"
+          onEscapeKeyDown={(e) => {
+            // Mark Escape as used so the project and role editors underneath stay open.
+            e.preventDefault();
+            setOpen(false);
+          }}
+        >
           <DialogTitle className="label-meta" style={{ fontSize: 11 }}>
             <span className="text-foreground">??</span>
             <span className="text-muted-foreground-dim"> / </span>
             KEYBOARD
           </DialogTitle>
           <DialogDescription className="sr-only">Admin keyboard shortcuts</DialogDescription>
-          <dl className="font-mono" style={{ fontSize: "max(11px, 0.75rem)" }}>
+          <dl style={{ fontSize: "0.8125rem" }}>
             {rows.map((row) => (
               <div key={row.label} className="flex items-center justify-between gap-4 py-1.5" style={{ borderBottom: "1px dashed var(--rule)" }}>
                 <dt className="text-muted-foreground">{row.label}</dt>
                 <dd className="flex gap-1">
                   {row.keys.map((k) => (
-                    <kbd key={k} className="min-w-6 px-1.5 py-0.5 text-center text-foreground border border-border" style={{ borderRadius: 2 }}>
+                    <kbd key={k} className="min-w-6 px-1.5 py-0.5 text-center font-mono text-foreground border border-border" style={{ borderRadius: 2 }}>
                       {k}
                     </kbd>
                   ))}

@@ -7,7 +7,7 @@ import { adminNav as sidebarLinks } from "@/admin/nav";
 import { buildMeta } from "@/data/buildMeta";
 
 export function AdminLayout() {
-  const { isAuthenticated, logout } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,6 +16,9 @@ export function AdminLayout() {
       navigate("/admin/login", { replace: true, state: { from: location.pathname + location.search } });
     }
   }, [isAuthenticated, navigate, location.pathname, location.search]);
+
+  // Navigate first so an unsaved-changes prompt can cancel; the login page ends the session.
+  const signOut = () => navigate("/admin/login", { state: { signOut: true } });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -113,7 +116,7 @@ export function AdminLayout() {
           </dl>
           <AdminShortcuts />
           <button
-            onClick={() => { logout(); navigate("/admin/login"); }}
+            onClick={signOut}
             className="w-full flex items-center gap-2.5 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
             style={{ fontSize: "0.75rem", borderRadius: "2px" }}
           >
@@ -144,7 +147,7 @@ export function AdminLayout() {
             </span>
           </div>
           <button
-            onClick={() => { logout(); navigate("/admin/login"); }}
+            onClick={signOut}
             aria-label="Sign out"
             className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
           >

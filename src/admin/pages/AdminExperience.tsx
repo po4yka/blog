@@ -42,7 +42,7 @@ export function AdminExperience() {
   useEffect(() => {
     if (!editing) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !e.defaultPrevented) {
         setEditing(null);
         triggerRef.current?.focus();
       }
