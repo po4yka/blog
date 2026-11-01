@@ -10,6 +10,10 @@ import { rehypeFootnotes } from "../src/lib/rehype-footnotes";
 const css = readFileSync("src/styles/prose.css", "utf8");
 const astroSource = readFileSync("src/components/blog/FootnotePopover.astro", "utf8");
 const script = astroSource.slice(astroSource.indexOf("<script>") + 8, astroSource.indexOf("</script>"));
+// The fixture injects the popover script inline; the site's CSP (no 'unsafe-inline') would block it.
+// Production ships that script as a bundled same-origin file, which the CSP allows.
+test.use({ bypassCSP: true });
+
 const SOURCE = `Opening paragraph with a claim[^a] and another[^b].\n\n${"Filler paragraph. ".repeat(20)}\n\n[^a]: Note alpha text.\n[^b]: Note beta text.\n`;
 
 async function load(page: import("@playwright/test").Page, width: number) {
