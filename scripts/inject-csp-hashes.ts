@@ -10,7 +10,8 @@ import { fileURLToPath } from "node:url";
 // Cloudflare ignores _headers lines longer than 2,000 characters.
 export const MAX_HEADER_LINE = 2000;
 
-const SCRIPT_RE = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+// The end tag matches the way browsers end script data: `</script` then anything up to `>`.
+const SCRIPT_RE = /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi;
 const JS_TYPES = new Set(["", "module", "text/javascript", "application/javascript"]);
 
 export function collectInlineScriptHashes(html: string): Set<string> {

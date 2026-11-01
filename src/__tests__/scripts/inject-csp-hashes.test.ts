@@ -16,6 +16,11 @@ describe("collectInlineScriptHashes", () => {
     );
   });
 
+  it("ends a script at end tags with whitespace or upper case", () => {
+    const html = `<script>one()</script ><SCRIPT>two()</SCRIPT\n>`;
+    expect(collectInlineScriptHashes(html)).toEqual(new Set([hash("one()"), hash("two()")]));
+  });
+
   it("skips src, JSON-LD, empty and other non-JS scripts", () => {
     const html = [
       `<script src="/m.js"></script>`,
