@@ -14,3 +14,8 @@ database_id = "93342834-5394-4f3e-8726-e8169f038ea8"
 [assets]
 binding = "ASSETS"
 html_handling = "drop-trailing-slash"
+
+# Workers Logs: keep console output and uncaught errors from /api and /admin in the dashboard.
+[observability]
+enabled = true
+head_sampling_rate = 1
