@@ -9,8 +9,14 @@ routes = [
 binding = "DB"
 database_name = "blog-db"
 database_id = "93342834-5394-4f3e-8726-e8169f038ea8"
+migrations_dir = "db/migrations"
 
 # Serve /blog from blog/index.html and redirect /blog/ to /blog, to match trailingSlash: "never".
 [assets]
 binding = "ASSETS"
 html_handling = "drop-trailing-slash"
+
+# Workers Logs: keep console output and uncaught errors from /api and /admin in the dashboard.
+[observability]
+enabled = true
+head_sampling_rate = 1
