@@ -1,14 +1,13 @@
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import type { BlogPostMeta } from "@/types";
 import { blogUrl, type Locale } from "@/lib/i18n";
+import { readingMinutes } from "@/lib/reading";
 import { PanelShell } from "./_helpers";
 import { T } from "@/components/ui/T";
 
 /** The latest post in one language; html[data-locale] shows one row. */
 function PostLink({ post, lang }: { post: BlogPostMeta; lang: Locale }) {
-  const minutes =
-    post.readingTime ??
-    (post.wordCount ? Math.max(1, Math.round(post.wordCount / 200)) : null);
+  const minutes = readingMinutes(post);
   const iso = post.isoDate ?? undefined;
   const primaryTag = post.tags[0];
 

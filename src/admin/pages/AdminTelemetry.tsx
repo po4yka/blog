@@ -1,124 +1,14 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTelemetry } from "@/admin/hooks/useAdminQueries";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
-import { TELEMETRY_RANGES, type Section, type Top, type TelemetryRange } from "@/lib/telemetry-types";
+import { TELEMETRY_RANGES, type TelemetryRange } from "@/lib/telemetry-types";
 import type { ActionsSummary } from "@/pages/api/github/actions";
+import { bytes, delta, duration, fmt, meta, statGrid } from "@/admin/components/telemetry/format";
+import { Panel, SectionBody, Sparkline, Stat, TopList } from "@/admin/components/telemetry/parts";
+import { CrawlersPanel, OriginsBlock, PageSpeedPanel, ReadingPanel } from "@/admin/components/telemetry/insights";
 
-const meta = { fontSize: "max(11px, 0.6875rem)", letterSpacing: "0.04em" } as const;
-const fmt = (n: number) => n.toLocaleString("en");
 const CACHEABLE = new Set(["hit", "miss", "expired", "revalidated", "updating", "stale"]);
-
-function bytes(n: number): string {
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let i = 0;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
-    i++;
-  }
-  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-}
-
-function duration(sec: number): string {
-  if (sec < 60) return `${Math.round(sec)}s`;
-  return `${Math.floor(sec / 60)}m ${Math.round(sec % 60)}s`;
-}
-
-/** "+12% vs previous" against the comparison period, when there is one. */
-function delta(now: number, prev: number | null): string | null {
-  if (prev === null || prev === 0) return null;
-  const pct = Math.round(((now - prev) / prev) * 100);
-  return `${pct > 0 ? "+" : ""}${pct}% vs previous`;
-}
-
-function Panel({ label, source, children }: { label: string; source: string; children: ReactNode }) {
-  return (
-    <section aria-label={label} className="border border-border bg-card" style={{ borderRadius: 2 }}>
-      <div className="flex items-baseline justify-between gap-4 px-4 py-2" style={{ borderBottom: "1px solid var(--rule)" }}>
-        <h2 className="label-meta">{label}</h2>
-        <span className="font-mono text-muted-foreground-dim truncate" style={meta}>
-          {source}
-        </span>
-      </div>
-      <div className="p-4">{children}</div>
-    </section>
-  );
-}
-
-/** Shows a section's data, or says plainly why there is none. */
-function SectionBody<T>({ section, hint, children }: { section: Section<T>; hint?: string; children: (data: T) => ReactNode }) {
-  if (section.status === "ok") return <>{children(section.data)}</>;
-  if (section.status === "unconfigured") {
-    return (
-      <p className="text-muted-foreground" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
-        Not configured. Set the Worker secrets{" "}
-        {section.missing.map((m, i) => (
-          <span key={m}>
-            {i > 0 && ", "}
-            <code className="font-mono text-foreground">{m}</code>
-          </span>
-        ))}
-        .
-      </p>
-    );
-  }
-  return (
-    <div className="space-y-1" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
-      <p className="text-foreground">Unavailable.</p>
-      <p className="font-mono text-muted-foreground break-words" style={meta}>
-        {section.message}
-      </p>
-      {hint && <p className="text-muted-foreground">{hint}</p>}
-    </div>
-  );
-}
-
-function Stat({ label, value, note }: { label: string; value: string; note?: string | null }) {
-  return (
-    <div className="min-w-0">
-      <div className="label-meta truncate">{label}</div>
-      <div className="mt-1 text-foreground" style={{ fontSize: "1.25rem", fontWeight: 600, lineHeight: 1.2 }}>
-        {value}
-      </div>
-      {note && (
-        <div className="font-mono text-muted-foreground-dim" style={meta}>
-          {note}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const statGrid = "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5";
-
-/** Ranked rows with a hairline bar scaled to the largest count. */
-function TopList({ title, rows, empty = "No data in this period." }: { title: string; rows: Top[]; empty?: string }) {
-  const max = Math.max(1, ...rows.map((r) => r.count));
-  return (
-    <div className="min-w-0">
-      <h3 className="label-meta mb-2">{title}</h3>
-      {rows.length === 0 ? (
-        <p className="font-mono text-muted-foreground-dim" style={meta}>
-          {empty}
-        </p>
-      ) : (
-        <ol className="space-y-1.5">
-          {rows.map((r) => (
-            <li key={r.label} className="font-mono" style={{ fontSize: "max(11px, 0.75rem)" }}>
-              <div className="flex justify-between gap-3">
-                <span className="truncate text-foreground" title={r.label}>
-                  {r.label}
-                </span>
-                <span className="shrink-0 text-muted-foreground">{fmt(r.count)}</span>
-              </div>
-              <div aria-hidden="true" className="mt-0.5 h-px bg-foreground/40" style={{ width: `${(r.count / max) * 100}%` }} />
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
 
 function RangePicker({ value, onChange }: { value: TelemetryRange; onChange: (r: TelemetryRange) => void }) {
   return (
@@ -155,6 +45,8 @@ export function AdminTelemetry() {
     staleTime: 5 * 60_000,
   });
 
+  const markers =
+    data?.deploys.status === "ok" ? data.deploys.data.map((d) => ({ at: d.at, label: `deploy ${d.commit}` })) : [];
   const generated = data ? new Date(data.generatedAt).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }) : null;
 
   return (
@@ -164,7 +56,7 @@ export function AdminTelemetry() {
         label="TELEMETRY"
         meta={generated ? `GENERATED ${generated} · CACHED 5 MIN` : undefined}
         title="Telemetry"
-        description="Visits from Umami, edge traffic and Worker health from Cloudflare, sign-in failures from D1."
+        description="Visits and reading from Umami, traffic, crawlers and Worker health from Cloudflare, page speed and sign-in failures from D1."
         actions={<RangePicker value={range} onChange={setRange} />}
       />
 
@@ -199,6 +91,17 @@ export function AdminTelemetry() {
                       note={v.active !== null ? `${fmt(v.active)} active now` : null}
                     />
                   </div>
+                  <SectionBody section={data.visitTrend}>
+                    {(tr) => (
+                      <Sparkline
+                        title={`PAGEVIEWS PER ${tr.unit.toUpperCase()}`}
+                        points={tr.pageviews}
+                        overlay={tr.sessions ? { label: "sessions", points: tr.sessions } : undefined}
+                        unit={tr.unit}
+                        markers={markers}
+                      />
+                    )}
+                  </SectionBody>
                   <div className="grid gap-6 sm:grid-cols-2">
                     <TopList title="PAGES" rows={v.pages} />
                     <TopList title="REFERRERS" rows={v.referrers} />
@@ -209,6 +112,8 @@ export function AdminTelemetry() {
               )}
             </SectionBody>
           </Panel>
+
+          <ReadingPanel section={data.reading} range={data.range} />
 
           <Panel label="EDGE TRAFFIC" source="cloudflare · last 24 h · sampled">
             <SectionBody section={data.edge}>
@@ -235,6 +140,17 @@ export function AdminTelemetry() {
                         note={`2xx ${fmt(e.status["2xx"])} · 3xx ${fmt(e.status["3xx"])} · 4xx ${fmt(e.status["4xx"])}`}
                       />
                     </div>
+                    <SectionBody section={data.edgeTrend}>
+                      {(tr) => (
+                        <Sparkline
+                          title="REQUESTS PER HOUR"
+                          points={tr.requests}
+                          overlay={{ label: "5xx", points: tr.errors5xx }}
+                          unit="hour"
+                          markers={markers}
+                        />
+                      )}
+                    </SectionBody>
                     <div className="grid gap-6 sm:grid-cols-2">
                       <TopList title="COUNTRIES" rows={e.countries} />
                       <TopList title="TOP 404 PATHS" rows={e.notFound} />
@@ -244,6 +160,8 @@ export function AdminTelemetry() {
               }}
             </SectionBody>
           </Panel>
+
+          <CrawlersPanel section={data.crawlers} />
 
           <Panel label="SECURITY" source="cloudflare · last 24 h / d1">
             <div className="grid gap-6 sm:grid-cols-2">
@@ -269,6 +187,9 @@ export function AdminTelemetry() {
                 </SectionBody>
               </div>
               <div className="sm:col-span-2">
+                <OriginsBlock section={data.origins} />
+              </div>
+              <div className="sm:col-span-2">
                 <SectionBody section={data.d1}>
                   {(d) =>
                     d.failures === null ? (
@@ -287,6 +208,8 @@ export function AdminTelemetry() {
               </div>
             </div>
           </Panel>
+
+          <PageSpeedPanel section={data.lighthouse} />
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Panel label="WORKER" source="po4yka-blog · last 24 h">

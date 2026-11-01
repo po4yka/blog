@@ -25,8 +25,9 @@ export const GET = withAdmin({ capability: "read:telemetry" }, async ({ request,
 
   const telemetry = await collectTelemetry(env, db, range as TelemetryRange);
   const body = JSON.stringify(telemetry);
-  const sections = [telemetry.visits, telemetry.edge, telemetry.firewall, telemetry.worker, telemetry.d1];
-  const ttl = sections.every((s) => s.status === "ok") ? CACHE_TTL_S : CACHE_TTL_DEGRADED_S;
+  // Every section, including ones added later: any that is not ok keeps the cache short.
+  const degraded = Object.values(telemetry).some((v) => typeof v === "object" && v !== null && "status" in v && v.status !== "ok");
+  const ttl = degraded ? CACHE_TTL_DEGRADED_S : CACHE_TTL_S;
   await cfCachePut(
     cacheKey,
     new Response(body, { headers: { "Content-Type": "application/json", "Cache-Control": `max-age=${ttl}` } }),

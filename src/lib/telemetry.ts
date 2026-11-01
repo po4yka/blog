@@ -2,16 +2,29 @@
 // (self-hosted Umami, the Cloudflare GraphQL Analytics API, D1) and reports
 // "unconfigured" or "error" instead of inventing numbers.
 
-import { UMAMI_ORIGIN } from "@/lib/constants";
+import { GITHUB_USERNAME, UMAMI_ORIGIN } from "@/lib/constants";
+import { blogPostsMeta } from "@/data/blogMeta";
+import { readingMinutes } from "@/lib/reading";
 import type {
+  CrawlerRow,
+  CrawlersData,
   D1Data,
+  Deploy,
   EdgeData,
+  EdgeTrendData,
+  FeedReader,
   FirewallData,
+  LighthouseData,
+  LighthouseRow,
+  OriginsData,
   Pair,
+  Point,
+  ReadingData,
   Section,
   Telemetry,
   TelemetryRange,
   Top,
+  VisitTrendData,
   VisitsData,
   WorkerData,
 } from "@/lib/telemetry-types";
@@ -79,10 +92,12 @@ export function umamiPair(stats: Record<string, unknown>, key: string): Pair {
   return { now: 0, prev: null };
 }
 
-async function loadVisits(env: TelemetryEnv, range: TelemetryRange, f: Fetch): Promise<VisitsData> {
+/** Umami API calls for one website and time range. */
+function umami(env: TelemetryEnv, range: TelemetryRange, f: Fetch) {
   const endAt = Date.now();
   const startAt = endAt - RANGE_DAYS[range] * 86_400_000;
   const base = `${UMAMI_ORIGIN}/api/websites/${encodeURIComponent(env.UMAMI_WEBSITE_ID!)}`;
+  const window = `startAt=${startAt}&endAt=${endAt}`;
   const request = (path: string) =>
     f(`${base}${path}`, { headers: { Authorization: `Bearer ${env.UMAMI_API_TOKEN}`, Accept: "application/json" } });
   const get = async (path: string): Promise<unknown> => {
@@ -90,28 +105,32 @@ async function loadVisits(env: TelemetryEnv, range: TelemetryRange, f: Fetch): P
     if (!res.ok) throw new Error(`Umami ${path.split("?")[0] || "/"} returned ${res.status}`);
     return res.json();
   };
-  const window = `startAt=${startAt}&endAt=${endAt}`;
   /** Tries each metric type name in turn while Umami answers 400 (an unsupported type). */
-  const metric = async (...types: string[]): Promise<Top[]> => {
+  const metric = async (limit: number, ...types: string[]): Promise<Top[]> => {
     for (const [i, type] of types.entries()) {
-      const res = await request(`/metrics?${window}&type=${type}&limit=8`);
+      const res = await request(`/metrics?${window}&type=${type}&limit=${limit}`);
       if (res.status === 400 && i < types.length - 1) continue;
       if (!res.ok) throw new Error(`Umami /metrics?type=${type} returned ${res.status}`);
       const rows: unknown = await res.json();
       if (!Array.isArray(rows)) throw new Error(`Umami /metrics?type=${type} did not return a list`);
-      return (rows as { x: string | null; y: number }[]).slice(0, 8).map((r) => ({ label: r.x || "(none)", count: r.y }));
+      return (rows as { x: string | null; y: number }[]).slice(0, limit).map((r) => ({ label: r.x || "(none)", count: r.y }));
     }
     return [];
   };
+  // Current Umami calls the page dimension "path"; Umami 2.x calls it "url" and rejects "path" with 400.
+  const pages = (limit: number) => metric(limit, "path", "url");
+  return { window, get, metric, pages };
+}
 
+async function loadVisits(env: TelemetryEnv, range: TelemetryRange, f: Fetch): Promise<VisitsData> {
+  const { window, get, metric, pages: pageMetric } = umami(env, range, f);
   const [stats, active, pages, referrers, countries, events] = await Promise.all([
     get(`/stats?${window}&compare=prev`) as Promise<Record<string, unknown>>,
     get("/active").catch(() => null) as Promise<{ visitors?: number; x?: number } | null>,
-    // Current Umami calls the page dimension "path"; Umami 2.x calls it "url" and rejects "path" with 400.
-    metric("path", "url"),
-    metric("referrer"),
-    metric("country"),
-    metric("event"),
+    pageMetric(8),
+    metric(8, "referrer"),
+    metric(8, "country"),
+    metric(8, "event"),
   ]);
   return {
     pageviews: umamiPair(stats, "pageviews"),
@@ -245,6 +264,329 @@ async function loadWorker(env: TelemetryEnv, f: Fetch): Promise<WorkerData> {
   };
 }
 
+// --- Time series helpers ---
+
+type Unit = "hour" | "day";
+
+/** Start of the UTC hour or day that contains `ms`, as an ISO string. */
+function bucketStart(ms: number, unit: Unit): string {
+  const d = new Date(ms);
+  if (unit === "day") d.setUTCHours(0, 0, 0, 0);
+  else d.setUTCMinutes(0, 0, 0);
+  return d.toISOString();
+}
+
+/** Parse an API time: Umami sends "2026-11-01 13:00:00" (UTC when asked), Cloudflare ISO. */
+function parseTime(t: string): number {
+  const iso = t.includes("T") ? t : `${t.replace(" ", "T")}Z`;
+  return Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? iso : `${iso}Z`);
+}
+
+/** One point per hour or day from `fromMs` to now, zero where the source had no row. */
+export function fillSeries(rows: { t: string; value: number }[], fromMs: number, unit: Unit, nowMs = Date.now()): Point[] {
+  const byBucket = new Map<string, number>();
+  for (const r of rows) {
+    const ms = parseTime(r.t);
+    if (Number.isNaN(ms)) continue;
+    const key = bucketStart(ms, unit);
+    byBucket.set(key, (byBucket.get(key) ?? 0) + r.value);
+  }
+  const step = unit === "day" ? 86_400_000 : 3_600_000;
+  const out: Point[] = [];
+  for (let ms = Date.parse(bucketStart(fromMs, unit)); ms <= nowMs; ms += step) {
+    const t = new Date(ms).toISOString();
+    out.push({ t, value: byBucket.get(t) ?? 0 });
+  }
+  return out;
+}
+
+// --- Reading (Umami) ---
+
+const READING_PATH_LIMIT = 500;
+
+const trimSlash = (path: string) => (path.length > 1 ? path.replace(/\/+$/, "") : path);
+
+async function loadReading(env: TelemetryEnv, range: TelemetryRange, f: Fetch): Promise<ReadingData> {
+  const { window, get, pages } = umami(env, range, f);
+  const [paths, completions] = await Promise.all([
+    // shortcut: the 500 most viewed paths; a post outside them shows 0 views. The panel states the limit.
+    pages(READING_PATH_LIMIT),
+    // Umami 2.x reads eventName, current Umami also accepts the event filter.
+    get(`/event-data/values?${window}&event=blog-read-complete&eventName=blog-read-complete&propertyName=slug`),
+  ]);
+  if (!Array.isArray(completions)) throw new Error("Umami /event-data/values did not return a list");
+
+  const views = new Map<string, number>();
+  for (const p of paths) views.set(trimSlash(p.label), (views.get(trimSlash(p.label)) ?? 0) + p.count);
+  const done = new Map<string, number>();
+  for (const c of completions as { value: string; total: number }[]) done.set(c.value, (done.get(c.value) ?? 0) + c.total);
+
+  const bySlug = new Map<string, (typeof blogPostsMeta)[number]>();
+  for (const m of blogPostsMeta) if (!bySlug.has(m.slug) || m.lang === "en") bySlug.set(m.slug, m);
+  const posts = [...bySlug.values()].map((m) => ({
+    slug: m.slug,
+    title: m.title,
+    pageviews: (views.get(`/blog/${m.slug}`) ?? 0) + (views.get(`/blog/ru/${m.slug}`) ?? 0),
+    completions: done.get(m.slug) ?? 0,
+    words: m.wordCount ?? null,
+    readingMin: readingMinutes(m),
+    href: m.lang === "ru" ? `/blog/ru/${m.slug}/` : `/blog/${m.slug}/`,
+  }));
+  posts.sort((a, b) => b.pageviews - a.pageviews || a.title.localeCompare(b.title));
+  return { posts, pathLimit: READING_PATH_LIMIT };
+}
+
+// --- Trends ---
+
+async function loadVisitTrend(env: TelemetryEnv, range: TelemetryRange, f: Fetch): Promise<VisitTrendData> {
+  const unit: Unit = range === "24h" ? "hour" : "day";
+  const { window, get } = umami(env, range, f);
+  const body = (await get(`/pageviews?${window}&unit=${unit}&timezone=UTC`)) as {
+    pageviews?: { x: string; y: number }[];
+    sessions?: { x: string; y: number }[];
+  };
+  if (!Array.isArray(body.pageviews)) throw new Error("Umami /pageviews did not return a series");
+  const from = Date.now() - RANGE_DAYS[range] * 86_400_000;
+  const series = (rows: { x: string; y: number }[]) => fillSeries(rows.map((r) => ({ t: r.x, value: r.y })), from, unit);
+  // A missing session series is shown as no overlay, never as a line of zeros.
+  return { unit, pageviews: series(body.pageviews), sessions: Array.isArray(body.sessions) ? series(body.sessions) : null };
+}
+
+async function loadEdgeTrend(env: TelemetryEnv, f: Fetch): Promise<EdgeTrendData> {
+  const query = `query EdgeTrend($zone: string, $since: Time, $until: Time) {
+    viewer { zones(filter: { zoneTag: $zone }) {
+      requests: httpRequestsAdaptiveGroups(limit: 48, filter: { datetime_geq: $since, datetime_lt: $until, requestSource: "eyeball" }, orderBy: [datetimeHour_ASC]) {
+        count dimensions { datetimeHour }
+      }
+      errors: httpRequestsAdaptiveGroups(limit: 48, filter: { datetime_geq: $since, datetime_lt: $until, requestSource: "eyeball", edgeResponseStatus_geq: 500 }, orderBy: [datetimeHour_ASC]) {
+        count dimensions { datetimeHour }
+      }
+    } }
+  }`;
+  type Hourly = Group<{ datetimeHour: string }>[];
+  const window = lastDay();
+  const data = await cfQuery<{ viewer: { zones: { requests: Hourly; errors: Hourly }[] } }>(env, query, { zone: env.CLOUDFLARE_ZONE_ID, ...window }, f);
+  const zone = data.viewer.zones[0];
+  if (!zone) throw new Error("Cloudflare returned no zone for CLOUDFLARE_ZONE_ID");
+  const from = Date.parse(window.since);
+  const series = (g: Hourly) => fillSeries(g.map((r) => ({ t: r.dimensions.datetimeHour, value: r.count })), from, "hour");
+  return { requests: series(zone.requests), errors5xx: series(zone.errors) };
+}
+
+/** Deploys the deploy job recorded after `wrangler deploy` succeeded (table from migration 008). */
+async function loadDeploys(db: D1Database, range: TelemetryRange): Promise<Deploy[]> {
+  type Row = { commit_sha: string; deployed_at: string };
+  try {
+    const { results } = await db
+      .prepare("SELECT commit_sha, deployed_at FROM deploys WHERE deployed_at > datetime('now', ?) ORDER BY deployed_at")
+      .bind(`-${RANGE_DAYS[range]} days`)
+      .all<Row>();
+    return results.map((r: Row) => ({
+      at: r.deployed_at,
+      commit: r.commit_sha.slice(0, 7),
+      url: `https://github.com/${GITHUB_USERNAME}/blog/commit/${r.commit_sha}`,
+    }));
+  } catch (err) {
+    // Until the first deploy after migration 008 creates the table, there are no markers to show.
+    if (err instanceof Error && /no such table/i.test(err.message)) return [];
+    throw err;
+  }
+}
+
+// --- Machine readers (Cloudflare) ---
+
+/** Files written for crawlers, agents and feed readers (post .md copies are matched separately). */
+export const MACHINE_PATHS = ["/llms.txt", "/llms-full.txt", "/robots.txt", "/rss.xml", "/rss.ru.xml", "/sitemap-index.xml", "/sitemap-0.xml"];
+
+const AGENTS: [RegExp, string, CrawlerRow["kind"]][] = [
+  [/GPTBot/i, "GPTBot", "ai"],
+  [/OAI-SearchBot/i, "OAI-SearchBot", "ai"],
+  [/ChatGPT-User/i, "ChatGPT-User", "ai"],
+  [/ClaudeBot/i, "ClaudeBot", "ai"],
+  [/Claude-SearchBot/i, "Claude-SearchBot", "ai"],
+  [/Claude-User/i, "Claude-User", "ai"],
+  [/PerplexityBot/i, "PerplexityBot", "ai"],
+  [/Perplexity-User/i, "Perplexity-User", "ai"],
+  [/meta-externalagent/i, "Meta-ExternalAgent", "ai"],
+  [/Amazonbot/i, "Amazonbot", "ai"],
+  [/Bytespider/i, "Bytespider", "ai"],
+  [/CCBot/i, "CCBot", "ai"],
+  [/DuckAssistBot/i, "DuckAssistBot", "ai"],
+  [/MistralAI-User/i, "MistralAI-User", "ai"],
+  [/cohere-ai/i, "cohere-ai", "ai"],
+  [/Googlebot/i, "Googlebot", "search"],
+  [/bingbot/i, "Bingbot", "search"],
+  [/Applebot/i, "Applebot", "search"],
+  [/YandexBot/i, "YandexBot", "search"],
+  [/DuckDuckBot/i, "DuckDuckBot", "search"],
+  [/Feedly/i, "Feedly", "feed"],
+  [/Inoreader/i, "Inoreader", "feed"],
+  [/NewsBlur/i, "NewsBlur", "feed"],
+  [/Feedbin/i, "Feedbin", "feed"],
+  [/Miniflux/i, "Miniflux", "feed"],
+  [/NetNewsWire/i, "NetNewsWire", "feed"],
+  [/FreshRSS/i, "FreshRSS", "feed"],
+  [/Old ?Reader/i, "The Old Reader", "feed"],
+];
+
+/** Name and kind of a user agent; anything unknown is grouped as "Other agents". */
+export function classifyAgent(ua: string): { name: string; kind: CrawlerRow["kind"] } {
+  for (const [re, name, kind] of AGENTS) if (re.test(ua)) return { name, kind };
+  // Feed services that are not listed still announce "N subscribers".
+  if (/\d+\s+subscribers?/i.test(ua)) {
+    // The product token, unless it is the generic "Mozilla/5.0" prefix many readers send.
+    const token = ua.split(/[/ (;]/)[0] ?? "";
+    return { name: token && !/^mozilla$/i.test(token) ? token : "Feed reader", kind: "feed" };
+  }
+  return { name: "Other agents", kind: "other" };
+}
+
+/** Subscriber count a feed reader reports in its user agent, for example "Feedly/1.0 (...; 42 subscribers)". */
+export function reportedSubscribers(ua: string): number | null {
+  const m = /(\d+)\s+subscribers?/i.exec(ua);
+  return m ? Number(m[1]) : null;
+}
+
+const CRAWLER_GROUP_LIMIT = 1000;
+
+async function loadCrawlers(env: TelemetryEnv, f: Fetch): Promise<CrawlersData> {
+  const query = `query Crawlers($zone: string, $since: Time, $until: Time) {
+    viewer { zones(filter: { zoneTag: $zone }) {
+      httpRequestsAdaptiveGroups(limit: ${CRAWLER_GROUP_LIMIT}, orderBy: [count_DESC], filter: {
+        datetime_geq: $since, datetime_lt: $until,
+        OR: [{ clientRequestPath_in: ${JSON.stringify(MACHINE_PATHS)} }, { clientRequestPath_like: "%.md" }]
+      }) { count dimensions { clientRequestPath userAgent } }
+    } }
+  }`;
+  type Zone = { httpRequestsAdaptiveGroups: Group<{ clientRequestPath: string; userAgent: string }>[] };
+  const data = await cfQuery<{ viewer: { zones: Zone[] } }>(env, query, { zone: env.CLOUDFLARE_ZONE_ID, ...lastDay() }, f);
+  const groups = data.viewer.zones[0]?.httpRequestsAdaptiveGroups ?? [];
+
+  const rows = new Map<string, { kind: CrawlerRow["kind"]; requests: number; paths: Map<string, number> }>();
+  const readers = new Map<string, FeedReader>();
+  let total = 0;
+  for (const g of groups) {
+    const { clientRequestPath: path, userAgent: ua } = g.dimensions;
+    total += g.count;
+    const { name, kind } = classifyAgent(ua ?? "");
+    const row = rows.get(name) ?? { kind, requests: 0, paths: new Map() };
+    row.requests += g.count;
+    // Post .md copies are grouped, so one crawler does not list every post.
+    const label = path.endsWith(".md") ? "/blog/*.md" : path;
+    row.paths.set(label, (row.paths.get(label) ?? 0) + g.count);
+    rows.set(name, row);
+    const subs = reportedSubscribers(ua ?? "");
+    if (subs !== null && /\.xml$/.test(path)) {
+      const key = `${name} ${path}`;
+      // The count is a total the reader reports on every fetch: keep the largest seen, never add.
+      if ((readers.get(key)?.subscribers ?? -1) < subs) readers.set(key, { name, feed: path, subscribers: subs });
+    }
+  }
+  const crawlers = [...rows.entries()]
+    .map(([name, r]) => ({
+      name,
+      kind: r.kind,
+      requests: r.requests,
+      paths: [...r.paths.entries()].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count).slice(0, 4),
+    }))
+    .sort((a, b) => (a.kind === "other" ? 1 : 0) - (b.kind === "other" ? 1 : 0) || b.requests - a.requests);
+  return {
+    total,
+    crawlers,
+    feedReaders: [...readers.values()].sort((a, b) => b.subscribers - a.subscribers),
+    truncated: groups.length >= CRAWLER_GROUP_LIMIT,
+  };
+}
+
+// --- Attack origins (Cloudflare) ---
+
+async function loadOrigins(env: TelemetryEnv, f: Fetch): Promise<OriginsData> {
+  const base = `datetime_geq: $since, datetime_lt: $until, requestSource: "eyeball"`;
+  const query = `query Origins($zone: string, $since: Time, $until: Time) {
+    viewer { zones(filter: { zoneTag: $zone }) {
+      networks: httpRequestsAdaptiveGroups(limit: 10, orderBy: [count_DESC], filter: { ${base}, edgeResponseStatus_geq: 400, edgeResponseStatus_lt: 500 }) {
+        count dimensions { clientAsn clientASNDescription }
+      }
+      probeCountries: httpRequestsAdaptiveGroups(limit: 10, orderBy: [count_DESC], filter: { ${base}, clientRequestPath_in: ${JSON.stringify(PROBE_PATHS)} }) {
+        count dimensions { clientCountryName }
+      }
+    } }
+  }`;
+  type Zone = {
+    networks: Group<{ clientAsn: string | number; clientASNDescription: string }>[];
+    probeCountries: Group<{ clientCountryName: string }>[];
+  };
+  const data = await cfQuery<{ viewer: { zones: Zone[] } }>(env, query, { zone: env.CLOUDFLARE_ZONE_ID, ...lastDay() }, f);
+  const zone = data.viewer.zones[0];
+  if (!zone) throw new Error("Cloudflare returned no zone for CLOUDFLARE_ZONE_ID");
+  return {
+    networks: zone.networks.map((g) => ({
+      asn: Number(g.dimensions.clientAsn),
+      name: g.dimensions.clientASNDescription || "(unknown network)",
+      requests: g.count,
+    })),
+    probeCountries: top(zone.probeCountries, (d) => d.clientCountryName),
+  };
+}
+
+// --- Lighthouse (D1, written by the deploy job) ---
+
+async function loadLighthouse(db: D1Database): Promise<LighthouseData> {
+  type Row = {
+    commit_sha: string;
+    measured_at: string;
+    form_factor: "desktop" | "mobile";
+    path: string;
+    performance: number | null;
+    accessibility: number | null;
+    best_practices: number | null;
+    lcp_ms: number | null;
+    cls: number | null;
+    tbt_ms: number | null;
+  };
+  type HistoryRow = { commit_sha: string; measured_at: string; form_factor: "desktop" | "mobile"; performance: number };
+  try {
+    const last = await db
+      .prepare("SELECT commit_sha, measured_at FROM lighthouse_runs ORDER BY measured_at DESC LIMIT 1")
+      .first<{ commit_sha: string; measured_at: string }>();
+    if (!last) return { latest: null, history: [] };
+    const [{ results: rows }, { results: history }] = await Promise.all([
+      db.prepare("SELECT * FROM lighthouse_runs WHERE commit_sha = ? ORDER BY form_factor, path").bind(last.commit_sha).all<Row>(),
+      db
+        .prepare(
+          `SELECT * FROM (
+             SELECT commit_sha, MAX(measured_at) AS measured_at, form_factor, AVG(performance) AS performance
+             FROM lighthouse_runs WHERE performance IS NOT NULL
+             GROUP BY commit_sha, form_factor ORDER BY measured_at DESC LIMIT 60
+           ) ORDER BY measured_at ASC`,
+        )
+        .all<HistoryRow>(),
+    ]);
+    const toRow = (r: Row): LighthouseRow => ({
+      formFactor: r.form_factor,
+      path: r.path,
+      performance: r.performance,
+      accessibility: r.accessibility,
+      bestPractices: r.best_practices,
+      lcpMs: r.lcp_ms,
+      cls: r.cls,
+      tbtMs: r.tbt_ms,
+    });
+    return {
+      latest: { commit: last.commit_sha.slice(0, 7), measuredAt: last.measured_at, rows: rows.map(toRow) },
+      history: history.map((h: HistoryRow) => ({
+        commit: h.commit_sha.slice(0, 7),
+        measuredAt: h.measured_at,
+        formFactor: h.form_factor,
+        performance: h.performance,
+      })),
+    };
+  } catch (err) {
+    if (err instanceof Error && /no such table/i.test(err.message)) return { latest: null, history: [] };
+    throw err;
+  }
+}
+
 // --- D1 ---
 
 async function loadD1(db: D1Database, range: TelemetryRange): Promise<D1Data> {
@@ -285,12 +627,36 @@ export async function collectTelemetry(
   f: Fetch = fetch,
 ): Promise<Telemetry> {
   const cf: (keyof TelemetryEnv)[] = ["CLOUDFLARE_ANALYTICS_TOKEN", "CLOUDFLARE_ZONE_ID"];
-  const [visits, edge, firewall, worker, d1] = await Promise.all([
-    section(env, ["UMAMI_API_TOKEN", "UMAMI_WEBSITE_ID"], () => loadVisits(env, range, f)),
-    section(env, cf, () => loadEdge(env, f)),
-    section(env, cf, () => loadFirewall(env, f)),
-    section(env, ["CLOUDFLARE_ANALYTICS_TOKEN", "CLOUDFLARE_ACCOUNT_ID"], () => loadWorker(env, f)),
-    section(env, [], () => loadD1(db, range)),
-  ]);
-  return { range, generatedAt: new Date().toISOString(), visits, edge, firewall, worker, d1 };
+  const um: (keyof TelemetryEnv)[] = ["UMAMI_API_TOKEN", "UMAMI_WEBSITE_ID"];
+  const [visits, edge, firewall, worker, d1, reading, visitTrend, edgeTrend, deploys, crawlers, origins, lighthouse] =
+    await Promise.all([
+      section(env, um, () => loadVisits(env, range, f)),
+      section(env, cf, () => loadEdge(env, f)),
+      section(env, cf, () => loadFirewall(env, f)),
+      section(env, ["CLOUDFLARE_ANALYTICS_TOKEN", "CLOUDFLARE_ACCOUNT_ID"], () => loadWorker(env, f)),
+      section(env, [], () => loadD1(db, range)),
+      section(env, um, () => loadReading(env, range, f)),
+      section(env, um, () => loadVisitTrend(env, range, f)),
+      section(env, cf, () => loadEdgeTrend(env, f)),
+      section(env, [], () => loadDeploys(db, range)),
+      section(env, cf, () => loadCrawlers(env, f)),
+      section(env, cf, () => loadOrigins(env, f)),
+      section(env, [], () => loadLighthouse(db)),
+    ]);
+  return {
+    range,
+    generatedAt: new Date().toISOString(),
+    visits,
+    edge,
+    firewall,
+    worker,
+    d1,
+    reading,
+    visitTrend,
+    edgeTrend,
+    deploys,
+    crawlers,
+    origins,
+    lighthouse,
+  };
 }
