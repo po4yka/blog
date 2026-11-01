@@ -4,6 +4,7 @@
 
 import { GITHUB_USERNAME, UMAMI_ORIGIN } from "@/lib/constants";
 import { blogPostsMeta } from "@/data/blogMeta";
+import { readingMinutes } from "@/lib/reading";
 import type {
   CrawlerRow,
   CrawlersData,
@@ -328,7 +329,7 @@ async function loadReading(env: TelemetryEnv, range: TelemetryRange, f: Fetch): 
     pageviews: (views.get(`/blog/${m.slug}`) ?? 0) + (views.get(`/blog/ru/${m.slug}`) ?? 0),
     completions: done.get(m.slug) ?? 0,
     words: m.wordCount ?? null,
-    readingMin: m.readingTime ?? null,
+    readingMin: readingMinutes(m),
     href: m.lang === "ru" ? `/blog/ru/${m.slug}/` : `/blog/${m.slug}/`,
   }));
   posts.sort((a, b) => b.pageviews - a.pageviews || a.title.localeCompare(b.title));

@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { classifyAgent, collectTelemetry, fillSeries, reportedSubscribers, type TelemetryEnv } from "@/lib/telemetry";
 import { blogPostsMeta } from "@/data/blogMeta";
 import { lighthouseSql } from "../../../scripts/lighthouse-to-sql";
+import { readingMinutes } from "@/lib/reading";
+import { bucketMs, timeMs } from "@/admin/components/telemetry/format";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -55,6 +57,23 @@ describe("fillSeries", () => {
   });
 });
 
+describe("readingMinutes", () => {
+  it("uses readingTime, else word count at 200 a minute, else nothing", () => {
+    expect(readingMinutes({ readingTime: 7, wordCount: 5000 })).toBe(7);
+    expect(readingMinutes({ wordCount: 2692 })).toBe(13);
+    expect(readingMinutes({ wordCount: 40 })).toBe(1);
+    expect(readingMinutes({})).toBeNull();
+  });
+});
+
+describe("deploy marker buckets", () => {
+  it("puts a deploy made today on today's daily point and this hour's hourly point", () => {
+    const deploy = timeMs("2026-11-01 09:07:01");
+    expect(bucketMs(deploy, "day")).toBe(Date.parse("2026-11-01T00:00:00Z"));
+    expect(bucketMs(deploy, "hour")).toBe(Date.parse("2026-11-01T09:00:00Z"));
+  });
+});
+
 describe("user agents", () => {
   it("names known AI, search and feed agents and groups the rest", () => {
     expect(classifyAgent("Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.2; +https://openai.com/gptbot)")).toEqual({ name: "GPTBot", kind: "ai" });
@@ -91,6 +110,10 @@ describe("collectTelemetry insights", () => {
     expect(t.reading.status).toBe("ok");
     const posts = t.reading.status === "ok" ? t.reading.data.posts : [];
     expect(posts[0]).toMatchObject({ slug: first, pageviews: 15, completions: 6 });
+    // blogMeta has word counts but no readingTime; minutes come from the site's own 200 wpm rule.
+    const meta = blogPostsMeta.find((p) => p.slug === first && p.lang === "en")!;
+    expect(posts[0]!.readingMin).toBe(readingMinutes(meta));
+    expect(posts[0]!.readingMin).not.toBeNull();
     expect(posts[1]).toMatchObject({ slug: second, pageviews: 2, completions: 0 });
     expect(posts).toHaveLength(new Set(blogPostsMeta.map((p) => p.slug)).size);
   });

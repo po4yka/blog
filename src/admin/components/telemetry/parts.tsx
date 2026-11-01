@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Point, Section, Top } from "@/lib/telemetry-types";
-import { fmt, meta, mono, shortTime, timeMs } from "./format";
+import { bucketMs, fmt, meta, mono, shortTime, timeMs } from "./format";
 
 export function Panel({ label, source, children }: { label: string; source: string; children: ReactNode }) {
   return (
@@ -127,7 +127,8 @@ export function Sparkline({
   const t0 = timeMs(points[0]!.t);
   const t1 = Math.max(t0 + 1, timeMs(points[points.length - 1]!.t));
   const max = kind === "score" ? 100 : Math.max(1, ...points.map((p) => p.value), ...(overlay?.points.map((p) => p.value) ?? []));
-  const x = (t: string) => ((timeMs(t) - t0) / (t1 - t0)) * W;
+  const xMs = (ms: number) => ((ms - t0) / (t1 - t0)) * W;
+  const x = (t: string) => xMs(timeMs(t));
   const y = (v: number) => H - 2 - (v / max) * (H - 4);
   const line = (ps: Point[]) => ps.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.t).toFixed(1)},${y(p.value).toFixed(1)}`).join(" ");
   const total = points.reduce((n, p) => n + p.value, 0);
@@ -137,7 +138,11 @@ export function Sparkline({
     kind === "score"
       ? `latest ${points[points.length - 1]!.value} · lowest ${low.value} at ${shortTime(low.t, unit)}`
       : `total ${fmt(total)} · peak ${fmt(peak.value)} at ${shortTime(peak.t, unit)}`;
-  const inRange = markers.filter((m) => timeMs(m.at) >= t0 && timeMs(m.at) <= t1);
+  // A point stands for its whole hour or day, so a marker goes to the start of its bucket:
+  // a deploy at 09:07 today belongs to today's point, the last one on a daily chart.
+  const inRange = markers
+    .map((m) => ({ ...m, ms: bucketMs(timeMs(m.at), unit) }))
+    .filter((m) => m.ms >= t0 && m.ms <= t1);
 
   return (
     <figure className="min-w-0">
@@ -160,8 +165,8 @@ export function Sparkline({
         {inRange.map((m, i) => (
           <line
             key={`${m.at}-${i}`}
-            x1={x(m.at)}
-            x2={x(m.at)}
+            x1={xMs(m.ms)}
+            x2={xMs(m.ms)}
             y1={H - 8}
             y2={H}
             stroke="var(--muted-foreground)"

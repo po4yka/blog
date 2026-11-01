@@ -31,6 +31,14 @@ export function delta(now: number, prev: number | null): string | null {
 /** Milliseconds for an ISO time or a SQLite "YYYY-MM-DD HH:MM:SS" (UTC) time. */
 export const timeMs = (t: string) => Date.parse(t.includes("T") ? t : `${t.replace(" ", "T")}Z`);
 
+/** Start of the UTC hour or day containing `ms`: the bucket a series point stands for. */
+export function bucketMs(ms: number, unit: "hour" | "day"): number {
+  const d = new Date(ms);
+  if (unit === "day") d.setUTCHours(0, 0, 0, 0);
+  else d.setUTCMinutes(0, 0, 0);
+  return d.getTime();
+}
+
 export function shortTime(t: string, unit: "hour" | "day"): string {
   const d = new Date(timeMs(t));
   return unit === "hour"
