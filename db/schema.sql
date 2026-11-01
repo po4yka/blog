@@ -101,3 +101,26 @@ CREATE TABLE IF NOT EXISTS auth_challenges (
   type        TEXT NOT NULL,
   created_at  TEXT DEFAULT (datetime('now'))
 );
+
+-- Deploys put live by the deploy job, for the admin Telemetry deploy markers
+CREATE TABLE IF NOT EXISTS deploys (
+  commit_sha  TEXT PRIMARY KEY,
+  deployed_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_deploys_at ON deploys(deployed_at);
+
+-- Lighthouse results per deploy for the admin Telemetry page (written by the deploy job)
+CREATE TABLE IF NOT EXISTS lighthouse_runs (
+  commit_sha     TEXT NOT NULL,
+  measured_at    TEXT NOT NULL,
+  form_factor    TEXT NOT NULL,
+  path           TEXT NOT NULL,
+  performance    REAL,
+  accessibility  REAL,
+  best_practices REAL,
+  lcp_ms         REAL,
+  cls            REAL,
+  tbt_ms         REAL,
+  PRIMARY KEY (commit_sha, form_factor, path)
+);
+CREATE INDEX IF NOT EXISTS idx_lighthouse_runs_measured ON lighthouse_runs(measured_at);

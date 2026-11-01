@@ -58,7 +58,7 @@ describe("statusBuckets", () => {
 describe("collectTelemetry", () => {
   it("reports which secrets are missing instead of calling the APIs", async () => {
     const f = vi.fn();
-    const t = await collectTelemetry({}, fakeDb({ counts: { admin_credentials: 1 } }), "7d", f);
+    const t = await collectTelemetry({}, fakeDb({ counts: { admin_credentials: 1 } }), "7d", f as typeof fetch);
     expect(f).not.toHaveBeenCalled();
     expect(t.visits).toEqual({ status: "unconfigured", missing: ["UMAMI_API_TOKEN", "UMAMI_WEBSITE_ID"] });
     expect(t.edge).toEqual({ status: "unconfigured", missing: ["CLOUDFLARE_ANALYTICS_TOKEN", "CLOUDFLARE_ZONE_ID"] });
@@ -149,7 +149,7 @@ describe("collectTelemetry", () => {
   });
 
   it("reports failures as null when migration 007 is missing", async () => {
-    const t = await collectTelemetry({}, fakeDb({ failures: new Error("no such table: auth_failures_daily") }), "30d");
+    const t = await collectTelemetry({}, fakeDb({ failures: new Error("no such table: auth_failures_daily") }), "30d", vi.fn() as typeof fetch);
     expect(t.d1.status === "ok" && t.d1.data.failures).toBeNull();
   });
 });
