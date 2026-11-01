@@ -54,12 +54,12 @@ describe("withAdmin() capability scoping", () => {
   });
 
   it("returns 200 when session capabilities include the required capability", async () => {
-    const response = await callWithAdmin("read:posts", ["read:posts", "write:posts"]);
+    const response = await callWithAdmin("read:posts", ["read:posts", "read:projects"]);
     expect(response.status).toBe(200);
   });
 
   it("returns 403 when session capabilities do not include the required capability", async () => {
-    const response = await callWithAdmin("write:posts", ["read:posts"]);
+    const response = await callWithAdmin("read:projects", ["read:posts"]);
     expect(response.status).toBe(403);
     const body = await response.json() as { error: string };
     expect(body.error).toBe("Forbidden");

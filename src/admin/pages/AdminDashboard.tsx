@@ -11,9 +11,9 @@ export function AdminDashboard() {
   const navigate = useNavigate();
 
   const stats = [
-    { label: "Blog Posts", value: blogPosts.length, icon: FileText, path: "/admin/blog", accent: true },
-    { label: "Projects", value: projects.length, icon: FolderKanban, path: "/admin/projects", accent: false },
-    { label: "Experience", value: roles.length, icon: Briefcase, path: "/admin/experience", accent: false },
+    { label: "Blog Posts", value: blogPosts.length, icon: FileText, path: "/admin/blog" },
+    { label: "Projects", value: projects.length, icon: FolderKanban, path: "/admin/projects" },
+    { label: "Experience", value: roles.length, icon: Briefcase, path: "/admin/experience" },
   ];
 
   const recentPosts = blogPosts.slice(0, 4);
@@ -40,7 +40,7 @@ export function AdminDashboard() {
           </span>
         </div>
         <p className="text-muted-foreground" style={{ fontSize: "0.8125rem", lineHeight: 1.5 }}>
-          Manage your website content
+          Content is edited in the repository. This view mirrors the deployed content.
         </p>
       </m.div>
 
@@ -124,7 +124,7 @@ export function AdminDashboard() {
           {recentPosts.map((post, i) => (
             <button
               key={post.slug}
-              onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}
+              onClick={() => navigate("/admin/blog")}
               className="w-full flex items-center gap-4 px-4 py-3.5 text-left hover:bg-foreground/[0.02] transition-colors duration-200 cursor-pointer"
               style={{ borderBottom: i < recentPosts.length - 1 ? "1px solid var(--border)" : "none" }}
             >
@@ -164,26 +164,11 @@ export function AdminDashboard() {
 
       {/* Quick actions */}
       <m.div
-        className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3"
+        className="mt-8 grid grid-cols-1 gap-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <button
-          onClick={() => navigate("/admin/blog/new")}
-          className="group flex items-center gap-3 p-4 border border-dashed border-border/60 hover:border-border transition-all duration-200 cursor-pointer text-left"
-          style={{ borderRadius: "2px" }}
-        >
-          <FileText size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors duration-200" />
-          <div>
-            <span className="text-foreground/80 group-hover:text-foreground transition-colors" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
-              New blog post
-            </span>
-            <p className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
-              Write a new article
-            </p>
-          </div>
-        </button>
         <a
           href="/"
           target="_blank"

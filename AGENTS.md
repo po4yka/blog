@@ -27,7 +27,7 @@ Match verification to the change: the affected test file and `npm run typecheck`
 ## Server, admin, and data
 
 - API routes live in `src/pages/api/` and must `export const prerender = false`.
-- Admin routes wrap handlers in `withAdmin({ capability, schema? }, handler)` from `src/lib/admin-handler.ts`, which handles origin check, session auth, capability scoping, Zod validation, and JSON errors. Do not call `requireAuth()` inside `withAdmin` handlers. Standard CRUD entities are declared once with `defineCollection()` in `src/lib/collections/`.
+- Admin routes wrap handlers in `withAdmin({ capability, schema? }, handler)` from `src/lib/admin-handler.ts`, which handles origin check, session auth, capability scoping, Zod validation, and JSON errors. Do not call `requireAuth()` inside `withAdmin` handlers. The admin is a read-only mirror of the repo content (no content write routes or editors); the deploy job reloads D1 from `db/seed.sql`, so edit the MDX/JSON sources instead. Read-only entities are declared once with `defineCollection()` in `src/lib/collections/`.
 - D1 is reached through `import { env } from "cloudflare:workers"` (`env.DB`), not `locals.runtime`. Sessions are HttpOnly cookies; auth is passkey-first (`@simplewebauthn/*`) with password fallback gated by `ADMIN_PASSWORD` + `ALLOW_PASSWORD_LOGIN`.
 - Schema is in `db/schema.sql`; schema changes need a new numbered file in `db/migrations/`. JSON arrays (tags, platforms, links) are stored as TEXT and parsed in the data layer.
 - Admin SPA: `src/admin/` (React Router, TanStack Query with keys in `src/admin/hooks/useAdminQueries.ts`). Visitor preferences: Zustand store in `src/stores/settingsStore.ts`.

@@ -9,15 +9,10 @@ import { validationError, jsonError } from "@/lib/validation";
 
 export type Capability =
   | "read:posts"
-  | "write:posts"
   | "read:projects"
-  | "write:projects"
   | "read:roles"
-  | "write:roles"
   | "read:categories"
-  | "write:categories"
-  | "read:settings"
-  | "write:settings";
+  | "read:settings";
 
 /**
  * Resolve the capability allowlist for a session.
