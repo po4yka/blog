@@ -1,0 +1,69 @@
+# Checks the public site, the Worker routes and Umami every 15 minutes.
+# A failure opens one "Uptime: ..." issue (GitHub notifies the owner); the next passing run closes it.
+name: Uptime
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Worst case when every URL times out: 5 URLs x 3 tries x (20 s + 10 s) = 450 s, plus the issue step.
+    timeout-minutes: 10
+    steps:
+      - name: Probe endpoints
+        id: probe
+        run: |
+          # url, expected status, text the body must contain ("" to skip)
+          checks=(
+            "https://po4yka.dev/|200|</html>"
+            "https://po4yka.dev/blog|200|</html>"
+            "https://po4yka.dev/api/admin/posts|401|"
+            "https://po4yka.dev/m.js|200|"
+            "https://analytics.po4yka.dev/api/heartbeat|200|\"ok\":true"
+          )
+          failed=""
+          for c in "${checks[@]}"; do
+            IFS='|' read -r url want text <<< "$c"
+            ok=false
+            for _ in 1 2 3; do
+              code=$(curl -sS -o body.txt -w '%{http_code}' --max-time 20 "$url" || echo 000)
+              if [ "$code" = "$want" ] && { [ -z "$text" ] || grep -qF "$text" body.txt; }; then
+                ok=true
+                break
+              fi
+              sleep 10
+            done
+            echo "$url -> $code (want $want) ok=$ok"
+            [ "$ok" = true ] || failed="$failed $url ($code)"
+          done
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+      - name: Open or close the uptime issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          FAILED: ${{ steps.probe.outputs.failed }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          open=$(gh issue list --repo "$REPO" --state open --search '"Uptime:" in:title' --json number --jq '.[0].number // empty')
+          if [ -n "$FAILED" ]; then
+            if [ -z "$open" ]; then
+              gh issue create --repo "$REPO" --title "Uptime: site check failed" --body "Failed:$FAILED. Run: $RUN_URL"
+            else
+              gh issue comment "$open" --repo "$REPO" --body "Still failing:$FAILED. Run: $RUN_URL"
+            fi
+            exit 1
+          fi
+          if [ -n "$open" ]; then
+            gh issue close "$open" --repo "$REPO" --comment "All checks pass again. Run: $RUN_URL"
+          fi

@@ -177,6 +177,10 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # The Cloudflare secrets live in this environment, which only protected branches (main) can use.
+    environment:
+      name: production
+      url: https://po4yka.dev
     # Deploys run one at a time and are never cancelled midway.
     concurrency:
       group: deploy-production
