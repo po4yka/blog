@@ -138,6 +138,7 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Unknown credential/i);
     expect(verifyAuthenticationResponseMock).not.toHaveBeenCalled();
+    expect(recordLoginAttemptMock).toHaveBeenCalledWith(expect.anything(), "1.2.3.4");
   });
 
   it("returns 401 when challenge is expired or missing", async () => {
@@ -163,6 +164,7 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Invalid or expired challenge/i);
     expect(verifyAuthenticationResponseMock).not.toHaveBeenCalled();
+    expect(recordLoginAttemptMock).toHaveBeenCalledWith(expect.anything(), "1.2.3.4");
   });
 
   it("returns 401 when verifyAuthenticationResponse throws", async () => {

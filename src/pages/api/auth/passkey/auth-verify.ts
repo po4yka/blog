@@ -14,6 +14,7 @@ import {
   createSession,
   makeSessionCookie,
   checkRateLimit,
+  countFailedSignIn,
   recordLoginAttempt,
   clearLoginAttempts,
   validateOrigin,
@@ -31,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const allowed = await checkRateLimit(db, ip);
   if (!allowed) {
+    await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many attempts" }), {
       status: 429,
       headers: { "Content-Type": "application/json", "Retry-After": "900" },
@@ -66,12 +68,15 @@ export const POST: APIRoute = async ({ request }) => {
   // Look up the credential
   const credential = await getCredentialById(db, assertion.id);
   if (!credential) {
+    // A guessed or stale credential ID is a failed sign-in: rate-limit it and count it.
+    await recordLoginAttempt(db, ip);
     return jsonError("Unknown credential", 401);
   }
 
   // Consume the challenge (one-time use)
   const validChallenge = await consumeChallenge(db, challenge, "authentication");
   if (!validChallenge) {
+    await recordLoginAttempt(db, ip);
     return jsonError("Invalid or expired challenge", 401);
   }
 

@@ -11,7 +11,8 @@ export type Capability =
   | "read:projects"
   | "read:roles"
   | "read:categories"
-  | "read:settings";
+  | "read:settings"
+  | "read:telemetry";
 
 /**
  * Resolve the capability allowlist for a session.

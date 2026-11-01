@@ -7,6 +7,12 @@ interface CloudflareEnv {
   ADMIN_PASSWORD: string;
   ALLOW_PASSWORD_LOGIN?: string;
   GITHUB_TOKEN?: string;
+  // Admin Telemetry page (src/lib/telemetry.ts); each panel says which one is missing.
+  UMAMI_API_TOKEN?: string;
+  UMAMI_WEBSITE_ID?: string;
+  CLOUDFLARE_ANALYTICS_TOKEN?: string;
+  CLOUDFLARE_ZONE_ID?: string;
+  CLOUDFLARE_ACCOUNT_ID?: string;
 }
 
 declare module "cloudflare:workers" {

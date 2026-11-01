@@ -28,7 +28,9 @@ async function load(page: import("@playwright/test").Page, width: number) {
     `<style>:root{--background:#fff;--foreground:#000;--border:#999;--muted-foreground:#444}body{margin:0}${css}</style>` +
       `<main style="padding:16px"><article class="blog-article"><div class="prose-blog">${code}</div></article></main>`,
   );
-  await page.addScriptTag({ content: js });
+  // /blog's CSP blocks inline scripts (the built page loads this script as a file). page.evaluate
+  // runs the fixture over DevTools, so the test keeps the real CSP for everything else on the page.
+  await page.evaluate(js);
 }
 
 test("each footnote is one node in the DOM", async ({ page }) => {
