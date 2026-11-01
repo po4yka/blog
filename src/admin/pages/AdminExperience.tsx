@@ -4,6 +4,7 @@ import { Plus, Trash2, TriangleAlert, X, Save, GripVertical } from "lucide-react
 import type { Role } from "@/admin/api";
 import { useRoles, useSaveRole, useDeleteRole } from "@/admin/hooks/useAdminQueries";
 import { FieldBlock as Field, TagsInput } from "@/admin/components/FormPrimitives";
+import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
 
 function newRole(): Role {
@@ -69,31 +70,24 @@ export function AdminExperience() {
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
-      {/* Header */}
-      <m.div
-        className="flex items-center justify-between gap-4 mb-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div>
-          <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
-            Experience
-          </h1>
-          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
-            {roles.length} {roles.length === 1 ? "role" : "roles"}
-          </p>
-        </div>
-        <button
-          ref={triggerRef}
-          onClick={() => setEditing(newRole())}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
-          style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
-        >
-          <Plus size={15} />
-          Add role
-        </button>
-      </m.div>
+      <AdminPageHeader
+        number="04"
+        label="EXPERIENCE"
+        meta={<>{roles.length} {roles.length === 1 ? "role" : "roles"} in D1</>}
+        title="Experience"
+        description="Roles stored in D1, in display order."
+        actions={
+            <button
+              ref={triggerRef}
+              onClick={() => setEditing(newRole())}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
+              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
+            >
+              <Plus size={15} />
+              Add role
+            </button>
+        }
+      />
 
       {/* Editor */}
       <AnimatePresence>
@@ -212,8 +206,8 @@ export function AdminExperience() {
       <m.div
         className="border border-border/50 bg-card overflow-hidden"
         style={{ borderRadius: "2px" }}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {roles.length === 0 && (

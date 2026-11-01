@@ -67,8 +67,8 @@ export function AdminSetup() {
 
       {state === "success" && (
         <m.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="text-center"
         >
           <CheckCircle size={32} className="text-muted-foreground mx-auto mb-3" />

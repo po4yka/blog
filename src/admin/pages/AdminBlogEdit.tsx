@@ -5,6 +5,7 @@ import { ArrowLeft, Save, Eye, EyeOff, Star, StarOff } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { usePosts, useSavePost, useCategories, useAddCategory } from "@/admin/hooks/useAdminQueries";
 import { FieldBlock, TagsInput } from "@/admin/components/FormPrimitives";
+import { useSaveShortcut, useUnsavedGuard } from "@/admin/hooks/useFormKeys";
 import { BlogPreviewPane } from "@/admin/components/BlogPreviewPane";
 
 function generateSlug(title: string): string {
@@ -21,8 +22,13 @@ function currentDateLabel(): string {
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+/** One editor instance per route: `/admin/blog/new` after an edit page must not keep that post's form. */
 export function AdminBlogEdit() {
   const { slug } = useParams();
+  return <PostEditor key={slug ?? "new"} slug={slug} />;
+}
+
+function PostEditor({ slug }: { slug: string | undefined }) {
   const navigate = useNavigate();
   const { data: blogPosts = [] } = usePosts();
   const { data: categories = [] } = useCategories();
@@ -63,19 +69,27 @@ export function AdminBlogEdit() {
     });
   };
 
+  const dirty = existing
+    ? JSON.stringify(form) !== JSON.stringify(existing)
+    : !!(form.title.trim() || form.summary.trim() || form.content.trim());
+  const allowNavigation = useUnsavedGuard(dirty);
+
   const handleSave = () => {
-    if (!form.title.trim() || !form.slug.trim()) return;
+    if (!form.title.trim() || !form.slug.trim() || savePostMutation.isPending) return;
     if (!categories.includes(form.category)) {
       addCategoryMutation.mutate(form.category);
     }
     savePostMutation.mutate(form, {
       onSuccess: () => {
         if (isNew) {
+          allowNavigation();
           navigate(`/admin/blog/edit/${form.slug}`, { replace: true });
         }
       },
     });
   };
+
+  useSaveShortcut(handleSave, dirty);
 
   const availableCategories = categories.filter((c) => c !== "All");
 
@@ -88,8 +102,8 @@ export function AdminBlogEdit() {
       {/* Header */}
       <m.div
         className="flex items-center justify-between gap-4 mb-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
         <div className="flex items-center gap-4">
@@ -104,11 +118,11 @@ export function AdminBlogEdit() {
             <h1 className="text-foreground" style={{ fontSize: "1.125rem", fontWeight: 600 }}>
               {isNew ? "New Post" : "Edit Post"}
             </h1>
-            {!isNew && (
-              <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
-                /{form.slug}
-              </span>
-            )}
+            <span className="font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
+              {!isNew && `/${form.slug}`}
+              {!isNew && (dirty || savePostMutation.isPending) && " · "}
+              {savePostMutation.isPending ? "SAVING" : dirty ? "UNSAVED · ⌘S TO SAVE" : ""}
+            </span>
           </div>
         </div>
 
@@ -134,8 +148,8 @@ export function AdminBlogEdit() {
       </m.div>
 
       <m.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {preview ? (
