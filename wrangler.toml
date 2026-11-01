@@ -1,5 +1,5 @@
 name = "po4yka-blog"
-compatibility_date = "2025-01-01"
+compatibility_date = "2026-10-23"
 
 routes = [
   { pattern = "po4yka.dev/*", zone_name = "po4yka.dev" }
