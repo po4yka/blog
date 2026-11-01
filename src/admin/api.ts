@@ -2,6 +2,7 @@
 // Auth is via HttpOnly session cookie (set by server on login).
 // Client tracks auth state via a lightweight sessionStorage flag.
 
+import type { Telemetry, TelemetryRange } from "@/lib/telemetry-types";
 import type { BlogPost, Project, Role, SiteSettings } from "@/types";
 import type {
   PublicKeyCredentialRequestOptionsJSON,
@@ -77,6 +78,9 @@ export const addCategory = (name: string) =>
   adminFetch<{ ok: true }>("categories", { method: "POST", body: JSON.stringify({ name }) });
 export const deleteCategory = (name: string) =>
   adminFetch<{ ok: true }>(`categories/${encodeURIComponent(name)}`, { method: "DELETE" });
+
+// --- Telemetry ---
+export const getTelemetry = (range: TelemetryRange) => adminFetch<Telemetry>(`telemetry?range=${range}`);
 
 // --- Settings ---
 export const getSettings = () => adminFetch<SiteSettings>("settings");

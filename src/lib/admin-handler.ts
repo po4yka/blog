@@ -17,7 +17,8 @@ export type Capability =
   | "read:categories"
   | "write:categories"
   | "read:settings"
-  | "write:settings";
+  | "write:settings"
+  | "read:telemetry";
 
 /**
  * Resolve the capability allowlist for a session.

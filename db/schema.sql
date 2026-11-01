@@ -80,6 +80,12 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 );
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip_address, attempted_at);
 
+-- Daily failed sign-in counts for the admin Telemetry page (no IPs)
+CREATE TABLE IF NOT EXISTS auth_failures_daily (
+  day   TEXT PRIMARY KEY,
+  count INTEGER NOT NULL DEFAULT 0
+);
+
 -- Passkey credentials
 CREATE TABLE IF NOT EXISTS admin_credentials (
   credential_id TEXT PRIMARY KEY,

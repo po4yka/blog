@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import * as api from "@/admin/api";
 import type { Project, Role } from "@/admin/api";
 import type { BlogPost } from "@/types";
+import type { TelemetryRange } from "@/lib/telemetry-types";
 
 // --- Query Keys ---
 
@@ -13,6 +14,7 @@ export const adminKeys = {
   roles: ["admin", "roles"] as const,
   categories: ["admin", "categories"] as const,
   settings: ["admin", "settings"] as const,
+  telemetry: (range: string) => ["admin", "telemetry", range] as const,
 };
 
 // --- Generic collection hook factories ---
@@ -168,6 +170,11 @@ export function useRemoveCategory() {
 }
 
 // --- Settings (single-row, stays hand-written) ---
+
+export function useTelemetry(range: TelemetryRange) {
+  // The server caches a range for up to 5 minutes; refetching within a minute would return the same data.
+  return useQuery({ queryKey: adminKeys.telemetry(range), queryFn: () => api.getTelemetry(range), staleTime: 60_000 });
+}
 
 export function useAdminSettings() {
   return useQuery({
