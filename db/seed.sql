@@ -118,8 +118,9 @@ Nothing in the data plane crosses into Java. SOCKS5 sessions, the TUN packet pum
 
 Why Rust, specifically, for code that parses untrusted bytes straight off the wire is the subject of the next piece.
 
-The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.', 0, 14),
+The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.', 0, 14);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('rag-breaks-earlier-than-people-think', 'en', 'RAG breaks earlier than people think', 'Apr 2026',
  'Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',
@@ -286,8 +287,9 @@ The choice between RAG and a wiki is a choice about where to pay. RAG stands up 
 
 What the failure modes in this piece share is where compute gets paid. The move from query time to ingest time is the underlying bet. Whether the output lands as markdown pages, typed edges in a temporal graph, or pre-computed community summaries depends on what the artefact is for. A wiki is read by humans; a graph is queried by systems. Both sit downstream of the same decision: compile once, read many.
 
-I don''t have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That''s the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I''d want — same query, same corpus, six months apart, do the answers agree — isn''t something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.', 1, 22),
+I don''t have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That''s the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I''d want — same query, same corpus, six months apart, do the answers agree — isn''t something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.', 1, 22);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('network-isnt-broken-just-here', 'ru', 'Сброс конкретных соединений при исправной сети: точечная диагностика', 'Jun 2026',
  'Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.',
  '["DPI","Network Diagnostics","Rust","Android"]', 'Networking',
@@ -403,8 +405,9 @@ tcp_16kb_blocked   16680      3            server_rst  high
 
 Зачем именно Rust для кода, который разбирает недоверенные байты прямо из сети, — тема следующего текста.
 
-Та самая коробка на пути никуда не делась и ведёт себя как прежде: буферизует трафик и рвёт соединение при превышении порога, независимо от того, какое приложение его открыло. Меняется поведение телефона. Он больше не считает все сбои одинаковыми: выносит вердикт, потом пробует минимальное вмешательство, которое снимает затык, и запоминает, помогло ли. В следующий раз, когда это соединение зависнет в той же сети, в хранилище уже записана сработавшая политика.', 0, 2),
+Та самая коробка на пути никуда не делась и ведёт себя как прежде: буферизует трафик и рвёт соединение при превышении порога, независимо от того, какое приложение его открыло. Меняется поведение телефона. Он больше не считает все сбои одинаковыми: выносит вердикт, потом пробует минимальное вмешательство, которое снимает затык, и запоминает, помогло ли. В следующий раз, когда это соединение зависнет в той же сети, в хранилище уже записана сработавшая политика.', 0, 2);
 
+INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('rag-breaks-earlier-than-people-think', 'ru', 'RAG ломается раньше, чем кажется', 'Apr 2026',
  'У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',
@@ -572,35 +575,51 @@ INSERT INTO projects (id, name, description, platforms, tags, links, featured, s
 ('copilot', 'Copilot AI Platform',
  'Multi-agent assistant for a regulated investment platform. Layered architecture with durable orchestration, supervisory agent graphs, and self-hosted LLM inference.',
  '["Backend","AI"]', '["LangGraph","PydanticAI","Temporal","vLLM","Bifrost","Langfuse","FastAPI","Go"]',
- '[]', 1, 0),
+ '[]', 1, 0);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('slack-gateway', 'CI/CD Slack Bot',
  'Internal CI/CD operations bot connecting Slack to GitLab pipelines. Build triggers, release management, Play Store publishing, and crash reporting.',
  '["Backend"]', '["Python","Flask","Slack Bolt","GitLab CI","Google Play API","OpenTelemetry","Kubernetes"]',
- '[]', 0, 1),
+ '[]', 0, 1);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('agents-framework', 'AGENTS.md Framework',
  'Tool-neutral AI agent policy framework consumed by Claude Code, Gemini CLI, and OpenAI Codex across multiple repositories.',
  '["Tooling"]', '["Claude Code","Gemini CLI","Codex","YAML","MCP","AI Agents"]',
- '[]', 1, 2),
+ '[]', 1, 2);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('heimdall', 'Heimdall',
  'Local-first analytics dashboard for AI-assisted engineering. Unified cost, burn-rate, cache efficiency, and waste-detection across 9 coding assistants.',
  '["Tooling","macOS"]', '["Rust","Swift","TypeScript","MCP","SQLite","FinOps","Observability"]',
- '[{"type":"GitHub","href":"https://github.com/po4yka/heimdall"}]', 1, 3),
+ '[{"type":"GitHub","href":"https://github.com/po4yka/heimdall"}]', 1, 3);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('kotlin-ci-toolchain', 'Kotlin CI Toolchain',
  'Kotlin-native CLI tools that replaced the entire Fastlane/Ruby release pipeline for Android CI/CD.',
  '["Android"]', '["Kotlin","picocli","GitLab CI","Gradle","CLI"]',
- '[]', 0, 4),
+ '[]', 0, 4);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('anr-watchdog', 'ANR Watchdog',
  'Android library with Java-level ANR monitor and C++ native signal handler for catching events the JVM monitor misses.',
  '["Android"]', '["Kotlin","C++","NDK","CMake","Firebase Crashlytics"]',
- '[]', 0, 5),
+ '[]', 0, 5);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('blog', 'po4yka.dev',
  'Personal portfolio and technical blog. Astro 7 + React 19 islands, Cloudflare Workers + D1, WebAuthn admin panel.',
  '["Web"]', '["Astro","React","TypeScript","Cloudflare Workers","D1","WebAuthn"]',
- '[{"type":"GitHub","href":"https://github.com/po4yka/blog"}]', 0, 6),
+ '[{"type":"GitHub","href":"https://github.com/po4yka/blog"}]', 0, 6);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('ripdpi', 'RIPDPI',
  'Android app for network connectivity optimization with local SOCKS5 proxy, adaptive DPI evasion, and encrypted DNS support.',
  '["Android"]', '["Kotlin","Rust","JNI","SOCKS5","DNS","VPN","NDK"]',
- '[{"type":"GitHub","href":"https://github.com/po4yka/RIPDPI"}]', 0, 7),
+ '[{"type":"GitHub","href":"https://github.com/po4yka/RIPDPI"}]', 0, 7);
+
+INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES
 ('ratatoskr', 'Ratatoskr',
  'Self-hosted messenger between you and the internet. Pulls articles, videos, and feeds, summarizes with LLMs, delivers signal — not feed. KMP, web, and Telegram clients.',
  '["Android","iOS","Backend","Web"]', '["KMP","Compose Multiplatform","Python","FastAPI","Telegram Bot","React","Ktor","SQLDelight"]',
@@ -610,22 +629,34 @@ INSERT INTO projects (id, name, description, platforms, tags, links, featured, s
 INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('garage-ai', 'Apr 2026 — Present', 'Garage IT', 'AI Engineer',
  'Building Copilot, a multi-agent assistant for a regulated multi-asset investment platform. Own the agent architecture, self-hosted LLM infrastructure, and AI platform decisions.',
- '["LangGraph","PydanticAI","Temporal","vLLM","Python"]', 0),
+ '["LangGraph","PydanticAI","Temporal","vLLM","Python"]', 0);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('garage-senior', 'Dec 2024 — Present', 'Garage IT', 'Senior Android Developer',
  'Decomposed a 1,500-LOC Activity monolith into a plugin architecture, replaced the Ruby CI pipeline with Kotlin tooling, and introduced AI coding agent workflows.',
- '["Kotlin","Compose","CI/CD","MobileOps","Claude Code"]', 1),
+ '["Kotlin","Compose","CI/CD","MobileOps","Claude Code"]', 1);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('garage-android', 'Nov 2022 — Dec 2024', 'Garage IT', 'Android Developer',
  'Android and MobileOps engineer on a multi-asset retail investment platform across 3 regulated markets. Owned the CI/CD infrastructure, release pipeline, and internal developer tooling.',
- '["Kotlin","Compose","Coroutines","Gradle","Python"]', 2),
+ '["Kotlin","Compose","Coroutines","Gradle","Python"]', 2);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('vk-mid', 'Feb 2022 — Nov 2022', 'VK', 'Android Developer',
  'Middle Android Developer on VK Clips, a short-form video product inside the VK super-app.',
- '["Kotlin","Dagger 2","Material Design","Modularization"]', 3),
+ '["Kotlin","Dagger 2","Material Design","Modularization"]', 3);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('vk-junior', 'Mar 2021 — Feb 2022', 'VK', 'Junior Android Developer',
  'Junior Android Developer on VK Clips, a short-form video service at VK.',
- '["Kotlin","Android SDK","UI Performance"]', 4),
+ '["Kotlin","Android SDK","UI Performance"]', 4);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('epam', 'Feb 2021 — Jun 2021', 'EPAM Systems', 'Industrial Practice (Internship)',
  'Android development internship focused on Agile practices, automated testing, and cross-platform development.',
- '["Kotlin","Android",".NET","Agile"]', 5),
+ '["Kotlin","Android",".NET","Agile"]', 5);
+
+INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES
 ('leti', 'Sep 2020 — Mar 2021', 'LETI', 'Junior Android Developer (Part-time)',
  'Built a Kotlin-based Android app with MVVM architecture as a university course hub.',
  '["Kotlin","Jetpack Compose","MVVM","Docker"]', 6);

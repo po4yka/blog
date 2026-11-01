@@ -26,7 +26,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const nonce = btoa(String.fromCharCode(...nonceBytes));
   context.locals.nonce = nonce;
 
-  const response = await next();
+  let response: Response;
+  try {
+    response = await next();
+  } catch (err) {
+    // requireAuth and validateOrigin throw their 401/403 as a Response; Astro would
+    // turn an uncaught one into a 500 page, so the client never saw the real status.
+    if (err instanceof Response) return err;
+    throw err;
+  }
 
   if (response.headers.get("content-type")?.includes("text/html")) {
     response.headers.set("Content-Security-Policy", policy(nonce));

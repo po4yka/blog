@@ -89,6 +89,20 @@ interface ExperienceJSON {
   roles: RoleJSON[];
 }
 
+// D1 rejects a single SQL statement over 100 KB (SQLITE_TOOBIG), so every row gets its own INSERT.
+export const D1_MAX_STATEMENT_BYTES = 100_000;
+
+export function insertRows(comment: string, head: string, values: string[]): string {
+  const statements = values.map((v) => `${head}\n${v};\n`);
+  for (const stmt of statements) {
+    const bytes = Buffer.byteLength(stmt, "utf-8");
+    if (bytes > D1_MAX_STATEMENT_BYTES) {
+      throw new Error(`${comment}: one INSERT is ${bytes} bytes, over the D1 limit of ${D1_MAX_STATEMENT_BYTES}`);
+    }
+  }
+  return `-- ${comment}\n${statements.join("\n")}`;
+}
+
 function generateBlogSeed(entries: BlogSeedEntry[]): string {
   if (entries.length === 0) return "";
 
@@ -103,11 +117,10 @@ function generateBlogSeed(entries: BlogSeedEntry[]): string {
     );
   }
 
-  return (
-    "-- Blog posts\n" +
-    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES\n" +
-    values.join(",\n\n") +
-    ";\n"
+  return insertRows(
+    "Blog posts",
+    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES",
+    values,
   );
 }
 
@@ -133,11 +146,10 @@ function generateProjectsSeed(): string {
     );
   });
 
-  return (
-    "-- Projects\n" +
-    "INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES\n" +
-    values.join(",\n") +
-    ";\n"
+  return insertRows(
+    "Projects",
+    "INSERT INTO projects (id, name, description, platforms, tags, links, featured, sort_order) VALUES",
+    values,
   );
 }
 
@@ -154,12 +166,7 @@ function generateRolesSeed(): string {
     );
   });
 
-  return (
-    "-- Roles\n" +
-    "INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES\n" +
-    values.join(",\n") +
-    ";\n"
-  );
+  return insertRows("Roles", "INSERT INTO roles (id, period, company, title, description, tags, sort_order) VALUES", values);
 }
 
 function generateSettingsSeed(): string {
