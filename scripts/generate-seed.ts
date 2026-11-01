@@ -171,6 +171,13 @@ function generateSettingsSeed(): string {
   );
 }
 
+// The deploy reloads D1 from this file, so it must replace the content tables, not append to them.
+export const CONTENT_TABLES = ["blog_posts", "categories", "projects", "roles", "site_settings"] as const;
+
+function generateResetSeed(): string {
+  return "-- Reset content tables\n" + CONTENT_TABLES.map((t) => `DELETE FROM ${t};\n`).join("");
+}
+
 export function generateSeedSource(): string {
   const entries = collectBlogEntries();
 
@@ -183,6 +190,7 @@ export function generateSeedSource(): string {
   const sections = [
     "-- Auto-generated from source files. Do not edit manually.",
     "-- Run \"npm run generate:all\" to regenerate.\n",
+    generateResetSeed(),
     generateBlogSeed(entries),
     generateCategoriesSeed(Array.from(categories)),
     generateProjectsSeed(),

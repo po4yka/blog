@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { createMockDb, createApiContext, createAuthenticatedContext } from "../../helpers";
+import { createApiContext } from "../../helpers";
 
 const validSettings = {
   name: "Nikita Pochaev",
@@ -75,58 +75,5 @@ describe("GET /api/admin/settings", () => {
 
     const body = await response.json();
     expect(body.error).toBe("Settings not found");
-  });
-});
-
-describe("PUT /api/admin/settings", () => {
-  it("updates settings with valid body", async () => {
-    const { PUT } = await import("@/pages/api/admin/settings");
-
-    const db = createMockDb();
-    const context = createAuthenticatedContext({
-      method: "PUT",
-      db,
-      body: validSettings,
-    });
-
-    const response = await PUT(context);
-    expect(response.status).toBe(200);
-
-    const body = await response.json();
-    expect(body.ok).toBe(true);
-  });
-
-  it("returns 401 without auth", async () => {
-    const { PUT } = await import("@/pages/api/admin/settings");
-
-    const context = createApiContext({
-      method: "PUT",
-      body: validSettings,
-    });
-
-    await expect(PUT(context)).rejects.toBeInstanceOf(Response);
-
-    try {
-      await PUT(context);
-    } catch (e) {
-      expect((e as Response).status).toBe(401);
-    }
-  });
-
-  it("returns 400 with invalid body", async () => {
-    const { PUT } = await import("@/pages/api/admin/settings");
-
-    const db = createMockDb();
-    const context = createAuthenticatedContext({
-      method: "PUT",
-      db,
-      body: { name: "" },
-    });
-
-    const response = await PUT(context);
-    expect(response.status).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe("Invalid request");
   });
 });

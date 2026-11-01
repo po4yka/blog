@@ -54,12 +54,12 @@ describe("withAdmin() capability scoping", () => {
   });
 
   it("returns 200 when session capabilities include the required capability", async () => {
-    const response = await callWithAdmin("read:posts", ["read:posts", "write:posts"]);
+    const response = await callWithAdmin("read:posts", ["read:posts", "read:projects"]);
     expect(response.status).toBe(200);
   });
 
   it("returns 403 when session capabilities do not include the required capability", async () => {
-    const response = await callWithAdmin("write:posts", ["read:posts"]);
+    const response = await callWithAdmin("read:projects", ["read:posts"]);
     expect(response.status).toBe(403);
     const body = await response.json() as { error: string };
     expect(body.error).toBe("Forbidden");
@@ -76,7 +76,7 @@ describe("withAdmin() capability scoping", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
-  it("re-throws Response errors from requireAuth (401 propagates)", async () => {
+  it("returns the 401 Response from requireAuth instead of throwing", async () => {
     const { withAdmin } = await import("@/lib/admin-handler");
     requireAuthMock.mockRejectedValueOnce(
       new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }),
@@ -91,6 +91,7 @@ describe("withAdmin() capability scoping", () => {
       headers: { Authorization: "Bearer bad-token" },
     });
 
-    await expect(route({ request: req, params: {}, db } as unknown as Parameters<typeof route>[0])).rejects.toBeInstanceOf(Response);
+    const res = await route({ request: req, params: {}, db } as unknown as Parameters<typeof route>[0]);
+    expect(res.status).toBe(401);
   });
 });

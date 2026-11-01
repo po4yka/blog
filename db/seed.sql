@@ -1,6 +1,13 @@
 -- Auto-generated from source files. Do not edit manually.
 -- Run "npm run generate:all" to regenerate.
 
+-- Reset content tables
+DELETE FROM blog_posts;
+DELETE FROM categories;
+DELETE FROM projects;
+DELETE FROM roles;
+DELETE FROM site_settings;
+
 -- Blog posts
 INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES
 ('network-isnt-broken-just-here', 'en', 'The Network Isn''t Broken Everywhere, Just Here: Diagnosing One Connection at a Time', 'Jun 2026',

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createApiContext, createAuthenticatedContext } from "../../helpers";
-import { setMockEnv } from "../../mocks/cloudflare-workers";
+import { createApiContext } from "../../helpers";
 
 // Build a db mock that supports .all() (list queries), .bind().first()
 // (single-row lookups), and .bind().run() (writes).
@@ -17,14 +16,6 @@ function createListMockDb(rows: unknown[] = []) {
     all: ReturnType<typeof vi.fn>;
   };
 }
-
-const VALID_PROJECT = {
-  name: "My App",
-  description: "A great app",
-  platforms: ["android", "ios"],
-  tags: ["kotlin", "swift"],
-  links: [{ type: "github", href: "https://github.com/test/app" }],
-};
 
 describe("GET /api/admin/projects", () => {
   beforeEach(() => {
@@ -70,138 +61,6 @@ describe("GET /api/admin/projects", () => {
     const ctx = createApiContext({ method: "GET", db });
 
     const response = await (GET(ctx) as Promise<Response>).catch((r: Response) => r);
-    expect((response as Response).status).toBe(401);
-  });
-});
-
-describe("POST /api/admin/projects", () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
-  it("creates project with valid body", async () => {
-    const { POST } = await import("@/pages/api/admin/projects/index");
-
-    const db = createListMockDb();
-    const ctx = createAuthenticatedContext({ method: "POST", body: VALID_PROJECT, db });
-
-    const response = await POST(ctx);
-    expect(response.status).toBe(200);
-
-    const body = await response.json();
-    expect(body.ok).toBe(true);
-  });
-
-  it("returns 401 without auth", async () => {
-    const { POST } = await import("@/pages/api/admin/projects/index");
-
-    const db = createListMockDb();
-    const ctx = createApiContext({ method: "POST", body: VALID_PROJECT, db });
-
-    const response = await (POST(ctx) as Promise<Response>).catch((r: Response) => r);
-    expect((response as Response).status).toBe(401);
-  });
-
-  it("returns 400 with invalid body (missing required fields)", async () => {
-    const { POST } = await import("@/pages/api/admin/projects/index");
-
-    const db = createListMockDb();
-    const ctx = createAuthenticatedContext({
-      method: "POST",
-      body: { description: "Missing name field" },
-      db,
-    });
-
-    const response = await POST(ctx);
-    expect(response.status).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe("Invalid request");
-  });
-
-  it("returns 400 with malformed JSON", async () => {
-    const { POST } = await import("@/pages/api/admin/projects/index");
-
-    const db = createListMockDb();
-    db.first.mockResolvedValueOnce({ token: "valid-test-token" });
-
-    const request = new Request("http://localhost/api/admin/projects", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer valid-test-token",
-        Origin: "http://localhost:4321",
-      },
-      body: "{ not valid json",
-    });
-
-    setMockEnv({ DB: db, ADMIN_PASSWORD: "test-password", ALLOW_PASSWORD_LOGIN: "true" });
-    const ctx = { request, params: {} } as unknown as import("astro").APIContext;
-
-    const response = await POST(ctx);
-    expect(response.status).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe("Invalid JSON");
-  });
-
-  it("returns 500 on DB error", async () => {
-    const { POST } = await import("@/pages/api/admin/projects/index");
-
-    const run = vi.fn()
-      .mockResolvedValueOnce({ success: true })
-      .mockRejectedValue(new Error("D1 write failure"));
-    const first = vi.fn().mockResolvedValueOnce({ token: "valid-test-token" });
-    const all = vi.fn().mockResolvedValue({ results: [] });
-    const bind = vi.fn().mockReturnValue({ run, first, all });
-    const prepare = vi.fn().mockReturnValue({ run, bind, first, all });
-    const db = { prepare, bind, run, first, all } as unknown as D1Database & {
-      first: ReturnType<typeof vi.fn>;
-    };
-
-    const ctx = createAuthenticatedContext({ method: "POST", body: VALID_PROJECT, db });
-
-    const response = await POST(ctx);
-    expect(response.status).toBe(500);
-
-    const body = await response.json();
-    expect(body.error).toBe("Internal server error");
-  });
-});
-
-describe("DELETE /api/admin/projects/[id]", () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
-  it("deletes project when authenticated", async () => {
-    const { DELETE } = await import("@/pages/api/admin/projects/[id]");
-
-    const db = createListMockDb();
-    const ctx = createAuthenticatedContext({
-      method: "DELETE",
-      params: { id: "proj-1" },
-      db,
-    });
-
-    const response = await DELETE(ctx);
-    expect(response.status).toBe(200);
-
-    const body = await response.json();
-    expect(body.ok).toBe(true);
-  });
-
-  it("returns 401 without auth", async () => {
-    const { DELETE } = await import("@/pages/api/admin/projects/[id]");
-
-    const db = createListMockDb();
-    const ctx = createApiContext({
-      method: "DELETE",
-      params: { id: "proj-1" },
-      db,
-    });
-
-    const response = await (DELETE(ctx) as Promise<Response>).catch((r: Response) => r);
     expect((response as Response).status).toBe(401);
   });
 });

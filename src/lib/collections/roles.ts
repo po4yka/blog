@@ -1,4 +1,3 @@
-import { z } from "astro/zod";
 import type { Role } from "@/types";
 import { defineCollection } from "./define.js";
 
@@ -7,15 +6,14 @@ export const roles = defineCollection<Role>({
   table: "roles",
   primaryKey: "id",
   orderBy: "sort_order ASC",
-  idGeneration: "uuid",
-  capabilities: { read: "read:roles", write: "write:roles" },
+  capabilities: { read: "read:roles" },
   fields: {
-    id: { column: "id", type: "text", zod: z.string().optional() },
-    period: { column: "period", type: "text", zod: z.string().min(1) },
-    company: { column: "company", type: "text", zod: z.string().min(1) },
-    title: { column: "title", type: "text", zod: z.string().min(1) },
-    description: { column: "description", type: "text", zod: z.string() },
-    tags: { column: "tags", type: "json", zod: z.array(z.string()).optional(), default: [] },
-    sortOrder: { column: "sort_order", type: "integer", zod: z.number().optional() },
+    id: { column: "id", type: "text" },
+    period: { column: "period", type: "text" },
+    company: { column: "company", type: "text" },
+    title: { column: "title", type: "text" },
+    description: { column: "description", type: "text" },
+    tags: { column: "tags", type: "json", default: [] },
+    sortOrder: { column: "sort_order", type: "integer" },
   },
 });

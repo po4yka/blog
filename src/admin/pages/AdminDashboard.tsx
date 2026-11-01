@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ArrowRight, ArrowUpRight, Plus } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { usePosts, useProjects, useRoles, useAdminSettings } from "@/admin/hooks/useAdminQueries";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 import { blogPostsMeta } from "@/data/blogMeta";
@@ -63,7 +63,7 @@ export function AdminDashboard() {
         label="DASHBOARD"
         meta={settings?.handle}
         title="Dashboard"
-        description="Admin data in D1 compared with the deployed build of the site."
+        description="Admin data in D1 compared with the deployed build of the site. Content is edited in the repository; this view mirrors the deployed content."
       />
 
       {/* Content sync */}
@@ -108,7 +108,7 @@ export function AdminDashboard() {
         {drifted && (
           <div className="px-4 py-3 space-y-3" style={{ borderTop: "1px solid var(--rule)" }}>
             <p className="text-muted-foreground" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
-              The public site is built from <code className="font-mono text-foreground">src/content/</code>. D1 holds the copy this admin edits; it is filled from <code className="font-mono text-foreground">db/seed.sql</code> by hand, so the two can differ.
+              The public site is built from <code className="font-mono text-foreground">src/content/</code>. Each deploy reloads D1 from <code className="font-mono text-foreground">db/seed.sql</code>, so drift normally means a deploy is still running or its D1 reload failed.
             </p>
             {rows.map((row, i) => {
               const d = diffs[i];
@@ -157,24 +157,16 @@ export function AdminDashboard() {
           ) : posts.isError ? (
             <p className="px-4 py-6 font-mono text-muted-foreground" style={meta}>D1 unavailable: posts could not be loaded.</p>
           ) : recentPosts.length === 0 ? (
-            <div className="px-4 py-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="px-4 py-6">
               <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
                 No posts in D1 yet. The build has {builtPosts.length} English {builtPosts.length === 1 ? "post" : "posts"}.
               </p>
-              <Link
-                to="/admin/blog/new"
-                className="inline-flex shrink-0 items-center gap-2 px-3 py-1.5 border border-border text-foreground hover:bg-muted transition-colors duration-100"
-                style={{ fontSize: "0.75rem", borderRadius: 2 }}
-              >
-                <Plus size={13} aria-hidden="true" /> New post
-              </Link>
             </div>
           ) : (
             recentPosts.map((post, i) => (
-              <Link
+              <div
                 key={post.slug}
-                to={`/admin/blog/edit/${post.slug}`}
-                className="flex items-center gap-4 px-4 py-3 hover:bg-muted transition-colors duration-100"
+                className="flex items-center gap-4 px-4 py-3"
                 style={{ borderTop: i > 0 ? "1px dashed var(--rule)" : undefined }}
               >
                 <span className="font-mono text-muted-foreground-dim shrink-0" style={meta}>
@@ -187,22 +179,14 @@ export function AdminDashboard() {
                 <span className="font-mono text-muted-foreground shrink-0" style={meta}>
                   {post.date}
                 </span>
-              </Link>
+              </div>
             ))
           )}
         </div>
       </section>
 
       {/* Quick actions */}
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Link
-          to="/admin/blog/new"
-          className="group flex items-center justify-between gap-3 p-4 border border-border hover:bg-muted transition-colors duration-100"
-          style={{ borderRadius: 2 }}
-        >
-          <span className="text-foreground" style={{ fontSize: "0.8125rem", fontWeight: 500 }}>New blog post</span>
-          <kbd className="font-mono text-muted-foreground-dim" style={meta}>n</kbd>
-        </Link>
+      <div className="mt-8 grid grid-cols-1 gap-3">
         <a
           href="/"
           target="_blank"

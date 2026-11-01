@@ -1,44 +1,12 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "motion/react";
-import { Plus, Trash2, TriangleAlert, Star, ChevronDown, ChevronUp } from "lucide-react";
-import type { Project } from "@/admin/api";
-import { useProjects, useSaveProject, useDeleteProject } from "@/admin/hooks/useAdminQueries";
+import { Star, ChevronDown, ChevronUp } from "lucide-react";
+import { useProjects } from "@/admin/hooks/useAdminQueries";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
-import { useConfirmDelete } from "@/admin/hooks/useConfirmDelete";
-import { ProjectEditor } from "@/admin/components/ProjectEditor";
-
-function newProject(): Project {
-  return {
-    id: `proj-${Date.now()}`,
-    name: "",
-    description: "",
-    platforms: [],
-    tags: [],
-    links: [],
-    featured: false,
-    sortOrder: 0,
-  };
-}
 
 export function AdminProjects() {
   const { data: projects = [] } = useProjects();
-  const saveProjectMutation = useSaveProject();
-  const deleteProjectMutation = useDeleteProject();
-  const [editing, setEditing] = useState<Project | null>(null);
-  const { confirmingId, requestDelete } = useConfirmDelete();
   const [expanded, setExpanded] = useState<string | null>(null);
-
-  const handleSave = () => {
-    if (!editing || !editing.name.trim()) return;
-    saveProjectMutation.mutate(editing, { onSuccess: () => setEditing(null) });
-  };
-
-  const handleDelete = (id: string) => {
-    requestDelete(id, () => {
-      deleteProjectMutation.mutate(id);
-      if (editing?.id === id) setEditing(null);
-    });
-  };
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
@@ -48,29 +16,7 @@ export function AdminProjects() {
         meta={<>{projects.length} {projects.length === 1 ? "project" : "projects"} in D1</>}
         title="Projects"
         description="Projects stored in D1."
-        actions={
-            <button
-              onClick={() => setEditing(newProject())}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background hover:bg-foreground/90 transition-colors duration-200 cursor-pointer"
-              style={{ fontSize: "0.8125rem", fontWeight: 500, borderRadius: "2px" }}
-            >
-              <Plus size={15} />
-              Add project
-            </button>
-        }
       />
-
-      {/* Editor modal */}
-      {editing && (
-        <ProjectEditor
-          editing={editing}
-          isExisting={!!projects.find((p) => p.id === editing.id)}
-          isPending={saveProjectMutation.isPending}
-          onSave={handleSave}
-          onClose={() => setEditing(null)}
-          onChange={setEditing}
-        />
-      )}
 
       {/* Project list */}
       <m.div
@@ -120,22 +66,6 @@ export function AdminProjects() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setEditing({ ...project })}
-                className="shrink-0 font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                style={{ fontSize: "max(11px, 0.6875rem)" }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(project.id!)}
-                aria-label={confirmingId === project.id ? `Confirm delete ${project.name}` : `Delete ${project.name}`}
-                className={`inline-flex h-11 w-11 shrink-0 items-center justify-center transition-colors cursor-pointer ${
-                  confirmingId === project.id ? "text-destructive" : "text-muted-foreground hover:text-destructive/80"
-                }`}
-              >
-                {confirmingId === project.id ? <TriangleAlert size={13} /> : <Trash2 size={13} />}
-              </button>
             </div>
 
             {/* Expanded detail */}

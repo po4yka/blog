@@ -1,23 +1,17 @@
 // Capability-scoped wrapper for admin API routes.
-// Centralizes auth, CORS, body parsing, and Zod validation.
+// Centralizes origin check, session auth, and capability scoping.
 
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
-import type { z } from "astro/zod";
 import { requireAuth, validateOrigin } from "@/lib/auth";
-import { validationError, jsonError } from "@/lib/validation";
+import { jsonError } from "@/lib/validation";
 
 export type Capability =
   | "read:posts"
-  | "write:posts"
   | "read:projects"
-  | "write:projects"
   | "read:roles"
-  | "write:roles"
   | "read:categories"
-  | "write:categories"
-  | "read:settings"
-  | "write:settings";
+  | "read:settings";
 
 /**
  * Resolve the capability allowlist for a session.
@@ -33,40 +27,15 @@ function sessionHasCapability(
   return session.capabilities.includes(required);
 }
 
-export interface AdminContext<T = undefined> {
+export interface AdminContext {
   request: Request;
   params: Record<string, string | undefined>;
   db: D1Database;
-  data: T;
 }
 
-interface WithSchemaOptions<S extends z.ZodType> {
-  capability: Capability;
-  schema: S;
-}
-
-interface WithoutSchemaOptions {
-  capability: Capability;
-  schema?: undefined;
-}
-
-// Overload: with schema -> handler receives typed data
-export function withAdmin<S extends z.ZodType>(
-  options: WithSchemaOptions<S>,
-  handler: (ctx: AdminContext<z.infer<S>>) => Promise<Response>,
-): APIRoute;
-
-// Overload: without schema -> handler receives undefined data
 export function withAdmin(
-  options: WithoutSchemaOptions,
-  handler: (ctx: AdminContext<undefined>) => Promise<Response>,
-): APIRoute;
-
-// Implementation signature must be compatible with both overloads.
-export function withAdmin<S extends z.ZodType>(
-  options: { capability: Capability; schema?: S },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handler: (ctx: AdminContext<any>) => Promise<Response>,
+  options: { capability: Capability },
+  handler: (ctx: AdminContext) => Promise<Response>,
 ): APIRoute {
   return async ({ params, request }) => {
     try {
@@ -79,20 +48,7 @@ export function withAdmin<S extends z.ZodType>(
         return jsonError("Forbidden", 403);
       }
 
-      let data: unknown = undefined;
-      if (options.schema) {
-        let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
-          return jsonError("Invalid JSON", 400);
-        }
-        const parsed = options.schema.safeParse(body);
-        if (!parsed.success) return validationError(parsed.error);
-        data = parsed.data;
-      }
-
-      const response = await handler({ request, params, db, data });
+      const response = await handler({ request, params, db });
 
       // Harden every admin API response: prevent MIME sniffing and ensure
       // browsers never cache authenticated responses.
@@ -101,9 +57,9 @@ export function withAdmin<S extends z.ZodType>(
 
       return response;
     } catch (err) {
-      // Re-throw Response errors (401 from requireAuth, 403 from
-      // validateOrigin) so Astro can return them directly.
-      if (err instanceof Response) throw err;
+      // requireAuth and validateOrigin throw a 401/403 Response. Return it: Astro turns a thrown
+      // Response into a 500, which hides "signed out" from the admin client.
+      if (err instanceof Response) return err;
       // Anything else is a real bug -- log it so Wrangler tail surfaces
       // the stack. The client still gets an opaque 500 so we don't leak
       // internals.
