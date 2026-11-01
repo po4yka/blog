@@ -1,34 +1,26 @@
 import { m } from "motion/react";
 import { useRoles } from "@/admin/hooks/useAdminQueries";
+import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 
 export function AdminExperience() {
   const { data: roles = [] } = useRoles();
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
-      {/* Header */}
-      <m.div
-        className="flex items-center justify-between gap-4 mb-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div>
-          <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
-            Experience
-          </h1>
-          <p className="font-mono text-muted-foreground/40 mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
-            {roles.length} {roles.length === 1 ? "role" : "roles"}
-          </p>
-        </div>
-      </m.div>
+      <AdminPageHeader
+        number="04"
+        label="EXPERIENCE"
+        meta={<>{roles.length} {roles.length === 1 ? "role" : "roles"} in D1</>}
+        title="Experience"
+        description="Roles stored in D1, in display order."
+      />
 
       {/* Roles list */}
       <m.div
         className="border border-border/50 bg-card overflow-hidden"
         style={{ borderRadius: "2px" }}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {roles.length === 0 && (

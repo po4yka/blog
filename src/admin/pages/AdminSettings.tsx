@@ -1,4 +1,5 @@
 import { m } from "motion/react";
+import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 import { useAdminSettings, useCategories } from "@/admin/hooks/useAdminQueries";
 
 export function AdminSettings() {
@@ -20,24 +21,18 @@ export function AdminSettings() {
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[700px]">
-      <m.div
-        className="mb-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
-          Settings
-        </h1>
-        <p className="text-muted-foreground mt-0.5" style={{ fontSize: "0.8125rem" }}>
-          Site profile as deployed. Edit it in the repository.
-        </p>
-      </m.div>
+      <AdminPageHeader
+        number="05"
+        label="SETTINGS"
+        meta="IN D1"
+        title="Settings"
+        description="Site profile, social links and blog categories. Content is edited in the repository."
+      />
 
       <m.div
         className="space-y-8"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         <Section title="Profile">

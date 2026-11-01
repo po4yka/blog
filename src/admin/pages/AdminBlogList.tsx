@@ -2,6 +2,7 @@ import { useState } from "react";
 import { m } from "motion/react";
 import { Star, Search, FileText } from "lucide-react";
 import { usePosts } from "@/admin/hooks/useAdminQueries";
+import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 
 export function AdminBlogList() {
   const { data: blogPosts = [] } = usePosts();
@@ -18,22 +19,13 @@ export function AdminBlogList() {
 
   return (
     <div className="px-6 md:px-10 py-8 md:py-10 max-w-[900px]">
-      {/* Header */}
-      <m.div
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div>
-          <h1 className="text-foreground" style={{ fontSize: "1.375rem", fontWeight: 600 }}>
-            Blog Posts
-          </h1>
-          <p className="font-mono text-muted-foreground-dim mt-0.5" style={{ fontSize: "max(11px, 0.6875rem)" }}>
-            {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} total
-          </p>
-        </div>
-      </m.div>
+      <AdminPageHeader
+        number="02"
+        label="BLOG POSTS"
+        meta={<>{blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} in D1</>}
+        title="Blog Posts"
+        description="English posts stored in D1. Content is edited in the repository."
+      />
 
       {/* Search */}
       <m.div
@@ -47,7 +39,7 @@ export function AdminBlogList() {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search posts..."
+          placeholder="Search posts  ( / )"
           aria-label="Search posts"
           className="w-full pl-9 pr-4 py-2.5 bg-card border border-border/50 text-foreground placeholder:text-muted-foreground/25 focus-visible:outline-2 focus-visible:outline-emphasis focus-visible:outline-offset-2 outline-none focus:border-border transition-colors duration-200"
           style={{ fontSize: "0.8125rem", borderRadius: "2px", fontWeight: 400, lineHeight: 1.5 }}
@@ -58,8 +50,8 @@ export function AdminBlogList() {
       <m.div
         className="mt-5 border border-border/50 bg-card overflow-hidden"
         style={{ borderRadius: "2px" }}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.15 }}
       >
         {filtered.length === 0 && (

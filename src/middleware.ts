@@ -30,7 +30,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   try {
     response = await next();
   } catch (err) {
-    // Auth guards (validateOrigin, requireAuth) throw a 401/403 Response. Astro would turn it into a 500.
+    // requireAuth and validateOrigin throw their 401/403 as a Response; Astro would
+    // turn an uncaught one into a 500 page, so the client never saw the real status.
     if (err instanceof Response) return err;
     throw err;
   }
