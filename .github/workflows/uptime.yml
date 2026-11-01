@@ -18,7 +18,8 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # Worst case when every URL times out: 5 URLs x 3 tries x (20 s + 10 s) = 450 s, plus the issue step.
+    timeout-minutes: 10
     steps:
       - name: Probe endpoints
         id: probe
