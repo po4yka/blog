@@ -23,13 +23,13 @@ export function Footer() {
         </Panel>
 
         <div
-          className="pt-5 flex items-center justify-between gap-4"
+          className="pt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
           style={{ borderTop: "1px solid var(--rule)" }}
         >
           <p className="label-meta text-muted-foreground">
             {year ? `© ${year}` : "©"} {t("footer.copyright")}
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4">
             <a
               href="/changelog"
               className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"

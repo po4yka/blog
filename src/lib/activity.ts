@@ -1,13 +1,19 @@
 import type { Locale } from "@/lib/i18n";
 
-export const WEEKS = 13; // ~3 months
+export const WEEKS = 53; // a year, as on the GitHub profile graph
 export const DAYS_PER_WEEK = 7;
 export const TOTAL_DAYS = WEEKS * DAYS_PER_WEEK;
 
-/** Noun forms for `pluralize`, shared by both panels. */
+/** Noun forms for `pluralize` in the sparkline (public events). */
 export const EVENT_FORMS = {
   en: ["event", "events"] as [string, string],
   ru: ["событие", "события", "событий"] as [string, string, string],
+};
+
+/** Noun forms for `pluralize` in the heatmap (GitHub contributions). */
+export const CONTRIBUTION_FORMS = {
+  en: ["contribution", "contributions"] as [string, string],
+  ru: ["вклад", "вклада", "вкладов"] as [string, string, string],
 };
 
 /** YYYY-MM-DD in the visitor's time zone, so a cell's key matches its label. */
@@ -44,14 +50,10 @@ export interface DayCell {
   future: boolean;
 }
 
-/** 13 weeks of days, Sunday-first columns, ending on the Saturday of this week.
+/** WEEKS of days, Sunday-first columns, ending on the Saturday of this week.
  *  Days after today are kept as `future` so the columns stay whole. */
-export function buildCalendar(events: Array<{ created_at: string }>, now = new Date(), locale: Locale = "en"): DayCell[] {
-  const counts = new Map<string, number>();
-  for (const event of events) {
-    const key = localDayKey(new Date(event.created_at));
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
+export function buildCalendar(days: Array<{ date: string; count: number }>, now = new Date(), locale: Locale = "en"): DayCell[] {
+  const counts = new Map(days.map((d) => [d.date, d.count]));
 
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const last = new Date(today);

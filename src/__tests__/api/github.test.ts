@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { setMockEnv, resetMockEnv } from "../mocks/cloudflare-workers";
 
 // GitHub routes cache via the Cloudflare Workers Cache API (caches.default)
 // and global fetch. We stub both: fetch is mocked per test, and caches.default
@@ -320,26 +321,44 @@ describe("GET /api/github/calendar", () => {
   }
 
   const ctx = { request: new Request("http://localhost/api/github/calendar") } as import("astro").APIContext;
+  const graphql = {
+    data: {
+      user: {
+        contributionsCollection: {
+          contributionCalendar: {
+            weeks: [
+              { contributionDays: [{ date: "2026-04-05", contributionCount: 0 }, { date: "2026-04-06", contributionCount: 3 }] },
+              { contributionDays: [{ date: "2026-04-12", contributionCount: 1 }] },
+            ],
+          },
+        },
+      },
+    },
+  };
 
-  it("returns created_at dates from events", async () => {
-    const events = [
-      { created_at: "2026-04-10T12:00:00Z" },
-      { created_at: "2026-04-11T08:00:00Z" },
-    ];
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => events });
+  beforeEach(() => setMockEnv({ GITHUB_TOKEN: "test-token" }));
+  afterEach(() => resetMockEnv());
+
+  it("flattens the contribution calendar into dated counts", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => graphql });
 
     const GET = await getHandler();
     const response = await GET(ctx);
     expect(response.status).toBe(200);
     expect(response.headers.get("X-Cache")).toBe("MISS");
-    expect(await response.json()).toEqual(events);
+    expect(await response.json()).toEqual([
+      { date: "2026-04-05", count: 0 },
+      { date: "2026-04-06", count: 3 },
+      { date: "2026-04-12", count: 1 },
+    ]);
+    const [url, init] = mockFetch.mock.calls[0]!;
+    expect(url).toBe("https://api.github.com/graphql");
+    expect(init.method).toBe("POST");
+    expect(init.headers.Authorization).toBe("Bearer test-token");
   });
 
   it("serves cached calendar data on the second call without re-fetching", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => [{ created_at: "2026-04-10T12:00:00Z" }],
-    });
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => graphql });
     const GET = await getHandler();
     const first = await GET(ctx);
     expect(first.headers.get("X-Cache")).toBe("MISS");
@@ -351,13 +370,25 @@ describe("GET /api/github/calendar", () => {
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("returns empty array on first-time failure", async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 503 });
-
+  it("returns 503 without a token, since GraphQL rejects anonymous requests", async () => {
+    resetMockEnv();
     const GET = await getHandler();
     const response = await GET(ctx);
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual([]);
+    expect(response.status).toBe(503);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("returns 503 when GitHub fails, so the panel says unavailable instead of an empty year", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
+    const GET = await getHandler();
+    expect((await GET(ctx)).status).toBe(503);
+
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ data: { user: null } }) });
+    expect((await GET(ctx)).status).toBe(503);
+
+    // GraphQL reports rate limits and scope errors with HTTP 200.
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ errors: [{ message: "rate limited" }], data: null }) });
+    expect((await GET(ctx)).status).toBe(503);
   });
 });
 
