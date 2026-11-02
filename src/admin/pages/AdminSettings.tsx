@@ -99,13 +99,13 @@ function Sessions() {
         type="button"
         onClick={() => void revoke()}
         disabled={busy}
-        className="px-4 py-2 border border-border/60 text-foreground/80 hover:bg-secondary/60 transition-colors cursor-pointer font-mono disabled:opacity-50 disabled:cursor-default"
+        className="px-4 py-2 border border-border/60 text-foreground/80 hover:bg-secondary/60 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-default"
         style={{ fontSize: "0.75rem", borderRadius: "2px" }}
       >
         {busy ? "Signing out..." : "Sign out everywhere"}
       </button>
       {error && (
-        <p role="alert" className="mt-3 font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
+        <p role="alert" className="mt-3 text-muted-foreground" style={{ fontSize: "0.75rem" }}>
           {error}
         </p>
       )}
