@@ -125,6 +125,8 @@ const captionText = captionMatch && caption ? caption.slice(captionMatch[0].leng
 ---
 
 <figure class="blog-figure">
+  {/* AnatomyFigure puts its live plate here, inside the figure with the caption. */}
+  <slot />
   <picture data-theme-aware>
     {sources.map((source) => (
       <source
