@@ -41,7 +41,8 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonError("Unable to determine client IP", 400);
   }
 
-  const allowed = await reserveLoginAttempt(db, ip);
+  // The only guessable credential: counted apart from passkeys, with a global cap as well.
+  const allowed = await reserveLoginAttempt(db, ip, { password: true });
   if (!allowed) {
     await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many login attempts. Try again in 15 minutes." }), {

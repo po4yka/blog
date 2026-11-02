@@ -81,10 +81,10 @@ describe("reserveLoginAttempt", () => {
 });
 
 describe("clearLoginAttempts", () => {
-  it("deletes all attempts for the given IP", async () => {
+  it("deletes the passkey and password attempts for the given IP", async () => {
     const db = createWriteMockDb();
     await clearLoginAttempts(db, "10.0.0.1");
-    expect(db._bind).toHaveBeenCalledWith("10.0.0.1");
+    expect(db._bind).toHaveBeenCalledWith("10.0.0.1", "pw:10.0.0.1");
     expect(db._run).toHaveBeenCalled();
   });
 });
