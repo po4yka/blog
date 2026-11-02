@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { BlogPostMeta } from "@/types";
 import { ALL_CATEGORY, filterPosts, findFeatured, readTagParam, withTagParam } from "@/lib/blog/filter";
 
@@ -10,11 +10,13 @@ function replaceTagInUrl(tag: string | null) {
 
 export function usePostFilters(posts: BlogPostMeta[]) {
   const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
-  // Initialize from ?tag= on first render (SSR-safe; initializer runs once).
-  const [activeTag, setActiveTag] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return readTagParam(window.location.search);
-  });
+  // The prerendered list has no tag filter, so hydrate without one and apply ?tag= after mount;
+  // reading the URL during the first render made the client HTML differ from the server's.
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the URL is only readable after hydration
+    setActiveTag(readTagParam(window.location.search));
+  }, []);
 
   const clearTag = () => {
     setActiveTag(null);
