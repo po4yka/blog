@@ -23,6 +23,13 @@ describe("generate-seed", () => {
     }
   });
 
+  // The admin orders posts by published_at; the "Mon YYYY" date label sorts alphabetically.
+  it("writes an ISO published_at for every post", () => {
+    const rows = [...generateSeedSource().matchAll(/^INSERT INTO blog_posts \(slug, lang, title, date, published_at,[^\n]*\n\('(?:[^']|'')*', '\w+', '(?:[^']|'')*', '(?:[^']|'')*', '([^']*)'/gm)];
+    expect(rows.length).toBeGreaterThan(0);
+    for (const [, publishedAt] of rows) expect(publishedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
   it("does not touch auth tables", () => {
     expect(generateSeedSource()).not.toMatch(/DELETE FROM (admin_|login_|passkey)/);
   });

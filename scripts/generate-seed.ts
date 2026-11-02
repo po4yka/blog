@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { postIsoDate } from "../src/lib/blog/dates.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 const PROJECTS_FILE = path.resolve("src/content/projects.json");
@@ -18,6 +19,7 @@ function escapeSql(str: string): string {
 interface BlogFrontMatter {
   title: string;
   date: string;
+  publishedAt?: string | Date;
   summary: string;
   tags: string[];
   category: string;
@@ -96,7 +98,7 @@ function generateBlogSeed(entries: BlogSeedEntry[]): string {
 
   for (const { slug, lang, fm, body, readingTime } of entries) {
     values.push(
-      `('${escapeSql(slug)}', '${escapeSql(lang)}', '${escapeSql(fm.title)}', '${escapeSql(fm.date)}',\n` +
+      `('${escapeSql(slug)}', '${escapeSql(lang)}', '${escapeSql(fm.title)}', '${escapeSql(fm.date)}', '${escapeSql(postIsoDate(fm) ?? "")}',\n` +
         ` '${escapeSql(fm.summary)}',\n` +
         ` '${escapeSql(JSON.stringify(fm.tags))}', '${escapeSql(fm.category)}',\n` +
         ` '${escapeSql(body)}', ${fm.featured ? 1 : 0}, ${readingTime})`,
@@ -105,7 +107,7 @@ function generateBlogSeed(entries: BlogSeedEntry[]): string {
 
   // One statement per post: D1 rejects a single statement over 100 KB (SQLITE_TOOBIG).
   const insert =
-    "INSERT INTO blog_posts (slug, lang, title, date, summary, tags, category, content, featured, reading_time) VALUES\n";
+    "INSERT INTO blog_posts (slug, lang, title, date, published_at, summary, tags, category, content, featured, reading_time) VALUES\n";
   return "-- Blog posts\n" + values.map((v) => `${insert}${v};\n`).join("\n");
 }
 

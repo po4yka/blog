@@ -28,6 +28,24 @@ const findPath = (paths: ReturnType<typeof buildBlogStaticPaths>, slug: string) 
 };
 
 describe("buildBlogStaticPaths", () => {
+  // The "Mon YYYY" label ties within a month and parsed in local time; publishedAt orders them.
+  it("orders posts of one month by publishedAt, then by slug", () => {
+    const posts = [
+      makePost("en/early", { date: "Jun 2026", publishedAt: new Date("2026-06-03") }),
+      makePost("en/b-label-only", { date: "Jun 2026" }),
+      makePost("en/late", { date: "Jun 2026", publishedAt: new Date("2026-06-20") }),
+      makePost("en/a-label-only", { date: "Jun 2026" }),
+      makePost("en/older", { date: "Sep 2025" }),
+    ];
+    expect(buildBlogStaticPaths(posts, "en").map((path) => path.params.slug)).toEqual([
+      "late",
+      "early",
+      "a-label-only",
+      "b-label-only",
+      "older",
+    ]);
+  });
+
   it("builds EN paths with adjacent posts, translation flags, and ranked related posts", () => {
     const posts = [
       makePost("en/current", {
