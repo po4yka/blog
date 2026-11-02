@@ -1,0 +1,78 @@
+/* Live anatomy figures (<AnatomyFigure>). The plate fragment carries the
+   anatomy kit's own stylesheet (ISO_CSS) with its default palette under
+   `.iso` and `.iso[data-theme="light"]` (0,1,0 and 0,2,0). The rules below
+   restyle it in the site palette and outrank both wherever they load.
+   Values mirror havamal's scripts/anatomy/po4yka-tokens.json, which also
+   colours the still SVGs: the mapped roles read the theme tokens directly,
+   and the rest of the shading ramp is copied from that file. */
+
+.dark .anatomy-figure .iso {
+  --anatomy-page: var(--background);
+  --anatomy-card: var(--card);
+  --anatomy-paper: var(--card);
+  --anatomy-strong: var(--foreground);
+  --anatomy-text: var(--muted-foreground);
+  --anatomy-muted: var(--muted-foreground-dim);
+  --anatomy-lit: var(--emphasis);
+  --anatomy-red: var(--destructive);
+  --anatomy-face: #1b1b1e;
+  --anatomy-top: #1c1c1f;
+  --anatomy-shade-0: #0f0f10;
+  --anatomy-shade-1: #121214;
+  --anatomy-shade-2: #151517;
+  --anatomy-shade-3: #18181b;
+  --anatomy-lit-top: #26262a;
+  --anatomy-lit-shade: #1d1d20;
+  --anatomy-hi: #d6d5d1;
+  --anatomy-mid: #6a6a70;
+  --anatomy-lo: #3e3e42;
+  --anatomy-faint: #2a2a2e;
+  --anatomy-halo: #050505;
+  --anatomy-dot: #e9e8e4;
+  --anatomy-mono: var(--font-mono);
+}
+
+:root:not(.dark) .anatomy-figure .iso {
+  --anatomy-page: var(--background);
+  --anatomy-card: var(--card);
+  --anatomy-paper: var(--card);
+  --anatomy-strong: var(--foreground);
+  --anatomy-text: var(--muted-foreground);
+  --anatomy-muted: var(--muted-foreground-dim);
+  --anatomy-lit: var(--emphasis);
+  --anatomy-red: var(--destructive);
+  --anatomy-face: #ffffff;
+  --anatomy-top: #ffffff;
+  --anatomy-shade-0: #dcd9d1;
+  --anatomy-shade-1: #e5e2db;
+  --anatomy-shade-2: #edeae4;
+  --anatomy-shade-3: #f4f2ed;
+  --anatomy-lit-top: #ffffff;
+  --anatomy-lit-shade: #eeebe4;
+  --anatomy-hi: #1e1e22;
+  --anatomy-mid: #86868c;
+  --anatomy-lo: #b5b3ae;
+  --anatomy-faint: #d5d3cf;
+  --anatomy-halo: #8a877e;
+  --anatomy-dot: #36363b;
+  --anatomy-mono: var(--font-mono);
+}
+
+/* Until the module mounts (and when it fails), the reader sees the still. */
+.anatomy-figure:not([data-live-ready]) .anatomy-figure-plate {
+  display: none;
+}
+/* Once live, the plate replaces the still; the caption stays. */
+.anatomy-figure[data-live-ready] .blog-figure picture {
+  display: none;
+}
+.prose-blog .anatomy-figure {
+  margin: 1.25rem 0;
+}
+.prose-blog .anatomy-figure .blog-figure {
+  margin-top: 0;
+}
+.anatomy-figure .iso-stage:focus-visible {
+  outline: 2px solid var(--emphasis);
+  outline-offset: 3px;
+}
