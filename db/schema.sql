@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   content      TEXT NOT NULL,
   featured     INTEGER DEFAULT 0,
   reading_time INTEGER,
+  published_at TEXT NOT NULL DEFAULT '', -- YYYY-MM-DD; orders posts (date is a display label)
   created_at   TEXT DEFAULT (datetime('now')),
   updated_at   TEXT DEFAULT (datetime('now')),
   PRIMARY KEY (slug, lang)
@@ -78,6 +79,7 @@ CREATE TABLE IF NOT EXISTS login_attempts (
   ip_address   TEXT NOT NULL,
   attempted_at TEXT DEFAULT (datetime('now'))
 );
+CREATE INDEX IF NOT EXISTS idx_blog_posts_published_at ON blog_posts(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip ON login_attempts(ip_address, attempted_at);
 
 -- Daily failed sign-in counts for the admin Telemetry page (no IPs)
