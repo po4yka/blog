@@ -17,8 +17,10 @@ export default defineConfig({
   projects: [
     { name: "chromium", testIgnore: /visual\.spec\.ts/ },
     // Cross-engine coverage for theme, navigation, Reveal and (later) scroll-timeline and transition specs.
-    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/ },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/ },
+    // WebKit and Firefox render in software on the Linux runner. With four workers on four vCPUs a
+    // view-transition navigation or theme wipe there can take longer than the default 5 s expect timeout.
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/, expect: { timeout: 15_000 } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /(theme|navigation|reveal)\.spec\.ts/, expect: { timeout: 15_000 } },
     // Linux-only screenshot baselines; enabled in the CI `visual` job with VISUAL=1.
     ...(process.env.VISUAL ? [{ name: "visual", testMatch: /visual\.spec\.ts/ }] : []),
   ],
