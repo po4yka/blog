@@ -484,3 +484,63 @@ describe("GET /api/github/actions", () => {
     expect(await response.json()).toEqual([]);
   });
 });
+
+// During a GitHub outage every visitor request went upstream again, each with GITHUB_TOKEN.
+describe("GitHub upstream failures", () => {
+  const ctx = { request: new Request("http://localhost/api/github/x") } as import("astro").APIContext;
+
+  it("remembers a failed call, so the next request does not go upstream", async () => {
+    mockFetch.mockResolvedValue({ ok: false, status: 502, json: async () => ({}) });
+    const { GET } = await import("@/pages/api/github/commits");
+
+    expect(await (await GET(ctx)).json()).toEqual([]);
+    expect(await (await GET(ctx)).json()).toEqual([]);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a thrown fetch as a failure instead of a 500", async () => {
+    mockFetch.mockRejectedValue(new TypeError("network down"));
+    const { GET } = await import("@/pages/api/github/repos");
+
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+    await GET(ctx);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the failure apart from the success entry and lets it expire", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 503, json: async () => ({}) });
+    const { GET } = await import("@/pages/api/github/repos");
+    await GET(ctx);
+
+    const keys = [...cacheStore.keys()];
+    expect(keys).toHaveLength(1);
+    expect(keys[0]).toContain("upstream-failed=1");
+    expect(cacheStore.get(keys[0]!)?.headers.get("Cache-Control")).toBe("max-age=60");
+
+    // Once the entry expires (the Cache API drops it), the route asks GitHub again.
+    cacheStore.clear();
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => [] });
+    await GET(ctx);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("remembers failed per-repo release calls in /api/github/latest-release", async () => {
+    mockFetch.mockImplementation(async (url: string) =>
+      url.includes("/releases/latest")
+        ? { ok: false, status: 403, json: async () => ({}), body: null }
+        : { ok: true, json: async () => [{ name: "a", fork: false, archived: false }], body: null },
+    );
+    const { GET } = await import("@/pages/api/github/latest-release");
+    await GET(ctx);
+    const releaseCalls = () => mockFetch.mock.calls.filter(([u]) => String(u).includes("/releases/latest")).length;
+    expect(releaseCalls()).toBeGreaterThan(0);
+    const first = releaseCalls();
+
+    // The aggregate is cached too; drop it so only the failure entries remain.
+    for (const key of [...cacheStore.keys()]) if (!key.includes("upstream-failed")) cacheStore.delete(key);
+    await GET(ctx);
+    expect(releaseCalls()).toBe(first);
+  });
+});

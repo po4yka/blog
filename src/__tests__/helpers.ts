@@ -69,7 +69,7 @@ export function createApiContext(options: {
       : {};
 
   const requestInit: RequestInit = { method, headers: { ...mutationHeaders, ...headers } };
-  if (body) {
+  if (body !== undefined) {
     requestInit.body = JSON.stringify(body);
     requestInit.headers = { ...mutationHeaders, ...headers, "Content-Type": "application/json" };
   }

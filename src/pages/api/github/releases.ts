@@ -5,7 +5,7 @@ import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { projects } from "@/data/projectsData";
 import type { GitHubProjectRelease } from "@/types";
-import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
+import { cfCacheGet, cfCachePut, fetchUpstream } from "@/lib/cf-cache";
 
 interface GitHubRelease {
   tag_name: string;
@@ -32,8 +32,8 @@ function projectRepos(): string[] {
 }
 
 async function fetchReleases(repo: string, headers: Record<string, string>): Promise<GitHubProjectRelease | null> {
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/releases?per_page=100`, { headers });
-  if (!res.ok) return null;
+  const res = await fetchUpstream(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/releases?per_page=100`, { headers });
+  if (!res) return null;
   const releases = ((await res.json()) as GitHubRelease[]).filter((r) => !r.draft);
   const latest = releases[0];
   if (!latest) return null;

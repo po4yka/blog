@@ -62,6 +62,25 @@ function buildAssertionBody(credentialId = "cred-id-abc", challenge = "test-chal
 }
 
 describe("POST /api/auth/passkey/auth-verify", () => {
+  // A null or wrongly shaped body threw a TypeError (500) before the schema check.
+  it.each([
+    ["null", null],
+    ["no response", { id: "a", rawId: "a", type: "public-key" }],
+    ["wrong type", { ...buildAssertionBody(), type: "other" }],
+  ])("returns 400 for a %s body without touching the credential store", async (_name, badBody) => {
+    reserveLoginAttemptMock.mockResolvedValue(true);
+    const { POST } = await import("@/pages/api/auth/passkey/auth-verify");
+    const ctx = createApiContext({
+      method: "POST",
+      body: badBody,
+      headers: { "cf-connecting-ip": "1.2.3.4", Origin: "http://localhost:4321" },
+    });
+    const response = await POST(ctx);
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { error: string }).error).toBe("Invalid request");
+    expect(getCredentialByIdMock).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     vi.resetModules();
     verifyAuthenticationResponseMock.mockReset();
@@ -103,9 +122,9 @@ describe("POST /api/auth/passkey/auth-verify", () => {
       rawId: "cred-id",
       type: "public-key",
       response: {
-        authenticatorData: "",
+        authenticatorData: "YXV0aA",
         clientDataJSON: "!!!not-valid-base64!!!",
-        signature: "",
+        signature: "c2ln",
       },
     };
 

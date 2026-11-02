@@ -16,7 +16,7 @@ import {
   countFailedSignIn,
   getClientIp,
 } from "@/lib/auth";
-import { jsonError } from "@/lib/validation";
+import { jsonError, registerVerifySchema, validationError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
 export const POST: APIRoute = async ({ request }) => {
@@ -42,17 +42,11 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonError("Invalid JSON", 400);
   }
 
-  const { setupToken, credential } = body as {
-    setupToken?: string;
-    credential?: RegistrationResponseJSON;
-  };
-
-  if (!setupToken) {
-    return jsonError("Setup token required", 400);
-  }
-  if (!credential) {
-    return jsonError("Credential response required", 400);
-  }
+  // A null or wrongly shaped body is a 400 here, not a TypeError (500) further down.
+  const parsed = registerVerifySchema.safeParse(body);
+  if (!parsed.success) return validationError(parsed.error);
+  const { setupToken } = parsed.data;
+  const credential = parsed.data.credential as RegistrationResponseJSON;
 
   // Parse the challenge out of clientDataJSON up front so a malformed
   // payload is a 400, not a 500 buried in a broad catch.

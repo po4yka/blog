@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubLatestRelease } from "@/types";
-import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
+import { cfCacheGet, cfCachePut, fetchUpstream } from "@/lib/cf-cache";
 
 interface GitHubRepo {
   name: string;
@@ -36,12 +36,13 @@ async function findLatestRelease(
 
   const releaseResults = await Promise.allSettled(
     repos.slice(0, MAX_REPOS_TO_CHECK).map(async (repo) => {
-      const res = await fetch(
+      // A repo without releases answers 404, which is remembered like a failure: still no release.
+      const res = await fetchUpstream(
         `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/releases/latest`,
         { headers: requestHeaders },
       );
 
-      if (res.status === 200) {
+      if (res) {
         const release = (await res.json()) as GitHubRelease;
         return {
           repo: repo.name,
@@ -87,9 +88,9 @@ export const GET: APIRoute = async () => {
   };
   if (authHeader) requestHeaders["Authorization"] = authHeader;
 
-  const reposRes = await fetch(REPOS_URL, { headers: requestHeaders });
+  const reposRes = await fetchUpstream(REPOS_URL, { headers: requestHeaders });
 
-  if (!reposRes.ok) {
+  if (!reposRes) {
     return Response.json(null, {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });

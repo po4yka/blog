@@ -3,7 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
-import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
+import { cfCacheGet, cfCachePut, fetchUpstream } from "@/lib/cf-cache";
 
 export interface ContributionDay {
   date: string; // YYYY-MM-DD
@@ -49,7 +49,7 @@ export const GET: APIRoute = async () => {
   // GitHub GraphQL rejects anonymous requests.
   if (!env.GITHUB_TOKEN) return unavailable();
 
-  const res = await fetch(GRAPHQL_URL, {
+  const res = await fetchUpstream(GRAPHQL_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${env.GITHUB_TOKEN}`,
@@ -57,8 +57,8 @@ export const GET: APIRoute = async () => {
       "User-Agent": `${GITHUB_USERNAME}-blog`,
     },
     body: JSON.stringify({ query: QUERY, variables: { login: GITHUB_USERNAME } }),
-  });
-  if (!res.ok) return unavailable();
+  }, CACHE_KEY);
+  if (!res) return unavailable();
 
   const body = (await res.json()) as ContributionsResponse;
   const weeks = body.data?.user?.contributionsCollection.contributionCalendar.weeks;

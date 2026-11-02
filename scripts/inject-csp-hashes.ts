@@ -6,22 +6,63 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse, type DefaultTreeAdapterMap } from "parse5";
 
 // Cloudflare ignores _headers lines longer than 2,000 characters.
 export const MAX_HEADER_LINE = 2000;
 
-// The end tag matches the way browsers end script data: `</script` then anything up to `>`.
-const SCRIPT_RE = /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi;
-const JS_TYPES = new Set(["", "module", "text/javascript", "application/javascript"]);
+// Script types the browser runs, so the CSP script-src covers them: the JavaScript MIME types of
+// the HTML spec, "module", "importmap" and "speculationrules". Any other type is a data block
+// (JSON-LD, for example), which the browser never runs.
+const EXECUTABLE_TYPES = new Set([
+  "",
+  "module",
+  "importmap",
+  "speculationrules",
+  "application/ecmascript",
+  "application/javascript",
+  "application/x-ecmascript",
+  "application/x-javascript",
+  "text/ecmascript",
+  "text/javascript",
+  "text/javascript1.0",
+  "text/javascript1.1",
+  "text/javascript1.2",
+  "text/javascript1.3",
+  "text/javascript1.4",
+  "text/javascript1.5",
+  "text/jscript",
+  "text/livescript",
+  "text/x-ecmascript",
+  "text/x-javascript",
+]);
 
+type Node = DefaultTreeAdapterMap["node"];
+type Element = DefaultTreeAdapterMap["element"];
+
+function* scripts(node: Node): Generator<Element> {
+  if (!("childNodes" in node)) return;
+  for (const child of node.childNodes) {
+    if (child.nodeName === "script") yield child as Element;
+    // Script text is in the parsed tree; a <template>'s content is a separate fragment.
+    yield* scripts(child);
+    if (child.nodeName === "template") yield* scripts((child as DefaultTreeAdapterMap["template"]).content);
+  }
+}
+
+/**
+ * The sha256 source of every inline script the browser runs. The HTML is parsed as a browser
+ * parses it (parse5), so attribute values with ">" and odd end tags cannot shift the hashed text.
+ */
 export function collectInlineScriptHashes(html: string): Set<string> {
   const hashes = new Set<string>();
-  for (const match of html.matchAll(SCRIPT_RE)) {
-    const attrs = match[1] ?? "";
-    const body = match[2] ?? "";
-    if (/(^|\s)src\s*=/i.test(attrs)) continue;
-    const type = /(?:^|\s)type\s*=\s*["']?([^"'\s>]*)/i.exec(attrs)?.[1]?.toLowerCase() ?? "";
-    if (!JS_TYPES.has(type) || body.trim() === "") continue;
+  for (const script of scripts(parse(html))) {
+    const attr = (name: string) => script.attrs.find((a) => a.name === name)?.value;
+    if (attr("src") !== undefined) continue;
+    const type = (attr("type") ?? "").trim().toLowerCase();
+    if (!EXECUTABLE_TYPES.has(type)) continue;
+    const body = script.childNodes.map((c) => ("value" in c ? c.value : "")).join("");
+    if (body.trim() === "") continue;
     hashes.add(`'sha256-${createHash("sha256").update(body).digest("base64")}'`);
   }
   return hashes;

@@ -21,14 +21,30 @@ describe("collectInlineScriptHashes", () => {
     expect(collectInlineScriptHashes(html)).toEqual(new Set([hash("one()"), hash("two()")]));
   });
 
-  it("skips src, JSON-LD, empty and other non-JS scripts", () => {
+  it("skips src, JSON-LD and other data blocks, and empty scripts", () => {
     const html = [
       `<script src="/m.js"></script>`,
       `<script type="application/ld+json">{"a":1}</script>`,
-      `<script type="speculationrules">{}</script>`,
+      `<script type="text/plain">x</script>`,
       `<script>  </script>`,
     ].join("");
     expect(collectInlineScriptHashes(html).size).toBe(0);
+  });
+
+  // The browser runs these too, so script-src must allow them or it blocks them.
+  it("hashes inline import maps and speculation rules", () => {
+    const html = `<script type="importmap">{"imports":{}}</script><script type="speculationrules">{}</script>`;
+    expect(collectInlineScriptHashes(html)).toEqual(new Set([hash('{"imports":{}}'), hash("{}")]));
+  });
+
+  it("hashes the script text even when an attribute value contains >", () => {
+    const html = `<script data-x="a>b">run()</script>`;
+    expect(collectInlineScriptHashes(html)).toEqual(new Set([hash("run()")]));
+  });
+
+  it("matches the type without case and ignores text inside comments", () => {
+    const html = `<!-- <script>no()</script> --><script type=" Text/JavaScript ">yes()</script>`;
+    expect(collectInlineScriptHashes(html)).toEqual(new Set([hash("yes()")]));
   });
 });
 

@@ -27,6 +27,12 @@ export function onUnauthorized(listener: () => void): () => void {
   return () => unauthorizedListeners.delete(listener);
 }
 
+/** The server answered 401: clear the flag, and useAuth drops its state, so AdminLayout sends the user to sign-in. */
+function signedOut() {
+  setAuthFlag(false);
+  for (const listener of unauthorizedListeners) listener();
+}
+
 export function isAuthenticated(): boolean {
   return typeof window !== "undefined" && sessionStorage.getItem(AUTH_FLAG) === "1";
 }
@@ -52,11 +58,7 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
     },
   });
 
-  if (res.status === 401) {
-    setAuthFlag(false);
-    // useAuth drops its state, so AdminLayout sends the user to the login page.
-    for (const listener of unauthorizedListeners) listener();
-  }
+  if (res.status === 401) signedOut();
 
   if (!res.ok) {
     const text = await res.text();
@@ -88,6 +90,20 @@ export async function logout(): Promise<void> {
   } catch {
     // Best-effort: clear client state even if the request fails
   }
+  setAuthFlag(false);
+}
+
+/** Revoke every admin session, on every device, this one included. Throws ApiError when the server refuses. */
+export async function logoutEverywhere(): Promise<void> {
+  const res = await fetch("/api/auth/logout", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json", "X-Requested-With": "AdminPanel" },
+    body: JSON.stringify({ everywhere: true }),
+  });
+  // A session that has already expired is signed out here too, not shown an error.
+  if (res.status === 401) signedOut();
+  if (!res.ok) throw new ApiError(res.status, await res.text());
   setAuthFlag(false);
 }
 

@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   clearLoginAttempts,
   createSession,
+  deleteAllSessions,
+  rateLimitKey,
   requireAuth,
   reserveLoginAttempt,
 } from "@/lib/auth";
@@ -87,5 +89,73 @@ describe("reserveLoginAttempt (SQLite)", () => {
     for (let i = 0; i < 5; i++) await reserveLoginAttempt(db, "1.2.3.4");
     sqlite.exec("UPDATE login_attempts SET attempted_at = datetime('now', '-16 minutes')");
     expect(await reserveLoginAttempt(db, "1.2.3.4")).toBe(true);
+  });
+});
+
+describe("rateLimitKey", () => {
+  it("keeps IPv4 and reduces IPv6 to its /64", () => {
+    expect(rateLimitKey("1.2.3.4")).toBe("1.2.3.4");
+    expect(rateLimitKey("2001:db8:1:2:3:4:5:6")).toBe("2001:db8:1:2::/64");
+    expect(rateLimitKey("2001:0DB8:0001:0002::abcd")).toBe("2001:db8:1:2::/64");
+    expect(rateLimitKey("2001:db8::1")).toBe("2001:db8:0:0::/64");
+    expect(rateLimitKey("::1")).toBe("0:0:0:0::/64");
+    expect(rateLimitKey("fe80::1%eth0")).toBe("fe80:0:0:0::/64");
+    expect(rateLimitKey("::ffff:1.2.3.4")).toBe("1.2.3.4");
+    // Other spellings of the same IPv4-mapped address.
+    expect(rateLimitKey("::ffff:102:304")).toBe("1.2.3.4");
+    expect(rateLimitKey("0:0:0:0:0:ffff:1.2.3.4")).toBe("1.2.3.4");
+  });
+
+  it("returns an address it cannot read unchanged, without throwing", () => {
+    for (const bad of ["1::2::3", "zz::1", "1:2:3:4:5:6:7:8::9", "2001:db8::1:2:3:4:5:6:7", "1:2:3", "::ffff:1.2.3.999"]) {
+      expect(rateLimitKey(bad), bad).toBe(bad);
+    }
+  });
+});
+
+describe("sign-in limits for IPv6 and all clients (SQLite)", () => {
+  // One client usually holds a whole /64; counting single addresses let it rotate past the limit.
+  it("counts every address in an IPv6 /64 as one client", async () => {
+    for (let i = 1; i <= 5; i++) expect(await reserveLoginAttempt(db, `2001:db8:1:2::${i}`)).toBe(true);
+    expect(await reserveLoginAttempt(db, "2001:db8:1:2:ffff::9")).toBe(false);
+    expect(await reserveLoginAttempt(db, "2001:db8:1:3::1")).toBe(true);
+
+    await clearLoginAttempts(db, "2001:db8:1:2::77");
+    expect(await reserveLoginAttempt(db, "2001:db8:1:2::1")).toBe(true);
+  });
+
+  it("caps password attempts from all clients at 20 per 15 minutes, but not passkey attempts", async () => {
+    for (let i = 1; i <= 20; i++) expect(await reserveLoginAttempt(db, `10.0.0.${i}`, { password: true })).toBe(true);
+    expect(await reserveLoginAttempt(db, "10.0.1.1", { password: true })).toBe(false);
+    // A flood of password guesses must not lock the admin out of passkey sign-in.
+    expect(await reserveLoginAttempt(db, "10.0.1.1")).toBe(true);
+
+    sqlite.exec("UPDATE login_attempts SET attempted_at = datetime('now', '-16 minutes')");
+    expect(await reserveLoginAttempt(db, "10.0.1.2", { password: true })).toBe(true);
+  });
+
+  it("does not count passkey attempts against the password limits", async () => {
+    for (let i = 1; i <= 25; i++) await reserveLoginAttempt(db, `10.1.0.${i}`);
+    for (let i = 0; i < 5; i++) await reserveLoginAttempt(db, "10.2.0.1");
+    expect(await reserveLoginAttempt(db, "10.2.0.1", { password: true })).toBe(true);
+  });
+
+  it("clears both the passkey and the password attempts of a client after a sign-in", async () => {
+    for (let i = 0; i < 5; i++) {
+      await reserveLoginAttempt(db, "1.2.3.4");
+      await reserveLoginAttempt(db, "1.2.3.4", { password: true });
+    }
+    await clearLoginAttempts(db, "1.2.3.4");
+    expect(sqlite.prepare("SELECT COUNT(*) AS n FROM login_attempts").get()).toEqual({ n: 0 });
+  });
+});
+
+describe("deleteAllSessions (SQLite)", () => {
+  it("revokes every session and reports how many there were", async () => {
+    const a = await createSession(db);
+    await createSession(db);
+    expect(await deleteAllSessions(db)).toBe(2);
+    const rejected = await requireAuth(withCookie(a), db).catch((err: unknown) => err);
+    expect((rejected as Response).status).toBe(401);
   });
 });

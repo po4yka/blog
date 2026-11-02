@@ -45,19 +45,76 @@ export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
 }
 
 const MAX_LOGIN_ATTEMPTS = 5;
+/** Password sign-in attempts allowed from all clients together in the same 15 minutes. */
+const MAX_GLOBAL_PASSWORD_ATTEMPTS = 20;
+/** Key prefix of password attempts: the global cap counts only these rows. */
+const PASSWORD_SCOPE = "pw:";
+
+/** Parses an IPv6 address into its 8 groups, or returns null when it is not one. */
+function ipv6Groups(addr: string): number[] | null {
+  // A dotted IPv4 tail ("::ffff:1.2.3.4") is the last two groups.
+  const dotted = /^(.*:)(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(addr);
+  if (dotted) {
+    const [, prefix, ...octets] = dotted;
+    const n = octets.map(Number);
+    if (n.some((o) => o > 255)) return null;
+    addr = `${prefix}${((n[0]! << 8) | n[1]!).toString(16)}:${((n[2]! << 8) | n[3]!).toString(16)}`;
+  }
+  const halves = addr.split("::");
+  if (halves.length > 2) return null;
+  const left = halves[0] ? halves[0].split(":") : [];
+  const right = halves[1] ? halves[1].split(":") : [];
+  const missing = 8 - left.length - right.length;
+  if (halves.length === 1 ? missing !== 0 : missing < 1) return null;
+  const parts = [...left, ...new Array<string>(halves.length === 2 ? missing : 0).fill("0"), ...right];
+  if (!parts.every((g) => /^[0-9a-f]{1,4}$/.test(g))) return null;
+  return parts.map((g) => parseInt(g, 16));
+}
 
 /**
- * Record a sign-in attempt for this IP if it is under the limit (5 per 15 minutes).
- * Returns false when the IP is throttled. The count and the insert are one statement,
- * so parallel requests cannot all pass the same count check. Every attempt takes a
- * slot, including the successful one; call clearLoginAttempts() after a sign-in.
+ * The key the sign-in limit counts by: an IPv4 address as is, an IPv6 address by its /64 prefix,
+ * and an IPv4-mapped IPv6 address (::ffff:a.b.c.d, in any spelling) as its IPv4 address.
+ * One IPv6 client usually holds a whole /64, so a per-address count let it rotate past the limit.
+ * An address that does not parse is used as it is.
  */
-export async function reserveLoginAttempt(db: D1Database, ip: string): Promise<boolean> {
+export function rateLimitKey(ip: string): string {
+  const addr = ip.split("%")[0]!.toLowerCase();
+  if (!addr.includes(":")) return addr;
+  const g = ipv6Groups(addr);
+  if (!g) return addr;
+  if (g.slice(0, 5).every((x) => x === 0) && g[5] === 0xffff) {
+    return [g[6]! >> 8, g[6]! & 255, g[7]! >> 8, g[7]! & 255].join(".");
+  }
+  return `${g.slice(0, 4).map((x) => x.toString(16)).join(":")}::/64`;
+}
+
+/**
+ * Record a sign-in attempt if the client is under the limit: 5 per 15 minutes per IPv4 address
+ * or IPv6 /64 (see rateLimitKey). Password attempts (`password`) are counted apart from passkey
+ * attempts and also have a cap of 20 per 15 minutes from all clients together, because only a
+ * password can be guessed. That cap is a lockout lever for the password fallback by design;
+ * passkey sign-in has its own count, so a flood of password guesses cannot lock the admin out.
+ * Returns false when throttled. The counts and the insert are one statement, so parallel
+ * requests cannot all pass the same check. Every attempt takes a slot, including the successful
+ * one; call clearLoginAttempts() after a sign-in.
+ */
+export async function reserveLoginAttempt(db: D1Database, ip: string, options: { password?: boolean } = {}): Promise<boolean> {
+  const recent = "attempted_at > datetime('now', '-15 minutes')";
+  const perClient = `(SELECT COUNT(*) FROM login_attempts WHERE ip_address = ? AND ${recent}) < ?`;
+  if (options.password) {
+    const key = PASSWORD_SCOPE + rateLimitKey(ip);
+    const result = await db
+      .prepare(
+        `INSERT INTO login_attempts (ip_address) SELECT ? WHERE ${perClient} AND (SELECT COUNT(*) FROM login_attempts WHERE ip_address LIKE '${PASSWORD_SCOPE}%' AND ${recent}) < ?`,
+      )
+      .bind(key, key, MAX_LOGIN_ATTEMPTS, MAX_GLOBAL_PASSWORD_ATTEMPTS)
+      .run();
+    return (result.meta?.changes ?? 0) > 0;
+  }
+  const key = rateLimitKey(ip);
   const result = await db
-    .prepare(
-      "INSERT INTO login_attempts (ip_address) SELECT ? WHERE (SELECT COUNT(*) FROM login_attempts WHERE ip_address = ? AND attempted_at > datetime('now', '-15 minutes')) < ?",
-    )
-    .bind(ip, ip, MAX_LOGIN_ATTEMPTS)
+    .prepare(`INSERT INTO login_attempts (ip_address) SELECT ? WHERE ${perClient}`)
+    .bind(key, key, MAX_LOGIN_ATTEMPTS)
     .run();
   return (result.meta?.changes ?? 0) > 0;
 }
@@ -84,7 +141,8 @@ export async function countFailedSignIn(db: D1Database): Promise<void> {
 }
 
 export async function clearLoginAttempts(db: D1Database, ip: string): Promise<void> {
-  await db.prepare("DELETE FROM login_attempts WHERE ip_address = ?").bind(ip).run();
+  const key = rateLimitKey(ip);
+  await db.prepare("DELETE FROM login_attempts WHERE ip_address IN (?, ?)").bind(key, PASSWORD_SCOPE + key).run();
 }
 
 export function validateOrigin(request: Request): void {
@@ -156,6 +214,12 @@ export async function deleteSession(db: D1Database, token: string): Promise<void
   await db.prepare("DELETE FROM admin_sessions WHERE token = ?").bind(tokenHash).run();
 }
 
+/** Delete every admin session, on every device. Returns how many there were. */
+export async function deleteAllSessions(db: D1Database): Promise<number> {
+  const result = await db.prepare("DELETE FROM admin_sessions").run();
+  return result.meta?.changes ?? 0;
+}
+
 // --- Session cookie helpers ---
 
 const COOKIE_NAME = "__session";
@@ -177,7 +241,7 @@ export function makeClearCookie(): string {
   return `${COOKIE_NAME}=; HttpOnly; SameSite=Lax; Path=/api; Max-Age=0`;
 }
 
-function extractSessionToken(request: Request): string | null {
+export function extractSessionToken(request: Request): string | null {
   // Prefer HttpOnly cookie, fall back to Bearer header for backward compat
   const cookies = request.headers.get("Cookie") ?? "";
   const match = cookies.match(/__session=([^;]+)/);
