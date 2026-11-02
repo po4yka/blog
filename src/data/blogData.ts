@@ -12,7 +12,7 @@ export const blogPosts: BlogPost[] = [
     date: "Jun 2026",
     isoDate: "2026-06-01",
     isoDateModified: "2026-06-01",
-    wordCount: 2692,
+    wordCount: 2910,
     headings: [2, 2, 2, 2, 2],
     summary:
       "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
@@ -20,7 +20,8 @@ export const blogPosts: BlogPost[] = [
     category: "Networking",
     featured: false,
     content: `import BlogFigure from "../../../components/BlogFigure.astro";
-import { figures } from "../../../assets/blog/network-isnt-broken-just-here/_figures";
+import AnatomyFigure from "../../../components/AnatomyFigure.astro";
+import { figures, live } from "../../../assets/blog/network-isnt-broken-just-here/_figures";
 
 Over mobile data, Telegram won't bring up a connection: the client sits on "Connecting…". Over Wi-Fi, the same client connects instantly. Between the two attempts only the network changes: the point of attachment and the carrier. That is enough for traffic to the same server to go through on one network and die on the handshake on the other.
 
@@ -65,6 +66,14 @@ tcp_16kb_blocked   16680      3            server_rst  high
 \`\`\`
 
 Three numbers cluster near the threshold and are easy to conflate: 16384 is the 16 KiB cumulative threshold (\`FAT_HEADER_THRESHOLD_BYTES\`); ~14 KiB is that minus a 2 KiB margin, the point from which the probe reads a teardown as the fat-header signal rather than a plain reset; and 16680 is simply the bytes already sent when this teardown landed, just past the threshold, so \`window_cap\` fires and it lands as \`tcp_16kb_blocked\`. On a loopback rig the SYN-ACK RTT is ~0, so the RST falls to \`server_rst\` either way; only a non-loopback path, with a measurable round-trip, lets the \`2×RTT\` rule separate \`in_path_rst\` from \`server_rst\`.
+
+Here is the same probe as a machine. Each card is one padded request, its length proportional to its byte count, and the sensor on the slide marks where the middlebox's buffer ends. On the clean path the sensor is parked and the blade never drops: all sixteen cards pass, and the outcome is \`tcp_fat_header_ok\`. With a 16 KiB buffer the blade drops after the second card, past the 14 KiB mark, so the outcome is \`tcp_16kb_blocked\`. When the box resets the connection at 8 KiB, the blade drops after the first card, before the 14 KiB mark, so the outcome is a plain \`tcp_reset\`. The readout shows the request number, the bytes sent and the outcome tag.
+
+<AnatomyFigure
+  variants={figures["fat-header-probe"].en}
+  live={live["fat-header-probe"].en}
+  alt="A card feeder pushes sixteen request cards, each a little longer than the last, along rails toward a middlebox, past a guillotine at the gate. A sensor on a slide marks where the box's buffer ends: at 16 KiB, or at 8 KiB for the early reset; on the clean path it is parked. Once the cards no longer fit the buffer, the blade drops as the next seam between cards reaches the gate, and the byte count at the cut decides the outcome. A ruler under the rails marks 8, 14 and 16 KiB."
+/>
 
 Each probe outcome lands in one of four \`ProbeOutcomeBucket\` values: \`Healthy\`, \`Attention\`, \`Failed\`, \`Inconclusive\`. Each carries an event level: \`info\`, \`warn\`, or \`error\`. When the path actively rejected the connection, the failure also carries a \`FailureClass\`, one of sixteen variants (\`DnsTampering\`, \`TlsAlert\`, \`HttpBlockpage\`, \`IpBlockSuspect\`, and the rest). \`Inconclusive\` is the careful bucket. A transient timeout that fired before any real signal arrived goes there and never triggers an automatic strategy change: a switch made on noise would be remembered as the fix.
 
@@ -140,7 +149,7 @@ The same box is still on the path, behaving exactly as before: it buffers the tr
     date: "Jun 2026",
     isoDate: "2026-06-01",
     isoDateModified: "2026-06-01",
-    wordCount: 2245,
+    wordCount: 2421,
     headings: [2, 2, 2, 2, 2],
     summary:
       "Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.",
@@ -148,7 +157,8 @@ The same box is still on the path, behaving exactly as before: it buffers the tr
     category: "Networking",
     featured: false,
     content: `import BlogFigure from "../../../components/BlogFigure.astro";
-import { figures } from "../../../assets/blog/network-isnt-broken-just-here/_figures";
+import AnatomyFigure from "../../../components/AnatomyFigure.astro";
+import { figures, live } from "../../../assets/blog/network-isnt-broken-just-here/_figures";
 
 Через мобильный интернет Telegram не поднимает соединение: клиент висит на «Connecting…». Через Wi-Fi тот же клиент подключается мгновенно. Между попытками меняется только сеть: точка подключения и оператор. Этого достаточно, чтобы трафик до одного и того же сервера в одной сети шёл, а в другой обрывался на рукопожатии.
 
@@ -193,6 +203,14 @@ tcp_16kb_blocked   16680      3            server_rst  high
 \`\`\`
 
 С этим порогом связаны три числа, которые легко перепутать. 16384 — сам порог в 16 КиБ (\`FAT_HEADER_THRESHOLD_BYTES\`). ~14 КиБ — порог минус 2 КиБ запаса: начиная с этого объёма проба трактует обрыв как признак толстого заголовка. 16680 байт успело уйти к моменту обрыва, чуть за порогом, поэтому срабатывает \`window_cap\`, и исход — \`tcp_16kb_blocked\`. На loopback-стенде RTT после SYN-ACK ≈ 0, поэтому любой RST классифицируется как \`server_rst\`; отделить \`in_path_rst\` от \`server_rst\` правилом \`2×RTT\` можно только на сетевом пути с измеримым RTT.
+
+Вот та же проба в виде механизма. Каждая карточка — один дополненный запрос, её длина пропорциональна числу байт. Датчик на салазках отмечает, где кончается буфер промежуточной коробки. На чистом пути датчик отведён и нож не падает: проходят все шестнадцать карточек, исход \`tcp_fat_header_ok\`. Если буфер рассчитан на 16 КиБ, нож падает после второй карточки, уже за отметкой 14 КиБ, и исход \`tcp_16kb_blocked\`. Если коробка сбрасывает соединение на 8 КиБ, нож падает после первой карточки, до отметки 14 КиБ, и исход — обычный \`tcp_reset\`. Табло показывает номер запроса, число отправленных байт и тег исхода.
+
+<AnatomyFigure
+  variants={figures["fat-header-probe"].ru}
+  live={live["fat-header-probe"].ru}
+  alt="Подающий механизм толкает по рельсам шестнадцать карточек-запросов, каждая чуть длиннее предыдущей, к промежуточной коробке, мимо гильотины на входе. Датчик на салазках отмечает, где кончается буфер коробки: на 16 КиБ или, при раннем сбросе, на 8 КиБ; на чистом пути датчик отведён в сторону. Когда карточки перестают помещаться в буфер, нож падает в тот момент, когда к входу подходит следующий шов между карточками, и по числу байт в момент обрыва проба определяет исход. Линейка под рельсами отмечает 8, 14 и 16 КиБ."
+/>
 
 Каждый исход пробы попадает в одну из четырёх категорий \`ProbeOutcomeBucket\`: \`Healthy\`, \`Attention\`, \`Failed\`, \`Inconclusive\`. Исходу присваивается и уровень события: \`info\`, \`warn\` или \`error\`. Если соединение на пути активно отбросили, отказу присваивают класс из \`FailureClass\`, один из шестнадцати (\`DnsTampering\`, \`TlsAlert\`, \`HttpBlockpage\`, \`IpBlockSuspect\` и прочие). \`Inconclusive\` — осторожная категория. Случайный таймаут, сработавший до первых осмысленных данных, уходит сюда и не запускает автоматическую смену стратегии: переключение по шуму запомнилось бы как лечение.
 
