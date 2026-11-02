@@ -10,7 +10,8 @@
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --packages=external",
     "dev": "npm run build && node dist/index.js",
-    "test": "npm run build && node test/smoke.mjs"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && npm run build && node test/smoke.mjs"
   },
   "dependencies": {
     "@hono/node-server": "2.1.5",
@@ -29,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "esbuild": "^0.28.1",
-    "typescript": "^5.7.0"
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
   }
 }
