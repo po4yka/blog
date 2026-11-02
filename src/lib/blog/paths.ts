@@ -9,3 +9,15 @@ export function postPath(
   const ru = langs.includes("ru") && (locale === "ru" || !langs.includes("en"));
   return ru ? `/blog/ru/${slug}` : `/blog/${slug}`;
 }
+
+/**
+ * One entry per slug: the version in `locale`, or the only version that exists. The generated
+ * post list holds one entry per language, so a list or a count of posts goes through this.
+ */
+export function postsInLocale<T extends { slug: string; lang?: string }>(posts: readonly T[], locale: string): T[] {
+  const bySlug = new Map<string, T>();
+  for (const post of posts) {
+    if (!bySlug.has(post.slug) || (post.lang ?? "en") === locale) bySlug.set(post.slug, post);
+  }
+  return [...bySlug.values()];
+}

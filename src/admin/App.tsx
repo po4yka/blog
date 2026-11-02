@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { RouterProvider } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ApiError } from "./api";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { LazyMotion, MotionConfig } from "motion/react";
 import { router } from "./routes";
@@ -10,7 +11,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000,
-      retry: 1,
+      // A 401 will not pass on a retry: the user must sign in again.
+      retry: (failureCount, error) => failureCount < 1 && !(error instanceof ApiError && error.status === 401),
       refetchOnWindowFocus: false,
     },
   },
