@@ -1,6 +1,10 @@
 ---
 // Blog figure with art-direction variants (desktop/mobile × light/dark)
 // and per-variant format conversion (AVIF/WebP/PNG) via astro:assets.
+// SVG variants (havamal figures with render-format svg) ship as-is: one
+// image/svg+xml source per art direction, no raster conversion. The SVG
+// embeds its own fonts and declares a 2x intrinsic width/height, which the
+// lightbox reads as the natural size.
 // Callers pass ImageMetadata directly (via a generated manifest module)
 // because import.meta.glob does not resolve when this component renders
 // as a slotted child of a React island in Astro 7.
@@ -30,6 +34,8 @@ interface Props {
 const { variants, alt, caption, eager = false } = Astro.props;
 
 const FORMATS = ["avif", "webp", "png"] as const;
+
+const isSvg = (image: ImageMetadata): boolean => image.format === "svg";
 
 // Mobile renders are optional. When an article ships none, the manifest
 // leaves mobileLight/mobileDark undefined; reuse the desktop render for the
@@ -64,8 +70,19 @@ const ART_DIRECTIONS: Array<{
 ];
 
 const sources = await Promise.all(
-  ART_DIRECTIONS.flatMap((direction) =>
-    FORMATS.map(async (format) => {
+  ART_DIRECTIONS.flatMap((direction) => {
+    if (isSvg(direction.src)) {
+      return [
+        {
+          srcset: direction.src.src,
+          type: "image/svg+xml" as const,
+          media: direction.media,
+          theme: direction.theme,
+          viewport: direction.viewport,
+        },
+      ];
+    }
+    return FORMATS.map(async (format) => {
       const processed = await getImage({
         src: direction.src,
         format,
@@ -78,11 +95,16 @@ const sources = await Promise.all(
         theme: direction.theme,
         viewport: direction.viewport,
       };
-    }),
-  ),
+    });
+  }),
 );
 
-const fallback = await getImage({ src: variants.desktopLight, format: "png" });
+const fallback = isSvg(variants.desktopLight)
+  ? {
+      src: variants.desktopLight.src,
+      attributes: { width: variants.desktopLight.width, height: variants.desktopLight.height },
+    }
+  : await getImage({ src: variants.desktopLight, format: "png" });
 
 // Authored captions open with "Figure 3." / "Рисунок 3." (havamal sync).
 // Lift that number into a field code in the InfoTable voice, FIG 03, and

@@ -4,11 +4,12 @@ import { ArrowLeft } from "lucide-react";
 import { Cmd, Em, LessViewer } from "@/components/Terminal";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { MotionProvider } from "@/components/MotionProvider";
-import { useLocale, useSettings } from "@/stores/settingsStore";
+import { PageLocaleProvider, useLocale, useSettings } from "@/stores/settingsStore";
 import { useScrollState } from "@/hooks/useScrollState";
 import { blogUrl, type Locale } from "@/lib/i18n";
 import type { TocItem } from "@/lib/blog/toc";
 import { countReadingMinutes } from "@/lib/blog/format";
+import { readingMinutes } from "@/lib/reading";
 import { CodeBlockCopy } from "./CodeBlockCopy";
 import { MobileToc } from "./MobileToc";
 import { PostFooter } from "./PostFooter";
@@ -45,12 +46,24 @@ function PagerStatus({ filename, percent }: { filename: string; percent: number 
 
 // --- Main Component ---
 
-export function BlogPostIsland({ post, slug, prev, next, related, toc, children, lang: langProp }: BlogPostIslandProps) {
+// The post's chrome (back link, pager, TOC, related posts) is in the post's language, not the
+// visitor's UI locale: the URL fixes it, and the static HTML for /blog/ru must be Russian.
+export function BlogPostIsland(props: BlogPostIslandProps) {
+  return (
+    <PageLocaleProvider value={props.lang ?? "en"}>
+      <BlogPost {...props} />
+    </PageLocaleProvider>
+  );
+}
+
+function BlogPost({ post, slug, prev, next, related, toc, children, lang: langProp }: BlogPostIslandProps) {
   const { t } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const tocRef = useRef<HTMLElement>(null);
-  const [readingTime, setReadingTime] = useState(post.readingTime ?? 0);
+  // From the generated word count, so the static HTML has the real figure, not "0 min".
+  const knownMinutes = readingMinutes(post);
+  const [readingTime, setReadingTime] = useState(knownMinutes ?? 0);
 
   const lang = langProp ?? "en";
   const listHref = blogUrl(lang);
@@ -61,10 +74,10 @@ export function BlogPostIsland({ post, slug, prev, next, related, toc, children,
   const tocLabel = t("blogPost.toc");
 
   useEffect(() => {
-    if (!post.readingTime && contentRef.current) {
+    if (knownMinutes == null && contentRef.current) {
       setReadingTime(countReadingMinutes(contentRef.current.textContent || ""));
     }
-  }, [post.readingTime]);
+  }, [knownMinutes]);
 
   useReadComplete(endRef, slug, lang);
 

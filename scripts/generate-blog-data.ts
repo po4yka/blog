@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { compareNewestFirst, parseDateLabel, postIsoDate } from "../src/lib/blog/dates.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 const OUTPUT_FILE = path.resolve("src/data/blogData.ts");
@@ -17,30 +18,6 @@ interface FrontMatter {
   tags: string[];
   category: string;
   featured?: boolean;
-}
-
-const FALLBACK_DAY = "01";
-
-function toIsoDateString(value: string | Date | undefined, humanDate: string): string {
-  // 1) explicit publishedAt from frontmatter (string or Date)
-  if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    return value.toISOString().slice(0, 10);
-  }
-  if (typeof value === "string" && value.length > 0) {
-    const parsed = new Date(value);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toISOString().slice(0, 10);
-    }
-  }
-  // 2) infer from the "Mon YYYY" date string
-  const parts = humanDate.split(" ");
-  if (parts.length === 2 && parts[0]! in MONTH_ORDER) {
-    const month = String((MONTH_ORDER[parts[0]!] ?? 0) + 1).padStart(2, "0");
-    const year = parts[1]!;
-    return `${year}-${month}-${FALLBACK_DAY}`;
-  }
-  // 3) last resort: today
-  return new Date().toISOString().slice(0, 10);
 }
 
 export function countWords(content: string): number {
@@ -57,29 +34,13 @@ export function headingDepths(content: string): number[] {
   return [...stripped.matchAll(/^(#{2,6})\s+\S/gm)].map((m) => m[1]!.length);
 }
 
-const MONTH_ORDER: Record<string, number> = {
-  Jan: 0,
-  Feb: 1,
-  Mar: 2,
-  Apr: 3,
-  May: 4,
-  Jun: 5,
-  Jul: 6,
-  Aug: 7,
-  Sep: 8,
-  Oct: 9,
-  Nov: 10,
-  Dec: 11,
-};
-
-function parseDateForSort(dateStr: string, filePath?: string): number {
-  const parts = dateStr.split(" ");
-  if (parts.length !== 2 || !(parts[0]! in MONTH_ORDER) || isNaN(parseInt(parts[1]!, 10))) {
-    throw new Error(`Invalid date format "${dateStr}"${filePath ? ` in ${filePath}` : ""}. Expected "Mon YYYY" (e.g. "Jan 2025").`);
+/** The ISO publication day; a label that is not "Mon YYYY" stops the build. */
+function isoDateOf(fm: FrontMatter, filePath: string): string {
+  const iso = postIsoDate(fm);
+  if (!iso || !parseDateLabel(fm.date)) {
+    throw new Error(`Invalid date format "${fm.date}" in ${filePath}. Expected "Mon YYYY" (e.g. "Jan 2025").`);
   }
-  const month = MONTH_ORDER[parts[0]!] ?? 0;
-  const year = parseInt(parts[1]!, 10);
-  return year * 12 + month;
+  return iso;
 }
 
 function escapeForTemplateLiteral(str: string): string {
@@ -112,7 +73,6 @@ export interface BlogEntry {
   isoDateModified: string;
   wordCount: number;
   headings: number[];
-  sortKey: number;
 }
 
 function readEntry(filePath: string, slug: string, lang: string): BlogEntry {
@@ -120,8 +80,9 @@ function readEntry(filePath: string, slug: string, lang: string): BlogEntry {
   const { data, content } = matter(raw);
   const fm = data as FrontMatter;
   const body = decodeHtmlEntities(content.trim());
-  const isoDate = toIsoDateString(fm.publishedAt, fm.date);
-  const isoDateModified = toIsoDateString(fm.updatedAt, fm.date) || isoDate;
+  const isoDate = isoDateOf(fm, filePath);
+  // No label fallback for updatedAt: an unreadable one must not give a modified day before the published one.
+  const isoDateModified = (fm.updatedAt && postIsoDate({ date: "", publishedAt: fm.updatedAt })) || isoDate;
   return {
     slug,
     lang,
@@ -131,7 +92,6 @@ function readEntry(filePath: string, slug: string, lang: string): BlogEntry {
     isoDateModified,
     wordCount: countWords(body),
     headings: headingDepths(body),
-    sortKey: parseDateForSort(fm.date, filePath),
   };
 }
 
@@ -171,7 +131,7 @@ export function readBlogPosts(): BlogEntry[] {
     appendEntriesForDir(entries, path.join(BLOG_DIR, lang), lang);
   }
 
-  entries.sort((a, b) => b.sortKey - a.sortKey);
+  entries.sort((a, b) => compareNewestFirst(a, b) || a.lang.localeCompare(b.lang));
 
   return entries;
 }

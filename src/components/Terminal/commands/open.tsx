@@ -15,7 +15,7 @@ const pages: Record<string, string> = {
 const allTargets: string[] = [
   ...Object.keys(pages),
   ...projects.map((p) => p.slug).filter((s): s is string => s != null),
-  ...blogPosts.map((p) => p.slug),
+  ...new Set(blogPosts.map((p) => p.slug)),
 ];
 
 const open: Command = {

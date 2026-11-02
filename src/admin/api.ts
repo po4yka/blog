@@ -19,6 +19,14 @@ export function setAuthFlag(authenticated: boolean) {
   else sessionStorage.removeItem(AUTH_FLAG);
 }
 
+const unauthorizedListeners = new Set<() => void>();
+
+/** Calls `listener` when an admin request gets 401 (the session expired or was revoked). Returns the unsubscribe. */
+export function onUnauthorized(listener: () => void): () => void {
+  unauthorizedListeners.add(listener);
+  return () => unauthorizedListeners.delete(listener);
+}
+
 export function isAuthenticated(): boolean {
   return typeof window !== "undefined" && sessionStorage.getItem(AUTH_FLAG) === "1";
 }
@@ -46,6 +54,8 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
 
   if (res.status === 401) {
     setAuthFlag(false);
+    // useAuth drops its state, so AdminLayout sends the user to the login page.
+    for (const listener of unauthorizedListeners) listener();
   }
 
   if (!res.ok) {

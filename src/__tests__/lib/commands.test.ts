@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
+import { isValidElement, type ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { blogPostsMeta } from "@/data/blogMeta";
 import { getAllCommands, getCommand, getCommandNames, parseLine, run, type CommandContext } from "@/lib/commands";
-import { postPath } from "@/lib/blog/paths";
+import { postPath, postsInLocale } from "@/lib/blog/paths";
+import { buildMeta } from "@/data/buildMeta";
 
 vi.mock("@/stores/settingsStore", () => ({ useSettingsStore: { getState: () => ({ setLocale: vi.fn() }) } }));
 vi.mock("@/lib/themeTransition", () => ({ switchTheme: vi.fn() }));
@@ -96,5 +99,47 @@ describe("lang, copy, jump", () => {
   it("completes copy and lang arguments", () => {
     expect(getCommand("copy")!.completions!("e", [])).toEqual(["email"]);
     expect(getCommand("lang")!.completions!("r", [])).toEqual(["ru"]);
+  });
+});
+
+const markup = (out: unknown) => (isValidElement(out) ? renderToStaticMarkup(out as ReactElement) : String(out));
+const slugCount = new Set(blogPostsMeta.map((p) => p.slug)).size;
+
+describe("postsInLocale", () => {
+  it("keeps one entry per slug, in the locale when that version exists", () => {
+    const posts = [
+      { slug: "both", lang: "en", t: "EN" },
+      { slug: "both", lang: "ru", t: "RU" },
+      { slug: "ru-only", lang: "ru", t: "RU only" },
+    ];
+    expect(postsInLocale(posts, "en").map((p) => p.t)).toEqual(["EN", "RU only"]);
+    expect(postsInLocale(posts, "ru").map((p) => p.t)).toEqual(["RU", "RU only"]);
+  });
+});
+
+describe("post listings", () => {
+  // The generated list has one entry per language; a listing showed every bilingual post twice.
+  it("lists each post once", () => {
+    for (const line of ["ls posts/", `grep ${blogPostsMeta[0]!.tags[0]} posts/`]) {
+      const html = markup(run(line, ctx("ru")));
+      for (const slug of new Set(blogPostsMeta.map((p) => p.slug))) {
+        expect(html.split(`>${slug}<`).length - 1, `${line}: ${slug}`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it("counts posts by slug and shows build data in neofetch", () => {
+    const html = markup(run("neofetch", ctx()));
+    expect(html).toContain(`Posts:</span><span class="text-foreground/60">${slugCount}<`);
+    expect(html).toContain(buildMeta.commitHash);
+    expect(html).not.toContain("macOS");
+  });
+});
+
+describe("real output only", () => {
+  it("has no commands that print made-up machine data", () => {
+    for (const name of ["kotlin", "swift", "gradle", "adb"]) expect(getCommand(name), name).toBeUndefined();
+    expect(run("uname", ctx())).toBe(`Astro ${buildMeta.astroVersion} on Cloudflare Workers`);
+    expect(run("uptime", ctx())).toContain(buildMeta.commitHash);
   });
 });

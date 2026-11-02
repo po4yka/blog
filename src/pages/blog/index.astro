@@ -3,27 +3,25 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import MainLayout from "@/layouts/MainLayout.astro";
 import { BlogListIsland } from "@/components/blog/BlogListIsland";
 import { parsePostId } from "@/lib/i18n";
+import { compareNewestFirst, postIsoDate } from "@/lib/blog/dates";
+import { readingMinutes } from "@/lib/reading";
+import { blogPostsMeta } from "@/data/blogMeta";
 
 const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
 
 // Filter to English posts only
 const posts = allPosts.filter((p) => parsePostId(p.id).lang === "en");
 
-// Sort by date descending (newest first)
-posts.sort((a, b) => {
-  const dateA = new Date(a.data.date);
-  const dateB = new Date(b.data.date);
-  return dateB.getTime() - dateA.getTime();
-});
+// Newest first by the ISO day; the "Mon YYYY" label parses in local time and ties within a month.
+const sortKey = (p: CollectionEntry<"blog">) => ({ isoDate: postIsoDate(p.data) ?? "", slug: p.id });
+posts.sort((a, b) => compareNewestFirst(sortKey(a), sortKey(b)));
 
-const serializedPosts = posts.map((p) => ({
-  slug: parsePostId(p.id).baseSlug,
-  ...p.data,
-  // build-time estimate from the raw MDX body; same 220 wpm rate the post
-  // page uses for its client-side fallback
-  readingTime:
-    p.data.readingTime ?? Math.max(1, Math.round((p.body ?? "").trim().split(/\s+/).length / 220)),
-}));
+const serializedPosts = posts.map((p) => {
+  const { lang, baseSlug } = parsePostId(p.id);
+  // The generated word count (code excluded), so the list and the post page show the same minutes.
+  const wordCount = blogPostsMeta.find((m) => m.slug === baseSlug && m.lang === lang)?.wordCount;
+  return { slug: baseSlug, ...p.data, readingTime: readingMinutes({ readingTime: p.data.readingTime, wordCount }) ?? 1 };
+});
 
 const categories = [
   "All",

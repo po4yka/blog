@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   login as apiLogin,
   logout as apiLogout,
   isAuthenticated as checkAuth,
+  onUnauthorized,
   ApiError,
   getPasskeyAuthOptions,
   verifyPasskeyAuth,
@@ -11,6 +12,9 @@ import { startAuthentication } from "@simplewebauthn/browser";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(checkAuth);
+
+  // An expired session answers 401; without this the pages stayed up and showed the raw error.
+  useEffect(() => onUnauthorized(() => setIsAuthenticated(false)), []);
 
   const login = useCallback(async (password: string): Promise<{ success: boolean; error?: string }> => {
     try {
