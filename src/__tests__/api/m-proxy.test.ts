@@ -40,6 +40,46 @@ describe("POST /api/m (analytics proxy)", () => {
     expect(body.error).toMatch(/too large/i);
   });
 
+  it("returns 413 from the declared Content-Length without reading the body", async () => {
+    const { POST } = await import("@/pages/api/m");
+
+    const req = new Request("http://localhost/api/m", {
+      method: "POST",
+      headers: { "content-type": "application/json", "content-length": String(1024 * 1024) },
+      body: "{}",
+    });
+
+    const response = await POST({ request: req, params: {} } as Parameters<typeof POST>[0]);
+    expect(response.status).toBe(413);
+    expect(req.bodyUsed).toBe(false);
+  });
+
+  it("returns 413 for a chunked body over 64 KB that declares no length", async () => {
+    const { POST } = await import("@/pages/api/m");
+
+    const chunk = new Uint8Array(16 * 1024);
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        sent += 1;
+        if (sent > 10) controller.close();
+        else controller.enqueue(chunk);
+      },
+    });
+    const req = new Request("http://localhost/api/m", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      duplex: "half",
+    } as RequestInit);
+
+    const response = await POST({ request: req, params: {} } as Parameters<typeof POST>[0]);
+    expect(response.status).toBe(413);
+    expect(fetchMock).not.toHaveBeenCalled();
+    // The read stops at the cap instead of buffering the whole body.
+    expect(sent).toBeLessThan(10);
+  });
+
   it("forwards cf-connecting-ip as x-forwarded-for", async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ ok: 1 }), {

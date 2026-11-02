@@ -44,19 +44,22 @@ export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
   return result === 0;
 }
 
-export async function checkRateLimit(db: D1Database, ip: string): Promise<boolean> {
-  const row = await db
-    .prepare(
-      "SELECT COUNT(*) as cnt FROM login_attempts WHERE ip_address = ? AND attempted_at > datetime('now', '-15 minutes')",
-    )
-    .bind(ip)
-    .first<{ cnt: number }>();
-  return (row?.cnt ?? 0) < 5;
-}
+const MAX_LOGIN_ATTEMPTS = 5;
 
-export async function recordLoginAttempt(db: D1Database, ip: string): Promise<void> {
-  await db.prepare("INSERT INTO login_attempts (ip_address) VALUES (?)").bind(ip).run();
-  await countFailedSignIn(db);
+/**
+ * Record a sign-in attempt for this IP if it is under the limit (5 per 15 minutes).
+ * Returns false when the IP is throttled. The count and the insert are one statement,
+ * so parallel requests cannot all pass the same count check. Every attempt takes a
+ * slot, including the successful one; call clearLoginAttempts() after a sign-in.
+ */
+export async function reserveLoginAttempt(db: D1Database, ip: string): Promise<boolean> {
+  const result = await db
+    .prepare(
+      "INSERT INTO login_attempts (ip_address) SELECT ? WHERE (SELECT COUNT(*) FROM login_attempts WHERE ip_address = ? AND attempted_at > datetime('now', '-15 minutes')) < ?",
+    )
+    .bind(ip, ip, MAX_LOGIN_ATTEMPTS)
+    .run();
+  return (result.meta?.changes ?? 0) > 0;
 }
 
 /**
@@ -124,7 +127,6 @@ export async function createSession(
 ): Promise<string> {
   const token = crypto.randomUUID();
   const tokenHash = await hashToken(token);
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   const capsJson = capabilities ? JSON.stringify(capabilities) : null;
 
   // Clean up expired sessions, old login attempts, and stale WebAuthn challenges
@@ -135,9 +137,14 @@ export async function createSession(
   ]);
 
   // Store the hash, not the raw token, so a D1 breach cannot replay sessions.
+  // expires_at uses SQLite's datetime() format so that the text comparisons with
+  // datetime('now') are correct. An ISO string ("...T...Z") sorts after any time on
+  // the same day, which kept a session valid until the next UTC midnight.
   await db
-    .prepare("INSERT INTO admin_sessions (token, expires_at, capabilities) VALUES (?, ?, ?)")
-    .bind(tokenHash, expiresAt, capsJson)
+    .prepare(
+      "INSERT INTO admin_sessions (token, expires_at, capabilities) VALUES (?, datetime('now', '+1 day'), ?)",
+    )
+    .bind(tokenHash, capsJson)
     .run();
 
   // Return the raw token; the caller puts it in the cookie/header.

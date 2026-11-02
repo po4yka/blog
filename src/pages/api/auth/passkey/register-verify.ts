@@ -9,7 +9,13 @@ import {
   consumeChallenge,
   storeCredential,
 } from "@/lib/webauthn";
-import { validateOrigin, checkRateLimit, getClientIp } from "@/lib/auth";
+import {
+  validateOrigin,
+  reserveLoginAttempt,
+  clearLoginAttempts,
+  countFailedSignIn,
+  getClientIp,
+} from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
@@ -20,8 +26,9 @@ export const POST: APIRoute = async ({ request }) => {
   const ip = getClientIp(request);
   if (!ip) return jsonError("Unable to determine client IP", 400);
 
-  const allowed = await checkRateLimit(db, ip);
+  const allowed = await reserveLoginAttempt(db, ip);
   if (!allowed) {
+    await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many attempts" }), {
       status: 429,
       headers: { "Content-Type": "application/json", "Retry-After": "900" },
@@ -67,6 +74,7 @@ export const POST: APIRoute = async ({ request }) => {
   // Validate and burn the setup token (one-time use, enforced here).
   const tokenValid = await consumeChallenge(db, setupToken, "setup");
   if (!tokenValid) {
+    await countFailedSignIn(db);
     return jsonError("Invalid or expired setup token", 403);
   }
 
@@ -104,6 +112,7 @@ export const POST: APIRoute = async ({ request }) => {
     registeredCred.counter,
     credential.response.transports ?? [],
   );
+  await clearLoginAttempts(db, ip);
 
   return Response.json({ ok: true, credentialID: registeredCred.id });
 };

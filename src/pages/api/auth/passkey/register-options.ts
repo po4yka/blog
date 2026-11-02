@@ -5,12 +5,30 @@ import { env } from "cloudflare:workers";
 import { generateRegistrationOptions } from "@simplewebauthn/server";
 import { rpID, rpName } from "@/lib/webauthn-config";
 import { validateChallenge, storeChallenge, getCredentials } from "@/lib/webauthn";
-import { validateOrigin } from "@/lib/auth";
+import {
+  validateOrigin,
+  reserveLoginAttempt,
+  clearLoginAttempts,
+  countFailedSignIn,
+  getClientIp,
+} from "@/lib/auth";
 import { jsonError } from "@/lib/validation";
 
 export const POST: APIRoute = async ({ request }) => {
   validateOrigin(request);
   const db = env.DB;
+
+  // Setup-token guesses share the sign-in limit. A valid token frees the slots again,
+  // so an admin who cancels the passkey prompt and retries is not locked out.
+  const ip = getClientIp(request);
+  if (!ip) return jsonError("Unable to determine client IP", 400);
+  if (!(await reserveLoginAttempt(db, ip))) {
+    await countFailedSignIn(db);
+    return new Response(JSON.stringify({ error: "Too many attempts" }), {
+      status: 429,
+      headers: { "Content-Type": "application/json", "Retry-After": "900" },
+    });
+  }
 
   let body: unknown;
   try {
@@ -30,8 +48,10 @@ export const POST: APIRoute = async ({ request }) => {
   // (b) the final registration step still enforces single-use.
   const valid = await validateChallenge(db, setupToken, "setup");
   if (!valid) {
+    await countFailedSignIn(db);
     return jsonError("Invalid or expired setup token", 403);
   }
+  await clearLoginAttempts(db, ip);
 
   try {
     const existingCredentials = await getCredentials(db);

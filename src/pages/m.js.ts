@@ -14,10 +14,12 @@ const UPSTREAM = `${UMAMI_ORIGIN}/script.js`;
 export const GET: APIRoute = async () => {
   const upstream = await fetch(UPSTREAM, { cf: { cacheTtl: 3600 } } as RequestInit);
 
+  // An empty script still needs a JavaScript type: Worker responses carry
+  // X-Content-Type-Options: nosniff, and the browser refuses a script without one.
   if (!upstream.ok) {
-    return new Response("", {
+    return new Response(null, {
       status: 204,
-      headers: { "Cache-Control": "no-store" },
+      headers: { "Content-Type": "text/javascript; charset=UTF-8", "Cache-Control": "no-store" },
     });
   }
 

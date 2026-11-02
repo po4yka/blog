@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   validateOrigin,
-  checkRateLimit,
-  recordLoginAttempt,
+  reserveLoginAttempt,
   clearLoginAttempts,
   deleteSession,
   makeSessionCookie,
@@ -64,37 +63,20 @@ describe("validateOrigin", () => {
   });
 });
 
-describe("checkRateLimit", () => {
-  it("returns true when under 5 attempts", async () => {
+// SQL semantics (the limit, the 15-minute window) are covered in auth-sqlite.test.ts.
+describe("reserveLoginAttempt", () => {
+  it("returns true when the conditional insert adds a row", async () => {
     const db = createMockDb();
-    db.first.mockResolvedValue({ cnt: 3 });
-    const allowed = await checkRateLimit(db, "1.2.3.4");
-    expect(allowed).toBe(true);
+    db.run.mockResolvedValue({ success: true, meta: { changes: 1 } });
+    expect(await reserveLoginAttempt(db, "1.2.3.4")).toBe(true);
+    expect(db.prepare).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO login_attempts"));
+    expect(db.bind).toHaveBeenCalledWith("1.2.3.4", "1.2.3.4", 5);
   });
 
-  it("returns false when at 5 attempts", async () => {
+  it("returns false when the IP is at the limit and no row is added", async () => {
     const db = createMockDb();
-    db.first.mockResolvedValue({ cnt: 5 });
-    const allowed = await checkRateLimit(db, "1.2.3.4");
-    expect(allowed).toBe(false);
-  });
-
-  it("returns true when count is null (no rows)", async () => {
-    const db = createMockDb();
-    db.first.mockResolvedValue(null);
-    const allowed = await checkRateLimit(db, "1.2.3.4");
-    expect(allowed).toBe(true);
-  });
-});
-
-describe("recordLoginAttempt", () => {
-  it("inserts IP into login_attempts and counts the failure for the day", async () => {
-    const db = createMockDb();
-    await recordLoginAttempt(db, "10.0.0.1");
-    expect(db.prepare).toHaveBeenCalledWith("INSERT INTO login_attempts (ip_address) VALUES (?)");
-    expect(db.bind).toHaveBeenCalledWith("10.0.0.1");
-    expect(db.prepare).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO auth_failures_daily"));
-    expect(db.run).toHaveBeenCalledTimes(2);
+    db.run.mockResolvedValue({ success: true, meta: { changes: 0 } });
+    expect(await reserveLoginAttempt(db, "1.2.3.4")).toBe(false);
   });
 });
 

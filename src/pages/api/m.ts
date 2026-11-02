@@ -11,6 +11,31 @@ const UPSTREAM = `${UMAMI_ORIGIN}/api/send`;
 const SITE_ORIGIN = "https://po4yka.dev";
 const MAX_BODY_BYTES = 64 * 1024; // 64 KB
 
+/** Read the request body, or return null as soon as it exceeds `max` bytes. */
+async function readBody(request: Request, max: number): Promise<Uint8Array<ArrayBuffer> | null> {
+  if (!request.body) return new Uint8Array();
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  const body = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return body;
+}
+
 export const POST: APIRoute = async ({ request }) => {
   // Reject non-JSON content types early to avoid unnecessary processing.
   const contentType = request.headers.get("content-type") ?? "";
@@ -21,14 +46,16 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // Cap incoming body to 64 KB to bound memory usage and prevent DoS.
-  const rawBody = await request.arrayBuffer();
-  if (rawBody.byteLength > MAX_BODY_BYTES) {
-    return new Response(JSON.stringify({ error: "Request body too large" }), {
+  // Cap incoming body to 64 KB to bound memory usage and prevent DoS. Check the
+  // declared length first; a chunked request has none, so the read stops at the cap too.
+  const tooLarge = () =>
+    new Response(JSON.stringify({ error: "Request body too large" }), {
       status: 413,
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
-  }
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) return tooLarge();
+  const rawBody = await readBody(request, MAX_BODY_BYTES);
+  if (!rawBody) return tooLarge();
 
   const clientIp =
     request.headers.get("cf-connecting-ip") ??

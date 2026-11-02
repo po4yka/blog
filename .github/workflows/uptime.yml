@@ -55,7 +55,8 @@ jobs:
           FAILED: ${{ steps.probe.outputs.failed }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          open=$(gh issue list --repo "$REPO" --state open --search '"Uptime:" in:title' --json number --jq '.[0].number // empty')
+          # Only issues this workflow opened: anyone can open an issue titled "Uptime: ...".
+          open=$(gh issue list --repo "$REPO" --state open --author "app/github-actions" --search '"Uptime:" in:title' --json number --jq '.[0].number // empty')
           if [ -n "$FAILED" ]; then
             if [ -z "$open" ]; then
               gh issue create --repo "$REPO" --title "Uptime: site check failed" --body "Failed:$FAILED. Run: $RUN_URL"

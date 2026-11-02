@@ -13,9 +13,8 @@ import {
 import {
   createSession,
   makeSessionCookie,
-  checkRateLimit,
+  reserveLoginAttempt,
   countFailedSignIn,
-  recordLoginAttempt,
   clearLoginAttempts,
   validateOrigin,
   getClientIp,
@@ -30,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
   const ip = getClientIp(request);
   if (!ip) return jsonError("Unable to determine client IP", 400);
 
-  const allowed = await checkRateLimit(db, ip);
+  const allowed = await reserveLoginAttempt(db, ip);
   if (!allowed) {
     await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many attempts" }), {
@@ -69,14 +68,14 @@ export const POST: APIRoute = async ({ request }) => {
   const credential = await getCredentialById(db, assertion.id);
   if (!credential) {
     // A guessed or stale credential ID is a failed sign-in: rate-limit it and count it.
-    await recordLoginAttempt(db, ip);
+    await countFailedSignIn(db);
     return jsonError("Unknown credential", 401);
   }
 
   // Consume the challenge (one-time use)
   const validChallenge = await consumeChallenge(db, challenge, "authentication");
   if (!validChallenge) {
-    await recordLoginAttempt(db, ip);
+    await countFailedSignIn(db);
     return jsonError("Invalid or expired challenge", 401);
   }
 
@@ -97,12 +96,12 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
   } catch {
-    await recordLoginAttempt(db, ip);
+    await countFailedSignIn(db);
     return jsonError("Verification failed", 401);
   }
 
   if (!verification.verified || !verification.authenticationInfo) {
-    await recordLoginAttempt(db, ip);
+    await countFailedSignIn(db);
     return jsonError("Verification failed", 401);
   }
 
