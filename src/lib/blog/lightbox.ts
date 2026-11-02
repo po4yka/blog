@@ -36,9 +36,12 @@ export function parseSource(raw: RawSource): VariantSource | null {
   return { srcset: raw.srcset, requiresDark, requiresMobile, mimeType: raw.type };
 }
 
-// Prefer PNG for the lightbox's single <img> render — broad decoder support
-// across browsers and image tooling. Fall back to the first format-agnostic
-// match (AVIF/WebP), then to the <img>'s fallback src.
+// The first matching source decides the art direction (sources come in
+// BlogFigure's most-specific-first order). Within that direction, prefer SVG
+// for the lightbox's single <img> render (a vector stays sharp at any zoom),
+// then PNG for broad decoder support across browsers and image tooling. Fall
+// back to the direction's first format (AVIF/WebP), then to the <img>'s
+// fallback src.
 export function pickVariant(
   figure: { sources: VariantSource[]; fallbackSrc: string },
   isDark: boolean,
@@ -47,11 +50,16 @@ export function pickVariant(
   const matches = figure.sources.filter(
     (s) => !(s.requiresDark && !isDark) && !(s.requiresMobile && !isMobile) && s.srcset,
   );
-  const png = matches.find((s) => s.mimeType === "image/png" || s.mimeType === null);
-  if (png) return png.srcset;
   const first = matches[0];
-  if (first) return first.srcset;
-  return figure.fallbackSrc;
+  if (!first) return figure.fallbackSrc;
+  const direction = matches.filter(
+    (s) => s.requiresDark === first.requiresDark && s.requiresMobile === first.requiresMobile,
+  );
+  const svg = direction.find((s) => s.mimeType === "image/svg+xml");
+  if (svg) return svg.srcset;
+  const png = direction.find((s) => s.mimeType === "image/png" || s.mimeType === null);
+  if (png) return png.srcset;
+  return first.srcset;
 }
 
 /**
