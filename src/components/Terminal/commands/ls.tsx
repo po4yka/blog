@@ -1,6 +1,7 @@
 import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
+import { postsInLocale } from "@/lib/blog/paths";
 import type { Command } from "@/lib/commands";
 
 const ls: Command = {
@@ -8,7 +9,7 @@ const ls: Command = {
   description: "List directory contents",
   completions: (partial) =>
     ["projects/", "posts/"].filter((c) => c.startsWith(partial)),
-  execute: (args) => {
+  execute: (args, ctx) => {
     const target = args[0]?.replace(/\/$/, "");
 
     if (!target) {
@@ -41,7 +42,7 @@ const ls: Command = {
     if (target === "posts") {
       return (
         <div className="space-y-0.5">
-          {blogPosts.map((p) => (
+          {postsInLocale(blogPosts, ctx.getLocale()).map((p) => (
             <div key={p.slug} className="flex gap-4">
               <span className="text-foreground font-medium shrink-0" style={{ minWidth: 140 }}>
                 {p.slug}
