@@ -8,10 +8,10 @@ import _f1EnDD from "./01-sixteen-kb-timing.en.dark.png";
 import _f1RuDL from "./01-sixteen-kb-timing.ru.light.png";
 import _f1RuDD from "./01-sixteen-kb-timing.ru.dark.png";
 
-import _f2EnDL from "./02-verdict-decision-flow.en.light.png";
-import _f2EnDD from "./02-verdict-decision-flow.en.dark.png";
-import _f2RuDL from "./02-verdict-decision-flow.ru.light.png";
-import _f2RuDD from "./02-verdict-decision-flow.ru.dark.png";
+import _f2EnDL from "./02-verdict-decision-flow.en.light.svg";
+import _f2EnDD from "./02-verdict-decision-flow.en.dark.svg";
+import _f2RuDL from "./02-verdict-decision-flow.ru.light.svg";
+import _f2RuDD from "./02-verdict-decision-flow.ru.dark.svg";
 
 import _f3EnDL from "./04-policy-state-machine.en.light.png";
 import _f3EnDD from "./04-policy-state-machine.en.dark.png";
