@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import type { GitHubActivitySummary } from "@/types";
-import { cfCacheGet, cfCachePut } from "@/lib/cf-cache";
+import { cfCacheGet, cfCachePut, fetchUpstream } from "@/lib/cf-cache";
 
 interface GitHubEvent {
   created_at: string;
@@ -51,9 +51,9 @@ export const GET: APIRoute = async () => {
   };
   if (env.GITHUB_TOKEN) requestHeaders["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
 
-  const res = await fetch(UPSTREAM_URL, { headers: requestHeaders });
+  const res = await fetchUpstream(UPSTREAM_URL, { headers: requestHeaders });
 
-  if (!res.ok) {
+  if (!res) {
     return Response.json(null, {
       headers: { "Cache-Control": "public, max-age=60", "X-Cache": "MISS" },
     });
