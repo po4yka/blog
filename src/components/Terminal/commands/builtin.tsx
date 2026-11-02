@@ -1,5 +1,8 @@
 import { registerCommand, getAllCommands } from "@/lib/commands";
 import type { Command } from "@/lib/commands";
+import { buildMeta } from "@/data/buildMeta";
+
+const DAY_MS = 86_400_000;
 
 const help: Command = {
   name: "help",
@@ -34,22 +37,26 @@ const date: Command = {
   execute: () => new Date().toString(),
 };
 
+// Terminal output is real data only (DESIGN.md): the build metadata and the current URL.
 const uptime: Command = {
   name: "uptime",
-  description: "Show system uptime",
-  execute: () => "47d 6h 23m -- load average: 1.47 1.22 0.98",
+  description: "Time since the last deploy",
+  execute: () => {
+    const days = Math.max(0, Math.floor((Date.now() - Date.parse(buildMeta.deployDate)) / DAY_MS));
+    return `up ${days}d -- deployed ${buildMeta.deployDate.slice(0, 10)} (${buildMeta.commitHash})`;
+  },
 };
 
 const uname: Command = {
   name: "uname",
   description: "Print system information",
-  execute: () => "Darwin po4yka.local 24.2.0 arm64",
+  execute: () => `Astro ${buildMeta.astroVersion} on Cloudflare Workers`,
 };
 
 const pwd: Command = {
   name: "pwd",
   description: "Print working directory",
-  execute: () => "/Users/po4yka/dev/po4yka.dev",
+  execute: () => (typeof location === "undefined" ? "/" : location.pathname),
 };
 
 const echo: Command = {
@@ -64,36 +71,7 @@ const clear: Command = {
   execute: () => "__CLEAR__",
 };
 
-const kotlin: Command = {
-  name: "kotlin",
-  description: "Show Kotlin version",
-  execute: () => "Kotlin 2.1.0 (JVM target 21)",
-};
-
-const swift: Command = {
-  name: "swift",
-  description: "Show Swift version",
-  execute: () => "Swift 6.0 (Xcode 16.2)",
-};
-
-const gradle: Command = {
-  name: "gradle",
-  description: "Show Gradle version",
-  execute: () => "Gradle 8.7 -- Build cache: enabled",
-};
-
-const adb: Command = {
-  name: "adb",
-  description: "Android Debug Bridge",
-  execute: (args) => {
-    if (args[0] === "devices") {
-      return "emulator-5554  device  Pixel_8_API_35";
-    }
-    return "adb: usage: adb devices";
-  },
-};
-
 // Register all builtin commands
-[help, whoami, date, uptime, uname, pwd, echo, clear, kotlin, swift, gradle, adb].forEach(
+[help, whoami, date, uptime, uname, pwd, echo, clear].forEach(
   registerCommand,
 );

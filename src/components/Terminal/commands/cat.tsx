@@ -1,13 +1,14 @@
 import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
+import { postsInLocale } from "@/lib/blog/paths";
 import { Em, Tag } from "../ui";
 import type { Command } from "@/lib/commands";
 
 const allSlugs: string[] = [
   "README.md",
   ...projects.map((p) => p.slug).filter((s): s is string => s != null),
-  ...blogPosts.map((p) => p.slug),
+  ...new Set(blogPosts.map((p) => p.slug)),
 ];
 
 function renderRow(label: string, children: React.ReactNode) {
@@ -25,7 +26,7 @@ const cat: Command = {
   name: "cat",
   description: "View file or entry details",
   completions: (partial) => allSlugs.filter((s) => s.startsWith(partial)),
-  execute: (args) => {
+  execute: (args, ctx) => {
     const target = args[0];
 
     if (!target) {
@@ -77,7 +78,7 @@ const cat: Command = {
       );
     }
 
-    const post = blogPosts.find((p) => p.slug === target);
+    const post = postsInLocale(blogPosts, ctx.getLocale()).find((p) => p.slug === target);
     if (post) {
       return (
         <div className="space-y-0.5">

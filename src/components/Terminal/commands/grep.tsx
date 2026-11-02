@@ -1,6 +1,7 @@
 import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
+import { postsInLocale } from "@/lib/blog/paths";
 import { Em } from "../ui";
 import type { Command } from "@/lib/commands";
 
@@ -32,7 +33,7 @@ const grep: Command = {
     }
     return [];
   },
-  execute: (args) => {
+  execute: (args, ctx) => {
     if (args.length < 2) {
       return "Usage: grep <keyword> posts/ | grep <keyword> projects/";
     }
@@ -41,7 +42,7 @@ const grep: Command = {
     const target = args[1]!.replace(/\/$/, "");
 
     if (target === "posts") {
-      const found = blogPosts.filter(
+      const found = postsInLocale(blogPosts, ctx.getLocale()).filter(
         (p) =>
           matches(p.title, keyword) ||
           matches(p.summary, keyword) ||
