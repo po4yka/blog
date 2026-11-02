@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { createContext, useCallback, useContext, useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { t, defaultLocale, type Locale, type TranslationKey } from "@/lib/i18n";
@@ -170,9 +170,24 @@ export function useSettings() {
   };
 }
 
+const PageLocaleContext = createContext<Locale | null>(null);
+
+/**
+ * Pins useLocale() below it to the page's content language. Blog post pages use it: the URL fixes
+ * the language (/blog = en, /blog/ru = ru), so their chrome is in that language in the static HTML too.
+ */
+export const PageLocaleProvider = PageLocaleContext.Provider;
+
+const subscribeNever = () => () => {};
+
 /** Convenience hook for i18n -- returns locale, setter, and a bound t() function */
 export function useLocale() {
-  const locale = useSettingsStore((s) => s.locale);
+  const pageLocale = useContext(PageLocaleContext);
+  const storedLocale = useSettingsStore((s) => s.locale);
+  // The prerendered HTML is in the default locale. Hydrate with it (the server snapshot), then
+  // re-render in the stored locale; reading the stored locale on the first render mismatches the HTML.
+  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const locale = pageLocale ?? (hydrated ? storedLocale : defaultLocale);
   const setLocale = useSettingsStore((s) => s.setLocale);
   // Memoize the bound t() so its reference is stable across renders (changes
   // only when locale changes). Without this, every consumer that lists t in a
