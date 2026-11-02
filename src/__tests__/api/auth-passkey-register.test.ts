@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createApiContext } from "../helpers";
+import { createApiContext, createMockDb } from "../helpers";
 
 // Hoisted mocks
 const verifyRegistrationResponseMock = vi.hoisted(() => vi.fn());
@@ -9,7 +9,7 @@ const validateChallengeMock = vi.hoisted(() => vi.fn());
 const storeChallengeMock = vi.hoisted(() => vi.fn());
 const storeCredentialMock = vi.hoisted(() => vi.fn());
 const getCredentialsMock = vi.hoisted(() => vi.fn());
-const checkRateLimitMock = vi.hoisted(() => vi.fn());
+const reserveLoginAttemptMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@simplewebauthn/server", () => ({
   verifyRegistrationResponse: verifyRegistrationResponseMock,
@@ -35,7 +35,7 @@ vi.mock("@/lib/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/auth")>();
   return {
     ...actual,
-    checkRateLimit: checkRateLimitMock,
+    reserveLoginAttempt: reserveLoginAttemptMock,
     validateOrigin: actual.validateOrigin,
     getClientIp: actual.getClientIp,
   };
@@ -73,11 +73,11 @@ describe("POST /api/auth/passkey/register-verify", () => {
     verifyRegistrationResponseMock.mockReset();
     consumeChallengeMock.mockReset();
     storeCredentialMock.mockReset();
-    checkRateLimitMock.mockReset();
+    reserveLoginAttemptMock.mockReset();
   });
 
   it("returns 400 when setupToken is missing", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     const { POST } = await import("@/pages/api/auth/passkey/register-verify");
 
     const ctx = createApiContext({
@@ -93,7 +93,7 @@ describe("POST /api/auth/passkey/register-verify", () => {
   });
 
   it("returns 403 when setup token is expired/invalid (consumeChallenge returns false for setup)", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     // First consumeChallenge call is for setup token
     consumeChallengeMock.mockResolvedValueOnce(false);
 
@@ -112,7 +112,7 @@ describe("POST /api/auth/passkey/register-verify", () => {
   });
 
   it("returns 403 when registration challenge is expired", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     // setup token valid, registration challenge invalid
     consumeChallengeMock.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
 
@@ -131,7 +131,7 @@ describe("POST /api/auth/passkey/register-verify", () => {
   });
 
   it("returns 400 when verifyRegistrationResponse throws", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     consumeChallengeMock.mockResolvedValue(true);
     verifyRegistrationResponseMock.mockRejectedValue(new Error("attestation error"));
 
@@ -150,7 +150,7 @@ describe("POST /api/auth/passkey/register-verify", () => {
   });
 
   it("returns 200 with credentialID on success", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     consumeChallengeMock.mockResolvedValue(true);
     const fakeKey = Buffer.from("fakepublickey");
     verifyRegistrationResponseMock.mockResolvedValue({
@@ -197,6 +197,47 @@ describe("POST /api/auth/passkey/register-options", () => {
     validateChallengeMock.mockReset();
     storeChallengeMock.mockReset();
     getCredentialsMock.mockReset();
+    reserveLoginAttemptMock.mockReset();
+    reserveLoginAttemptMock.mockResolvedValue(true);
+  });
+
+  it("returns 429 before checking the setup token when the IP is rate-limited", async () => {
+    reserveLoginAttemptMock.mockResolvedValue(false);
+
+    const { POST } = await import("@/pages/api/auth/passkey/register-options");
+
+    const ctx = createApiContext({
+      method: "POST",
+      body: { setupToken: "guess" },
+      headers: { Origin: "http://localhost:4321" },
+    });
+
+    const response = await POST(ctx);
+    expect(response.status).toBe(429);
+    expect(response.headers.get("Retry-After")).toBe("900");
+    expect(validateChallengeMock).not.toHaveBeenCalled();
+  });
+
+  it("frees the rate-limit slots when the setup token is valid", async () => {
+    validateChallengeMock.mockResolvedValue(true);
+    getCredentialsMock.mockResolvedValue([]);
+    generateRegistrationOptionsMock.mockResolvedValue({ challenge: "c", rpName: "test", rpID: "localhost" });
+    storeChallengeMock.mockResolvedValue(undefined);
+
+    const { POST } = await import("@/pages/api/auth/passkey/register-options");
+
+    const db = createMockDb();
+    const ctx = createApiContext({
+      method: "POST",
+      body: { setupToken: "valid" },
+      headers: { Origin: "http://localhost:4321" },
+      db,
+    });
+
+    const response = await POST(ctx);
+    expect(response.status).toBe(200);
+    // A cancelled passkey prompt and a retry must not lock the admin out of sign-in.
+    expect(db.prepare).toHaveBeenCalledWith("DELETE FROM login_attempts WHERE ip_address = ?");
   });
 
   it("returns 400 when setupToken is missing", async () => {

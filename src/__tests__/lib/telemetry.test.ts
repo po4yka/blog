@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { collectTelemetry, statusBuckets, umamiPair, type TelemetryEnv } from "@/lib/telemetry";
-import { countFailedSignIn, recordLoginAttempt } from "@/lib/auth";
+import { countFailedSignIn } from "@/lib/auth";
 
 /** D1 fake: answers COUNT queries with `counts[table]`, and the failures query with `failures` (or throws). */
 function fakeDb(opts: { counts?: Record<string, number>; failures?: { day: string; count: number }[] | Error }) {
@@ -151,30 +151,6 @@ describe("collectTelemetry", () => {
   it("reports failures as null when migration 007 is missing", async () => {
     const t = await collectTelemetry({}, fakeDb({ failures: new Error("no such table: auth_failures_daily") }), "30d", vi.fn() as typeof fetch);
     expect(t.d1.status === "ok" && t.d1.data.failures).toBeNull();
-  });
-});
-
-describe("recordLoginAttempt", () => {
-  it("still records the rate-limit attempt when the daily counter table is missing", async () => {
-    const runs: string[] = [];
-    const db = {
-      prepare: (sql: string) => {
-        const stmt = {
-          bind: () => stmt,
-          run: async () => {
-            if (sql.includes("auth_failures_daily")) throw new Error("no such table: auth_failures_daily");
-            runs.push(sql);
-            return { success: true };
-          },
-        };
-        return stmt;
-      },
-    } as unknown as D1Database;
-    const err = vi.spyOn(console, "error").mockImplementation(() => {});
-    await expect(recordLoginAttempt(db, "1.2.3.4")).resolves.toBeUndefined();
-    expect(runs).toEqual(["INSERT INTO login_attempts (ip_address) VALUES (?)"]);
-    expect(err).toHaveBeenCalled();
-    err.mockRestore();
   });
 });
 

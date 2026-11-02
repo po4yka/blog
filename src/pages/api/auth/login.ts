@@ -6,10 +6,9 @@ import {
   createSession,
   makeSessionCookie,
   validateOrigin,
-  checkRateLimit,
+  reserveLoginAttempt,
   countFailedSignIn,
   timingSafeEqual,
-  recordLoginAttempt,
   clearLoginAttempts,
   getClientIp,
 } from "@/lib/auth";
@@ -42,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonError("Unable to determine client IP", 400);
   }
 
-  const allowed = await checkRateLimit(db, ip);
+  const allowed = await reserveLoginAttempt(db, ip);
   if (!allowed) {
     await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Too many login attempts. Try again in 15 minutes." }), {
@@ -56,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const valid = await timingSafeEqual(password, env.ADMIN_PASSWORD);
   if (!valid) {
-    await recordLoginAttempt(db, ip);
+    await countFailedSignIn(db);
     return new Response(JSON.stringify({ error: "Invalid password" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },

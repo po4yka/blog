@@ -7,8 +7,8 @@ const getCredentialByIdMock = vi.hoisted(() => vi.fn());
 const consumeChallengeMock = vi.hoisted(() => vi.fn());
 const updateCredentialCounterMock = vi.hoisted(() => vi.fn());
 const clearLoginAttemptsMock = vi.hoisted(() => vi.fn());
-const recordLoginAttemptMock = vi.hoisted(() => vi.fn());
-const checkRateLimitMock = vi.hoisted(() => vi.fn());
+const countFailedSignInMock = vi.hoisted(() => vi.fn());
+const reserveLoginAttemptMock = vi.hoisted(() => vi.fn());
 const createSessionMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@simplewebauthn/server", () => ({
@@ -31,8 +31,8 @@ vi.mock("@/lib/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/auth")>();
   return {
     ...actual,
-    checkRateLimit: checkRateLimitMock,
-    recordLoginAttempt: recordLoginAttemptMock,
+    reserveLoginAttempt: reserveLoginAttemptMock,
+    countFailedSignIn: countFailedSignInMock,
     clearLoginAttempts: clearLoginAttemptsMock,
     createSession: createSessionMock,
     // keep validateOrigin + getClientIp as real implementations
@@ -69,13 +69,13 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     consumeChallengeMock.mockReset();
     updateCredentialCounterMock.mockReset();
     clearLoginAttemptsMock.mockReset();
-    recordLoginAttemptMock.mockReset();
-    checkRateLimitMock.mockReset();
+    countFailedSignInMock.mockReset();
+    reserveLoginAttemptMock.mockReset();
     createSessionMock.mockReset();
   });
 
   it("returns 429 when IP is rate-limited", async () => {
-    checkRateLimitMock.mockResolvedValue(false);
+    reserveLoginAttemptMock.mockResolvedValue(false);
 
     const { POST } = await import("@/pages/api/auth/passkey/auth-verify");
 
@@ -94,7 +94,7 @@ describe("POST /api/auth/passkey/auth-verify", () => {
   });
 
   it("returns 400 for malformed clientDataJSON (invalid base64/JSON)", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
 
     const { POST } = await import("@/pages/api/auth/passkey/auth-verify");
 
@@ -122,7 +122,7 @@ describe("POST /api/auth/passkey/auth-verify", () => {
   });
 
   it("returns 401 for unknown credential", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     getCredentialByIdMock.mockResolvedValue(null);
 
     const { POST } = await import("@/pages/api/auth/passkey/auth-verify");
@@ -138,11 +138,11 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Unknown credential/i);
     expect(verifyAuthenticationResponseMock).not.toHaveBeenCalled();
-    expect(recordLoginAttemptMock).toHaveBeenCalledWith(expect.anything(), "1.2.3.4");
+    expect(countFailedSignInMock).toHaveBeenCalledWith(expect.anything());
   });
 
   it("returns 401 when challenge is expired or missing", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     getCredentialByIdMock.mockResolvedValue({
       credentialID: "cred-id-abc",
       publicKey: "cHVibGlja2V5",
@@ -164,11 +164,11 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Invalid or expired challenge/i);
     expect(verifyAuthenticationResponseMock).not.toHaveBeenCalled();
-    expect(recordLoginAttemptMock).toHaveBeenCalledWith(expect.anything(), "1.2.3.4");
+    expect(countFailedSignInMock).toHaveBeenCalledWith(expect.anything());
   });
 
   it("returns 401 when verifyAuthenticationResponse throws", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     getCredentialByIdMock.mockResolvedValue({
       credentialID: "cred-id-abc",
       publicKey: "cHVibGlja2V5",
@@ -177,7 +177,7 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     });
     consumeChallengeMock.mockResolvedValue(true);
     verifyAuthenticationResponseMock.mockRejectedValue(new Error("crypto mismatch"));
-    recordLoginAttemptMock.mockResolvedValue(undefined);
+    countFailedSignInMock.mockResolvedValue(undefined);
 
     const { POST } = await import("@/pages/api/auth/passkey/auth-verify");
 
@@ -191,11 +191,11 @@ describe("POST /api/auth/passkey/auth-verify", () => {
     expect(response.status).toBe(401);
     const body = await response.json() as { error: string };
     expect(body.error).toMatch(/Verification failed/i);
-    expect(recordLoginAttemptMock).toHaveBeenCalledWith(expect.anything(), "1.2.3.4");
+    expect(countFailedSignInMock).toHaveBeenCalledWith(expect.anything());
   });
 
   it("returns 200 with Set-Cookie on successful verification", async () => {
-    checkRateLimitMock.mockResolvedValue(true);
+    reserveLoginAttemptMock.mockResolvedValue(true);
     getCredentialByIdMock.mockResolvedValue({
       credentialID: "cred-id-abc",
       publicKey: "cHVibGlja2V5",
@@ -246,11 +246,11 @@ describe("POST /api/auth/passkey/auth-verify", () => {
       return {
         ...actual,
         getClientIp: getClientIpProdMock,
-        checkRateLimit: checkRateLimitMock,
+        reserveLoginAttempt: reserveLoginAttemptMock,
         validateOrigin: actual.validateOrigin,
         makeSessionCookie: actual.makeSessionCookie,
         createSession: createSessionMock,
-        recordLoginAttempt: recordLoginAttemptMock,
+        countFailedSignIn: countFailedSignInMock,
         clearLoginAttempts: clearLoginAttemptsMock,
       };
     });

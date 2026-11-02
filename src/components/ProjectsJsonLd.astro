@@ -3,6 +3,7 @@
 // an ItemList so crawlers get an ordered catalogue instead of disconnected
 // entities. Rendered on /projects only — the home-page island stays lean.
 import { projects } from "@/data/projectsData";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 const SITE_URL = "https://po4yka.dev";
 
@@ -86,4 +87,4 @@ const itemList = {
   }),
 };
 ---
-<script type="application/ld+json" nonce={nonce} set:html={JSON.stringify(itemList)} />
+<script type="application/ld+json" nonce={nonce} set:html={serializeJsonLd(itemList)} />

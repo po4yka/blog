@@ -82,10 +82,8 @@ describe("POST /api/auth/login", () => {
 
   it("returns 429 with Retry-After when IP is rate-limited", async () => {
     const db = createMockDb();
-    // Make checkRateLimit return cnt >= 5 to trigger rate limit
-    // The real auth.ts does: SELECT COUNT(*) as cnt ... -> first()
-    // first() is on the bound result. The bind() mock returns { run, first }.
-    db.first.mockResolvedValue({ cnt: 10 });
+    // reserveLoginAttempt's conditional insert adds no row when the IP is at the limit.
+    db.run.mockResolvedValue({ success: true, meta: { changes: 0 } });
 
     setMockEnv({ DB: db, ADMIN_PASSWORD: "secret", ALLOW_PASSWORD_LOGIN: "true" });
 

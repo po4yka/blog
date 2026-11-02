@@ -6,7 +6,8 @@ import { setMockEnv } from "./mocks/cloudflare-workers";
  * Exposes bind, run, and first as vi.fn() for assertions.
  */
 export function createMockDb() {
-  const run = vi.fn().mockResolvedValue({ success: true, results: [] });
+  // meta.changes = 1 lets reserveLoginAttempt() pass by default.
+  const run = vi.fn().mockResolvedValue({ success: true, results: [], meta: { changes: 1 } });
   const first = vi.fn();
   const bind = vi.fn().mockReturnValue({ run, first });
   const prepare = vi.fn().mockReturnValue({ run, bind, first });

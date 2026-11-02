@@ -1,5 +1,6 @@
 ---
 import type { BlogPostData } from "@/types";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 interface Props {
   isHomePage?: boolean;
@@ -121,14 +122,14 @@ const blogPostingSchema = blogPost && blogPostUrl
 <script
   type="application/ld+json"
   nonce={nonce}
-  set:html={JSON.stringify(personSchema)}
+  set:html={serializeJsonLd(personSchema)}
 />
 {
   websiteSchema && (
     <script
       type="application/ld+json"
       nonce={nonce}
-      set:html={JSON.stringify(websiteSchema)}
+      set:html={serializeJsonLd(websiteSchema)}
     />
   )
 }
@@ -137,7 +138,7 @@ const blogPostingSchema = blogPost && blogPostUrl
     <script
       type="application/ld+json"
       nonce={nonce}
-      set:html={JSON.stringify(blogPostingSchema)}
+      set:html={serializeJsonLd(blogPostingSchema)}
     />
   )
 }
