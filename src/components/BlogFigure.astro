@@ -69,8 +69,17 @@ const ART_DIRECTIONS: Array<{
   },
 ];
 
-const sources = await Promise.all(
-  ART_DIRECTIONS.flatMap((direction) => {
+type FigureSource = {
+  srcset: string;
+  type: "image/svg+xml" | `image/${(typeof FORMATS)[number]}`;
+  media: string;
+  theme: "dark" | "light";
+  viewport: "mobile" | "desktop";
+};
+
+// An SVG source is ready at once; a raster one is a getImage() promise per format.
+const sources: FigureSource[] = await Promise.all(
+  ART_DIRECTIONS.flatMap((direction): Array<FigureSource | Promise<FigureSource>> => {
     if (isSvg(direction.src)) {
       return [
         {
