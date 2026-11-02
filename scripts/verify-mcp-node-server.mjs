@@ -6,7 +6,7 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const nodeServerVersion = "2.1.3";
+const nodeServerVersion = "2.1.5";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoots = [
   ".claude/cms-mcp",
