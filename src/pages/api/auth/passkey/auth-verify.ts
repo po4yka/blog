@@ -19,7 +19,7 @@ import {
   validateOrigin,
   getClientIp,
 } from "@/lib/auth";
-import { jsonError } from "@/lib/validation";
+import { authenticationResponseSchema, jsonError, validationError } from "@/lib/validation";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 
 export const POST: APIRoute = async ({ request }) => {
@@ -45,7 +45,10 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonError("Invalid JSON", 400);
   }
 
-  const assertion = body as AuthenticationResponseJSON;
+  // A null or wrongly shaped body is a 400 here, not a TypeError (500) further down.
+  const parsed = authenticationResponseSchema.safeParse(body);
+  if (!parsed.success) return validationError(parsed.error);
+  const assertion = parsed.data as AuthenticationResponseJSON;
 
   // Parse the challenge out of clientDataJSON up front so a malformed
   // payload is a 400, not a 401/500 buried in a broad catch.

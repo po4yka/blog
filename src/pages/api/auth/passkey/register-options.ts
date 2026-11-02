@@ -12,7 +12,7 @@ import {
   countFailedSignIn,
   getClientIp,
 } from "@/lib/auth";
-import { jsonError } from "@/lib/validation";
+import { jsonError, registerOptionsSchema, validationError } from "@/lib/validation";
 
 export const POST: APIRoute = async ({ request }) => {
   validateOrigin(request);
@@ -37,10 +37,9 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonError("Invalid JSON", 400);
   }
 
-  const { setupToken } = body as { setupToken?: string };
-  if (!setupToken) {
-    return jsonError("Setup token required", 400);
-  }
+  const parsed = registerOptionsSchema.safeParse(body);
+  if (!parsed.success) return validationError(parsed.error);
+  const { setupToken } = parsed.data;
 
   // Validate setup token without consuming it. The token is only burned
   // in register-verify so that (a) the 5-minute expiry is measured from a

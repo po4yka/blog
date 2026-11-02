@@ -76,6 +76,19 @@ describe("POST /api/auth/passkey/register-verify", () => {
     reserveLoginAttemptMock.mockReset();
   });
 
+  it("returns 400 for a null body instead of a TypeError (500)", async () => {
+    reserveLoginAttemptMock.mockResolvedValue(true);
+    const { POST } = await import("@/pages/api/auth/passkey/register-verify");
+    const ctx = createApiContext({
+      method: "POST",
+      body: null,
+      headers: { "cf-connecting-ip": "1.2.3.4", Origin: "http://localhost:4321" },
+    });
+    const response = await POST(ctx);
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { error: string }).error).toBe("Invalid request");
+  });
+
   it("returns 400 when setupToken is missing", async () => {
     reserveLoginAttemptMock.mockResolvedValue(true);
     const { POST } = await import("@/pages/api/auth/passkey/register-verify");
@@ -88,8 +101,9 @@ describe("POST /api/auth/passkey/register-verify", () => {
 
     const response = await POST(ctx);
     expect(response.status).toBe(400);
-    const body = await response.json() as { error: string };
-    expect(body.error).toMatch(/Setup token required/i);
+    const body = (await response.json()) as { error: string; details: { path: string[] }[] };
+    expect(body.error).toBe("Invalid request");
+    expect(body.details.map((d) => d.path.join("."))).toContain("setupToken");
   });
 
   it("returns 403 when setup token is expired/invalid (consumeChallenge returns false for setup)", async () => {
@@ -237,7 +251,7 @@ describe("POST /api/auth/passkey/register-options", () => {
     const response = await POST(ctx);
     expect(response.status).toBe(200);
     // A cancelled passkey prompt and a retry must not lock the admin out of sign-in.
-    expect(db.prepare).toHaveBeenCalledWith("DELETE FROM login_attempts WHERE ip_address = ?");
+    expect(db.prepare).toHaveBeenCalledWith("DELETE FROM login_attempts WHERE ip_address IN (?, ?)");
   });
 
   it("returns 400 when setupToken is missing", async () => {
@@ -251,8 +265,9 @@ describe("POST /api/auth/passkey/register-options", () => {
 
     const response = await POST(ctx);
     expect(response.status).toBe(400);
-    const body = await response.json() as { error: string };
-    expect(body.error).toMatch(/Setup token required/i);
+    const body = (await response.json()) as { error: string; details: { path: string[] }[] };
+    expect(body.error).toBe("Invalid request");
+    expect(body.details.map((d) => d.path.join("."))).toContain("setupToken");
   });
 
   it("returns 403 when setupToken is expired/invalid", async () => {
