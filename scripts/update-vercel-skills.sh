@@ -1,19 +1,28 @@
 #!/bin/bash
-# Update Vercel agent skills to latest version from GitHub.
+# Update Vercel agent skills to a reviewed commit from GitHub.
 # Installs web-design-guidelines, composition-patterns, react-best-practices.
-# Usage: bash scripts/update-vercel-skills.sh
+# Usage: bash scripts/update-vercel-skills.sh <commit-sha>
+# The commit is required: the skill text becomes agent instructions, so read the upstream diff since
+# the previous update first, and name the commit in the commit message that vendors the update.
 set -euo pipefail
 
 REPO="https://github.com/vercel-labs/agent-skills.git"
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REF="${1:-}"
+if [[ ! "$REF" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Usage: bash $0 <commit-sha>: a reviewed 40-character commit of $REPO" >&2
+  exit 1
+fi
 TEMP_DIR="$(mktemp -d)"
 VERCEL_SKILLS=(web-design-guidelines composition-patterns react-best-practices)
 
 cleanup() { rm -rf "$TEMP_DIR"; }
 trap cleanup EXIT
 
-echo "Cloning latest vercel agent-skills..."
-git clone --depth 1 "$REPO" "$TEMP_DIR/agent-skills" 2>/dev/null
+echo "Fetching agent-skills at $REF..."
+git init -q "$TEMP_DIR/agent-skills"
+git -C "$TEMP_DIR/agent-skills" fetch -q --depth 1 "$REPO" "$REF"
+git -C "$TEMP_DIR/agent-skills" checkout -q FETCH_HEAD
 
 echo "Updating Claude Code skills..."
 for skill in "${VERCEL_SKILLS[@]}"; do
@@ -38,4 +47,4 @@ perl -pi -e 's/^name: vercel-react-best-practices(\r?\n)/name: react-best-practi
 echo "Re-applying skill routing policy..."
 bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
 
-echo "Done. Vercel skills updated on $(date +%Y-%m-%d)."
+echo "Done. Vercel skills updated to $REF on $(date +%Y-%m-%d)."

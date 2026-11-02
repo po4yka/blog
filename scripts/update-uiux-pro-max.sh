@@ -15,7 +15,15 @@ if [ ! -d "$SOURCE" ]; then
   exit 1
 fi
 
-echo "Source: $SOURCE"
+# A local checkout, so pin it the same way: no uncommitted changes, and the commit is printed for
+# the commit message that vendors the update.
+if [ -n "$(git -C "$SOURCE" status --porcelain)" ]; then
+  echo "Error: $SOURCE has uncommitted changes. Commit or stash them, then review the diff since the previous update."
+  exit 1
+fi
+SOURCE_REF="$(git -C "$SOURCE" rev-parse HEAD)"
+
+echo "Source: $SOURCE at $SOURCE_REF"
 echo "Targets: $CLAUDE_SKILLS_DIR, $AGENTS_SKILLS_DIR"
 echo ""
 
@@ -84,5 +92,5 @@ echo "Re-applying skill routing policy..."
 bash "$PROJECT_ROOT/scripts/apply-skill-policy.sh"
 
 echo ""
-echo "Done. UI/UX Pro Max skills updated on $(date +%Y-%m-%d)."
+echo "Done. UI/UX Pro Max skills updated to $SOURCE_REF on $(date +%Y-%m-%d)."
 echo "Skills: ui-ux-pro-max, brand-system, slides, banner-design, design-tokens (refs)"
