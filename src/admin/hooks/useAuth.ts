@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import {
   login as apiLogin,
   logout as apiLogout,
+  logoutEverywhere as apiLogoutEverywhere,
   isAuthenticated as checkAuth,
   onUnauthorized,
   ApiError,
@@ -48,5 +49,10 @@ export function useAuth() {
     setIsAuthenticated(false);
   }, []);
 
-  return { isAuthenticated, login, loginWithPasskey, logout };
+  const logoutEverywhere = useCallback(async () => {
+    await apiLogoutEverywhere();
+    setIsAuthenticated(false);
+  }, []);
+
+  return { isAuthenticated, login, loginWithPasskey, logout, logoutEverywhere };
 }

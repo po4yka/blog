@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { m } from "motion/react";
+import { useAuthContext } from "@/admin/contexts/AuthContext";
+import { ApiError } from "@/admin/api";
 import { AdminPageHeader } from "@/admin/components/AdminPageHeader";
 import { useAdminSettings, useCategories } from "@/admin/hooks/useAdminQueries";
 
@@ -43,6 +46,8 @@ export function AdminSettings() {
           <Fields rows={links} mono />
         </Section>
 
+        <Sessions />
+
         <Section title="Blog Categories">
           <div className="flex flex-wrap gap-2">
             {categories
@@ -60,6 +65,51 @@ export function AdminSettings() {
         </Section>
       </m.div>
     </div>
+  );
+}
+
+function Sessions() {
+  const { logoutEverywhere } = useAuthContext();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const revoke = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      // On success the auth state drops and AdminLayout returns to the sign-in page.
+      await logoutEverywhere();
+    } catch (e) {
+      // A 401 already returned the user to sign-in (see adminFetch); 403 is a scoped session.
+      setError(
+        e instanceof ApiError && e.status === 403
+          ? "This session has limited access and cannot revoke the others."
+          : "Could not revoke the sessions. Try again.",
+      );
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Section title="Sessions">
+      <p className="text-muted-foreground mb-4" style={{ fontSize: "0.8125rem", lineHeight: 1.6 }}>
+        Sign out on every device, this one included. Use it when a device is lost or a session may be stolen.
+      </p>
+      <button
+        type="button"
+        onClick={() => void revoke()}
+        disabled={busy}
+        className="px-4 py-2 border border-border/60 text-foreground/80 hover:bg-secondary/60 transition-colors cursor-pointer font-mono disabled:opacity-50 disabled:cursor-default"
+        style={{ fontSize: "0.75rem", borderRadius: "2px" }}
+      >
+        {busy ? "Signing out..." : "Sign out everywhere"}
+      </button>
+      {error && (
+        <p role="alert" className="mt-3 font-mono text-muted-foreground" style={{ fontSize: "max(11px, 0.6875rem)" }}>
+          {error}
+        </p>
+      )}
+    </Section>
   );
 }
 
