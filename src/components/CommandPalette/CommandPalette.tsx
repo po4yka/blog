@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Dialog, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import "@/components/Terminal/commands/index";
 import { blogPostsMeta } from "@/data/blogMeta";
+import { postsInLocale } from "@/lib/blog/paths";
 import { projects } from "@/data/projectsData";
 import { CONTACT_EMAIL } from "@/lib/constants";
 import { run, type CommandContext } from "@/lib/commands";
@@ -33,13 +34,7 @@ function buildItems(t: Translate, locale: string): PaletteItem[] {
     items.push({ id: `page-${p.target}`, group: "pages", title: t(p.key), command: `open ${p.target}`, keywords: [p.target] });
   }
 
-  // One row per slug: the current locale's version, or the only version that exists.
-  const bySlug = new Map<string, (typeof blogPostsMeta)[number]>();
-  for (const post of blogPostsMeta) {
-    const have = bySlug.get(post.slug);
-    if (!have || (post.lang ?? "en") === locale) bySlug.set(post.slug, post);
-  }
-  for (const post of bySlug.values()) {
+  for (const post of postsInLocale(blogPostsMeta, locale)) {
     items.push({
       id: `post-${post.slug}`,
       group: "posts",

@@ -1,5 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 import { parsePostId, type Locale } from "@/lib/i18n";
+import { compareNewestFirst, postIsoDate } from "@/lib/blog/dates";
 
 type BlogEntry = CollectionEntry<"blog"> & {
   data: CollectionEntry<"blog">["data"] & {
@@ -10,7 +11,8 @@ type BlogEntry = CollectionEntry<"blog"> & {
 type PreparedBlogPost = {
   post: BlogEntry;
   baseSlug: string;
-  dateTime: number;
+  /** YYYY-MM-DD; orders posts, never the "Mon YYYY" label. */
+  isoDate: string;
   tags: Set<string>;
 };
 
@@ -58,7 +60,7 @@ const toRelatedPost = (item: PreparedBlogPost): RelatedPost => ({
   slug: item.baseSlug,
   title: item.post.data.title,
   date: item.post.data.date,
-  isoDate: item.post.data.isoDate,
+  isoDate: item.isoDate,
   category: item.post.data.category,
   summary: item.post.data.summary,
 });
@@ -74,7 +76,7 @@ const countTagOverlap = (a: Set<string>, b: Set<string>): number => {
 const isBetterRelated = (candidate: RelatedCandidate, existing: RelatedCandidate): boolean => {
   if (candidate.overlap !== existing.overlap) return candidate.overlap > existing.overlap;
   if (candidate.sameCategory !== existing.sameCategory) return candidate.sameCategory > existing.sameCategory;
-  return candidate.item.dateTime > existing.item.dateTime;
+  return candidate.item.isoDate > existing.item.isoDate;
 };
 
 const insertTopRelated = (top: RelatedCandidate[], candidate: RelatedCandidate): void => {
@@ -116,13 +118,13 @@ export function buildBlogStaticPaths(allPosts: CollectionEntry<"blog">[], locale
     byLocale.get(lang)!.push({
       post,
       baseSlug,
-      dateTime: new Date(post.data.date).getTime(),
+      isoDate: postIsoDate(post.data) ?? "",
       tags: new Set(post.data.tags ?? []),
     });
   }
 
   for (const posts of byLocale.values()) {
-    posts.sort((a, b) => b.dateTime - a.dateTime);
+    posts.sort((a, b) => compareNewestFirst({ isoDate: a.isoDate, slug: a.baseSlug }, { isoDate: b.isoDate, slug: b.baseSlug }));
   }
 
   const localePosts = byLocale.get(locale)!;

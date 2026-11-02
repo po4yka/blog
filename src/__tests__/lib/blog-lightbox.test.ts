@@ -93,6 +93,39 @@ describe("pickVariant", () => {
     expect(pickVariant(noPng, true, false)).toBe("/dd.avif");
   });
 
+  it("picks the theme-matching SVG when BlogFigure ships SVG variants", () => {
+    // SVG figures emit one image/svg+xml source per art direction.
+    const svgFigure = {
+      sources: parseAll(
+        DIRECTIONS.map((d) => ({ srcset: `/${d.key}.svg`, type: "image/svg+xml", media: d.media, theme: d.theme, viewport: d.viewport })),
+      ),
+      fallbackSrc: "/light.svg",
+    };
+    expect(pickVariant(svgFigure, false, false)).toBe("/light.svg");
+    expect(pickVariant(svgFigure, true, false)).toBe("/dd.svg");
+    expect(pickVariant(svgFigure, true, true)).toBe("/md.svg");
+  });
+
+  it("keeps the most specific direction when formats differ between directions", () => {
+    // Desktop variants as SVG, mobile variants as raster: dark mobile must
+    // stay on the mobile render instead of jumping to the desktop SVG.
+    const mixed = {
+      sources: parseAll([
+        ...blogFigureRaw().filter((r) => r.viewport === "mobile"),
+        { srcset: "/dd.svg", type: "image/svg+xml", media: DIRECTIONS[2].media, theme: "dark", viewport: "desktop" },
+      ]),
+      fallbackSrc: "/light.svg",
+    };
+    expect(pickVariant(mixed, true, true)).toBe("/md.png");
+    expect(pickVariant(mixed, true, false)).toBe("/dd.svg");
+  });
+
+  it("prefers an SVG over a PNG for the same direction", () => {
+    const svg = parseSource({ srcset: "/dd.svg", media: "", type: "image/svg+xml", theme: "dark", viewport: "desktop" })!;
+    const png = parseSource({ srcset: "/dd.png", media: "", type: "image/png", theme: "dark", viewport: "desktop" })!;
+    expect(pickVariant({ sources: [png, svg], fallbackSrc: "/f" }, true, false)).toBe("/dd.svg");
+  });
+
   it("treats a source without a type as PNG-compatible", () => {
     const s = parseSource({ srcset: "/raw.jpg", media: "", type: null })!;
     expect(pickVariant({ sources: [s], fallbackSrc: "/f" }, false, false)).toBe("/raw.jpg");

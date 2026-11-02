@@ -2,6 +2,7 @@ import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { roles, skills } from "@/data/experienceData";
+import { buildMeta } from "@/data/buildMeta";
 import { Em } from "../ui";
 import type { Command } from "@/lib/commands";
 
@@ -38,13 +39,14 @@ const neofetch: Command = {
             <span className="text-muted-foreground-dim">@po4yka.dev</span>
           </div>
           <div className="text-muted-foreground-dim">--------------</div>
-          {renderInfoRow("OS", "macOS 15.2 arm64")}
-          {renderInfoRow("Shell", "zsh 5.9")}
-          {renderInfoRow("Terminal", "operator-console")}
-          {renderInfoRow("Editor", "neovim")}
+          {/* Every row comes from the build or the generated data, never a made-up machine. */}
+          {renderInfoRow("Host", "Cloudflare Workers")}
+          {renderInfoRow("Framework", `Astro ${buildMeta.astroVersion}`)}
+          {renderInfoRow("Build", buildMeta.commitHash)}
           {renderInfoRow("Theme", ctx.getTheme())}
           {renderInfoRow("Projects", String(projects.length))}
-          {renderInfoRow("Posts", String(blogPosts.length))}
+          {/* One entry per language in the generated list: count slugs. */}
+          {renderInfoRow("Posts", String(new Set(blogPosts.map((p) => p.slug)).size))}
           {renderInfoRow("Roles", String(roles.length))}
           {renderInfoRow("Languages", String(languageCount))}
         </div>

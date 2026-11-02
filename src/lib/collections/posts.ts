@@ -8,7 +8,8 @@ export const posts = defineCollection<BlogPost>({
   name: "posts",
   table: "blog_posts",
   primaryKey: "slug",
-  orderBy: "date DESC",
+  // published_at (YYYY-MM-DD), not the "Mon YYYY" date label, which sorts alphabetically.
+  orderBy: "published_at DESC, slug",
   capabilities: { read: "read:posts" },
   fields: {
     slug: { column: "slug", type: "text" },
@@ -43,7 +44,7 @@ function mapRow(row: Record<string, unknown>): BlogPost {
 
 posts.getAll = async (db: D1Database): Promise<BlogPost[]> => {
   const { results } = await db
-    .prepare("SELECT * FROM blog_posts WHERE lang = 'en' ORDER BY date DESC")
+    .prepare("SELECT * FROM blog_posts WHERE lang = 'en' ORDER BY published_at DESC, slug")
     .all<Record<string, unknown>>();
   return results.map(mapRow);
 };
