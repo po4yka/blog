@@ -68,20 +68,21 @@ function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: nu
           )}
           <span className="hidden sm:inline text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
           {/* Title: its own line on phones, after the langs; inline from sm. */}
-          <div className="relative min-w-0 basis-full order-last sm:basis-auto sm:order-none">
-            <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 font-sans text-mono">
-              {title}
-            </span>
+          <div className="relative min-w-0 basis-full order-last sm:basis-auto sm:order-none sm:flex-1">
+            <span className="text-foreground font-sans text-mono">{title}</span>
             <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
           </div>
-          {/* Language indicators */}
+          {/* Available languages, pinned right; the row links to `lang`, shown brighter.
+              Passive label: the other language is one locale switch away. */}
           {availLangs.length > 1 && (
-            <>
-              <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
-              <span className="text-muted-foreground-dim shrink-0 font-mono text-label select-none">
-                {availLangs.map((l) => l.toUpperCase()).join(" ")}
-              </span>
-            </>
+            <span className="ml-auto shrink-0 font-mono text-label select-none" aria-hidden="true">
+              {availLangs.map((l, i) => (
+                <span key={l}>
+                  {i > 0 && <span className="text-muted-foreground-dim">{" · "}</span>}
+                  <span className={l === lang ? "text-muted-foreground" : "text-muted-foreground-dim"}>{l}</span>
+                </span>
+              ))}
+            </span>
           )}
         </div>
       </div>
@@ -104,11 +105,12 @@ export function BlogPreview() {
         id="blog-heading"
       />
       {/* A static prompt line: the section ships no JS, so no click-to-copy. */}
-      <Reveal speed="fast" className="flex items-baseline gap-2 font-mono text-mono-lg min-w-0">
-        <span className="select-none" style={{ color: "var(--emphasis)", fontWeight: 500 }} aria-hidden="true">
+      {/* Kept quieter than the post titles: the prompt is chrome, the titles are content. */}
+      <Reveal speed="fast" className="flex items-baseline gap-2 font-mono text-mono-sm min-w-0">
+        <span className="select-none text-muted-foreground" aria-hidden="true">
           $
         </span>
-        <span className="text-foreground min-w-0 wrap-anywhere" style={{ opacity: 0.92 }}>
+        <span className="text-muted-foreground min-w-0 wrap-anywhere">
           ls -t <Em>./posts/</Em> | head -3
         </span>
       </Reveal>
@@ -133,7 +135,7 @@ export function BlogPreview() {
       <div className="pt-1">
         <a
           href="/blog"
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* The accessible name starts with the visible text (WCAG 2.5.3). */}
           <T k="blogPreview.viewAll" />
