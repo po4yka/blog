@@ -146,7 +146,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
         </p>
 
         <div
-          tabIndex={ready ? 0 : -1}
+          tabIndex={0}
           role="group"
           aria-label={t("activity.calendarLabel").replace("{n}", String(WEEKS))}
           aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"

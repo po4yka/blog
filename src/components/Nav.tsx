@@ -208,7 +208,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             </button>
             <button
               ref={hamburgerRef}
-              className="flex items-center justify-center text-muted-foreground/60 hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
+              className="flex items-center justify-center text-muted-foreground hover:text-foreground active:opacity-70 min-h-[44px] min-w-[44px] transition-colors duration-200 cursor-pointer"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={t("nav.toggleMenu")}
               aria-expanded={menuOpen}

@@ -20,7 +20,7 @@ export function Experience() {
             return (
             <div
               key={role.period}
-              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 group hover:bg-card transition-colors duration-150 rounded-[2px]"
+              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 rounded-[2px]"
             >
               <div className="lg:col-span-8">
                 <div className="flex items-baseline justify-between lg:justify-start gap-4 flex-wrap">
@@ -41,7 +41,7 @@ export function Experience() {
                       │
                     </span>
                     <span
-                      className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 text-sm font-medium font-sans"
+                      className="text-foreground/80 text-sm font-medium font-sans"
                     >
                       {role.title}
                     </span>
@@ -59,7 +59,7 @@ export function Experience() {
                   </span>
                 </div>
                 <p
-                  className="mt-1.5 text-muted-foreground group-hover:text-foreground/70 transition-colors duration-200 font-sans text-mono"
+                  className="mt-1.5 text-muted-foreground font-sans text-mono"
                   style={{ lineHeight: 1.7 }}
                 >
                   {role.description}
