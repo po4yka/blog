@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { m, AnimatePresence } from "motion/react";
 import { BootBlock, Cmd, Em } from "@/components/Terminal";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -31,6 +32,7 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
   const { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered, featured } =
     usePostFilters(posts);
   const lang = (langProp ?? "en") as Locale;
+  useCoverArrival();
 
   return (
     <ErrorBoundary>
@@ -125,4 +127,24 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
     </MotionProvider>
     </ErrorBoundary>
   );
+}
+
+/**
+ * A post opened from this list morphs its cover out of the row's strip
+ * (transitions.css), so the header cover must not print in again: mark the
+ * incoming document before the swap (theme.css, html[data-cover-arrived]).
+ */
+function useCoverArrival() {
+  useEffect(() => {
+    const onBeforeSwap = (e: Event) => {
+      const next = (e as Event & { newDocument?: Document }).newDocument;
+      const slug = next?.querySelector<SVGElement>(".cover-header[data-cover-slug]")?.dataset.coverSlug;
+      // Without view transitions there is no morph, so the cover prints in as usual.
+      if (next && slug && "startViewTransition" in document && document.querySelector(`.cover-strip[data-cover-slug="${CSS.escape(slug)}"]`)) {
+        next.documentElement.dataset.coverArrived = "";
+      }
+    };
+    document.addEventListener("astro:before-swap", onBeforeSwap);
+    return () => document.removeEventListener("astro:before-swap", onBeforeSwap);
+  }, []);
 }

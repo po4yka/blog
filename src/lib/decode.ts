@@ -35,9 +35,8 @@ export function decode(el: HTMLElement, s: State): boolean {
   // Motion rules from the shared contract: read the DOM, not the store.
   const { motion, effects = "full" } = document.documentElement.dataset;
   if (!node || motion === "reduce" || effects !== "full" || !/mono/i.test(getComputedStyle(el).fontFamily)) return true;
-  const { width, height } = el.getBoundingClientRect();
-  // Hidden (the other language's copy, or display: none): try again when it shows.
-  if (width === 0 && height === 0) return false;
+  // Hidden (the other language's copy, or display: none) has no boxes: try again when it shows.
+  if (!el.getClientRects().length) return false;
   // A restart mid-decode finds one of our own frames in the node; the value is still s.final.
   const text = node.data === s.last && s.final ? s.final : node.data;
   s.final = s.last = text;
@@ -57,7 +56,10 @@ export function decode(el: HTMLElement, s: State): boolean {
 
 let started = false;
 
-/** One delegated observer: every [data-decode] element decodes when it first enters the viewport, and again (from the new text) when its text changes. */
+/**
+ * One delegated observer: every [data-decode] element decodes when it first enters the viewport, and again (from the new text)
+ * when its text changes. A [data-decode="hover"] element also decodes when the pointer or focus enters its `.group` row.
+ */
 export function initDecode(): void {
   if (started) return;
   started = true;
@@ -66,12 +68,13 @@ export function initDecode(): void {
     if (!s) states.set(el, (s = { last: "", final: "", raf: 0 }));
     return s;
   };
+  const run = (el: HTMLElement) => decode(el, state(el));
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
       const el = e.target as HTMLElement;
       io.unobserve(el);
-      if (!decode(el, state(el))) io.observe(el);
+      if (!run(el)) io.observe(el);
     }
   });
   const textWatch = new MutationObserver((records) => {
@@ -82,7 +85,7 @@ export function initDecode(): void {
       // textContent, which also holds whitespace and other nodes and would never match.
       if (el && valueNode(el)?.data !== state(el).last) changed.add(el);
     }
-    changed.forEach((el) => decode(el, state(el)));
+    changed.forEach(run);
   });
   const watch = (el: HTMLElement) => {
     if (states.has(el)) return;
@@ -95,9 +98,17 @@ export function initDecode(): void {
     root.querySelectorAll<HTMLElement>("[data-decode]").forEach(watch);
   };
   scan(document);
-  // Islands and page swaps add elements after load. React hydrates asynchronously and a scrambled
-  // frame before it finishes is a hydration mismatch (#418), so an island sets data-decode only
-  // after it mounts; watch for the attribute as well as for new nodes.
+  // pointerenter does not bubble, so a capturing listener sees one event per element entered: it acts on the row itself,
+  // once. focusin targets the focused link, so it acts on the row around it.
+  for (const type of ["pointerenter", "focusin"])
+    document.addEventListener(
+      type,
+      ({ target }) => {
+        const row = (target as Element).closest?.(".group");
+        if (row && (type < "p" || row === target)) row.querySelectorAll<HTMLElement>("[data-decode=hover]").forEach(run);
+      },
+      true,
+    );
   new MutationObserver((records) => {
     for (const r of records) {
       if (r.type === "attributes") scan(r.target as HTMLElement);

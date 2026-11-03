@@ -383,6 +383,93 @@ html[data-motion="reduce"] .hero-field-pause {
   animation-delay: calc(var(--col, 0) * 20ms);
 }
 
+/* ─── Post cover and project plates (rule A8, DESIGN.md "Post Covers") ───
+   Inline 1-bit SVGs: pixels are 1-unit strokes, rules and frames are single
+   strokes with pathLength 1. Motion is opacity and stroke-dashoffset only;
+   tokens.css cuts all of it to the end state under reduced motion. */
+.cover-art {
+  height: auto;
+}
+.cover-art path,
+.plate-art path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+.cover-block {
+  transition: opacity 100ms ease;
+}
+.cover-block[data-dim] {
+  opacity: 0.3;
+}
+.cover-frame-fill {
+  fill: currentColor;
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease;
+}
+.cover-block[data-active] .cover-frame-fill {
+  opacity: 0.4;
+}
+/* Reading progress: the mask keeps read columns (--read, 0 to 1) at full ink
+   and the rest at --unread, which useCoverMap lowers once reading starts. */
+.cover-unread {
+  fill-opacity: var(--unread, 1);
+  transition: fill-opacity var(--dur-base) ease;
+}
+.cover-read {
+  transform: scaleX(var(--read, 0));
+}
+
+/* Print-in, once, in reading order (--x is the block's left edge, 0 to 1):
+   rules draw top to bottom, then frames trace round, then the dither appears
+   rank by rank, sparse pixels first (--r), so dense code settles last. */
+@keyframes cover-stroke {
+  from { stroke-dashoffset: 1; }
+}
+@keyframes dither-in {
+  from { opacity: 0; }
+}
+.cover-print .cover-stroke {
+  stroke-dasharray: 1;
+  animation: cover-stroke var(--dur-base) var(--ease-step-8) both;
+  animation-delay: calc(var(--x) * var(--dur-base));
+}
+.cover-print .cover-frame {
+  animation-delay: calc(160ms + var(--x) * var(--dur-base));
+}
+.cover-print .cover-px {
+  animation: dither-in 1ms step-end both;
+  animation-delay: calc(280ms + var(--x) * 320ms + var(--r) * 30ms);
+}
+/* Arriving from the blog list, the cover morphs from the row's strip
+   (transitions.css) and is already printed. */
+html[data-cover-arrived] .cover-print * {
+  animation: none;
+}
+
+/* Dissolve on hover or keyboard focus of the row (.group): the late ranks of a
+   strip or a plate appear one rank at a time, and leave at once. */
+.cover-strip .cover-px[data-late],
+.plate-art .plate-late {
+  opacity: 0;
+  transition: opacity 0s;
+}
+.group:hover .cover-strip .cover-px[data-late],
+.group:focus-visible .cover-strip .cover-px[data-late],
+.group:hover .plate-art .plate-late,
+.group:focus-within .plate-art .plate-late {
+  opacity: 1;
+  transition-delay: calc(var(--r) * 40ms);
+}
+
+/* Touch screens have no hover: show the full density at rest. */
+@media (hover: none) {
+  .cover-strip .cover-px[data-late],
+  .plate-art .plate-late {
+    opacity: 1;
+  }
+}
+
 /* One-shot outline flash — invalid form feedback.
    Wrapper must have `outline: 1px solid transparent; outline-offset: N` at rest. */
 @keyframes form-flash {

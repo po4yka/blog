@@ -24,6 +24,14 @@
   animation-timing-function: var(--ease-in-out);
 }
 
+/* List-to-post cover morph: the strip in the blog list row and the post header
+   cover share post-cover-<slug>. Both have the same aspect ratio, so the group
+   only scales; the pixels stay crisp in both snapshots. */
+::view-transition-group(*.post-cover) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-in-out);
+}
+
 /* Lightbox expansion: the inline image and the lightbox image share the name
    lightbox-figure for the length of one transition (ImageLightbox/sharedElement.ts). */
 ::view-transition-group(lightbox-figure) {
