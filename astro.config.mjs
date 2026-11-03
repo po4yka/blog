@@ -109,5 +109,13 @@ export default defineConfig({
       },
     },
     assetsInclude: ["**/*.svg", "**/*.csv"],
+    build: {
+      // Keep every bundled script an external file. Astro inlines a small
+      // script as an inline module, and ClientRouter then waits for inline
+      // modules by appending <script type="module" src="data:..."> after a
+      // swap, which `script-src 'self'` blocks: every navigation into a post
+      // logged a CSP violation. Other assets keep Vite's default 4 KB rule.
+      assetsInlineLimit: (filePath) => (filePath.endsWith(".js") ? false : undefined),
+    },
   },
 });
