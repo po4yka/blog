@@ -18,9 +18,11 @@ posts.sort((a, b) => compareNewestFirst(sortKey(a), sortKey(b)));
 
 const serializedPosts = posts.map((p) => {
   const { lang, baseSlug } = parsePostId(p.id);
-  // The generated word count (code excluded), so the list and the post page show the same minutes.
-  const wordCount = blogPostsMeta.find((m) => m.slug === baseSlug && m.lang === lang)?.wordCount;
-  return { slug: baseSlug, ...p.data, readingTime: readingMinutes({ readingTime: p.data.readingTime, wordCount }) ?? 1 };
+  // The generated word count (code excluded), so the list and the post page show the same minutes,
+  // and the outline the row's cover strip draws.
+  const meta = blogPostsMeta.find((m) => m.slug === baseSlug && m.lang === lang);
+  const wordCount = meta?.wordCount;
+  return { slug: baseSlug, ...p.data, outline: meta?.outline, readingTime: readingMinutes({ readingTime: p.data.readingTime, wordCount }) ?? 1 };
 });
 
 const categories = [

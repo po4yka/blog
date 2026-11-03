@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import { cn } from "@/components/ui/utils";
 import { TOC_MIN_ITEMS, nestToc, type TocItem } from "@/lib/blog/toc";
+import { CoverArt } from "./CoverArt";
 
 // --- Table of contents: nested list shared by the desktop sidebar and the mobile sheet ---
 
@@ -84,11 +85,14 @@ export function Toc({
   activeId,
   label,
   progressRef,
+  map,
 }: {
   items: TocItem[];
   activeId: string;
   label: string;
   progressRef: RefObject<HTMLElement | null>;
+  /** The post cover, turned to run top to bottom beside the list; it fills as the reader goes (useCoverMap). */
+  map?: { outline: string; activeFigure: number | null; onBlock: (section: number, figure: number | null) => void };
 }) {
   if (items.length < TOC_MIN_ITEMS) return null;
 
@@ -96,7 +100,20 @@ export function Toc({
     <aside ref={progressRef} className="hidden lg:block">
       <nav aria-label={label} className="sticky top-24 space-y-3">
         <div className="label-meta text-muted-foreground-dim">{label}</div>
-        <TocList items={items} activeId={activeId} progress />
+        <div className="flex gap-3">
+          {map && (
+            <CoverArt
+              outline={map.outline}
+              variant="map"
+              className="w-10 shrink-0 self-start text-foreground/60"
+              activeFigure={map.activeFigure}
+              onBlock={map.onBlock}
+            />
+          )}
+          <div className="min-w-0 flex-1">
+            <TocList items={items} activeId={activeId} progress />
+          </div>
+        </div>
       </nav>
     </aside>
   );

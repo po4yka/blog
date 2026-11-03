@@ -260,11 +260,11 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 ### Project Plates
 
 - Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (48px). Hidden below `sm`
-- Source: `scripts/generate-plates.ts` writes `public/plates/<slug>.svg` and `<slug>.hover.svg` at build time (`generate:all`, checked by `validate:all`). Each is a 16x16 1-bit mark from `ditherField` in `src/lib/dither.ts` (ordered Bayer dither), mirrored on the vertical axis
-- Seed (rule A8): the FNV-1a hash of the project slug, and nothing else. A plate is an identity mark, not a metric. Its caption prints the seed as `slug#<4 hex>` (the `/projects` meta row and the `MARK` line of the home spec sheet)
-- Colour: the SVGs are CSS masks over `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
-- Hover and keyboard focus (rule A3): the hover file holds only the pixels a higher density adds, so the plate fills in by opacity alone. On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
-- Budget: 0 KB runtime JS, each SVG under 3 KB
+- Source: `plateArt` in `src/lib/plate.ts`, rendered as an inline SVG in the server HTML. Each is an 8x8 1-bit mark: a silhouette plus an ordered-dithered inside (`ditherField` in `src/lib/dither.ts`), mirrored on the vertical axis
+- Seeds (rule A8): the project's first platform picks the silhouette (backend: a rack, tooling: a hex nut, android: a phone, web: a browser window, anything else: a diamond), so projects of one kind look related; the FNV-1a hash of the slug picks the inside. A plate is an identity mark, not a metric. Its caption prints both seeds as `<kind> · slug#<4 hex>` (the `/projects` meta row and the `MARK` line of the home spec sheet)
+- Colour: the strokes are `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
+- Hover and keyboard focus (rule A3): the pixels a higher density adds dissolve in one Bayer rank at a time (`plate-late`, 40 ms per rank), by opacity alone; they leave at once. The caption decodes at the same moment (`data-decode="hover"`, see "Decode"). On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
+- Budget: 0 KB runtime JS beyond the decode script, under 1 KB of markup per plate
 
 ### Not Found Page
 
@@ -323,8 +323,9 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Decode
 
-- `src/lib/decode.ts`, one delegated observer started from `MainLayout.astro`. An element with `data-decode` swaps its letters and digits for mono Latin glyphs and settles left to right over `--dur-slow` (420 ms), once when it first enters the viewport and again when its value changes. Inline script, 960 B gzip (budget 1 KB)
-- Only monospace values decode (a runtime check skips anything else): a same-length scramble then has the same width, so nothing is pinned and no layout changes. Used on the hero field caption numbers and on the build panel (date, hash, Astro version, counts) and the release tag. Not on prose, not on locale-dependent text React re-renders, never on section numbers
+- `src/lib/decode.ts`, one delegated observer started from `MainLayout.astro`. An element with `data-decode` swaps its letters and digits for mono Latin glyphs and settles left to right over `--dur-slow` (420 ms), once when it first enters the viewport and again when its value changes. Inline script, 1015 B gzip (budget 1 KB)
+- Only monospace values decode (a runtime check skips anything else): a same-length scramble then has the same width, so nothing is pinned and no layout changes. Used on the hero field caption numbers, on the build panel (date, hash, Astro version, counts), the release tag, the post cover section numbers and the plate captions. Not on prose, not on locale-dependent text React re-renders, never on SectionHeader numbers
+- `data-decode="hover"` also decodes when the pointer enters the element's `.group` row or keyboard focus lands inside it, in step with the plate dissolve (`.group:focus-within`)
 - The final text is in the server HTML; during a decode the element has `role="img"` and an `aria-label` with the final text. Frames write into the existing text node. React hydrates an island asynchronously, so an island never renders `data-decode` on the server: it adds the attribute after it mounts (`useClientValue`), and the observer picks it up then, so React never sees a scrambled frame
 - Off under `data-motion="reduce"` and when `data-effects` is not `full`
 
@@ -343,13 +344,20 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Post Covers
 
-- Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 6:1 ratio. The art is `aria-hidden`; the caption is real text
-- Source: `scripts/generate-covers.ts` writes `public/covers/<lang>-<slug>.svg` at build time (`generate:all`, checked by `validate:all`). Each is a 144x24 1-bit field from `coverField` in `src/lib/cover.ts`, ordered-dithered with `ditherField`
-- Seeds (rule A8), all from the post's own MDX: the slug hash picks the wave pattern, the word count sets the density, each heading is one band (an h2 band fills the height, each level deeper starts a third lower, two paper columns between bands), and the publish date shifts the phase. One cover per language, like the OG images; the two languages share the slug, headings and date, so they look related
-- Caption: `cover: <slug>, <words>, <headings>, <YYYY-MM-DD>` in `.label-meta`, with localized plurals
-- Colour: a CSS mask over `currentColor` at `var(--foreground)` 45%. Tone is capped below solid ink, so every region keeps a dither texture
+- Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 9.2:1 ratio (4 CSS px per cell at the 46rem header width). The art is `aria-hidden`; the caption and the section numbers are real text
+- Source: `CoverArt` (`src/components/blog/CoverArt.tsx`) renders `coverArt` from `src/lib/cover.ts` as an inline SVG in the server HTML: a 184x20 1-bit minimap, one group per block, its pixels split by Bayer rank and its rule or frame as one stroke. `coverPixels` gives the same pixels as a raster for the OG card
+- Seed (rule A8): the post's outline, read from its MDX by `articleOutline` in `scripts/generate-blog-data.ts` and stored as `outline` in `blogData.ts` (tokens such as `h2 p38 f14 c6`). The x axis is reading order. Each block takes columns in proportion to its estimated rendered height in lines (prose and lists from their word count, code from its line count, a figure 14 lines), at least 3 columns, with one paper column between blocks
+- Marks: an h2 is a full-height 1-column rule, an h3 a shorter one, deeper headings match the content height; prose is a light ordered dither, code a dense one, a list rows of dots, a figure an empty frame. One cover per language, like the OG images
+- Section numbers: under the cover, `01`, `02`... in `.label-meta` at the column of each h2 rule, each a link to its heading (the h2 items of the TOC). A number closer than 12 columns to the previous one is left out; its rule stays
+- Caption: `cover: <words>, <sections>, <figures>, <code blocks>` in `.label-meta`, with localized plurals; a kind the post does not have is left out
+- Colour: strokes in `currentColor` at `var(--foreground)` 60%
+- Print-in (once, on load): rules draw top to bottom (`cover-stroke`, `--dur-base`, `--ease-step-8`), frames trace round 160 ms later, then the dither appears rank by rank, sparse pixels first (`dither-in`, 30 ms per rank), each block delayed by its position, so the cover prints in reading order in about 900 ms. Dense code settles last. A post opened from the blog list does not print again (`html[data-cover-arrived]`)
+- Reading progress (`useCoverMap`, rule A2): the read part keeps full ink and the rest falls to 35% once the reading line passes the top of the content. The position is linear inside each section, between the h2 anchors, so it matches the cover columns. A JS-written custom property, not a scroll animation, so it also works under reduced motion
+- Hover and focus (rule A3): pointing at a section on the cover, or focusing or hovering its number, dims the other blocks to 30% and swaps the caption by opacity for `§<n> <heading> · <figures>, <code blocks>`. A click on a section goes to its heading, a click on a frame to its figure. Figures link only when the page has exactly as many figures as the outline. The art is a pointer enhancement: the keyboard and screen reader path is the numbers (a `nav` named "Sections on the cover", each link padded to a 44 px hit area) and the TOC
+- TOC map: on `lg` and up the sticky TOC shows the same cover turned to run top to bottom (2 px a cell, 40 px wide) beside the list. It follows reading progress, and the frame of the figure in the middle band of the viewport fills at 40%
+- Blog list strip: each `/blog` row shows the cover at 2 px a cell (368 px wide). At rest only ranks 0 and 1 show; on row hover or focus the later ranks dissolve in, 40 ms per rank. Under `(hover: none)` the strip and the plates show full density at rest. The strip and the header cover share `view-transition-name: post-cover-<slug>`, so opening a post morphs the strip into the header cover (`--dur-base`, rule A1)
 - OG card: the same pixels, in the meta grey, as a 992px band between the title and the footer row of `public/og/<lang>-<slug>.png`
-- Budget: 0 KB runtime JS beyond the caption helper, each SVG under 10 KB
+- Budget: no new JS on the list; on the post page the hover state and `useCoverMap` (one scroll listener throttled to a frame, one IntersectionObserver)
 
 ### Tags / Platform Badges
 
@@ -456,7 +464,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
-- Seed generative art from real inputs only and print the seed in its caption (rule A8): the slug hash for project plates; slug, word count, heading depths and publish date for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, heading structure and publish date
+- Seed generative art from real inputs only and print the seed in its caption (rule A8): the first platform and the slug hash for project plates; the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent
@@ -614,6 +622,9 @@ Permitted:
 - Pointer response (rule A6): the pointer displaces the hero field's dither only, on fine pointers, while the field is live; nothing else follows the cursor
 - Decode (`src/lib/decode.ts`): monospace values settle from glyphs to their final text over `--dur-slow`, once on entering the viewport and again when the value changes (see "Decode")
 - `arch-draw` keyframe on the architecture diagram flows (`.arch-flow`): a scroll-linked `stroke-dashoffset` draw under rule A2, finished by default
+- Post cover print-in: the `cover-stroke` and `dither-in` keyframes, once on load (see "Post Covers")
+- Dither dissolve on row hover or focus: the late Bayer ranks of a plate or a blog list strip appear 40 ms apart, by opacity
+- Reading progress on the post cover and the TOC map (rule A2), and the list-to-post cover morph (rule A1)
 - `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
 - `progress-rail` keyframe on the blog reading progress rail (`src/styles/scroll.css`, rule A2)
 - `theme-wipe` keyframe for the circular theme change (`src/styles/transitions.css`)

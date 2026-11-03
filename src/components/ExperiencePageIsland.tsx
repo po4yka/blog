@@ -26,7 +26,7 @@ function RoleEntry({
   const [start, end] = role.period.split(" — ");
   const current = end === "Present";
   return (
-    <div className="relative py-5 pl-7 sm:pl-0 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-x-8 group">
+    <div className="relative py-5 pl-7 sm:pl-0 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-x-8">
       {/* Rail node: filled for a role that is still running. */}
       <span
         aria-hidden="true"
@@ -39,7 +39,7 @@ function RoleEntry({
       </div>
       <div className="min-w-0">
       <div className="mt-1 sm:mt-0 flex items-baseline justify-between gap-x-4 gap-y-1 flex-wrap">
-        <h2 className="m-0 text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium">
+        <h2 className="m-0 text-foreground/85 font-sans text-mono-lg font-medium">
           {role.title}
         </h2>
         <span className="text-muted-foreground font-mono text-mono-sm">
@@ -50,7 +50,7 @@ function RoleEntry({
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 font-sans text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 font-sans text-mono" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
@@ -100,15 +100,15 @@ function RoleEntry({
 
 function SkillsSection({ group }: { group: SkillGroup }) {
   return (
-    <div className="flex gap-4 py-1 font-mono text-mono-sm hover:bg-muted transition-colors duration-150">
+    <div className="flex gap-4 py-1 font-mono text-mono-sm">
       <span className="text-muted-foreground shrink-0" style={{ minWidth: "100px" }}>
         {group.label}
       </span>
       <span className="text-foreground/80">
         {group.items.map((item, i) => (
           <span key={item}>
-            {i > 0 && <span className="text-muted-foreground-dim" aria-hidden="true"> · </span>}
-            <span className="cursor-default">{item}</span>
+            <span>{item}</span>
+            {i < group.items.length - 1 && <span className="text-muted-foreground-dim" aria-hidden="true">{"\u00a0· "}</span>}
           </span>
         ))}
       </span>

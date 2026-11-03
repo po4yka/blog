@@ -32,7 +32,7 @@ export function InfoTable({
       {rows.map((row, i) => (
         <Reveal
           key={row.label}
-          className="flex items-baseline py-1.5 -mx-2 px-2"
+          className={`flex items-baseline py-1.5 -mx-2 px-2${fieldCodes ? " flex-wrap sm:flex-nowrap" : ""}`}
           style={{
             lineHeight: 1.6,
             gap: fieldCodes ? "0.5rem" : "1.5rem",
@@ -77,7 +77,8 @@ export function InfoTable({
               {row.label}
             </span>
           )}
-          <span className="font-sans text-foreground text-sm min-w-0 flex-1" style={{ opacity: 0.92 }}>
+          {/* Field-code rows stack below sm: the dotted label leaves the value too narrow to read. */}
+          <span className={`font-sans text-foreground text-sm min-w-0 flex-1${fieldCodes ? " basis-full pl-9 sm:basis-auto sm:pl-0" : ""}`} style={{ opacity: 0.92 }}>
             {row.value}
           </span>
         </Reveal>

@@ -8,7 +8,7 @@ import { closestRoutes, type KnownRoute } from "@/lib/routeMatch";
 // The path never changes while the page is open.
 const noSubscribe = () => () => {};
 
-const LINK ="text-foreground/80 hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150";
+const LINK ="py-1.5 sm:py-0 text-foreground/80 hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150";
 
 function RouteList({ routes }: { routes: KnownRoute[] }) {
   return (
@@ -66,10 +66,10 @@ export function NotFound({ routes }: { routes: KnownRoute[] }) {
         <div className="p-6 space-y-6">
           <Reveal className="font-mono text-mono space-y-1" style={{ lineHeight: 1.7 }} delay={0.1}>
             <p className="m-0">
-              <span className="text-muted-foreground label-meta">ERROR ·</span>{" "}
+              <span className="text-muted-foreground label-meta">{t("notFound.errorLabel")} ·</span>{" "}
               <span className="text-foreground/80">{t("notFound.error")}</span>
             </p>
-            <p className="m-0 min-h-[1.7em] break-all" aria-live="polite">
+            <p className="m-0 min-h-[1.7em] wrap-anywhere" aria-live="polite">
               {path && (
                 <>
                   <span className="text-muted-foreground label-meta">{t("notFound.requested")} ·</span>{" "}
@@ -106,7 +106,7 @@ export function NotFound({ routes }: { routes: KnownRoute[] }) {
             })}
           </Reveal>
 
-          <p className="m-0 text-foreground/70 font-mono text-mono-sm">{t("notFound.info")}</p>
+          <p className="m-0 text-foreground/70 font-sans text-sm">{t("notFound.info")}</p>
 
           {/* The link keeps its own colour transition, so the fade sits on a wrapper. */}
           <Reveal className="flex" delay={0.4}>
@@ -114,7 +114,7 @@ export function NotFound({ routes }: { routes: KnownRoute[] }) {
               href="/"
               aria-label={t("notFound.goHome")}
               title={t("notFound.goHome")}
-              className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 text-mono"
+              className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 min-h-11 sm:min-h-0 text-mono"
             >
               {t("notFound.goBack")}
             </a>

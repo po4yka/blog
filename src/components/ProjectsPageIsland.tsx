@@ -11,13 +11,14 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 import { BootBlock, Cmd, Em, Tag, OperatorPanel } from "./Terminal";
 import { Panel } from "./ui/Panel";
 import { Plate } from "./ui/Plate";
-import { plateCaption } from "@/lib/dither";
+import { plateCaption } from "@/lib/plate";
 import { SectionHeader } from "./SectionHeader";
 import { ErrorBoundary } from "./ErrorBoundary";
 
 import { projects, type Project } from "@/data/projectsData";
 import { MotionProvider } from "./MotionProvider";
 import { useLocale } from "@/stores/settingsStore";
+import { useClientValue } from "@/hooks/useClientValue";
 import { useEffect, useState } from "react";
 import { deferIdle } from "./Decorations/_utils";
 import { GITHUB_USERNAME } from "@/lib/constants";
@@ -77,10 +78,12 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
 function ProjectEntry({ project, releases }: { project: Project; releases: ReleaseMap }) {
   const { t, locale } = useLocale();
   const release = repoNames(project).map((r) => releases[r]).find((r): r is GitHubProjectRelease => !!r);
+  // Decode is set after mount: a scrambled frame before hydration ends is a mismatch (src/lib/decode.ts).
+  const mounted = useClientValue(() => true, false);
 
   return (
     <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-4">
-      <Plate slug={project.slug ?? project.id} size={48} className="hidden sm:block mt-1" />
+      <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={48} className="hidden sm:block mt-1" />
       <div className="flex-1 min-w-0">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -112,9 +115,9 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
               {project.year}
             </span>
           )}
-          {/* Caption of the plate: it names the seed. */}
-          <span className="hidden sm:inline text-muted-foreground-dim text-label">
-            {plateCaption(project.slug ?? project.id)}
+          {/* Caption of the plate: it names the seeds, and decodes with the plate's dissolve on hover. */}
+          <span className="hidden sm:inline text-muted-foreground-dim text-label" data-decode={mounted ? "hover" : undefined}>
+            {plateCaption(project.slug ?? project.id, project.platforms[0])}
           </span>
         </div>
       </div>
@@ -156,7 +159,7 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             <a
               key={link.href}
               href={link.href}
-              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
+              className="inline-flex items-center gap-1 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${link.type} (${t("links.opensNewWindow")})`}

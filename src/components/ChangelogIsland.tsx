@@ -108,7 +108,7 @@ export function ChangelogPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${entry.hash} (${t("links.opensNewWindow")})`}
-                    className="font-mono text-mono-sm text-muted-foreground-dim hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 tabular-nums"
+                    className="inline-flex items-center min-h-11 sm:min-h-0 font-mono text-mono-sm text-muted-foreground-dim hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 tabular-nums"
                   >
                     {entry.hash}
                   </a>

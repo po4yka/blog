@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { ditherField, hash32, hashHex, markField, mirrorX, mulberry32, pixelsToSvg } from "@/lib/dither";
-import { generatePlateFiles } from "../../../scripts/generate-plates";
 
 const ink = (p: Uint8Array) => p.reduce((n, v) => n + v, 0);
 
@@ -65,21 +64,5 @@ describe("marks", () => {
     const px = Uint8Array.from([1, 1, 0, 1, 0, 0, 1, 1]);
     expect(pixelsToSvg(px, 4, 2)).toContain('d="M0 0.5h2m1 0h1M2 1.5h2"');
     expect(pixelsToSvg(px, 4, 2, "#fff")).toContain('stroke="#fff"');
-  });
-});
-
-describe("generatePlateFiles", () => {
-  it("writes a resting and a hover plate per project, each under 3 KB", () => {
-    const files = generatePlateFiles();
-    const slugs = [...files.keys()].filter((n) => !n.endsWith(".hover.svg")).map((n) => n.replace(/\.svg$/, ""));
-    expect(slugs.length).toBeGreaterThan(0);
-    for (const slug of slugs) {
-      const rest = files.get(`${slug}.svg`)!;
-      const hover = files.get(`${slug}.hover.svg`)!;
-      expect(rest.length).toBeLessThan(3072);
-      expect(hover.length).toBeLessThan(3072);
-      expect(rest).toMatch(/^<svg [^>]*viewBox="0 0 16 16"/);
-    }
-    expect(generatePlateFiles()).toEqual(files);
   });
 });

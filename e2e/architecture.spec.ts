@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("the architecture diagram is static HTML in both languages, under 4 KB", async ({ request }) => {
   const html = await (await request.get("/changelog/")).text();
-  const svg = html.match(/<svg viewBox="0 0 640 264"[\s\S]*?<\/svg>/)?.[0] ?? "";
+  const svg = html.match(/<svg viewBox="0 0 680 264"[\s\S]*?<\/svg>/)?.[0] ?? "";
   expect(svg).toContain("caches.default");
   expect(svg).toContain("env.DB");
   expect(Buffer.byteLength(svg)).toBeLessThan(4096);

@@ -52,11 +52,10 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
       label: <T k="hero.buildContent" />,
       value: (
         <>
-          <TCount decode n={buildMeta.postCount} forms={{ en: ["post", "posts"], ru: ["пост", "поста", "постов"] }} />
-          {" · "}
-          <TCount decode n={buildMeta.projectCount} forms={{ en: ["project", "projects"], ru: ["проект", "проекта", "проектов"] }} />
-          {" · "}
-          <TCount decode n={buildMeta.roleCount} forms={{ en: ["role", "roles"], ru: ["роль", "роли", "ролей"] }} />
+          {/* Each count stays on one line with its trailing separator; the row wraps only between counts. */}
+          <span className="whitespace-nowrap"><TCount decode n={buildMeta.postCount} forms={{ en: ["post", "posts"], ru: ["пост", "поста", "постов"] }} />{" ·"}</span>{" "}
+          <span className="whitespace-nowrap"><TCount decode n={buildMeta.projectCount} forms={{ en: ["project", "projects"], ru: ["проект", "проекта", "проектов"] }} />{" ·"}</span>{" "}
+          <span className="whitespace-nowrap"><TCount decode n={buildMeta.roleCount} forms={{ en: ["role", "roles"], ru: ["роль", "роли", "ролей"] }} /></span>
         </>
       ),
     },

@@ -50,7 +50,7 @@ export function HeroWhois() {
         <span className="select-none" style={{ color: "var(--emphasis)", fontWeight: 500 }}>
           $
         </span>
-        <span className="text-foreground min-w-0 break-all" style={{ opacity: 0.92 }}>
+        <span className="text-foreground min-w-0 wrap-anywhere" style={{ opacity: 0.92 }}>
           cd ~/po4yka &amp;&amp; cat <Em>identity.md</Em>
         </span>
       </div>

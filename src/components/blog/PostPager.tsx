@@ -27,7 +27,7 @@ export function PostPager({
   return (
     <nav
       aria-label={t("blogPost.postNav")}
-      className="pt-4 font-mono text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start"
+      className="panel p-4 text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start"
     >
       {prev ? (
         <a
@@ -38,17 +38,17 @@ export function PostPager({
             <ArrowLeft size={10} />
             {t("blogPost.previous")}
           </span>
-          <span className="text-foreground/80 hover:text-foreground" style={titleStyle}>
+          <span className="font-sans text-foreground/80 hover:text-foreground" style={titleStyle}>
             {prev.title}
           </span>
           <span className="label-meta">{prev.date}</span>
         </a>
       ) : (
-        <span />
+        <span aria-hidden="true" className="hidden sm:block" />
       )}
       <a
         href={listHref}
-        className="inline-flex items-center justify-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline sm:justify-self-center sm:self-center"
+        className="inline-flex items-center justify-center gap-1.5 min-h-11 sm:min-h-0 font-mono text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline sm:justify-self-center sm:self-center"
       >
         <ArrowUp size={12} />
         {t("blogPost.allPosts")}
@@ -62,13 +62,13 @@ export function PostPager({
             {t("blogPost.next")}
             <ArrowRight size={10} />
           </span>
-          <span className="text-foreground/80 hover:text-foreground" style={titleStyle}>
+          <span className="font-sans text-foreground/80 hover:text-foreground" style={titleStyle}>
             {next.title}
           </span>
           <span className="label-meta">{next.date}</span>
         </a>
       ) : (
-        <span />
+        <span aria-hidden="true" className="hidden sm:block" />
       )}
     </nav>
   );

@@ -51,7 +51,8 @@ describe("PostHeader", () => {
 describe("PostPager", () => {
   it("renders only the index link between two empty slots when prev and next are null", () => {
     const out = html(createElement(PostPager, { prev: null, next: null, lang: "en", listHref: "/blog" }));
-    expect(out).toContain("<span></span>");
+    // Both slots hold the three-column grid on wide screens and collapse on phones.
+    expect(out.match(/<span aria-hidden="true" class="hidden sm:block"><\/span>/g)).toHaveLength(2);
     expect(out.match(/<a /g)).toHaveLength(1);
     expect(out).toContain('href="/blog"');
   });
