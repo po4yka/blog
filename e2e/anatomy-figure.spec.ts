@@ -1,9 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// The first live <AnatomyFigure> (havamal's anatomy pipeline): the fat-header
-// probe machine in "The Network Isn't Broken Everywhere".
+// The first live <AnatomyFigure> from havamal's anatomy pipeline: the fat-header
+// probe machine in "The Network Isn't Broken Everywhere". The post's interactive
+// diagrams share the island, so the locator names the figure.
 const POST_URL = "/blog/network-isnt-broken-just-here";
-const FIGURE = ".anatomy-figure";
+const FIGURE = '.anatomy-figure:has([data-anatomy="fat-header-probe"])';
 
 async function setTheme(page: Page, theme: "light" | "dark") {
   await page.addInitScript((value) => {

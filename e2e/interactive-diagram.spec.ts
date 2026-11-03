@@ -41,7 +41,7 @@ test.describe("interactive diagram", () => {
       );
     expect(await ink()).toBe(await siteInk());
     await page.evaluate(() =>
-      document.documentElement.classList.toggle("dark"),
+      document.documentElement.classList.replace("light", "dark"),
     );
     await expect
       .poll(async () => (await ink()) === (await siteInk()))
