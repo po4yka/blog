@@ -1,0 +1,57 @@
+---
+// Live isometric figure from havamal's anatomy pipeline. havamal's
+// sync_to_blog.py emits it for a `<picture data-live="anatomy">` block and
+// lists its files in the article's _figures.ts:
+//   variants  the still SVGs, shown through <BlogFigure> (caption, lightbox,
+//             no-JS readers, and the fallback when the module fails)
+//   live      the plate fragment (a ?raw string) and the ES module URL (a
+//             ?url asset, so it loads as a same-origin script under the CSP)
+// The fragment renders hidden; src/lib/anatomyFigure.ts mounts the module
+// when the figure nears the viewport and then swaps the still for the plate.
+import BlogFigure from "./BlogFigure.astro";
+import type { ImageMetadata } from "astro";
+import "@/styles/anatomy.css";
+
+interface Props {
+  variants: {
+    desktopLight: ImageMetadata;
+    desktopDark: ImageMetadata;
+    mobileLight?: ImageMetadata;
+    mobileDark?: ImageMetadata;
+  };
+  live: { html: string; js: string };
+  alt: string;
+  caption?: string;
+}
+
+const { variants, live, alt, caption } = Astro.props;
+---
+
+<div class="anatomy-figure" data-anatomy-src={live.js}>
+  <BlogFigure variants={variants} alt={alt} caption={caption}>
+    <div class="anatomy-figure-plate" set:html={live.html} />
+  </BlogFigure>
+</div>
+
+<script>
+  import { setupAnatomyFigures } from "@/lib/anatomyFigure";
+
+  // Set up once per <body>. ClientRouter replaces <body> on every swap. When
+  // this script first loads during a navigation from a page without a
+  // figure, astro:page-load may already have fired, so it also runs at once.
+  let teardown: (() => void) | null = null;
+  let setUpFor: HTMLElement | null = null;
+  const start = () => {
+    if (setUpFor === document.body) return;
+    teardown?.();
+    teardown = setupAnatomyFigures(document);
+    setUpFor = document.body;
+  };
+  start();
+  document.addEventListener("astro:page-load", start);
+  document.addEventListener("astro:before-swap", () => {
+    teardown?.();
+    teardown = null;
+    setUpFor = null;
+  });
+</script>

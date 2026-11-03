@@ -21,14 +21,19 @@ import _f2RuDD from "./02-wiki-three-layers.ru.dark.png";
 import _f2RuML from "./02-wiki-three-layers.mobile.ru.light.png";
 import _f2RuMD from "./02-wiki-three-layers.mobile.ru.dark.png";
 
-import _f3EnDL from "./03-compute-shift-quadrant.en.light.png";
-import _f3EnDD from "./03-compute-shift-quadrant.en.dark.png";
-import _f3EnML from "./03-compute-shift-quadrant.mobile.en.light.png";
-import _f3EnMD from "./03-compute-shift-quadrant.mobile.en.dark.png";
-import _f3RuDL from "./03-compute-shift-quadrant.ru.light.png";
-import _f3RuDD from "./03-compute-shift-quadrant.ru.dark.png";
-import _f3RuML from "./03-compute-shift-quadrant.mobile.ru.light.png";
-import _f3RuMD from "./03-compute-shift-quadrant.mobile.ru.dark.png";
+import _f3EnDL from "./compile-once-bench.en.light.svg";
+import _f3EnDD from "./compile-once-bench.en.dark.svg";
+import _f3RuDL from "./compile-once-bench.ru.light.svg";
+import _f3RuDD from "./compile-once-bench.ru.dark.svg";
+
+import _f4EnDL from "./03-compute-shift-quadrant.en.light.png";
+import _f4EnDD from "./03-compute-shift-quadrant.en.dark.png";
+import _f4EnML from "./03-compute-shift-quadrant.mobile.en.light.png";
+import _f4EnMD from "./03-compute-shift-quadrant.mobile.en.dark.png";
+import _f4RuDL from "./03-compute-shift-quadrant.ru.light.png";
+import _f4RuDD from "./03-compute-shift-quadrant.ru.dark.png";
+import _f4RuML from "./03-compute-shift-quadrant.mobile.ru.light.png";
+import _f4RuMD from "./03-compute-shift-quadrant.mobile.ru.dark.png";
 
 export interface FigureVariants {
   desktopLight: ImageMetadata;
@@ -48,8 +53,29 @@ export const figures: Record<string, FigureSet> = {
     en: { desktopLight: _f2EnDL, desktopDark: _f2EnDD, mobileLight: _f2EnML, mobileDark: _f2EnMD },
     ru: { desktopLight: _f2RuDL, desktopDark: _f2RuDD, mobileLight: _f2RuML, mobileDark: _f2RuMD },
   },
+  "compile-once-bench": {
+    en: { desktopLight: _f3EnDL, desktopDark: _f3EnDD },
+    ru: { desktopLight: _f3RuDL, desktopDark: _f3RuDD },
+  },
   "03-compute-shift-quadrant": {
-    en: { desktopLight: _f3EnDL, desktopDark: _f3EnDD, mobileLight: _f3EnML, mobileDark: _f3EnMD },
-    ru: { desktopLight: _f3RuDL, desktopDark: _f3RuDD, mobileLight: _f3RuML, mobileDark: _f3RuMD },
+    en: { desktopLight: _f4EnDL, desktopDark: _f4EnDD, mobileLight: _f4EnML, mobileDark: _f4EnMD },
+    ru: { desktopLight: _f4RuDL, desktopDark: _f4RuDD, mobileLight: _f4RuML, mobileDark: _f4RuMD },
+  },
+};
+
+import _l3EnHtml from "./live/compile-once-bench.en.html?raw";
+import _l3EnJs from "./live/compile-once-bench.en.js?url&no-inline";
+import _l3RuHtml from "./live/compile-once-bench.ru.html?raw";
+import _l3RuJs from "./live/compile-once-bench.ru.js?url&no-inline";
+
+export interface LiveFigure {
+  html: string;
+  js: string;
+}
+
+export const live: Record<string, Record<"en" | "ru", LiveFigure>> = {
+  "compile-once-bench": {
+    en: { html: _l3EnHtml, js: _l3EnJs },
+    ru: { html: _l3RuHtml, js: _l3RuJs },
   },
 };
