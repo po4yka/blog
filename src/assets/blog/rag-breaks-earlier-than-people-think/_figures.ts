@@ -3,37 +3,37 @@
 
 import type { ImageMetadata } from "astro";
 
-import _f1EnDL from "./01-rag-failure-layers.en.light.png";
-import _f1EnDD from "./01-rag-failure-layers.en.dark.png";
-import _f1EnML from "./01-rag-failure-layers.mobile.en.light.png";
-import _f1EnMD from "./01-rag-failure-layers.mobile.en.dark.png";
-import _f1RuDL from "./01-rag-failure-layers.ru.light.png";
-import _f1RuDD from "./01-rag-failure-layers.ru.dark.png";
-import _f1RuML from "./01-rag-failure-layers.mobile.ru.light.png";
-import _f1RuMD from "./01-rag-failure-layers.mobile.ru.dark.png";
+import _f1EnDL from "./01-rag-failure-layers.en.light.svg";
+import _f1EnDD from "./01-rag-failure-layers.en.dark.svg";
+import _f1EnML from "./01-rag-failure-layers.mobile.en.light.svg";
+import _f1EnMD from "./01-rag-failure-layers.mobile.en.dark.svg";
+import _f1RuDL from "./01-rag-failure-layers.ru.light.svg";
+import _f1RuDD from "./01-rag-failure-layers.ru.dark.svg";
+import _f1RuML from "./01-rag-failure-layers.mobile.ru.light.svg";
+import _f1RuMD from "./01-rag-failure-layers.mobile.ru.dark.svg";
 
-import _f2EnDL from "./02-wiki-three-layers.en.light.png";
-import _f2EnDD from "./02-wiki-three-layers.en.dark.png";
-import _f2EnML from "./02-wiki-three-layers.mobile.en.light.png";
-import _f2EnMD from "./02-wiki-three-layers.mobile.en.dark.png";
-import _f2RuDL from "./02-wiki-three-layers.ru.light.png";
-import _f2RuDD from "./02-wiki-three-layers.ru.dark.png";
-import _f2RuML from "./02-wiki-three-layers.mobile.ru.light.png";
-import _f2RuMD from "./02-wiki-three-layers.mobile.ru.dark.png";
+import _f2EnDL from "./02-wiki-three-layers.en.light.svg";
+import _f2EnDD from "./02-wiki-three-layers.en.dark.svg";
+import _f2EnML from "./02-wiki-three-layers.mobile.en.light.svg";
+import _f2EnMD from "./02-wiki-three-layers.mobile.en.dark.svg";
+import _f2RuDL from "./02-wiki-three-layers.ru.light.svg";
+import _f2RuDD from "./02-wiki-three-layers.ru.dark.svg";
+import _f2RuML from "./02-wiki-three-layers.mobile.ru.light.svg";
+import _f2RuMD from "./02-wiki-three-layers.mobile.ru.dark.svg";
 
 import _f3EnDL from "./compile-once-bench.en.light.svg";
 import _f3EnDD from "./compile-once-bench.en.dark.svg";
 import _f3RuDL from "./compile-once-bench.ru.light.svg";
 import _f3RuDD from "./compile-once-bench.ru.dark.svg";
 
-import _f4EnDL from "./03-compute-shift-quadrant.en.light.png";
-import _f4EnDD from "./03-compute-shift-quadrant.en.dark.png";
-import _f4EnML from "./03-compute-shift-quadrant.mobile.en.light.png";
-import _f4EnMD from "./03-compute-shift-quadrant.mobile.en.dark.png";
-import _f4RuDL from "./03-compute-shift-quadrant.ru.light.png";
-import _f4RuDD from "./03-compute-shift-quadrant.ru.dark.png";
-import _f4RuML from "./03-compute-shift-quadrant.mobile.ru.light.png";
-import _f4RuMD from "./03-compute-shift-quadrant.mobile.ru.dark.png";
+import _f4EnDL from "./03-compute-shift-quadrant.en.light.svg";
+import _f4EnDD from "./03-compute-shift-quadrant.en.dark.svg";
+import _f4EnML from "./03-compute-shift-quadrant.mobile.en.light.svg";
+import _f4EnMD from "./03-compute-shift-quadrant.mobile.en.dark.svg";
+import _f4RuDL from "./03-compute-shift-quadrant.ru.light.svg";
+import _f4RuDD from "./03-compute-shift-quadrant.ru.dark.svg";
+import _f4RuML from "./03-compute-shift-quadrant.mobile.ru.light.svg";
+import _f4RuMD from "./03-compute-shift-quadrant.mobile.ru.dark.svg";
 
 export interface FigureVariants {
   desktopLight: ImageMetadata;
