@@ -16,12 +16,8 @@ CHECK=0
 MANUAL_ONLY=(
   # Impeccable: push toward color, intensity, or effects the design system bans
   bolder colorize delight overdrive onboard extract teach-impeccable
-  # taste-skill: generic premium/redesign defaults
-  taste-skill redesign-skill minimalist-skill
   # UI/UX Pro Max: generic palettes, fonts, and brand kits
   ui-ux-pro-max brand-system slides banner-design design-tokens
-  # Greenfield design skill
-  hallmark
   # Superseded in-repo design system (phosphor accents, IBM Plex)
   signal-deck
 )
