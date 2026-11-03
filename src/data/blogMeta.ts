@@ -11,8 +11,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     lang: "en",
     title: "The Network Isn't Broken Everywhere, Just Here: Diagnosing One Connection at a Time",
     date: "Jun 2026",
-    isoDate: "2026-06-01",
-    isoDateModified: "2026-06-01",
+    isoDate: "2026-06-19",
+    isoDateModified: "2026-11-03",
     wordCount: 2910,
     headings: [2, 2, 2, 2, 2],
     summary:
@@ -26,8 +26,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     lang: "ru",
     title: "Сброс конкретных соединений при исправной сети: точечная диагностика",
     date: "Jun 2026",
-    isoDate: "2026-06-01",
-    isoDateModified: "2026-06-01",
+    isoDate: "2026-06-19",
+    isoDateModified: "2026-11-03",
     wordCount: 2421,
     headings: [2, 2, 2, 2, 2],
     summary:
@@ -41,8 +41,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     lang: "en",
     title: "RAG breaks earlier than people think",
     date: "Apr 2026",
-    isoDate: "2026-04-01",
-    isoDateModified: "2026-04-01",
+    isoDate: "2026-04-15",
+    isoDateModified: "2026-04-15",
     wordCount: 4335,
     headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:
@@ -56,8 +56,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     lang: "ru",
     title: "RAG ломается раньше, чем кажется",
     date: "Apr 2026",
-    isoDate: "2026-04-01",
-    isoDateModified: "2026-04-01",
+    isoDate: "2026-04-15",
+    isoDateModified: "2026-04-15",
     wordCount: 3884,
     headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:

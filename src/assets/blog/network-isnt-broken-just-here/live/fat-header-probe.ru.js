@@ -789,8 +789,9 @@ let drop = run.cut ? BLADE.travel : 0, dropRate = 0;
 let sensor = PATHS[path].buffer === null ? PARK : PATHS[path].buffer / 1024;
 let phase = "hold";
 let hold = 0, ledPulse = 0, seen = writtenAt(sent);
-let touring = !reducedMotion;
-let frame = 0, last = 0, visible = false, idleTimer = 0;
+// No idle tour: the blog allows one ambient loop (the hero field), so the
+// figure moves only in answer to the reader (DESIGN.md rules A1 and A4).
+let frame = 0, last = 0, visible = false;
 let member = "";
 const sensorGoal = () => (PATHS[path].buffer === null ? PARK : PATHS[path].buffer / 1024);
 const tripped = () => sensor < PARK - 0.3 && sent / 1024 > sensor;
@@ -854,10 +855,9 @@ function settleInstant() {
   seen = writtenAt(sent);
 }
 
-function choose(next, { auto = false } = {}) {
+function choose(next) {
   path = (next + PATHS.length) % PATHS.length;
   run = RUNS[path];
-  if (!auto) touring = false;
   if (reducedMotion) settleInstant();
   else { phase = "rewind"; hold = 0; }
   describe();
@@ -898,12 +898,9 @@ function tick(now) {
   if (n > seen && phase === "feed") ledPulse = 0.25;
   seen = n;
   ledPulse = Math.max(0, ledPulse - dt);
-  if (phase === "hold") {
-    hold += dt;
-    if (touring && hold > 3.2) choose(path + 1, { auto: true });
-  }
+  if (phase === "hold") hold += dt;
   draw();
-  const settled = phase === "hold" && !touring && sensorHome && ledPulse === 0 && dropRate === 0;
+  const settled = phase === "hold" && sensorHome && ledPulse === 0 && dropRate === 0;
   frame = visible && !settled ? requestAnimationFrame(tick) : 0;
 }
 
@@ -912,16 +909,12 @@ function kick() {
   if (!frame && visible) { last = 0; frame = requestAnimationFrame(tick); }
 }
 
-const steer = (next) => {
-  clearTimeout(idleTimer);
-  choose(next);
-  if (!reducedMotion) idleTimer = setTimeout(() => { touring = true; hold = 0; kick(); }, 9000);
-};
+const steer = (next) => choose(next);
 
 const io = new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) kick(); }, { rootMargin: "120px 0px" });
 io.observe(stage);
 onDispose(() => io.disconnect());
-onDispose(() => { clearTimeout(idleTimer); cancelAnimationFrame(frame); });
+onDispose(() => cancelAnimationFrame(frame));
 
 const onKey = (event) => {
   const digit = "123".indexOf(event.key);

@@ -10,7 +10,7 @@ DELETE FROM site_settings;
 
 -- Blog posts
 INSERT INTO blog_posts (slug, lang, title, date, published_at, summary, tags, category, content, featured, reading_time) VALUES
-('network-isnt-broken-just-here', 'en', 'The Network Isn''t Broken Everywhere, Just Here: Diagnosing One Connection at a Time', 'Jun 2026', '2026-06-01',
+('network-isnt-broken-just-here', 'en', 'The Network Isn''t Broken Everywhere, Just Here: Diagnosing One Connection at a Time', 'Jun 2026', '2026-06-19',
  'A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.',
  '["DPI","Network Diagnostics","Rust","Android"]', 'Networking',
  'import BlogFigure from "../../../components/BlogFigure.astro";
@@ -137,7 +137,7 @@ Why Rust, specifically, for code that parses untrusted bytes straight off the wi
 The same box is still on the path, behaving exactly as before: it buffers the traffic and tears the connection down past the threshold, regardless of which app opened the connection. What changes is the phone. It no longer treats every failure as the same failure: it files a verdict, then tries the smallest intervention that clears the stall and remembers whether it held. The next time that connection hangs on that network, the store already holds the fix that cleared it.', 0, 15);
 
 INSERT INTO blog_posts (slug, lang, title, date, published_at, summary, tags, category, content, featured, reading_time) VALUES
-('rag-breaks-earlier-than-people-think', 'en', 'RAG breaks earlier than people think', 'Apr 2026', '2026-04-01',
+('rag-breaks-earlier-than-people-think', 'en', 'RAG breaks earlier than people think', 'Apr 2026', '2026-04-15',
  'Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',
  'import BlogFigure from "../../../components/BlogFigure.astro";
@@ -306,7 +306,7 @@ What the failure modes in this piece share is where compute gets paid. The move 
 I don''t have a neat ending. The wiki I built will rot in places I stop re-reading, and the commit hooks will keep catching schema violations while silent summaries drift. That''s the trade the pattern makes: no durability guarantee, just a failure mode that lives in a file a person can open. The measure I''d want — same query, same corpus, six months apart, do the answers agree — isn''t something any benchmark reports on yet, so for now the signal is the next time I open a page and flinch at what it says.', 1, 22);
 
 INSERT INTO blog_posts (slug, lang, title, date, published_at, summary, tags, category, content, featured, reading_time) VALUES
-('network-isnt-broken-just-here', 'ru', 'Сброс конкретных соединений при исправной сети: точечная диагностика', 'Jun 2026', '2026-06-01',
+('network-isnt-broken-just-here', 'ru', 'Сброс конкретных соединений при исправной сети: точечная диагностика', 'Jun 2026', '2026-06-19',
  'Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.',
  '["DPI","Network Diagnostics","Rust","Android"]', 'Networking',
  'import BlogFigure from "../../../components/BlogFigure.astro";
@@ -433,7 +433,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
 Та самая коробка на пути никуда не делась и ведёт себя как прежде: буферизует трафик и рвёт соединение при превышении порога, независимо от того, какое приложение его открыло. Меняется поведение телефона. Он больше не считает все сбои одинаковыми: выносит вердикт, потом пробует минимальное вмешательство, которое снимает затык, и запоминает, помогло ли. В следующий раз, когда это соединение зависнет в той же сети, в хранилище уже записана сработавшая политика.', 0, 2);
 
 INSERT INTO blog_posts (slug, lang, title, date, published_at, summary, tags, category, content, featured, reading_time) VALUES
-('rag-breaks-earlier-than-people-think', 'ru', 'RAG ломается раньше, чем кажется', 'Apr 2026', '2026-04-01',
+('rag-breaks-earlier-than-people-think', 'ru', 'RAG ломается раньше, чем кажется', 'Apr 2026', '2026-04-15',
  'У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.',
  '["RAG","LLM","Knowledge Management","Architecture"]', 'Architecture',
  'import BlogFigure from "../../../components/BlogFigure.astro";

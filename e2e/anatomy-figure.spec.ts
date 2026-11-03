@@ -50,6 +50,20 @@ test.describe("live anatomy figure", () => {
     expect(await pageToken()).toBe("#0b0b0c");
   });
 
+  test("stays still until the reader acts (DESIGN.md rule A12: no tour or loop)", async ({ page }) => {
+    await page.goto(POST_URL);
+    const figure = await liveFigure(page);
+    const snapshot = () =>
+      figure.evaluate((el) => {
+        const readout = el.querySelector("[data-readout]")?.textContent ?? "";
+        const moved = Array.from(el.querySelectorAll("[transform]"), (node) => node.getAttribute("transform")).join("|");
+        return readout + "#" + moved;
+      });
+    const before = await snapshot();
+    await page.waitForTimeout(4_500);
+    expect(await snapshot()).toBe(before);
+  });
+
   test("the keyboard changes the readout", async ({ page }) => {
     await page.goto(POST_URL);
     const figure = await liveFigure(page);
