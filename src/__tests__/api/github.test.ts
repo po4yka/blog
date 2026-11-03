@@ -370,24 +370,53 @@ describe("GET /api/github/calendar", () => {
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("returns 503 without a token, since GraphQL rejects anonymous requests", async () => {
+  // Trimmed from github.com/users/<login>/contributions: cells and tooltips are linked by id.
+  const profileHtml = `
+    <td tabindex="0" data-ix="0" style="width: 11px" data-date="2026-04-06" id="contribution-day-component-1-0" data-level="2" role="gridcell" class="ContributionCalendar-day"></td>
+    <td tabindex="0" data-ix="0" style="width: 11px" data-date="2026-04-05" id="contribution-day-component-0-0" data-level="0" role="gridcell" class="ContributionCalendar-day"></td>
+    <td tabindex="0" data-ix="1" style="width: 11px" data-date="2026-04-12" id="contribution-day-component-0-1" data-level="4" role="gridcell" class="ContributionCalendar-day"></td>
+    <tool-tip id="tooltip-a" for="contribution-day-component-0-0" popover="manual" data-direction="n" class="sr-only position-absolute">No contributions on April 5th.</tool-tip>
+    <tool-tip id="tooltip-b" for="contribution-day-component-1-0" popover="manual" data-direction="n" class="sr-only position-absolute">1 contribution on April 6th.</tool-tip>
+    <tool-tip id="tooltip-c" for="contribution-day-component-0-1" popover="manual" data-direction="n" class="sr-only position-absolute">1,234 contributions on April 12th.</tool-tip>`;
+  const profileDays = [
+    { date: "2026-04-05", count: 0 },
+    { date: "2026-04-06", count: 1 },
+    { date: "2026-04-12", count: 1234 },
+  ];
+
+  it("reads the public profile graph without a token, since GraphQL rejects anonymous requests", async () => {
     resetMockEnv();
+    mockFetch.mockResolvedValueOnce({ ok: true, text: async () => profileHtml });
     const GET = await getHandler();
     const response = await GET(ctx);
-    expect(response.status).toBe(503);
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(profileDays);
+    const [url, init] = mockFetch.mock.calls[0]!;
+    expect(url).toBe("https://github.com/users/po4yka/contributions");
+    expect(init.headers.Authorization).toBeUndefined();
   });
 
-  it("returns 503 when GitHub fails, so the panel says unavailable instead of an empty year", async () => {
+  it("reads the public profile graph when GraphQL fails", async () => {
+    // GraphQL reports rate limits and scope errors with HTTP 200.
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ errors: [{ message: "bad credentials" }], data: null }) });
+    mockFetch.mockResolvedValueOnce({ ok: true, text: async () => profileHtml });
+    const GET = await getHandler();
+    const response = await GET(ctx);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(profileDays);
+  });
+
+  it("returns 503 when both sources fail, so the panel says unavailable instead of an empty year", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
     mockFetch.mockResolvedValueOnce({ ok: false, status: 502 });
     const GET = await getHandler();
     expect((await GET(ctx)).status).toBe(503);
+  });
 
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ data: { user: null } }) });
-    expect((await GET(ctx)).status).toBe(503);
-
-    // GraphQL reports rate limits and scope errors with HTTP 200.
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ errors: [{ message: "rate limited" }], data: null }) });
+  it("returns 503 when the profile page no longer has the graph markup", async () => {
+    resetMockEnv();
+    mockFetch.mockResolvedValueOnce({ ok: true, text: async () => "<html>redesigned</html>" });
+    const GET = await getHandler();
     expect((await GET(ctx)).status).toBe(503);
   });
 });
