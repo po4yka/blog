@@ -44,7 +44,7 @@ Before visual or copy changes, read `DESIGN.md` (tokens, components, motion rule
 - Motion is limited to the permitted list in `DESIGN.md` (fades, opacity and background shifts, underline and rule draws, a few named keyframes); no `whileTap`/`whileHover` geometry changes, no pulse loops; respect reduced motion.
 - Content must be in the static HTML; islands are for interactive chrome only (AI crawlers do not run JavaScript).
 
-Third-party design skills (Impeccable, taste, UI/UX Pro Max, Hallmark, Vercel) and the superseded `signal-deck` skill give generic or outdated advice. Where they conflict with the rules above, the project docs win: this is Astro with React islands (ignore Next.js/RSC guidance), icons are `lucide-react`, and no new fonts or palettes.
+Third-party design skills (Impeccable, UI/UX Pro Max, Vercel) and the superseded `signal-deck` skill give generic or outdated advice. Where they conflict with the rules above, the project docs win: this is Astro with React islands (ignore Next.js/RSC guidance), icons are `lucide-react`, and no new fonts or palettes.
 
 ## SEO and agent-discoverability surfaces
 
