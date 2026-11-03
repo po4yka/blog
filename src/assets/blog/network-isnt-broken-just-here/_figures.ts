@@ -69,14 +69,26 @@ export const figures: Record<string, FigureSet> = {
   },
 };
 
+import _l1EnHtml from "./live/01-sixteen-kb-timing.en.html?raw";
+import _l1EnJs from "./live/01-sixteen-kb-timing.en.js?url&no-inline";
+import _l1RuHtml from "./live/01-sixteen-kb-timing.ru.html?raw";
+import _l1RuJs from "./live/01-sixteen-kb-timing.ru.js?url&no-inline";
 import _l2EnHtml from "./live/fat-header-probe.en.html?raw";
 import _l2EnJs from "./live/fat-header-probe.en.js?url&no-inline";
 import _l2RuHtml from "./live/fat-header-probe.ru.html?raw";
 import _l2RuJs from "./live/fat-header-probe.ru.js?url&no-inline";
+import _l3EnHtml from "./live/02-verdict-decision-flow.en.html?raw";
+import _l3EnJs from "./live/02-verdict-decision-flow.en.js?url&no-inline";
+import _l3RuHtml from "./live/02-verdict-decision-flow.ru.html?raw";
+import _l3RuJs from "./live/02-verdict-decision-flow.ru.js?url&no-inline";
 import _l4EnHtml from "./live/fake-ttl-decoy.en.html?raw";
 import _l4EnJs from "./live/fake-ttl-decoy.en.js?url&no-inline";
 import _l4RuHtml from "./live/fake-ttl-decoy.ru.html?raw";
 import _l4RuJs from "./live/fake-ttl-decoy.ru.js?url&no-inline";
+import _l5EnHtml from "./live/04-policy-state-machine.en.html?raw";
+import _l5EnJs from "./live/04-policy-state-machine.en.js?url&no-inline";
+import _l5RuHtml from "./live/04-policy-state-machine.ru.html?raw";
+import _l5RuJs from "./live/04-policy-state-machine.ru.js?url&no-inline";
 
 export interface LiveFigure {
   html: string;
@@ -84,12 +96,24 @@ export interface LiveFigure {
 }
 
 export const live: Record<string, Record<"en" | "ru", LiveFigure>> = {
+  "01-sixteen-kb-timing": {
+    en: { html: _l1EnHtml, js: _l1EnJs },
+    ru: { html: _l1RuHtml, js: _l1RuJs },
+  },
   "fat-header-probe": {
     en: { html: _l2EnHtml, js: _l2EnJs },
     ru: { html: _l2RuHtml, js: _l2RuJs },
   },
+  "02-verdict-decision-flow": {
+    en: { html: _l3EnHtml, js: _l3EnJs },
+    ru: { html: _l3RuHtml, js: _l3RuJs },
+  },
   "fake-ttl-decoy": {
     en: { html: _l4EnHtml, js: _l4EnJs },
     ru: { html: _l4RuHtml, js: _l4RuJs },
+  },
+  "04-policy-state-machine": {
+    en: { html: _l5EnHtml, js: _l5EnJs },
+    ru: { html: _l5RuHtml, js: _l5RuJs },
   },
 };

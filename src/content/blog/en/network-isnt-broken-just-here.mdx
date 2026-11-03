@@ -41,8 +41,9 @@ tcp_connect_failed           never connected
 tls_handshake_failed         TLS setup failed
 ```
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["01-sixteen-kb-timing"].en}
+  live={live["01-sixteen-kb-timing"].en}
   alt="Annotated byte axis of the fat-header probe over one TLS session. Gates at 8 KiB (late_stage_cutoff once a response is seen), 14 KiB (fat_threshold_reached, 16384 minus 2048 bytes), and 16 KiB (FAT_HEADER_THRESHOLD_BYTES). A cut-off at the threshold is logged tcp_16kb_blocked, the focal signal. Below, classify_rst_origin splits a reset by timing: in_path_rst within twice the SYN-ACK RTT, server_rst later."
 />
 
@@ -71,8 +72,9 @@ The classification layer collapses all of it into four verdicts, and those decid
 
 `IP_BLOCK_SUSPECT` is deliberately hard to reach. It needs every DoH-supplied IPv4 address to fail at the SYN, every alternate IPv6 to fail too, and a second independent flow to confirm. Until that confirmation lands, the runner sits in `PendingSecondFlow` and withholds the verdict. A false positive here would shove a connection onto a relay it never needed, so the runner waits for proof. When the verdict does fire, it sets `arm_gate = OwnedStackOnly`: every TLS-family repair is skipped and the engine goes straight to its own stack, the relay path. Rewriting packets is pointless if nothing is home at the address.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["02-verdict-decision-flow"].en}
+  live={live["02-verdict-decision-flow"].en}
   alt="Decision flow from a probe outcome to one of four policy verdicts. The outcome is bucketed into ProbeOutcomeBucket (Healthy, Attention, Failed, Inconclusive); a Failed path carries a FailureClass. The four verdicts are TRANSPARENT_OK, OWNED_STACK_ONLY, NO_DIRECT_SOLUTION, and IP_BLOCK_SUSPECT. IP_BLOCK_SUSPECT is gated behind a dashed PendingSecondFlow node that waits for a second independent flow before the verdict fires."
 />
 
@@ -106,8 +108,9 @@ The learning is keyed to the network as well as the destination. The `Remembered
 
 A remembered policy moves through three states: `observed`, `validated`, `suppressed`. Two consecutive failures of a validated policy flip it to suppressed and lock it out for 24 hours; any success resets the failure count and clears the lock. The table keeps at most 64 rows total and forgets anything older than 90 days. On rejoining a known network, the store replays the validated policy at once, then re-checks quietly in the background. Every handoff between Wi-Fi and cellular recomputes the fingerprint and queries the store. Over weeks the phone ends up holding a private map of which networks break which connections, and how.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["04-policy-state-machine"].en}
+  live={live["04-policy-state-machine"].en}
   alt="State machine of the remembered per-network policy. States observed, validated, suppressed. A new scope enters observed, validates to validated, and a success self-loops there. Two consecutive failures of a validated policy move it to suppressed with a 24-hour lock; any success or lock expiry returns it to validated. The scope key is a SHA-256 hash; the store keeps at most 64 rows and forgets entries older than 90 days."
 />
 

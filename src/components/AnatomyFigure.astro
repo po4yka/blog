@@ -1,7 +1,9 @@
 ---
-// Live isometric figure from havamal's anatomy pipeline. havamal's
-// sync_to_blog.py emits it for a `<picture data-live="anatomy">` block and
-// lists its files in the article's _figures.ts:
+// Live figure from havamal: an isometric anatomy figure or an interactive
+// diagram (a diagram-design figure with a live layer). havamal's
+// sync_to_blog.py emits it for a `<picture data-live="anatomy">` or
+// `<picture data-live="diagram">` block and lists its files in the
+// article's _figures.ts:
 //   variants  the still SVGs, shown through <BlogFigure> (caption, lightbox,
 //             no-JS readers, and the fallback when the module fails)
 //   live      the plate fragment (a ?raw string) and the ES module URL (a

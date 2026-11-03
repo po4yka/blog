@@ -25,33 +25,52 @@
 <line x1="16" y1="40" x2="944" y2="40" stroke="#e9e8e4" stroke-width="1" stroke-opacity="0.12"/>
 <path d="M12 40H20M16 36V44" stroke="#e9e8e4" stroke-width="1" fill="none" stroke-opacity="0.35"/>
 <path d="M940 40H948M944 36V44" stroke="#e9e8e4" stroke-width="1" fill="none" stroke-opacity="0.35"/>
-<rect x="480" y="96" width="352" height="152" fill="#e8634b" fill-opacity="0.04"/>
+<rect data-node="quad-wiki" x="480" y="96" width="352" height="152" fill="#e8634b" fill-opacity="0.04"/>
+<rect data-node="quad-synthesis" x="128" y="96" width="352" height="152" fill="none"/>
+<rect data-node="quad-classic" x="128" y="248" width="352" height="152" fill="none"/>
+<rect data-node="quad-graphs" x="480" y="248" width="352" height="152" fill="none"/>
 <line x1="128" y1="248" x2="832" y2="248" stroke="#e9e8e4" stroke-width="1" marker-start="url(#d-03-compute-shift-quadrant-en-dark-axis-tip)" marker-end="url(#d-03-compute-shift-quadrant-en-dark-axis-tip)" stroke-opacity="0.35"/>
 <line x1="480" y1="400" x2="480" y2="96" stroke="#e9e8e4" stroke-width="1" marker-start="url(#d-03-compute-shift-quadrant-en-dark-axis-tip)" marker-end="url(#d-03-compute-shift-quadrant-en-dark-axis-tip)" stroke-opacity="0.35"/>
 <text x="116" y="252" fill="#8a8a90" font-size="10" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">QUERY-TIME</text>
 <text x="844" y="252" fill="#8a8a90" font-size="10" font-family="'Geist Mono', monospace" letter-spacing="0.10em">INGEST-TIME</text>
 <text x="480" y="84" fill="#8a8a90" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">HUMAN-READABLE ARTIFACT</text>
 <text x="480" y="420" fill="#8a8a90" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">OPAQUE STORE</text>
-<text x="144" y="116" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">READ-TIME SYNTHESIS</text>
-<text x="816" y="116" fill="#e8634b" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">WIKI ZONE</text>
-<text x="144" y="392" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">CLASSIC RAG</text>
-<text x="816" y="392" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">PRE-INDEXED GRAPHS</text>
+<text data-mark="quad-synthesis" x="144" y="116" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">READ-TIME SYNTHESIS</text>
+<text data-mark="quad-wiki" x="816" y="116" fill="#e8634b" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">WIKI ZONE</text>
+<text data-mark="quad-classic" x="144" y="392" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">CLASSIC RAG</text>
+<text data-mark="quad-graphs" x="816" y="392" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">PRE-INDEXED GRAPHS</text>
+<g data-node="wiki">
 <circle cx="664" cy="150" r="5.5" fill="#e8634b"/>
 <text x="676" y="155" fill="#e9e8e4" font-size="15" font-weight="500" font-family="'Geist', sans-serif">LLM Wiki</text>
+</g>
+<g data-node="graphrag">
 <circle cx="740" cy="282" r="4" fill="#e9e8e4"/>
 <text x="752" y="286" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif">GraphRAG</text>
+</g>
+<g data-node="zep">
 <circle cx="610" cy="346" r="4" fill="#e9e8e4"/>
 <text x="622" y="350" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif">Zep · Graphiti</text>
+</g>
+<g data-node="hipporag">
 <circle cx="498" cy="364" r="4" fill="#e9e8e4"/>
 <text x="510" y="368" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif">HippoRAG</text>
+</g>
+<g data-node="lazygraphrag">
 <circle cx="392" cy="310" r="4" fill="#e9e8e4"/>
 <text x="380" y="314" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif" text-anchor="end">LazyGraphRAG</text>
+</g>
+<g data-node="mem0">
 <circle cx="332" cy="340" r="4" fill="#e9e8e4"/>
 <text x="344" y="344" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif">Mem0</text>
+</g>
+<g data-node="letta">
 <circle cx="240" cy="300" r="4" fill="#e9e8e4"/>
 <text x="228" y="304" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif" text-anchor="end">Letta / MemGPT</text>
+</g>
+<g data-node="plain-rag">
 <circle cx="184" cy="364" r="4" fill="#e9e8e4"/>
 <text x="196" y="368" fill="#a6a6ac" font-size="13" font-family="'Geist', sans-serif">Plain RAG</text>
+</g>
 <line x1="16" y1="444" x2="944" y2="444" stroke="#e9e8e4" stroke-width="1" stroke-opacity="0.12"/>
 <text x="24" y="468" fill="#8a8a90" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.16em">LEGEND</text>
 <circle cx="98" cy="464" r="5" fill="#e8634b"/>

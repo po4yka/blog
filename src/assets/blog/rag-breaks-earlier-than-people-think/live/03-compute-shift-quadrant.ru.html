@@ -1,0 +1,245 @@
+<div class="anatomy-live diagram-live" data-anatomy="03-compute-shift-quadrant" lang="ru"><style>.diagram-live{--dg-card:#ffffff;--dg-paper:#f5f3ee;--dg-paper-2:#ebe8e2;--dg-ink:#101012;--dg-muted:#4a4a50;--dg-soft:#6a6a70;--dg-rule:#d5d3cf;--dg-accent:#b83a28;--dg-ink-rgb:16,16,18;--dg-accent-rgb:184,58,40;--dg-muted-rgb:74,74,80;--dg-soft-rgb:106,106,112;--dg-paper-rgb:245,243,238}.diagram-live[data-theme="dark"]{--dg-card:#141416;--dg-paper:#0b0b0c;--dg-paper-2:#141416;--dg-ink:#e9e8e4;--dg-muted:#a6a6ac;--dg-soft:#8a8a90;--dg-rule:rgba(166,166,172,0.25);--dg-accent:#e8634b;--dg-ink-rgb:233,232,228;--dg-accent-rgb:232,99,75;--dg-muted-rgb:166,166,172;--dg-soft-rgb:138,138,144;--dg-paper-rgb:11,11,12}.diagram-live{--dg-sans:'Geist','Geist Variable',system-ui,sans-serif;--dg-mono:'Geist Mono','Geist Mono Variable',ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--dg-sans);color:var(--dg-muted)}.diagram-live svg{display:block;width:100%;height:auto}.diagram-live svg[data-viewport="mobile"]{display:none}@media (max-width:640px){.diagram-live svg[data-viewport="mobile"]{display:block}.diagram-stage:has(svg[data-viewport="mobile"]) svg[data-viewport="desktop"]{display:none}}.diagram-stage{position:relative;border-radius:2px;outline:none}.diagram-stage:focus-visible{outline:2px solid var(--dg-ink);outline-offset:3px}.diagram-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.diagram-chip{font:500 11px/1 var(--dg-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--dg-rule);border-radius:2px;background:var(--dg-card);color:var(--dg-muted);cursor:pointer;-webkit-appearance:none;appearance:none}.diagram-chip[aria-checked="true"],.diagram-chip[aria-pressed="true"]{border-color:var(--dg-ink);color:var(--dg-ink)}.diagram-chip:focus-visible{outline:2px solid var(--dg-ink);outline-offset:2px}.diagram-chip:disabled{opacity:.45;cursor:default}.diagram-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap;margin-top:10px;font-family:var(--dg-mono);font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:var(--dg-soft)}.diagram-readout{color:var(--dg-ink);text-align:right;margin-left:auto}.diagram-live [data-hint="touch"]{display:none}@media (hover:none) and (pointer:coarse){.diagram-live [data-hint="keys"]{display:none}.diagram-live [data-hint="touch"]{display:inline}}.diagram-live:not([data-motion="reduce"]) [data-node],.diagram-live:not([data-motion="reduce"]) [data-edge],.diagram-live:not([data-motion="reduce"]) [data-mark]{transition:opacity .25s ease,stroke .25s ease,fill .25s ease}.diagram-live .is-dim{opacity:.28}.diagram-live rect[data-node].is-on{fill:rgba(var(--dg-accent-rgb),0.06)}.diagram-live g[data-node]{cursor:pointer}.diagram-live g[data-node].is-on circle{fill:var(--dg-accent);stroke:rgba(var(--dg-accent-rgb),0.22);stroke-width:6}.diagram-live g[data-node].is-on text,.diagram-live text[data-mark].is-on{fill:var(--dg-accent)}.diagram-live .diagram-key{margin-right:7px;color:var(--dg-soft)}</style><div class="diagram-stage" tabindex="0" role="group" aria-label="Рисунок 4, где каждая система платит за вычисления: выберите систему"><svg data-viewport="desktop" focusable="false" aria-hidden="true" viewBox="0 0 960 568" xmlns="http://www.w3.org/2000/svg" aria-labelledby="03-compute-shift-quadrant-desktop-compute-shift-quadrant-title 03-compute-shift-quadrant-desktop-compute-shift-quadrant-desc">
+      <title id="03-compute-shift-quadrant-desktop-compute-shift-quadrant-title">Где каждая система платит за вычисления</title>
+      <desc id="03-compute-shift-quadrant-desktop-compute-shift-quadrant-desc">Квадрант, располагающий восемь систем по двум осям: вычисление на запросе ↔ на ингесте (горизонталь), непрозрачное хранилище ↔ читаемый человеком артефакт (вертикаль). Обычный RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti и GraphRAG кучкуются в нижней половине (непрозрачные хранилища). LLM Wiki стоит одна в верхнем правом углу (тяжёлый ингест, markdown-артефакт).</desc>
+      <defs>
+        <marker id="03-compute-shift-quadrant-desktop-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+        </marker>
+        <marker id="03-compute-shift-quadrant-desktop-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-accent)"/>
+        </marker>
+        <marker id="03-compute-shift-quadrant-desktop-axis-tip" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto-start-reverse">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+        </marker>
+      </defs>
+
+      <!-- ── Panel ─────────────────────────────────────────────────────── -->
+      <rect x="0.5" y="0.5" width="959" height="567" rx="2" fill="var(--dg-card)" stroke="var(--dg-rule)" stroke-width="1"/>
+
+      <!-- ── Header row ────────────────────────────────────────────────── -->
+      <text x="24" y="25" fill="var(--dg-muted)" font-size="14" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">РИС. 04 / ГДЕ ПЛАТИТ КАЖДАЯ СИСТЕМА</text>
+      <text x="936" y="25" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="end">ВОСЕМЬ СИСТЕМ · ДВЕ ОСИ</text>
+      <line x1="16" y1="40" x2="944" y2="40" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <path d="M12 40H20M16 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+      <path d="M940 40H948M944 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+
+      <!-- ── Wiki zone tint (painted first) ────────────────────────────── -->
+      <rect data-node="quad-wiki" x="480" y="96" width="352" height="152" fill="rgba(var(--dg-accent-rgb),0.04)"/>
+      <rect data-node="quad-synthesis" x="128" y="96" width="352" height="152" fill="none"/>
+      <rect data-node="quad-classic" x="128" y="248" width="352" height="152" fill="none"/>
+      <rect data-node="quad-graphs" x="480" y="248" width="352" height="152" fill="none"/>
+
+      <!-- ── Axes ──────────────────────────────────────────────────────── -->
+      <line x1="128" y1="248" x2="832" y2="248" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" marker-start="url(#03-compute-shift-quadrant-desktop-axis-tip)" marker-end="url(#03-compute-shift-quadrant-desktop-axis-tip)"/>
+      <line x1="480" y1="400" x2="480" y2="96" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" marker-start="url(#03-compute-shift-quadrant-desktop-axis-tip)" marker-end="url(#03-compute-shift-quadrant-desktop-axis-tip)"/>
+
+      <text x="116" y="252" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">НА ЗАПРОСЕ</text>
+      <text x="844" y="252" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" letter-spacing="0.10em">НА ИНГЕСТЕ</text>
+      <text x="480" y="84" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.10em">ЧИТАЕМЫЙ ЧЕЛОВЕКОМ АРТЕФАКТ</text>
+      <text x="480" y="420" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.10em">НЕПРОЗРАЧНОЕ ХРАНИЛИЩЕ</text>
+
+      <!-- ── Quadrant captions ─────────────────────────────────────────── -->
+      <text data-mark="quad-synthesis" x="144" y="116" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">СИНТЕЗ ПРИ ЧТЕНИИ</text>
+      <text data-mark="quad-wiki" x="816" y="116" fill="var(--dg-accent)" font-size="10" font-weight="500" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">ЗОНА ВИКИ</text>
+      <text data-mark="quad-classic" x="144" y="392" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">КЛАССИЧЕСКИЙ RAG</text>
+      <text data-mark="quad-graphs" x="816" y="392" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">ПРЕДИНДЕКСИРОВАННЫЕ ГРАФЫ</text>
+
+      <!-- ── Systems ───────────────────────────────────────────────────── -->
+
+      <!-- LLM Wiki (focal) -->
+      <g data-node="wiki">
+        <circle cx="664" cy="150" r="5.5" fill="var(--dg-accent)"/>
+        <text x="676" y="155" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">LLM Wiki</text>
+      </g>
+
+      <g data-node="graphrag">
+        <circle cx="740" cy="282" r="4" fill="var(--dg-ink)"/>
+        <text x="752" y="286" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)">GraphRAG</text>
+      </g>
+
+      <g data-node="zep">
+        <circle cx="610" cy="346" r="4" fill="var(--dg-ink)"/>
+        <text x="622" y="350" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)">Zep · Graphiti</text>
+      </g>
+
+      <g data-node="hipporag">
+        <circle cx="498" cy="364" r="4" fill="var(--dg-ink)"/>
+        <text x="510" y="368" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)">HippoRAG</text>
+      </g>
+
+      <g data-node="lazygraphrag">
+        <circle cx="392" cy="310" r="4" fill="var(--dg-ink)"/>
+        <text x="380" y="314" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)" text-anchor="end">LazyGraphRAG</text>
+      </g>
+
+      <g data-node="mem0">
+        <circle cx="332" cy="340" r="4" fill="var(--dg-ink)"/>
+        <text x="344" y="344" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)">Mem0</text>
+      </g>
+
+      <g data-node="letta">
+        <circle cx="240" cy="300" r="4" fill="var(--dg-ink)"/>
+        <text x="228" y="304" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)" text-anchor="end">Letta / MemGPT</text>
+      </g>
+
+      <g data-node="plain-rag">
+        <circle cx="184" cy="364" r="4" fill="var(--dg-ink)"/>
+        <text x="196" y="368" fill="var(--dg-muted)" font-size="13" font-family="var(--dg-sans)">Обычный RAG</text>
+      </g>
+
+      <!-- ── Footer ────────────────────────────────────────────────────── -->
+      <line x1="16" y1="444" x2="944" y2="444" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <text x="24" y="468" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ЛЕГЕНДА</text>
+      <circle cx="98" cy="464" r="5" fill="var(--dg-accent)"/>
+      <text x="110" y="468" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Ход, за который выступает статья</text>
+      <circle cx="352" cy="464" r="4" fill="var(--dg-ink)"/>
+      <text x="364" y="468" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Выпущенная система</text>
+
+      <text x="24" y="492" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ОСИ</text>
+      <text x="92" y="492" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Горизонталь: где платят за вычисления — на запросе или один раз на ингесте.</text>
+      <text x="92" y="508" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Вертикаль: что хранит система — непрозрачное хранилище или читаемый артефакт.</text>
+
+      <text x="24" y="532" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ВЫВОД</text>
+      <text x="92" y="532" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Позиция — это сигнал.</text>
+      <text x="92" y="548" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Только верхний правый угол держит скомпилированный артефакт в файлах, которые можно открыть.</text>
+      <text x="936" y="548" fill="var(--dg-soft)" font-size="11" font-family="var(--dg-mono)" text-anchor="end">compute-shift · quadrant</text>
+    </svg><svg data-viewport="mobile" focusable="false" aria-hidden="true" viewBox="0 0 680 1056" xmlns="http://www.w3.org/2000/svg" aria-labelledby="03-compute-shift-quadrant-mobile-compute-shift-quadrant-title 03-compute-shift-quadrant-mobile-compute-shift-quadrant-desc">
+    <title id="03-compute-shift-quadrant-mobile-compute-shift-quadrant-title">Где каждая система платит за вычисления</title>
+    <desc id="03-compute-shift-quadrant-mobile-compute-shift-quadrant-desc">Квадрант, располагающий восемь систем по двум осям: вычисление на запросе ↔ на ингесте (горизонталь), непрозрачное хранилище ↔ читаемый человеком артефакт (вертикаль). Обычный RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti и GraphRAG кучкуются в нижней половине (непрозрачные хранилища). LLM Wiki стоит одна в верхнем правом углу (тяжёлый ингест, markdown-артефакт).</desc>
+    <defs>
+      <marker id="03-compute-shift-quadrant-mobile-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+      </marker>
+      <marker id="03-compute-shift-quadrant-mobile-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="var(--dg-accent)"/>
+      </marker>
+      <marker id="03-compute-shift-quadrant-mobile-axis-tip" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto-start-reverse">
+        <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+      </marker>
+    </defs>
+
+    <!-- ── Panel ─────────────────────────────────────────────────────── -->
+    <rect x="0.5" y="0.5" width="679" height="1055" rx="2" fill="var(--dg-card)" stroke="var(--dg-rule)" stroke-width="1"/>
+
+    <!-- ── Header rows ───────────────────────────────────────────────── -->
+    <text x="20" y="28" fill="var(--dg-muted)" font-size="18" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">РИС. 04 / ГДЕ ПЛАТИТ КАЖДАЯ СИСТЕМА</text>
+    <text x="20" y="49" fill="var(--dg-soft)" font-size="15" font-family="var(--dg-mono)">ВОСЕМЬ СИСТЕМ · ДВЕ ОСИ</text>
+    <line x1="12" y1="60" x2="668" y2="60" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+    <path d="M8 60H16M12 56V64" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+    <path d="M664 60H672M668 56V64" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+
+    <!-- ── Wiki zone tint ────────────────────────────────────────────── -->
+    <rect data-node="quad-wiki" x="340" y="104" width="292" height="292" fill="rgba(var(--dg-accent-rgb),0.04)"/>
+    <rect data-node="quad-synthesis" x="48" y="104" width="292" height="292" fill="none"/>
+    <rect data-node="quad-classic" x="48" y="396" width="292" height="292" fill="none"/>
+    <rect data-node="quad-graphs" x="340" y="396" width="292" height="292" fill="none"/>
+
+    <!-- ── Axes ──────────────────────────────────────────────────────── -->
+    <line x1="48" y1="396" x2="632" y2="396" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1.3" marker-start="url(#03-compute-shift-quadrant-mobile-axis-tip)" marker-end="url(#03-compute-shift-quadrant-mobile-axis-tip)"/>
+    <line x1="340" y1="688" x2="340" y2="104" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1.3" marker-start="url(#03-compute-shift-quadrant-mobile-axis-tip)" marker-end="url(#03-compute-shift-quadrant-mobile-axis-tip)"/>
+
+    <text x="48" y="420" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" letter-spacing="0.10em">НА ЗАПРОСЕ</text>
+    <text x="632" y="420" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">НА ИНГЕСТЕ</text>
+    <text x="340" y="92" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.10em">ЧИТАЕМЫЙ ЧЕЛОВЕКОМ АРТЕФАКТ</text>
+    <text x="340" y="714" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.10em">НЕПРОЗРАЧНОЕ ХРАНИЛИЩЕ</text>
+
+    <!-- ── Quadrant captions ─────────────────────────────────────────── -->
+    <text data-mark="quad-synthesis" x="64" y="128" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">СИНТЕЗ ПРИ ЧТЕНИИ</text>
+    <text data-mark="quad-wiki" x="616" y="128" fill="var(--dg-accent)" font-size="13" font-weight="500" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">ЗОНА ВИКИ</text>
+    <text data-mark="quad-classic" x="64" y="672" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">КЛАССИЧЕСКИЙ RAG</text>
+    <text data-mark="quad-graphs" x="616" y="672" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" text-anchor="end" letter-spacing="0.10em">ПРЕДИНДЕКСИРОВАННЫЕ ГРАФЫ</text>
+
+    <!-- ── Systems (numbered; names in the footer list) ──────────────── -->
+    <g data-node="wiki">
+      <circle cx="492" cy="208" r="7" fill="var(--dg-accent)"/>
+      <text x="506" y="213" fill="var(--dg-accent)" font-size="14" font-weight="500" font-family="var(--dg-mono)">01</text>
+    </g>
+
+    <g data-node="graphrag">
+      <circle cx="556" cy="460" r="5" fill="var(--dg-ink)"/>
+      <text x="568" y="465" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">02</text>
+    </g>
+
+    <g data-node="zep">
+      <circle cx="448" cy="584" r="5" fill="var(--dg-ink)"/>
+      <text x="460" y="589" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">03</text>
+    </g>
+
+    <g data-node="hipporag">
+      <circle cx="356" cy="620" r="5" fill="var(--dg-ink)"/>
+      <text x="368" y="625" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">04</text>
+    </g>
+
+    <g data-node="lazygraphrag">
+      <circle cx="268" cy="516" r="5" fill="var(--dg-ink)"/>
+      <text x="280" y="521" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">05</text>
+    </g>
+
+    <g data-node="mem0">
+      <circle cx="216" cy="572" r="5" fill="var(--dg-ink)"/>
+      <text x="228" y="577" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">06</text>
+    </g>
+
+    <g data-node="letta">
+      <circle cx="140" cy="496" r="5" fill="var(--dg-ink)"/>
+      <text x="152" y="501" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">07</text>
+    </g>
+
+    <g data-node="plain-rag">
+      <circle cx="96" cy="620" r="5" fill="var(--dg-ink)"/>
+      <text x="108" y="625" fill="var(--dg-muted)" font-size="14" font-family="var(--dg-mono)">08</text>
+    </g>
+
+    <!-- ── Footer ────────────────────────────────────────────────────── -->
+    <line x1="12" y1="736" x2="668" y2="736" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+    <text x="20" y="764" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">СИСТЕМЫ</text>
+    <g data-node="wiki">
+      <text x="112" y="764" fill="var(--dg-accent)" font-size="14" font-weight="500" font-family="var(--dg-mono)">01</text>
+      <text x="140" y="764" fill="var(--dg-ink)" font-size="16" font-weight="500" font-family="var(--dg-sans)">LLM Wiki</text>
+    </g>
+    <g data-node="graphrag">
+      <text x="392" y="764" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">02</text>
+      <text x="420" y="764" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">GraphRAG</text>
+    </g>
+    <g data-node="zep">
+      <text x="112" y="788" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">03</text>
+      <text x="140" y="788" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Zep · Graphiti</text>
+    </g>
+    <g data-node="hipporag">
+      <text x="392" y="788" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">04</text>
+      <text x="420" y="788" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">HippoRAG</text>
+    </g>
+    <g data-node="lazygraphrag">
+      <text x="112" y="812" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">05</text>
+      <text x="140" y="812" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">LazyGraphRAG</text>
+    </g>
+    <g data-node="mem0">
+      <text x="392" y="812" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">06</text>
+      <text x="420" y="812" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Mem0</text>
+    </g>
+    <g data-node="letta">
+      <text x="112" y="836" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">07</text>
+      <text x="140" y="836" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Letta / MemGPT</text>
+    </g>
+    <g data-node="plain-rag">
+      <text x="392" y="836" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)">08</text>
+      <text x="420" y="836" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Обычный RAG</text>
+    </g>
+
+    <text x="20" y="868" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ЛЕГЕНДА</text>
+    <circle cx="119" cy="863" r="6.5" fill="var(--dg-accent)"/>
+    <text x="134" y="868" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Ход, за который выступает статья</text>
+    <circle cx="119" cy="887" r="5" fill="var(--dg-ink)"/>
+    <text x="134" y="892" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Выпущенная система</text>
+
+    <text x="20" y="924" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ОСИ</text>
+    <text x="112" y="924" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Горизонталь: где платят за вычисления — на запросе</text>
+    <text x="112" y="944" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">или один раз на ингесте. Вертикаль: что хранит</text>
+    <text x="112" y="964" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">система — непрозрачное хранилище или артефакт.</text>
+
+    <text x="20" y="996" fill="var(--dg-soft)" font-size="13" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ВЫВОД</text>
+    <text x="112" y="996" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">Позиция — это сигнал. Только верхний правый угол</text>
+    <text x="112" y="1016" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">держит скомпилированный артефакт в файлах,</text>
+    <text x="112" y="1036" fill="var(--dg-muted)" font-size="16" font-family="var(--dg-sans)">которые человек может открыть.</text>
+    <text x="660" y="1036" fill="var(--dg-soft)" font-size="14" font-family="var(--dg-mono)" text-anchor="end">compute-shift · quadrant</text>
+  </svg></div><div class="diagram-controls" role="radiogroup" aria-label="Системы в квадранте"><button type="button" class="diagram-chip" role="radio" data-pick="0" aria-checked="false" aria-keyshortcuts="1"><span class="diagram-key" aria-hidden="true">01</span>LLM Wiki</button><button type="button" class="diagram-chip" role="radio" data-pick="1" aria-checked="false" aria-keyshortcuts="2"><span class="diagram-key" aria-hidden="true">02</span>GraphRAG</button><button type="button" class="diagram-chip" role="radio" data-pick="2" aria-checked="false" aria-keyshortcuts="3"><span class="diagram-key" aria-hidden="true">03</span>Zep · Graphiti</button><button type="button" class="diagram-chip" role="radio" data-pick="3" aria-checked="false" aria-keyshortcuts="4"><span class="diagram-key" aria-hidden="true">04</span>HippoRAG</button><button type="button" class="diagram-chip" role="radio" data-pick="4" aria-checked="false" aria-keyshortcuts="5"><span class="diagram-key" aria-hidden="true">05</span>LazyGraphRAG</button><button type="button" class="diagram-chip" role="radio" data-pick="5" aria-checked="false" aria-keyshortcuts="6"><span class="diagram-key" aria-hidden="true">06</span>Mem0</button><button type="button" class="diagram-chip" role="radio" data-pick="6" aria-checked="false" aria-keyshortcuts="7"><span class="diagram-key" aria-hidden="true">07</span>Letta / MemGPT</button><button type="button" class="diagram-chip" role="radio" data-pick="7" aria-checked="false" aria-keyshortcuts="8"><span class="diagram-key" aria-hidden="true">08</span>Обычный RAG</button></div><div class="diagram-foot"><span class="diagram-hint"><span data-hint="keys">← → или 1–8 — выбрать систему · Esc — сброс</span><span data-hint="touch">Нажмите на систему</span></span><span class="diagram-readout" data-readout aria-live="polite">Выберите систему, чтобы увидеть, где она платит</span></div></div>

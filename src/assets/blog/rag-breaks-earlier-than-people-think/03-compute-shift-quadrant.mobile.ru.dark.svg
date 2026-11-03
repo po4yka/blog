@@ -25,51 +25,86 @@
 <line x1="12" y1="60" x2="668" y2="60" stroke="#e9e8e4" stroke-width="1" stroke-opacity="0.12"/>
 <path d="M8 60H16M12 56V64" stroke="#e9e8e4" stroke-width="1" fill="none" stroke-opacity="0.35"/>
 <path d="M664 60H672M668 56V64" stroke="#e9e8e4" stroke-width="1" fill="none" stroke-opacity="0.35"/>
-<rect x="340" y="104" width="292" height="292" fill="#e8634b" fill-opacity="0.04"/>
+<rect data-node="quad-wiki" x="340" y="104" width="292" height="292" fill="#e8634b" fill-opacity="0.04"/>
+<rect data-node="quad-synthesis" x="48" y="104" width="292" height="292" fill="none"/>
+<rect data-node="quad-classic" x="48" y="396" width="292" height="292" fill="none"/>
+<rect data-node="quad-graphs" x="340" y="396" width="292" height="292" fill="none"/>
 <line x1="48" y1="396" x2="632" y2="396" stroke="#e9e8e4" stroke-width="1.3" marker-start="url(#d-03-compute-shift-quadrant-mobile-ru-dark-axis-tip)" marker-end="url(#d-03-compute-shift-quadrant-mobile-ru-dark-axis-tip)" stroke-opacity="0.35"/>
 <line x1="340" y1="688" x2="340" y2="104" stroke="#e9e8e4" stroke-width="1.3" marker-start="url(#d-03-compute-shift-quadrant-mobile-ru-dark-axis-tip)" marker-end="url(#d-03-compute-shift-quadrant-mobile-ru-dark-axis-tip)" stroke-opacity="0.35"/>
 <text x="48" y="420" fill="#8a8a90" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.10em">НА ЗАПРОСЕ</text>
 <text x="632" y="420" fill="#8a8a90" font-size="13" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">НА ИНГЕСТЕ</text>
 <text x="340" y="92" fill="#8a8a90" font-size="13" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">ЧИТАЕМЫЙ ЧЕЛОВЕКОМ АРТЕФАКТ</text>
 <text x="340" y="714" fill="#8a8a90" font-size="13" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">НЕПРОЗРАЧНОЕ ХРАНИЛИЩЕ</text>
-<text x="64" y="128" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">СИНТЕЗ ПРИ ЧТЕНИИ</text>
-<text x="616" y="128" fill="#e8634b" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">ЗОНА ВИКИ</text>
-<text x="64" y="672" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">КЛАССИЧЕСКИЙ RAG</text>
-<text x="616" y="672" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">ПРЕДИНДЕКСИРОВАННЫЕ ГРАФЫ</text>
+<text data-mark="quad-synthesis" x="64" y="128" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">СИНТЕЗ ПРИ ЧТЕНИИ</text>
+<text data-mark="quad-wiki" x="616" y="128" fill="#e8634b" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">ЗОНА ВИКИ</text>
+<text data-mark="quad-classic" x="64" y="672" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">КЛАССИЧЕСКИЙ RAG</text>
+<text data-mark="quad-graphs" x="616" y="672" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.10em">ПРЕДИНДЕКСИРОВАННЫЕ ГРАФЫ</text>
+<g data-node="wiki">
 <circle cx="492" cy="208" r="7" fill="#e8634b"/>
 <text x="506" y="213" fill="#e8634b" font-size="14" font-weight="500" font-family="'Geist Mono', monospace">01</text>
+</g>
+<g data-node="graphrag">
 <circle cx="556" cy="460" r="5" fill="#e9e8e4"/>
 <text x="568" y="465" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">02</text>
+</g>
+<g data-node="zep">
 <circle cx="448" cy="584" r="5" fill="#e9e8e4"/>
 <text x="460" y="589" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">03</text>
+</g>
+<g data-node="hipporag">
 <circle cx="356" cy="620" r="5" fill="#e9e8e4"/>
 <text x="368" y="625" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">04</text>
+</g>
+<g data-node="lazygraphrag">
 <circle cx="268" cy="516" r="5" fill="#e9e8e4"/>
 <text x="280" y="521" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">05</text>
+</g>
+<g data-node="mem0">
 <circle cx="216" cy="572" r="5" fill="#e9e8e4"/>
 <text x="228" y="577" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">06</text>
+</g>
+<g data-node="letta">
 <circle cx="140" cy="496" r="5" fill="#e9e8e4"/>
 <text x="152" y="501" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">07</text>
+</g>
+<g data-node="plain-rag">
 <circle cx="96" cy="620" r="5" fill="#e9e8e4"/>
 <text x="108" y="625" fill="#a6a6ac" font-size="14" font-family="'Geist Mono', monospace">08</text>
+</g>
 <line x1="12" y1="736" x2="668" y2="736" stroke="#e9e8e4" stroke-width="1" stroke-opacity="0.12"/>
 <text x="20" y="764" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.16em">СИСТЕМЫ</text>
+<g data-node="wiki">
 <text x="112" y="764" fill="#e8634b" font-size="14" font-weight="500" font-family="'Geist Mono', monospace">01</text>
 <text x="140" y="764" fill="#e9e8e4" font-size="16" font-weight="500" font-family="'Geist', sans-serif">LLM Wiki</text>
+</g>
+<g data-node="graphrag">
 <text x="392" y="764" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">02</text>
 <text x="420" y="764" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">GraphRAG</text>
+</g>
+<g data-node="zep">
 <text x="112" y="788" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">03</text>
 <text x="140" y="788" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">Zep · Graphiti</text>
+</g>
+<g data-node="hipporag">
 <text x="392" y="788" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">04</text>
 <text x="420" y="788" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">HippoRAG</text>
+</g>
+<g data-node="lazygraphrag">
 <text x="112" y="812" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">05</text>
 <text x="140" y="812" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">LazyGraphRAG</text>
+</g>
+<g data-node="mem0">
 <text x="392" y="812" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">06</text>
 <text x="420" y="812" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">Mem0</text>
+</g>
+<g data-node="letta">
 <text x="112" y="836" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">07</text>
 <text x="140" y="836" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">Letta / MemGPT</text>
+</g>
+<g data-node="plain-rag">
 <text x="392" y="836" fill="#8a8a90" font-size="14" font-family="'Geist Mono', monospace">08</text>
 <text x="420" y="836" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">Обычный RAG</text>
+</g>
 <text x="20" y="868" fill="#8a8a90" font-size="13" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.16em">ЛЕГЕНДА</text>
 <circle cx="119" cy="863" r="6.5" fill="#e8634b"/>
 <text x="134" y="868" fill="#a6a6ac" font-size="16" font-family="'Geist', sans-serif">Ход, за который выступает статья</text>
