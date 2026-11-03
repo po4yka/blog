@@ -13,7 +13,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Jun 2026",
     isoDate: "2026-06-19",
     isoDateModified: "2026-11-03",
-    wordCount: 2910,
+    wordCount: 3217,
     headings: [2, 2, 2, 2, 2],
     summary:
       "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
@@ -28,7 +28,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     date: "Jun 2026",
     isoDate: "2026-06-19",
     isoDateModified: "2026-11-03",
-    wordCount: 2421,
+    wordCount: 2684,
     headings: [2, 2, 2, 2, 2],
     summary:
       "Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.",
@@ -42,8 +42,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     title: "RAG breaks earlier than people think",
     date: "Apr 2026",
     isoDate: "2026-04-15",
-    isoDateModified: "2026-04-15",
-    wordCount: 4335,
+    isoDateModified: "2026-11-03",
+    wordCount: 4605,
     headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
@@ -57,8 +57,8 @@ export const blogPostsMeta: BlogPostMeta[] = [
     title: "RAG ломается раньше, чем кажется",
     date: "Apr 2026",
     isoDate: "2026-04-15",
-    isoDateModified: "2026-04-15",
-    wordCount: 3884,
+    isoDateModified: "2026-11-03",
+    wordCount: 4116,
     headings: [2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 2, 2, 2],
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",

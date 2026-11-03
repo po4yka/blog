@@ -3,10 +3,10 @@
 
 import type { ImageMetadata } from "astro";
 
-import _f1EnDL from "./01-sixteen-kb-timing.en.light.png";
-import _f1EnDD from "./01-sixteen-kb-timing.en.dark.png";
-import _f1RuDL from "./01-sixteen-kb-timing.ru.light.png";
-import _f1RuDD from "./01-sixteen-kb-timing.ru.dark.png";
+import _f1EnDL from "./01-sixteen-kb-timing.en.light.svg";
+import _f1EnDD from "./01-sixteen-kb-timing.en.dark.svg";
+import _f1RuDL from "./01-sixteen-kb-timing.ru.light.svg";
+import _f1RuDD from "./01-sixteen-kb-timing.ru.dark.svg";
 
 import _f2EnDL from "./fat-header-probe.en.light.svg";
 import _f2EnDD from "./fat-header-probe.en.dark.svg";
@@ -18,15 +18,20 @@ import _f3EnDD from "./02-verdict-decision-flow.en.dark.svg";
 import _f3RuDL from "./02-verdict-decision-flow.ru.light.svg";
 import _f3RuDD from "./02-verdict-decision-flow.ru.dark.svg";
 
-import _f4EnDL from "./04-policy-state-machine.en.light.png";
-import _f4EnDD from "./04-policy-state-machine.en.dark.png";
-import _f4RuDL from "./04-policy-state-machine.ru.light.png";
-import _f4RuDD from "./04-policy-state-machine.ru.dark.png";
+import _f4EnDL from "./fake-ttl-decoy.en.light.svg";
+import _f4EnDD from "./fake-ttl-decoy.en.dark.svg";
+import _f4RuDL from "./fake-ttl-decoy.ru.light.svg";
+import _f4RuDD from "./fake-ttl-decoy.ru.dark.svg";
 
-import _f5EnDL from "./03-layer-map.en.light.png";
-import _f5EnDD from "./03-layer-map.en.dark.png";
-import _f5RuDL from "./03-layer-map.ru.light.png";
-import _f5RuDD from "./03-layer-map.ru.dark.png";
+import _f5EnDL from "./04-policy-state-machine.en.light.svg";
+import _f5EnDD from "./04-policy-state-machine.en.dark.svg";
+import _f5RuDL from "./04-policy-state-machine.ru.light.svg";
+import _f5RuDD from "./04-policy-state-machine.ru.dark.svg";
+
+import _f6EnDL from "./03-layer-map.en.light.svg";
+import _f6EnDD from "./03-layer-map.en.dark.svg";
+import _f6RuDL from "./03-layer-map.ru.light.svg";
+import _f6RuDD from "./03-layer-map.ru.dark.svg";
 
 export interface FigureVariants {
   desktopLight: ImageMetadata;
@@ -50,13 +55,17 @@ export const figures: Record<string, FigureSet> = {
     en: { desktopLight: _f3EnDL, desktopDark: _f3EnDD },
     ru: { desktopLight: _f3RuDL, desktopDark: _f3RuDD },
   },
-  "04-policy-state-machine": {
+  "fake-ttl-decoy": {
     en: { desktopLight: _f4EnDL, desktopDark: _f4EnDD },
     ru: { desktopLight: _f4RuDL, desktopDark: _f4RuDD },
   },
-  "03-layer-map": {
+  "04-policy-state-machine": {
     en: { desktopLight: _f5EnDL, desktopDark: _f5EnDD },
     ru: { desktopLight: _f5RuDL, desktopDark: _f5RuDD },
+  },
+  "03-layer-map": {
+    en: { desktopLight: _f6EnDL, desktopDark: _f6EnDD },
+    ru: { desktopLight: _f6RuDL, desktopDark: _f6RuDD },
   },
 };
 
@@ -64,6 +73,10 @@ import _l2EnHtml from "./live/fat-header-probe.en.html?raw";
 import _l2EnJs from "./live/fat-header-probe.en.js?url&no-inline";
 import _l2RuHtml from "./live/fat-header-probe.ru.html?raw";
 import _l2RuJs from "./live/fat-header-probe.ru.js?url&no-inline";
+import _l4EnHtml from "./live/fake-ttl-decoy.en.html?raw";
+import _l4EnJs from "./live/fake-ttl-decoy.en.js?url&no-inline";
+import _l4RuHtml from "./live/fake-ttl-decoy.ru.html?raw";
+import _l4RuJs from "./live/fake-ttl-decoy.ru.js?url&no-inline";
 
 export interface LiveFigure {
   html: string;
@@ -74,5 +87,9 @@ export const live: Record<string, Record<"en" | "ru", LiveFigure>> = {
   "fat-header-probe": {
     en: { html: _l2EnHtml, js: _l2EnJs },
     ru: { html: _l2RuHtml, js: _l2RuJs },
+  },
+  "fake-ttl-decoy": {
+    en: { html: _l4EnHtml, js: _l4EnJs },
+    ru: { html: _l4RuHtml, js: _l4RuJs },
   },
 };
