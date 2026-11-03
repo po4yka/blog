@@ -1,0 +1,207 @@
+<div class="anatomy-live diagram-live" data-anatomy="01-sixteen-kb-timing" lang="ru"><style>.diagram-live{--dg-card:#ffffff;--dg-paper:#f5f3ee;--dg-paper-2:#ebe8e2;--dg-ink:#101012;--dg-muted:#4a4a50;--dg-soft:#6a6a70;--dg-rule:#d5d3cf;--dg-accent:#b83a28;--dg-ink-rgb:16,16,18;--dg-accent-rgb:184,58,40;--dg-muted-rgb:74,74,80;--dg-soft-rgb:106,106,112;--dg-paper-rgb:245,243,238}.diagram-live[data-theme="dark"]{--dg-card:#141416;--dg-paper:#0b0b0c;--dg-paper-2:#141416;--dg-ink:#e9e8e4;--dg-muted:#a6a6ac;--dg-soft:#8a8a90;--dg-rule:rgba(166,166,172,0.25);--dg-accent:#e8634b;--dg-ink-rgb:233,232,228;--dg-accent-rgb:232,99,75;--dg-muted-rgb:166,166,172;--dg-soft-rgb:138,138,144;--dg-paper-rgb:11,11,12}.diagram-live{--dg-sans:'Geist','Geist Variable',system-ui,sans-serif;--dg-mono:'Geist Mono','Geist Mono Variable',ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--dg-sans);color:var(--dg-muted)}.diagram-live svg{display:block;width:100%;height:auto}.diagram-live svg[data-viewport="mobile"]{display:none}@media (max-width:640px){.diagram-live svg[data-viewport="mobile"]{display:block}.diagram-stage:has(svg[data-viewport="mobile"]) svg[data-viewport="desktop"]{display:none}}.diagram-stage{position:relative;border-radius:2px;outline:none}.diagram-stage:focus-visible{outline:2px solid var(--dg-ink);outline-offset:3px}.diagram-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.diagram-chip{font:500 11px/1 var(--dg-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--dg-rule);border-radius:2px;background:var(--dg-card);color:var(--dg-muted);cursor:pointer;-webkit-appearance:none;appearance:none}.diagram-chip[aria-checked="true"],.diagram-chip[aria-pressed="true"]{border-color:var(--dg-ink);color:var(--dg-ink)}.diagram-chip:focus-visible{outline:2px solid var(--dg-ink);outline-offset:2px}.diagram-chip:disabled{opacity:.45;cursor:default}.diagram-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap;margin-top:10px;font-family:var(--dg-mono);font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:var(--dg-soft)}.diagram-readout{color:var(--dg-ink);text-align:right;margin-left:auto}.diagram-live [data-hint="touch"]{display:none}@media (hover:none) and (pointer:coarse){.diagram-live [data-hint="keys"]{display:none}.diagram-live [data-hint="touch"]{display:inline}}.diagram-live:not([data-motion="reduce"]) [data-node],.diagram-live:not([data-motion="reduce"]) [data-edge],.diagram-live:not([data-motion="reduce"]) [data-mark]{transition:opacity .25s ease,stroke .25s ease,fill .25s ease}.diagram-live .is-dim{opacity:.28}.diagram-live .diagram-stage::after{content:"";position:absolute;top:26.098901098901102%;height:5.21978021978022%;left:var(--kib-x,65.41666666666667%);width:2px;margin-left:-1px;background:var(--dg-accent);pointer-events:none}.diagram-live:not([data-motion="reduce"]) .diagram-stage::after{transition:left .25s ease}.diagram-live [data-node].is-on > rect:nth-of-type(2){stroke:var(--dg-ink);stroke-width:2;stroke-dasharray:none}.diagram-live [data-node="blocked"].is-on > rect:nth-of-type(2){stroke:var(--dg-accent)}.diagram-live [data-node].is-on > line{stroke:var(--dg-accent);stroke-width:2}.diagram-live [data-node].is-on > text:first-child{fill:var(--dg-accent)}.diagram-live .diagram-stage{cursor:pointer}.diagram-live .diagram-chip,.diagram-live .diagram-readout{text-transform:none}</style><div class="diagram-stage" tabindex="0" role="slider" aria-label="Порог толстого заголовка. Задайте, сколько KiB сессия успела отправить до обрыва, от 0 до 16, стрелками влево и вправо, клавишами Home и End или цифрами 1–3 для отметок 8, 14 и 16 KiB. На оси подсвечивается исход." aria-valuemin="0" aria-valuemax="16" aria-valuenow="14" aria-valuetext="Отправлено 14 KiB: tcp_16kb_blocked, сброс или зависание на пороге"><svg data-viewport="desktop" focusable="false" aria-hidden="true" viewBox="0 0 960 728" xmlns="http://www.w3.org/2000/svg" aria-labelledby="01-sixteen-kb-timing-desktop-sixteen-kb-timing-title 01-sixteen-kb-timing-desktop-sixteen-kb-timing-desc">
+      <title id="01-sixteen-kb-timing-desktop-sixteen-kb-timing-title">Порог толстого заголовка</title>
+      <desc id="01-sixteen-kb-timing-desktop-sixteen-kb-timing-desc">Размеченная ось байтов пробы толстым заголовком в пределах одной TLS-сессии. Отметки на 8 KiB (late_stage_cutoff, когда уже виден ответ), 14 KiB (fat_threshold_reached, 16384 минус 2048 байт) и 16 KiB (FAT_HEADER_THRESHOLD_BYTES). Обрыв на пороге пишется как tcp_16kb_blocked — главный сигнал. Ниже classify_rst_origin делит сброс по времени: in_path_rst в пределах двойного RTT после SYN-ACK, server_rst позже.</desc>
+      <defs>
+        <marker id="01-sixteen-kb-timing-desktop-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+        </marker>
+        <marker id="01-sixteen-kb-timing-desktop-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-accent)"/>
+        </marker>
+      </defs>
+
+      <!-- ── Panel ─────────────────────────────────────────────────────── -->
+      <rect x="0.5" y="0.5" width="959" height="727" rx="2" fill="var(--dg-card)" stroke="var(--dg-rule)" stroke-width="1"/>
+
+      <!-- ── Header row ────────────────────────────────────────────────── -->
+      <text x="24" y="25" fill="var(--dg-muted)" font-size="14" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">РИС. 01 / ГДЕ ЛОМАЕТСЯ РУКОПОЖАТИЕ</text>
+      <text x="936" y="25" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="end">RIPDPI · DIAGNOSTICS · FAT-HEADER PROBE</text>
+      <line x1="16" y1="40" x2="944" y2="40" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <path d="M12 40H20M16 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+      <path d="M940 40H948M944 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+
+      <!-- ── Byte axis ─────────────────────────────────────────────────── -->
+      <text x="24" y="72" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ОТПРАВЛЕНО БАЙТ · ОДНА TLS-СЕССИЯ · FAT_HEADER_REQUESTS = 16</text>
+
+      <!-- gate rules (above the axis) -->
+      <g data-node="gate-8">
+        <line x1="376" y1="170" x2="376" y2="200" stroke="var(--dg-muted)" stroke-width="1"/>
+      </g>
+      <g data-node="gate-14">
+        <line x1="628" y1="168" x2="628" y2="200" stroke="var(--dg-ink)" stroke-width="1"/>
+      </g>
+      <g data-node="gate-16">
+        <line x1="712" y1="106" x2="712" y2="200" stroke="var(--dg-muted)" stroke-width="1"/>
+      </g>
+
+      <!-- 16 KiB gate, top tier -->
+      <g data-node="gate-16">
+        <text x="712" y="84" fill="var(--dg-muted)" font-size="12" font-weight="500" font-family="var(--dg-mono)" text-anchor="middle">16 KiB</text>
+        <text x="712" y="98" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)" text-anchor="middle">FAT_HEADER_THRESHOLD_BYTES</text>
+      </g>
+
+      <!-- 14 KiB gate, primary -->
+      <g data-node="gate-14">
+        <text x="628" y="116" fill="var(--dg-ink)" font-size="12" font-weight="500" font-family="var(--dg-mono)" text-anchor="middle">14 KiB</text>
+        <text x="628" y="132" fill="var(--dg-ink)" font-size="11" font-family="var(--dg-mono)" text-anchor="middle">fat_threshold_reached</text>
+        <text x="628" y="146" fill="var(--dg-muted)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle">16 384 − 2 048 байт</text>
+        <text x="628" y="160" fill="var(--dg-muted)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle">= 14 336</text>
+      </g>
+
+      <!-- 8 KiB gate -->
+      <g data-node="gate-8">
+        <text x="376" y="132" fill="var(--dg-muted)" font-size="12" font-weight="500" font-family="var(--dg-mono)" text-anchor="middle">8 KiB</text>
+        <text x="376" y="148" fill="var(--dg-muted)" font-size="11" font-family="var(--dg-mono)" text-anchor="middle">late_stage_cutoff</text>
+        <text x="376" y="162" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle">responses_seen ≥ 1</text>
+      </g>
+
+      <!-- origin -->
+      <text x="40" y="188" fill="var(--dg-muted)" font-size="11" font-family="var(--dg-mono)" text-anchor="middle">0</text>
+
+      <!-- ruler -->
+      <line x1="40" y1="200" x2="796" y2="200" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#01-sixteen-kb-timing-desktop-arrow)"/>
+      <path d="M82 200V205M124 200V205M166 200V205M208 200V205M250 200V205M292 200V205M334 200V205M418 200V205M460 200V205M502 200V205M544 200V205M586 200V205M670 200V205" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" fill="none"/>
+      <path d="M40 200V209M376 200V209M628 200V209M712 200V209" stroke="var(--dg-muted)" stroke-width="1" fill="none"/>
+
+      <!-- leaders from the axis to the hung outcome nodes -->
+      <g data-edge="before">
+        <line x1="40" y1="200" x2="40" y2="236" stroke="var(--dg-muted)" stroke-width="1"/>
+      </g>
+      <g data-edge="reset">
+        <line x1="256" y1="200" x2="256" y2="236" stroke="var(--dg-muted)" stroke-width="1" stroke-dasharray="4,3"/>
+      </g>
+      <g data-edge="timeout">
+        <line x1="368" y1="200" x2="368" y2="236" stroke="var(--dg-muted)" stroke-width="1" stroke-dasharray="4,3"/>
+      </g>
+      <g data-edge="blocked">
+        <line x1="628" y1="200" x2="628" y2="236" stroke="var(--dg-muted)" stroke-width="1"/>
+      </g>
+      <g data-edge="ok">
+        <line x1="712" y1="200" x2="712" y2="236" stroke="var(--dg-muted)" stroke-width="1"/>
+      </g>
+      <g data-edge="freeze">
+        <line x1="676" y1="200" x2="676" y2="316" stroke="var(--dg-muted)" stroke-width="1" stroke-dasharray="4,3"/>
+      </g>
+
+      <!-- ── Outcome nodes, row 1 ──────────────────────────────────────── -->
+
+      <!-- before bytes flow -->
+      <g data-node="before">
+        <rect x="24" y="236" width="152" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="24" y="236" width="152" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="36" y="252" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ДО ПЕРЕДАЧИ БАЙТ</text>
+        <text x="36" y="270" fill="var(--dg-muted)" font-size="10" font-weight="500" font-family="var(--dg-mono)">tcp_connect_failed</text>
+        <text x="36" y="286" fill="var(--dg-muted)" font-size="10" font-weight="500" font-family="var(--dg-mono)">tls_handshake_failed</text>
+      </g>
+
+      <!-- tcp_reset -->
+      <g data-node="reset">
+        <rect x="192" y="236" width="112" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="192" y="236" width="112" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="204" y="252" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСХОД</text>
+        <text x="204" y="270" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">tcp_reset</text>
+        <text x="204" y="286" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">ранний сброс</text>
+      </g>
+
+      <!-- tcp_timeout -->
+      <g data-node="timeout">
+        <rect x="320" y="236" width="120" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="320" y="236" width="120" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="332" y="252" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСХОД</text>
+        <text x="332" y="270" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">tcp_timeout</text>
+        <text x="332" y="286" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">нет ответа</text>
+      </g>
+
+      <!-- tcp_16kb_blocked (focal) -->
+      <g data-node="blocked">
+        <rect x="456" y="236" width="200" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="456" y="236" width="200" height="60" rx="2" fill="rgba(var(--dg-accent-rgb),0.08)" stroke="var(--dg-accent)" stroke-width="1"/>
+        <text x="468" y="252" fill="var(--dg-accent)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСХОД · ГЛАВНЫЙ СИГНАЛ</text>
+        <text x="468" y="270" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">tcp_16kb_blocked</text>
+        <text x="468" y="286" fill="var(--dg-accent)" font-size="10.5" font-family="var(--dg-sans)">сброс или зависание на пороге</text>
+      </g>
+
+      <!-- tcp_fat_header_ok (primary) -->
+      <g data-node="ok">
+        <rect x="696" y="236" width="200" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="696" y="236" width="200" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="708" y="252" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСХОД</text>
+        <text x="708" y="270" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">tcp_fat_header_ok</text>
+        <text x="708" y="286" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">дошло до 16 KiB без обрыва</text>
+      </g>
+
+      <!-- ── Outcome nodes, row 2 ──────────────────────────────────────── -->
+
+      <!-- tcp_freeze_after_threshold -->
+      <g data-node="freeze">
+        <rect x="560" y="316" width="240" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="560" y="316" width="240" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="572" y="332" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСХОД</text>
+        <text x="572" y="352" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">tcp_freeze_after_threshold</text>
+        <text x="572" y="368" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">зависло после порога</text>
+      </g>
+
+      <!-- ── RST timing zone ───────────────────────────────────────────── -->
+      <rect x="24" y="404" width="912" height="216" rx="2" fill="rgba(var(--dg-ink-rgb),0.04)" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <text x="36" y="424" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ТАЙМИНГ RST · classify_rst_origin(syn_ack_ms, rst_ms)</text>
+
+      <!-- edges (before nodes) -->
+      <g data-node="rst-flow">
+        <line x1="200" y1="474" x2="236" y2="474" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#01-sixteen-kb-timing-desktop-arrow)"/>
+        <path d="M464 464H548" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#01-sixteen-kb-timing-desktop-arrow)"/>
+        <rect x="494" y="444" width="28" height="14" fill="var(--dg-card)"/>
+        <text x="508" y="454" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ДА</text>
+        <path d="M464 484H500Q508 484 508 492V542Q508 550 516 550H548" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#01-sixteen-kb-timing-desktop-arrow)"/>
+        <rect x="516" y="508" width="24" height="14" fill="var(--dg-card)"/>
+        <text x="528" y="518" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">НЕТ</text>
+      </g>
+
+      <!-- RST получен -->
+      <g data-node="rst-flow">
+        <rect x="40" y="444" width="160" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="40" y="444" width="160" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="52" y="460" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВХОД</text>
+        <text x="52" y="478" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">RST получен</text>
+        <text x="52" y="494" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">во время TLS-сессии</text>
+      </g>
+
+      <!-- decision -->
+      <g data-node="rst-flow">
+        <rect x="240" y="444" width="224" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="240" y="444" width="224" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="252" y="460" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">РЕШЕНИЕ</text>
+        <text x="252" y="478" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">RST в пределах 2× RTT</text>
+        <text x="252" y="494" fill="var(--dg-muted)" font-size="11" font-family="var(--dg-mono)">после SYN-ACK?</text>
+      </g>
+
+      <!-- in_path_rst (focal) -->
+      <g data-node="rst-flow">
+        <rect x="552" y="444" width="240" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="552" y="444" width="240" height="60" rx="2" fill="rgba(var(--dg-accent-rgb),0.08)" stroke="var(--dg-accent)" stroke-width="1"/>
+        <text x="564" y="460" fill="var(--dg-accent)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСТОЧНИК</text>
+        <text x="564" y="478" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">in_path_rst</text>
+        <text x="564" y="494" fill="var(--dg-accent)" font-size="10.5" font-family="var(--dg-sans)">DPI-коробка на пути вбросила сброс</text>
+      </g>
+
+      <!-- server_rst -->
+      <g data-node="rst-flow">
+        <rect x="552" y="520" width="240" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="552" y="520" width="240" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="564" y="536" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ИСТОЧНИК</text>
+        <text x="564" y="554" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">server_rst</text>
+        <text x="564" y="570" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">сервер сам закрыл соединение</text>
+      </g>
+
+      <!-- 2× RTT rule -->
+      <text x="40" y="604" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">ПРАВИЛО 2× RTT</text>
+      <text x="144" y="604" fill="var(--dg-muted)" font-size="11" font-family="var(--dg-sans)">Если RST приходит в пределах 2 × syn_ack_ms после SYN-ACK, он пришёл слишком быстро, чтобы прийти с удалённого сервера.</text>
+
+      <!-- ── Footer ────────────────────────────────────────────────────── -->
+      <line x1="16" y1="644" x2="944" y2="644" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <text x="24" y="668" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">СИГНАЛ</text>
+      <text x="92" y="668" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Проба записывает, на каком байте произошёл обрыв, а не просто факт сброса: позиция на оси и есть улика.</text>
+      <text x="24" y="692" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ТАЙМИНГ</text>
+      <text x="92" y="692" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Правило 2× RTT относит сброс на счёт коробки на пути,</text>
+      <text x="92" y="708" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">когда тот приходит слишком быстро, чтобы прийти с удалённого сервера.</text>
+      <text x="936" y="708" fill="var(--dg-soft)" font-size="11" font-family="var(--dg-mono)" text-anchor="end">ripdpi-diagnostics-fat-header</text>
+    </svg></div><div class="diagram-controls" role="radiogroup" aria-label="Перейти к отметке"><button type="button" class="diagram-chip" role="radio" data-kib="8" aria-checked="false">8 KiB</button><button type="button" class="diagram-chip" role="radio" data-kib="14" aria-checked="true">14 KiB</button><button type="button" class="diagram-chip" role="radio" data-kib="16" aria-checked="false">16 KiB</button></div><div class="diagram-foot"><span class="diagram-hint"><span data-hint="keys">← → отправлено KiB · Home End · 1–3 — отметки</span><span data-hint="touch">Нажмите на ось или отметку</span></span><span class="diagram-readout" data-readout aria-live="polite">14 KiB · tcp_16kb_blocked · сброс или зависание на пороге</span></div></div>

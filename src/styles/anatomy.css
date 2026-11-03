@@ -76,3 +76,21 @@
   outline: 2px solid var(--emphasis);
   outline-offset: 3px;
 }
+
+/* Interactive diagrams (havamal's figures/interactive/ pipeline) share the
+   island. Their fragment reads --dg-* properties, with the light and dark
+   values of scripts/anatomy/diagram-tokens.json as fallbacks; the mapped
+   roles follow the site palette here. */
+.anatomy-figure .diagram-live {
+  --dg-paper: var(--background);
+  --dg-ink: var(--foreground);
+  --dg-muted: var(--muted-foreground);
+  --dg-accent: var(--destructive);
+  --dg-sans: var(--font-sans);
+  --dg-mono: var(--font-mono);
+}
+.anatomy-figure .diagram-stage:focus-visible,
+.anatomy-figure .diagram-chip:focus-visible {
+  outline: 2px solid var(--emphasis);
+  outline-offset: 3px;
+}

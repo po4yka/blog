@@ -67,6 +67,10 @@ import _l3EnHtml from "./live/compile-once-bench.en.html?raw";
 import _l3EnJs from "./live/compile-once-bench.en.js?url&no-inline";
 import _l3RuHtml from "./live/compile-once-bench.ru.html?raw";
 import _l3RuJs from "./live/compile-once-bench.ru.js?url&no-inline";
+import _l4EnHtml from "./live/03-compute-shift-quadrant.en.html?raw";
+import _l4EnJs from "./live/03-compute-shift-quadrant.en.js?url&no-inline";
+import _l4RuHtml from "./live/03-compute-shift-quadrant.ru.html?raw";
+import _l4RuJs from "./live/03-compute-shift-quadrant.ru.js?url&no-inline";
 
 export interface LiveFigure {
   html: string;
@@ -77,5 +81,9 @@ export const live: Record<string, Record<"en" | "ru", LiveFigure>> = {
   "compile-once-bench": {
     en: { html: _l3EnHtml, js: _l3EnJs },
     ru: { html: _l3RuHtml, js: _l3RuJs },
+  },
+  "03-compute-shift-quadrant": {
+    en: { html: _l4EnHtml, js: _l4EnJs },
+    ru: { html: _l4RuHtml, js: _l4RuJs },
   },
 };

@@ -1,0 +1,101 @@
+<div class="anatomy-live diagram-live" data-anatomy="04-policy-state-machine" lang="ru"><style>.diagram-live{--dg-card:#ffffff;--dg-paper:#f5f3ee;--dg-paper-2:#ebe8e2;--dg-ink:#101012;--dg-muted:#4a4a50;--dg-soft:#6a6a70;--dg-rule:#d5d3cf;--dg-accent:#b83a28;--dg-ink-rgb:16,16,18;--dg-accent-rgb:184,58,40;--dg-muted-rgb:74,74,80;--dg-soft-rgb:106,106,112;--dg-paper-rgb:245,243,238}.diagram-live[data-theme="dark"]{--dg-card:#141416;--dg-paper:#0b0b0c;--dg-paper-2:#141416;--dg-ink:#e9e8e4;--dg-muted:#a6a6ac;--dg-soft:#8a8a90;--dg-rule:rgba(166,166,172,0.25);--dg-accent:#e8634b;--dg-ink-rgb:233,232,228;--dg-accent-rgb:232,99,75;--dg-muted-rgb:166,166,172;--dg-soft-rgb:138,138,144;--dg-paper-rgb:11,11,12}.diagram-live{--dg-sans:'Geist','Geist Variable',system-ui,sans-serif;--dg-mono:'Geist Mono','Geist Mono Variable',ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--dg-sans);color:var(--dg-muted)}.diagram-live svg{display:block;width:100%;height:auto}.diagram-live svg[data-viewport="mobile"]{display:none}@media (max-width:640px){.diagram-live svg[data-viewport="mobile"]{display:block}.diagram-stage:has(svg[data-viewport="mobile"]) svg[data-viewport="desktop"]{display:none}}.diagram-stage{position:relative;border-radius:2px;outline:none}.diagram-stage:focus-visible{outline:2px solid var(--dg-ink);outline-offset:3px}.diagram-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.diagram-chip{font:500 11px/1 var(--dg-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--dg-rule);border-radius:2px;background:var(--dg-card);color:var(--dg-muted);cursor:pointer;-webkit-appearance:none;appearance:none}.diagram-chip[aria-checked="true"],.diagram-chip[aria-pressed="true"]{border-color:var(--dg-ink);color:var(--dg-ink)}.diagram-chip:focus-visible{outline:2px solid var(--dg-ink);outline-offset:2px}.diagram-chip:disabled{opacity:.45;cursor:default}.diagram-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap;margin-top:10px;font-family:var(--dg-mono);font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:var(--dg-soft)}.diagram-readout{color:var(--dg-ink);text-align:right;margin-left:auto}.diagram-live [data-hint="touch"]{display:none}@media (hover:none) and (pointer:coarse){.diagram-live [data-hint="keys"]{display:none}.diagram-live [data-hint="touch"]{display:inline}}.diagram-live:not([data-motion="reduce"]) [data-node],.diagram-live:not([data-motion="reduce"]) [data-edge],.diagram-live:not([data-motion="reduce"]) [data-mark]{transition:opacity .25s ease,stroke .25s ease,fill .25s ease}.diagram-live .is-dim{opacity:.28}.diagram-live [data-node].is-on rect+rect{stroke:var(--dg-accent);stroke-width:2}.diagram-live [data-edge].is-on line,.diagram-live [data-edge].is-on path{stroke:var(--dg-accent);stroke-width:2}.diagram-live [data-edge].is-on text{fill:var(--dg-accent)}.diagram-live .diagram-key{display:inline-block;margin-right:7px;color:var(--dg-soft)}.diagram-live .diagram-chip.is-next{border-color:var(--dg-ink);color:var(--dg-ink)}.diagram-live .diagram-chip.is-idle{opacity:.5}</style><div class="diagram-stage" tabindex="0" role="group" aria-label="Конечный автомат запомненной политики: запускайте события проверки и следите за состоянием"><svg data-viewport="desktop" focusable="false" aria-hidden="true" viewBox="0 0 960 384" xmlns="http://www.w3.org/2000/svg" aria-labelledby="04-policy-state-machine-desktop-policy-state-machine-title 04-policy-state-machine-desktop-policy-state-machine-desc">
+      <title id="04-policy-state-machine-desktop-policy-state-machine-title">Машина состояний запомненной политики</title>
+      <desc id="04-policy-state-machine-desktop-policy-state-machine-desc">Машина состояний политики, запомненной по сетям. Состояния observed, validated, suppressed. Новая область входит в observed, валидируется в validated, успех оставляет её там же. Два отказа подряд у валидированной политики переводят её в suppressed с блокировкой на 24 часа; любой успех или истечение блокировки возвращают в validated. Ключ области — SHA-256-хеш; хранилище держит не больше 64 строк и забывает записи старше 90 дней.</desc>
+      <defs>
+        <marker id="04-policy-state-machine-desktop-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+        </marker>
+        <marker id="04-policy-state-machine-desktop-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-accent)"/>
+        </marker>
+      </defs>
+
+      <!-- ── Panel ─────────────────────────────────────────────────────── -->
+      <rect x="0.5" y="0.5" width="959" height="383" rx="2" fill="var(--dg-card)" stroke="var(--dg-rule)" stroke-width="1"/>
+
+      <!-- ── Header row ────────────────────────────────────────────────── -->
+      <text x="24" y="25" fill="var(--dg-muted)" font-size="14" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">РИС. 05 / ЧТО ЗАПОМИНАЕТ ТЕЛЕФОН</text>
+      <text x="936" y="25" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="end">RIPDPI · REMEMBERED NETWORK POLICY</text>
+      <line x1="16" y1="40" x2="944" y2="40" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <path d="M12 40H20M16 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+      <path d="M940 40H948M944 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+
+      <!-- ── Edges (drawn before nodes) ────────────────────────────────── -->
+
+      <!-- start → observed -->
+      <g data-edge="new-scope">
+        <line x1="44" y1="166" x2="148" y2="166" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#04-policy-state-machine-desktop-arrow)"/>
+        <rect x="50" y="146" width="96" height="14" fill="var(--dg-card)"/>
+        <text x="98" y="156" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">НОВАЯ ОБЛАСТЬ</text>
+      </g>
+
+      <!-- observed → validated -->
+      <g data-edge="validates">
+        <line x1="320" y1="166" x2="420" y2="166" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#04-policy-state-machine-desktop-arrow)"/>
+        <rect x="326" y="146" width="88" height="14" fill="var(--dg-card)"/>
+        <text x="370" y="156" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ВАЛИДИРУЕТСЯ</text>
+      </g>
+
+      <!-- validated self-loop -->
+      <g data-edge="success-loop">
+        <path d="M480 136V112Q480 104 488 104H528Q536 104 536 112V132" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#04-policy-state-machine-desktop-arrow)"/>
+        <rect x="468" y="80" width="80" height="14" fill="var(--dg-card)"/>
+        <text x="508" y="90" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ЛЮБОЙ УСПЕХ</text>
+      </g>
+
+      <!-- validated → suppressed (focal transition) -->
+      <g data-edge="fail-lock">
+        <line x1="592" y1="166" x2="700" y2="166" stroke="var(--dg-accent)" stroke-width="1" marker-end="url(#04-policy-state-machine-desktop-arrow-accent)"/>
+        <rect x="600" y="132" width="96" height="28" fill="var(--dg-card)"/>
+        <text x="648" y="142" fill="var(--dg-accent)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">2 ОТКАЗА</text>
+        <text x="648" y="156" fill="var(--dg-accent)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ПОДРЯД</text>
+        <rect x="608" y="172" width="80" height="14" fill="var(--dg-card)"/>
+        <text x="648" y="182" fill="var(--dg-accent)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">БЛОК. 24 ч</text>
+      </g>
+
+      <!-- suppressed → validated, routed below -->
+      <g data-edge="recover">
+        <path d="M760 196V244Q760 252 752 252H516Q508 252 508 244V200" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#04-policy-state-machine-desktop-arrow)"/>
+        <rect x="520" y="258" width="228" height="14" fill="var(--dg-card)"/>
+        <text x="634" y="268" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ЛЮБОЙ УСПЕХ ИЛИ СНЯТА БЛОКИРОВКА</text>
+      </g>
+
+      <!-- ── Nodes ─────────────────────────────────────────────────────── -->
+
+      <!-- start -->
+      <circle cx="36" cy="166" r="6" fill="var(--dg-ink)"/>
+
+      <!-- observed -->
+      <g data-node="observed">
+        <rect x="152" y="136" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="152" y="136" width="168" height="60" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1"/>
+        <text x="164" y="152" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">СОСТОЯНИЕ</text>
+        <text x="164" y="174" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">observed</text>
+      </g>
+
+      <!-- validated (primary) -->
+      <g data-node="validated">
+        <rect x="424" y="136" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="424" y="136" width="168" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="436" y="152" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">СОСТОЯНИЕ</text>
+        <text x="436" y="174" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">validated</text>
+      </g>
+
+      <!-- suppressed (focal) -->
+      <g data-node="suppressed">
+        <rect x="704" y="136" width="232" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="704" y="136" width="232" height="60" rx="2" fill="rgba(var(--dg-accent-rgb),0.08)" stroke="var(--dg-accent)" stroke-width="1"/>
+        <text x="716" y="152" fill="var(--dg-accent)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">СОСТОЯНИЕ</text>
+        <text x="716" y="170" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">suppressed</text>
+        <text x="716" y="186" fill="var(--dg-accent)" font-size="10" font-family="var(--dg-mono)">suppressedUntil = failedAt + 24h</text>
+      </g>
+
+      <!-- ── Footer ────────────────────────────────────────────────────── -->
+      <line x1="16" y1="300" x2="944" y2="300" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <text x="24" y="324" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ХРАНЕНИЕ</text>
+      <text x="128" y="324" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Не больше 64 строк; всё старше 90 дней забывается автоматически.</text>
+      <text x="24" y="348" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ПРИВАТНОСТЬ</text>
+      <text x="128" y="348" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Ключ области — SHA-256-хеш.</text>
+      <text x="128" y="364" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Сырые SSID/BSSID не попадают в логи и краш-репорты и не покидают устройство.</text>
+      <text x="936" y="364" fill="var(--dg-soft)" font-size="11" font-family="var(--dg-mono)" text-anchor="end">RememberedNetworkPolicyStore · Room</text>
+    </svg></div><div class="diagram-controls" role="group" aria-label="События"><button type="button" class="diagram-chip" data-event="0" aria-keyshortcuts="S 1"><span class="diagram-key" aria-hidden="true">S</span>Успех</button><button type="button" class="diagram-chip" data-event="1" aria-keyshortcuts="F 2"><span class="diagram-key" aria-hidden="true">F</span>Отказ</button><button type="button" class="diagram-chip" data-event="2" aria-keyshortcuts="T 3"><span class="diagram-key" aria-hidden="true">T</span>Прошли 24 ч</button><button type="button" class="diagram-chip" data-event="3" aria-keyshortcuts="R 0"><span class="diagram-key" aria-hidden="true">R</span>Новая область</button></div><div class="diagram-foot"><span class="diagram-hint"><span data-hint="keys">Буквы на кнопках · ← → выбор · ↵ запуск</span><span data-hint="touch">Нажмите на событие</span></span><span class="diagram-readout" data-readout aria-live="polite">OBSERVED · ещё не валидирована</span></div></div>

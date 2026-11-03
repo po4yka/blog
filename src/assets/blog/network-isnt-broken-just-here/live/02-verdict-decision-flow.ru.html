@@ -1,0 +1,196 @@
+<div class="anatomy-live diagram-live" data-anatomy="02-verdict-decision-flow" lang="ru"><style>.diagram-live{--dg-card:#ffffff;--dg-paper:#f5f3ee;--dg-paper-2:#ebe8e2;--dg-ink:#101012;--dg-muted:#4a4a50;--dg-soft:#6a6a70;--dg-rule:#d5d3cf;--dg-accent:#b83a28;--dg-ink-rgb:16,16,18;--dg-accent-rgb:184,58,40;--dg-muted-rgb:74,74,80;--dg-soft-rgb:106,106,112;--dg-paper-rgb:245,243,238}.diagram-live[data-theme="dark"]{--dg-card:#141416;--dg-paper:#0b0b0c;--dg-paper-2:#141416;--dg-ink:#e9e8e4;--dg-muted:#a6a6ac;--dg-soft:#8a8a90;--dg-rule:rgba(166,166,172,0.25);--dg-accent:#e8634b;--dg-ink-rgb:233,232,228;--dg-accent-rgb:232,99,75;--dg-muted-rgb:166,166,172;--dg-soft-rgb:138,138,144;--dg-paper-rgb:11,11,12}.diagram-live{--dg-sans:'Geist','Geist Variable',system-ui,sans-serif;--dg-mono:'Geist Mono','Geist Mono Variable',ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--dg-sans);color:var(--dg-muted)}.diagram-live svg{display:block;width:100%;height:auto}.diagram-live svg[data-viewport="mobile"]{display:none}@media (max-width:640px){.diagram-live svg[data-viewport="mobile"]{display:block}.diagram-stage:has(svg[data-viewport="mobile"]) svg[data-viewport="desktop"]{display:none}}.diagram-stage{position:relative;border-radius:2px;outline:none}.diagram-stage:focus-visible{outline:2px solid var(--dg-ink);outline-offset:3px}.diagram-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.diagram-chip{font:500 11px/1 var(--dg-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--dg-rule);border-radius:2px;background:var(--dg-card);color:var(--dg-muted);cursor:pointer;-webkit-appearance:none;appearance:none}.diagram-chip[aria-checked="true"],.diagram-chip[aria-pressed="true"]{border-color:var(--dg-ink);color:var(--dg-ink)}.diagram-chip:focus-visible{outline:2px solid var(--dg-ink);outline-offset:2px}.diagram-chip:disabled{opacity:.45;cursor:default}.diagram-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap;margin-top:10px;font-family:var(--dg-mono);font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:var(--dg-soft)}.diagram-readout{color:var(--dg-ink);text-align:right;margin-left:auto}.diagram-live [data-hint="touch"]{display:none}@media (hover:none) and (pointer:coarse){.diagram-live [data-hint="keys"]{display:none}.diagram-live [data-hint="touch"]{display:inline}}.diagram-live:not([data-motion="reduce"]) [data-node],.diagram-live:not([data-motion="reduce"]) [data-edge],.diagram-live:not([data-motion="reduce"]) [data-mark]{transition:opacity .25s ease,stroke .25s ease,fill .25s ease}.diagram-live .is-dim{opacity:.28}.diagram-live .diagram-controls-sub{margin-top:6px}.diagram-live .diagram-sub{display:contents}.diagram-live .diagram-chip[data-class]{text-transform:none;letter-spacing:.02em}.diagram-live .diagram-readout{text-transform:none;letter-spacing:.02em}.diagram-live [data-edge="second-flow"] rect,.diagram-live [data-edge="second-flow"] text{display:none}.diagram-live [data-edge].is-on line,.diagram-live [data-edge].is-on path{stroke:var(--dg-accent)}.diagram-live [data-edge].is-on text{fill:var(--dg-accent)}.diagram-live [data-node].is-end rect[stroke],.diagram-live [data-node].is-end ellipse{stroke:var(--dg-accent)}.diagram-live text.is-pick,.diagram-live .is-pick text{fill:var(--dg-accent)}</style><div class="diagram-stage" tabindex="0" role="group" aria-label="Схема решения: проведите исход пробы до вердикта"><svg data-viewport="desktop" focusable="false" aria-hidden="true" viewBox="0 0 960 644" xmlns="http://www.w3.org/2000/svg" aria-labelledby="02-verdict-decision-flow-desktop-verdict-decision-flow-title 02-verdict-decision-flow-desktop-verdict-decision-flow-desc">
+      <title id="02-verdict-decision-flow-desktop-verdict-decision-flow-title">От исхода пробы к вердикту политики</title>
+      <desc id="02-verdict-decision-flow-desktop-verdict-decision-flow-desc">Схема решения от исхода пробы к одному из четырёх вердиктов политики. Исход раскладывается по ProbeOutcomeBucket (Healthy, Attention, Failed, Inconclusive); ветка Failed несёт FailureClass. Четыре вердикта: TRANSPARENT_OK, OWNED_STACK_ONLY, NO_DIRECT_SOLUTION и IP_BLOCK_SUSPECT. IP_BLOCK_SUSPECT закрыт пунктирным узлом PendingSecondFlow, который ждёт второго независимого соединения, прежде чем вердикт сработает.</desc>
+      <defs>
+        <marker id="02-verdict-decision-flow-desktop-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-muted)"/>
+        </marker>
+        <marker id="02-verdict-decision-flow-desktop-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="var(--dg-accent)"/>
+        </marker>
+      </defs>
+
+      <!-- ── Panel ─────────────────────────────────────────────────────── -->
+      <rect x="0.5" y="0.5" width="959" height="643" rx="2" fill="var(--dg-card)" stroke="var(--dg-rule)" stroke-width="1"/>
+
+      <!-- ── Header row ────────────────────────────────────────────────── -->
+      <text x="24" y="25" fill="var(--dg-muted)" font-size="14" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.12em">РИС. 02 / ОДИН ИСХОД, ЧЕТЫРЕ ВЕРДИКТА</text>
+      <text x="936" y="25" fill="var(--dg-soft)" font-size="13" font-family="var(--dg-mono)" text-anchor="end">RIPDPI · DIAGNOSTICS · CLASSIFICATION</text>
+      <line x1="16" y1="40" x2="944" y2="40" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <path d="M12 40H20M16 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+      <path d="M940 40H948M944 36V44" stroke="rgba(var(--dg-ink-rgb),0.35)" stroke-width="1" fill="none"/>
+
+      <!-- ── Edges (drawn before nodes) ────────────────────────────────── -->
+
+      <!-- probe → bucket, y=300 -->
+      <g data-edge="enter">
+        <line x1="168" y1="300" x2="212" y2="300" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="170" y="278" width="40" height="14" fill="var(--dg-card)"/>
+        <text x="190" y="288" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">ВХОД</text>
+      </g>
+
+      <!-- Healthy: bucket top (x=318) up to y=120, right to TRANSPARENT_OK -->
+      <g data-edge="healthy">
+        <path d="M318 220V128Q318 120 326 120H764" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="516" y="100" width="72" height="14" fill="var(--dg-card)"/>
+        <text x="552" y="110" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">HEALTHY</text>
+      </g>
+
+      <!-- Attention: bucket right (y=304) to x=444, up to y=220, right to OWNED_STACK_ONLY -->
+      <g data-edge="attention">
+        <path d="M420 292H436Q444 292 444 284V228Q444 220 452 220H764" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="560" y="200" width="88" height="14" fill="var(--dg-card)"/>
+        <text x="604" y="210" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">TLS ALERT</text>
+      </g>
+
+      <!-- Failed: bucket right (y=320) straight to FailureClass -->
+      <g data-edge="failed">
+        <line x1="420" y1="320" x2="464" y2="320" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="422" y="298" width="44" height="14" fill="var(--dg-card)"/>
+        <text x="444" y="308" fill="var(--dg-soft)" font-size="9.5" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.06em">FAILED</text>
+      </g>
+
+      <!-- FailureClass → NO_DIRECT_SOLUTION, y=320 -->
+      <g data-edge="blockpage">
+        <line x1="668" y1="320" x2="764" y2="320" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="676" y="300" width="80" height="14" fill="var(--dg-card)"/>
+        <text x="716" y="310" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">BLOCKPAGE</text>
+      </g>
+
+      <!-- IP silent: bucket bottom (x=336) down to y=420, right to the gate -->
+      <g data-edge="ip-silent">
+        <path d="M336 380V412Q336 420 344 420H536" fill="none" stroke="var(--dg-muted)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="404" y="400" width="80" height="14" fill="var(--dg-card)"/>
+        <text x="444" y="410" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">IP SILENT</text>
+      </g>
+
+      <!-- Gate self-loop: waits for the second flow -->
+      <g data-edge="second-flow">
+        <path d="M600 392C600 356 664 356 664 392" fill="none" stroke="var(--dg-muted)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="596" y="340" width="72" height="14" fill="var(--dg-card)"/>
+        <text x="632" y="350" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">2-Е СОЕД.</text>
+      </g>
+
+      <!-- Gate → IP_BLOCK_SUSPECT, y=420 -->
+      <g data-edge="confirm">
+        <line x1="716" y1="420" x2="764" y2="420" stroke="var(--dg-accent)" stroke-width="1" marker-end="url(#02-verdict-decision-flow-desktop-arrow-accent)"/>
+        <rect x="718" y="400" width="44" height="14" fill="var(--dg-card)"/>
+        <text x="740" y="410" fill="var(--dg-accent)" font-size="9" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.06em">ПОДТВ.</text>
+      </g>
+
+      <!-- Inconclusive: bucket bottom (x=300) down to y=516, right to the terminal (dashed) -->
+      <g data-edge="inconclusive">
+        <path d="M300 380V508Q300 516 308 516H764" fill="none" stroke="var(--dg-muted)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#02-verdict-decision-flow-desktop-arrow)"/>
+        <rect x="484" y="496" width="104" height="14" fill="var(--dg-card)"/>
+        <text x="536" y="506" fill="var(--dg-soft)" font-size="10" font-family="var(--dg-mono)" text-anchor="middle" letter-spacing="0.08em">INCONCLUSIVE</text>
+      </g>
+
+      <!-- ── Nodes ─────────────────────────────────────────────────────── -->
+
+      <!-- Исход пробы (input) -->
+      <g data-node="probe">
+        <rect x="24" y="270" width="144" height="60" fill="var(--dg-card)"/>
+        <ellipse cx="96" cy="300" rx="72" ry="30" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1"/>
+        <text x="96" y="297" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)" text-anchor="middle">Исход пробы</text>
+        <text x="96" y="314" fill="var(--dg-muted)" font-size="11" font-family="var(--dg-mono)" text-anchor="middle">путь · тайминг · ответ</text>
+      </g>
+
+      <!-- ProbeOutcomeBucket (primary) -->
+      <g data-node="bucket">
+        <rect x="216" y="220" width="204" height="160" rx="2" fill="var(--dg-card)"/>
+        <rect x="216" y="220" width="204" height="160" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="228" y="236" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">КАТЕГОРИЯ</text>
+        <text x="228" y="256" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">ProbeOutcomeBucket</text>
+        <line x1="228" y1="266" x2="408" y2="266" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+        <g data-mark="bucket-healthy">
+          <text x="228" y="286" fill="var(--dg-ink)" font-size="11.5" font-family="var(--dg-mono)">Healthy</text>
+          <text x="408" y="286" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)" text-anchor="end">info</text>
+        </g>
+        <g data-mark="bucket-attention">
+          <text x="228" y="308" fill="var(--dg-ink)" font-size="11.5" font-family="var(--dg-mono)">Attention</text>
+          <text x="408" y="308" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)" text-anchor="end">warn</text>
+        </g>
+        <g data-mark="bucket-failed">
+          <text x="228" y="324" fill="var(--dg-ink)" font-size="11.5" font-family="var(--dg-mono)">Failed</text>
+          <text x="408" y="324" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)" text-anchor="end">error</text>
+        </g>
+        <g data-mark="bucket-inconclusive">
+          <text x="228" y="356" fill="var(--dg-soft)" font-size="11.5" font-family="var(--dg-mono)">Inconclusive</text>
+          <text x="408" y="356" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)" text-anchor="end">warn</text>
+        </g>
+      </g>
+
+      <!-- FailureClass -->
+      <g data-node="failure-class">
+        <rect x="468" y="280" width="200" height="80" rx="2" fill="var(--dg-card)"/>
+        <rect x="468" y="280" width="200" height="80" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1"/>
+        <text x="480" y="296" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">КЛАСС ОТКАЗА</text>
+        <text x="480" y="314" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">FailureClass</text>
+        <text data-mark="class-dns-tampering" x="480" y="334" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-mono)">DnsTampering</text>
+        <text data-mark="class-tls-alert" x="576" y="334" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-mono)">TlsAlert</text>
+        <text data-mark="class-http-blockpage" x="480" y="350" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-mono)">HttpBlockpage</text>
+        <text data-mark="class-ip-block-suspect" x="576" y="350" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-mono)">IpBlockSuspect</text>
+      </g>
+
+      <!-- PendingSecondFlow gate (focal) -->
+      <g data-node="gate">
+        <rect x="540" y="392" width="176" height="56" rx="2" fill="var(--dg-card)"/>
+        <rect x="540" y="392" width="176" height="56" rx="2" fill="rgba(var(--dg-accent-rgb),0.08)" stroke="var(--dg-accent)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="552" y="408" fill="var(--dg-accent)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВОРОТА · arm_gate</text>
+        <text x="552" y="426" fill="var(--dg-ink)" font-size="15" font-weight="500" font-family="var(--dg-sans)">PendingSecondFlow</text>
+        <text x="552" y="441" fill="var(--dg-accent)" font-size="10.5" font-family="var(--dg-mono)">ждёт 2-го соединения</text>
+      </g>
+
+      <!-- Verdict: TRANSPARENT_OK -->
+      <g data-node="verdict-transparent-ok">
+        <rect x="768" y="90" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="768" y="90" width="168" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="780" y="106" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВЕРДИКТ</text>
+        <text x="780" y="124" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">TRANSPARENT_OK</text>
+        <text x="780" y="140" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">работает напрямую</text>
+      </g>
+
+      <!-- Verdict: OWNED_STACK_ONLY -->
+      <g data-node="verdict-owned-stack-only">
+        <rect x="768" y="190" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="768" y="190" width="168" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="780" y="206" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВЕРДИКТ</text>
+        <text x="780" y="224" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">OWNED_STACK_ONLY</text>
+        <text x="780" y="240" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">свой TLS-стек приложения</text>
+      </g>
+
+      <!-- Verdict: NO_DIRECT_SOLUTION -->
+      <g data-node="verdict-no-direct-solution">
+        <rect x="768" y="290" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="768" y="290" width="168" height="60" rx="2" fill="var(--dg-paper)" stroke="var(--dg-ink)" stroke-width="1"/>
+        <text x="780" y="306" fill="var(--dg-soft)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВЕРДИКТ</text>
+        <text x="780" y="324" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">NO_DIRECT_SOLUTION</text>
+        <text x="780" y="340" fill="var(--dg-muted)" font-size="10.5" font-family="var(--dg-sans)">нужен туннель</text>
+      </g>
+
+      <!-- Verdict: IP_BLOCK_SUSPECT (focal) -->
+      <g data-node="verdict-ip-block-suspect">
+        <rect x="768" y="390" width="168" height="60" rx="2" fill="var(--dg-card)"/>
+        <rect x="768" y="390" width="168" height="60" rx="2" fill="rgba(var(--dg-accent-rgb),0.08)" stroke="var(--dg-accent)" stroke-width="1"/>
+        <text x="780" y="406" fill="var(--dg-accent)" font-size="9.5" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.10em">ВЕРДИКТ</text>
+        <text x="780" y="424" fill="var(--dg-ink)" font-size="13" font-weight="500" font-family="var(--dg-mono)">IP_BLOCK_SUSPECT</text>
+        <text x="780" y="440" fill="var(--dg-accent)" font-size="10.5" font-family="var(--dg-sans)">на уровне IP тишина</text>
+      </g>
+
+      <!-- Terminal: no strategy change -->
+      <g data-node="no-change">
+        <rect x="768" y="494" width="168" height="44" rx="2" fill="var(--dg-card)"/>
+        <rect x="768" y="494" width="168" height="44" rx="2" fill="var(--dg-paper)" stroke="rgba(var(--dg-ink-rgb),0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="780" y="512" fill="var(--dg-muted)" font-size="13" font-weight="500" font-family="var(--dg-sans)">Без смены стратегии</text>
+        <text x="780" y="528" fill="var(--dg-soft)" font-size="10.5" font-family="var(--dg-mono)">случайный · повтор позже</text>
+      </g>
+
+      <!-- ── Footer ────────────────────────────────────────────────────── -->
+      <line x1="16" y1="560" x2="944" y2="560" stroke="rgba(var(--dg-ink-rgb),0.12)" stroke-width="1"/>
+      <text x="24" y="584" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ВОРОТА</text>
+      <text x="92" y="584" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Ложный IP_BLOCK_SUSPECT увёл бы соединение на ненужный relay.</text>
+      <text x="92" y="600" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Раннер ждёт второго независимого соединения, прежде чем вынести вердикт.</text>
+      <text x="24" y="624" fill="var(--dg-soft)" font-size="10" font-weight="500" font-family="var(--dg-mono)" letter-spacing="0.16em">ПРАВИЛО</text>
+      <text x="92" y="624" fill="var(--dg-muted)" font-size="12.5" font-family="var(--dg-sans)">Случайный таймаут до первых данных попадает в Inconclusive и не меняет стратегию.</text>
+      <text x="936" y="624" fill="var(--dg-soft)" font-size="11" font-family="var(--dg-mono)" text-anchor="end">ripdpi-diagnostics-classification</text>
+    </svg></div><div class="diagram-controls" role="radiogroup" aria-label="Категория исхода пробы"><button type="button" class="diagram-chip" role="radio" data-bucket="healthy" aria-checked="true">Healthy</button><button type="button" class="diagram-chip" role="radio" data-bucket="attention" aria-checked="false">Attention</button><button type="button" class="diagram-chip" role="radio" data-bucket="failed" aria-checked="false">Failed</button><button type="button" class="diagram-chip" role="radio" data-bucket="inconclusive" aria-checked="false">Inconclusive</button></div><div class="diagram-controls diagram-controls-sub"><span class="diagram-sub" role="radiogroup" aria-label="Класс отказа"><button type="button" class="diagram-chip" role="radio" data-class="http-blockpage" aria-checked="false" disabled>HttpBlockpage</button><button type="button" class="diagram-chip" role="radio" data-class="ip-block-suspect" aria-checked="false" disabled>IpBlockSuspect</button></span><button type="button" class="diagram-chip" data-flow aria-pressed="false" disabled>2-е соединение есть</button></div><div class="diagram-foot"><span class="diagram-hint"><span data-hint="keys">← → исход · ↵ второе соединение</span><span data-hint="touch">Нажмите на исход</span></span><span class="diagram-readout" data-readout aria-live="polite">TRANSPARENT_OK · напрямую всё работает, трогать нечего</span></div></div>

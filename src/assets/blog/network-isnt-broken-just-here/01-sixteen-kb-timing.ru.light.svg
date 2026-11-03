@@ -23,60 +23,97 @@
 <path d="M12 40H20M16 36V44" stroke="#101012" stroke-width="1" fill="none" stroke-opacity="0.35"/>
 <path d="M940 40H948M944 36V44" stroke="#101012" stroke-width="1" fill="none" stroke-opacity="0.35"/>
 <text x="24" y="72" fill="#6a6a70" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ОТПРАВЛЕНО БАЙТ · ОДНА TLS-СЕССИЯ · FAT_HEADER_REQUESTS = 16</text>
+<g data-node="gate-8">
 <line x1="376" y1="170" x2="376" y2="200" stroke="#4a4a50" stroke-width="1"/>
+</g>
+<g data-node="gate-14">
 <line x1="628" y1="168" x2="628" y2="200" stroke="#101012" stroke-width="1"/>
+</g>
+<g data-node="gate-16">
 <line x1="712" y1="106" x2="712" y2="200" stroke="#4a4a50" stroke-width="1"/>
+</g>
+<g data-node="gate-16">
 <text x="712" y="84" fill="#4a4a50" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="middle">16 KiB</text>
 <text x="712" y="98" fill="#6a6a70" font-size="10.5" font-family="'Geist Mono', monospace" text-anchor="middle">FAT_HEADER_THRESHOLD_BYTES</text>
+</g>
+<g data-node="gate-14">
 <text x="628" y="116" fill="#101012" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="middle">14 KiB</text>
 <text x="628" y="132" fill="#101012" font-size="11" font-family="'Geist Mono', monospace" text-anchor="middle">fat_threshold_reached</text>
 <text x="628" y="146" fill="#4a4a50" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle">16 384 − 2 048 байт</text>
 <text x="628" y="160" fill="#4a4a50" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle">= 14 336</text>
+</g>
+<g data-node="gate-8">
 <text x="376" y="132" fill="#4a4a50" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="middle">8 KiB</text>
 <text x="376" y="148" fill="#4a4a50" font-size="11" font-family="'Geist Mono', monospace" text-anchor="middle">late_stage_cutoff</text>
 <text x="376" y="162" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle">responses_seen ≥ 1</text>
+</g>
 <text x="40" y="188" fill="#4a4a50" font-size="11" font-family="'Geist Mono', monospace" text-anchor="middle">0</text>
 <line x1="40" y1="200" x2="796" y2="200" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-01-sixteen-kb-timing-ru-light-arrow)"/>
 <path d="M82 200V205M124 200V205M166 200V205M208 200V205M250 200V205M292 200V205M334 200V205M418 200V205M460 200V205M502 200V205M544 200V205M586 200V205M670 200V205" stroke="#101012" stroke-width="1" fill="none" stroke-opacity="0.30"/>
 <path d="M40 200V209M376 200V209M628 200V209M712 200V209" stroke="#4a4a50" stroke-width="1" fill="none"/>
+<g data-edge="before">
 <line x1="40" y1="200" x2="40" y2="236" stroke="#4a4a50" stroke-width="1"/>
+</g>
+<g data-edge="reset">
 <line x1="256" y1="200" x2="256" y2="236" stroke="#4a4a50" stroke-width="1" stroke-dasharray="4,3"/>
+</g>
+<g data-edge="timeout">
 <line x1="368" y1="200" x2="368" y2="236" stroke="#4a4a50" stroke-width="1" stroke-dasharray="4,3"/>
+</g>
+<g data-edge="blocked">
 <line x1="628" y1="200" x2="628" y2="236" stroke="#4a4a50" stroke-width="1"/>
+</g>
+<g data-edge="ok">
 <line x1="712" y1="200" x2="712" y2="236" stroke="#4a4a50" stroke-width="1"/>
+</g>
+<g data-edge="freeze">
 <line x1="676" y1="200" x2="676" y2="316" stroke="#4a4a50" stroke-width="1" stroke-dasharray="4,3"/>
+</g>
+<g data-node="before">
 <rect x="24" y="236" width="152" height="60" rx="2" fill="#ffffff"/>
 <rect x="24" y="236" width="152" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="36" y="252" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ДО ПЕРЕДАЧИ БАЙТ</text>
 <text x="36" y="270" fill="#4a4a50" font-size="10" font-weight="500" font-family="'Geist Mono', monospace">tcp_connect_failed</text>
 <text x="36" y="286" fill="#4a4a50" font-size="10" font-weight="500" font-family="'Geist Mono', monospace">tls_handshake_failed</text>
+</g>
+<g data-node="reset">
 <rect x="192" y="236" width="112" height="60" rx="2" fill="#ffffff"/>
 <rect x="192" y="236" width="112" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="204" y="252" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСХОД</text>
 <text x="204" y="270" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">tcp_reset</text>
 <text x="204" y="286" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">ранний сброс</text>
+</g>
+<g data-node="timeout">
 <rect x="320" y="236" width="120" height="60" rx="2" fill="#ffffff"/>
 <rect x="320" y="236" width="120" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="332" y="252" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСХОД</text>
 <text x="332" y="270" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">tcp_timeout</text>
 <text x="332" y="286" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">нет ответа</text>
+</g>
+<g data-node="blocked">
 <rect x="456" y="236" width="200" height="60" rx="2" fill="#ffffff"/>
 <rect x="456" y="236" width="200" height="60" rx="2" fill="#b83a28" stroke="#b83a28" stroke-width="1" fill-opacity="0.08"/>
 <text x="468" y="252" fill="#b83a28" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСХОД · ГЛАВНЫЙ СИГНАЛ</text>
 <text x="468" y="270" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">tcp_16kb_blocked</text>
 <text x="468" y="286" fill="#b83a28" font-size="10.5" font-family="'Geist', sans-serif">сброс или зависание на пороге</text>
+</g>
+<g data-node="ok">
 <rect x="696" y="236" width="200" height="60" rx="2" fill="#ffffff"/>
 <rect x="696" y="236" width="200" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1"/>
 <text x="708" y="252" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСХОД</text>
 <text x="708" y="270" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">tcp_fat_header_ok</text>
 <text x="708" y="286" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">дошло до 16 KiB без обрыва</text>
+</g>
+<g data-node="freeze">
 <rect x="560" y="316" width="240" height="60" rx="2" fill="#ffffff"/>
 <rect x="560" y="316" width="240" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="572" y="332" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСХОД</text>
 <text x="572" y="352" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">tcp_freeze_after_threshold</text>
 <text x="572" y="368" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">зависло после порога</text>
+</g>
 <rect x="24" y="404" width="912" height="216" rx="2" fill="#101012" stroke="#101012" stroke-width="1" fill-opacity="0.04" stroke-opacity="0.12"/>
 <text x="36" y="424" fill="#6a6a70" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ТАЙМИНГ RST · classify_rst_origin(syn_ack_ms, rst_ms)</text>
+<g data-node="rst-flow">
 <line x1="200" y1="474" x2="236" y2="474" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-01-sixteen-kb-timing-ru-light-arrow)"/>
 <path d="M464 464H548" fill="none" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-01-sixteen-kb-timing-ru-light-arrow)"/>
 <rect x="494" y="444" width="28" height="14" fill="#ffffff"/>
@@ -84,26 +121,35 @@
 <path d="M464 484H500Q508 484 508 492V542Q508 550 516 550H548" fill="none" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-01-sixteen-kb-timing-ru-light-arrow)"/>
 <rect x="516" y="508" width="24" height="14" fill="#ffffff"/>
 <text x="528" y="518" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">НЕТ</text>
+</g>
+<g data-node="rst-flow">
 <rect x="40" y="444" width="160" height="60" rx="2" fill="#ffffff"/>
 <rect x="40" y="444" width="160" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="52" y="460" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ВХОД</text>
 <text x="52" y="478" fill="#101012" font-size="15" font-weight="500" font-family="'Geist', sans-serif">RST получен</text>
 <text x="52" y="494" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">во время TLS-сессии</text>
+</g>
+<g data-node="rst-flow">
 <rect x="240" y="444" width="224" height="60" rx="2" fill="#ffffff"/>
 <rect x="240" y="444" width="224" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1"/>
 <text x="252" y="460" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">РЕШЕНИЕ</text>
 <text x="252" y="478" fill="#101012" font-size="15" font-weight="500" font-family="'Geist', sans-serif">RST в пределах 2× RTT</text>
 <text x="252" y="494" fill="#4a4a50" font-size="11" font-family="'Geist Mono', monospace">после SYN-ACK?</text>
+</g>
+<g data-node="rst-flow">
 <rect x="552" y="444" width="240" height="60" rx="2" fill="#ffffff"/>
 <rect x="552" y="444" width="240" height="60" rx="2" fill="#b83a28" stroke="#b83a28" stroke-width="1" fill-opacity="0.08"/>
 <text x="564" y="460" fill="#b83a28" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСТОЧНИК</text>
 <text x="564" y="478" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">in_path_rst</text>
 <text x="564" y="494" fill="#b83a28" font-size="10.5" font-family="'Geist', sans-serif">DPI-коробка на пути вбросила сброс</text>
+</g>
+<g data-node="rst-flow">
 <rect x="552" y="520" width="240" height="60" rx="2" fill="#ffffff"/>
 <rect x="552" y="520" width="240" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.30"/>
 <text x="564" y="536" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">ИСТОЧНИК</text>
 <text x="564" y="554" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">server_rst</text>
 <text x="564" y="570" fill="#4a4a50" font-size="10.5" font-family="'Geist', sans-serif">сервер сам закрыл соединение</text>
+</g>
 <text x="40" y="604" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.12em">ПРАВИЛО 2× RTT</text>
 <text x="144" y="604" fill="#4a4a50" font-size="11" font-family="'Geist', sans-serif">Если RST приходит в пределах 2 × syn_ack_ms после SYN-ACK, он пришёл слишком быстро, чтобы прийти с удалённого сервера.</text>
 <line x1="16" y1="644" x2="944" y2="644" stroke="#101012" stroke-width="1" stroke-opacity="0.12"/>

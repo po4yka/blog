@@ -22,38 +22,54 @@
 <line x1="16" y1="40" x2="944" y2="40" stroke="#101012" stroke-width="1" stroke-opacity="0.12"/>
 <path d="M12 40H20M16 36V44" stroke="#101012" stroke-width="1" fill="none" stroke-opacity="0.35"/>
 <path d="M940 40H948M944 36V44" stroke="#101012" stroke-width="1" fill="none" stroke-opacity="0.35"/>
+<g data-edge="new-scope">
 <line x1="44" y1="166" x2="148" y2="166" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-04-policy-state-machine-ru-light-arrow)"/>
 <rect x="50" y="146" width="96" height="14" fill="#ffffff"/>
 <text x="98" y="156" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">НОВАЯ ОБЛАСТЬ</text>
+</g>
+<g data-edge="validates">
 <line x1="320" y1="166" x2="420" y2="166" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-04-policy-state-machine-ru-light-arrow)"/>
 <rect x="326" y="146" width="88" height="14" fill="#ffffff"/>
 <text x="370" y="156" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ВАЛИДИРУЕТСЯ</text>
+</g>
+<g data-edge="success-loop">
 <path d="M480 136V112Q480 104 488 104H528Q536 104 536 112V132" fill="none" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-04-policy-state-machine-ru-light-arrow)"/>
 <rect x="468" y="80" width="80" height="14" fill="#ffffff"/>
 <text x="508" y="90" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ЛЮБОЙ УСПЕХ</text>
+</g>
+<g data-edge="fail-lock">
 <line x1="592" y1="166" x2="700" y2="166" stroke="#b83a28" stroke-width="1" marker-end="url(#d-04-policy-state-machine-ru-light-arrow-accent)"/>
 <rect x="600" y="132" width="96" height="28" fill="#ffffff"/>
 <text x="648" y="142" fill="#b83a28" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">2 ОТКАЗА</text>
 <text x="648" y="156" fill="#b83a28" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ПОДРЯД</text>
 <rect x="608" y="172" width="80" height="14" fill="#ffffff"/>
 <text x="648" y="182" fill="#b83a28" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">БЛОК. 24 ч</text>
+</g>
+<g data-edge="recover">
 <path d="M760 196V244Q760 252 752 252H516Q508 252 508 244V200" fill="none" stroke="#4a4a50" stroke-width="1" marker-end="url(#d-04-policy-state-machine-ru-light-arrow)"/>
 <rect x="520" y="258" width="228" height="14" fill="#ffffff"/>
 <text x="634" y="268" fill="#6a6a70" font-size="10" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ЛЮБОЙ УСПЕХ ИЛИ СНЯТА БЛОКИРОВКА</text>
+</g>
 <circle cx="36" cy="166" r="6" fill="#101012"/>
+<g data-node="observed">
 <rect x="152" y="136" width="168" height="60" rx="2" fill="#ffffff"/>
 <rect x="152" y="136" width="168" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1" stroke-opacity="0.30"/>
 <text x="164" y="152" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">СОСТОЯНИЕ</text>
 <text x="164" y="174" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">observed</text>
+</g>
+<g data-node="validated">
 <rect x="424" y="136" width="168" height="60" rx="2" fill="#ffffff"/>
 <rect x="424" y="136" width="168" height="60" rx="2" fill="#f5f3ee" stroke="#101012" stroke-width="1"/>
 <text x="436" y="152" fill="#6a6a70" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">СОСТОЯНИЕ</text>
 <text x="436" y="174" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">validated</text>
+</g>
+<g data-node="suppressed">
 <rect x="704" y="136" width="232" height="60" rx="2" fill="#ffffff"/>
 <rect x="704" y="136" width="232" height="60" rx="2" fill="#b83a28" stroke="#b83a28" stroke-width="1" fill-opacity="0.08"/>
 <text x="716" y="152" fill="#b83a28" font-size="9.5" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.10em">СОСТОЯНИЕ</text>
 <text x="716" y="170" fill="#101012" font-size="13" font-weight="500" font-family="'Geist Mono', monospace">suppressed</text>
 <text x="716" y="186" fill="#b83a28" font-size="10" font-family="'Geist Mono', monospace">suppressedUntil = failedAt + 24h</text>
+</g>
 <line x1="16" y1="300" x2="944" y2="300" stroke="#101012" stroke-width="1" stroke-opacity="0.12"/>
 <text x="24" y="324" fill="#6a6a70" font-size="10" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.16em">ХРАНЕНИЕ</text>
 <text x="128" y="324" fill="#4a4a50" font-size="12.5" font-family="'Geist', sans-serif">Не больше 64 строк; всё старше 90 дней забывается автоматически.</text>

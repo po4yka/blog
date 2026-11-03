@@ -12,7 +12,7 @@ export const blogPosts: BlogPost[] = [
     date: "Jun 2026",
     isoDate: "2026-06-19",
     isoDateModified: "2026-11-03",
-    wordCount: 3217,
+    wordCount: 3220,
     outline: "p27 h2 p22 c9 f14 p3 c6 p20 f14 p22 f14 h2 p27 f14 p44 h2 p22 f14 h2 p48 h2 p6 f14 p21",
     summary:
       "A phone connects over Wi-Fi but not mobile data, and the same connections die every time. RIPDPI diagnoses the network path before it touches anything: a fat-header probe, a failure class, a verdict — then a fix, only if one exists.",
@@ -51,8 +51,9 @@ tcp_connect_failed           never connected
 tls_handshake_failed         TLS setup failed
 \`\`\`
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["01-sixteen-kb-timing"].en}
+  live={live["01-sixteen-kb-timing"].en}
   alt="Annotated byte axis of the fat-header probe over one TLS session. Gates at 8 KiB (late_stage_cutoff once a response is seen), 14 KiB (fat_threshold_reached, 16384 minus 2048 bytes), and 16 KiB (FAT_HEADER_THRESHOLD_BYTES). A cut-off at the threshold is logged tcp_16kb_blocked, the focal signal. Below, classify_rst_origin splits a reset by timing: in_path_rst within twice the SYN-ACK RTT, server_rst later."
 />
 
@@ -81,8 +82,9 @@ The classification layer collapses all of it into four verdicts, and those decid
 
 \`IP_BLOCK_SUSPECT\` is deliberately hard to reach. It needs every DoH-supplied IPv4 address to fail at the SYN, every alternate IPv6 to fail too, and a second independent flow to confirm. Until that confirmation lands, the runner sits in \`PendingSecondFlow\` and withholds the verdict. A false positive here would shove a connection onto a relay it never needed, so the runner waits for proof. When the verdict does fire, it sets \`arm_gate = OwnedStackOnly\`: every TLS-family repair is skipped and the engine goes straight to its own stack, the relay path. Rewriting packets is pointless if nothing is home at the address.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["02-verdict-decision-flow"].en}
+  live={live["02-verdict-decision-flow"].en}
   alt="Decision flow from a probe outcome to one of four policy verdicts. The outcome is bucketed into ProbeOutcomeBucket (Healthy, Attention, Failed, Inconclusive); a Failed path carries a FailureClass. The four verdicts are TRANSPARENT_OK, OWNED_STACK_ONLY, NO_DIRECT_SOLUTION, and IP_BLOCK_SUSPECT. IP_BLOCK_SUSPECT is gated behind a dashed PendingSecondFlow node that waits for a second independent flow before the verdict fires."
 />
 
@@ -116,8 +118,9 @@ The learning is keyed to the network as well as the destination. The \`Remembere
 
 A remembered policy moves through three states: \`observed\`, \`validated\`, \`suppressed\`. Two consecutive failures of a validated policy flip it to suppressed and lock it out for 24 hours; any success resets the failure count and clears the lock. The table keeps at most 64 rows total and forgets anything older than 90 days. On rejoining a known network, the store replays the validated policy at once, then re-checks quietly in the background. Every handoff between Wi-Fi and cellular recomputes the fingerprint and queries the store. Over weeks the phone ends up holding a private map of which networks break which connections, and how.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["04-policy-state-machine"].en}
+  live={live["04-policy-state-machine"].en}
   alt="State machine of the remembered per-network policy. States observed, validated, suppressed. A new scope enters observed, validates to validated, and a success self-loops there. Two consecutive failures of a validated policy move it to suppressed with a 24-hour lock; any success or lock expiry returns it to validated. The scope key is a SHA-256 hash; the store keeps at most 64 rows and forgets entries older than 90 days."
 />
 
@@ -157,7 +160,7 @@ The same box is still on the path, behaving exactly as before: it buffers the tr
     date: "Jun 2026",
     isoDate: "2026-06-19",
     isoDateModified: "2026-11-03",
-    wordCount: 2684,
+    wordCount: 2687,
     outline: "p23 h2 p19 c9 f14 p3 c6 p15 f14 p18 f14 h2 p21 f14 p39 h2 p18 f14 h2 p41 h2 p6 f14 p19",
     summary:
       "Телефон подключается по Wi-Fi, но не по мобильной сети, и отваливаются всегда одни и те же соединения. RIPDPI сначала диагностирует сетевой путь — проба, класс отказа, вердикт — и только потом что-то чинит, если есть чем.",
@@ -196,8 +199,9 @@ tcp_connect_failed           не подключился
 tls_handshake_failed         TLS не установился
 \`\`\`
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["01-sixteen-kb-timing"].ru}
+  live={live["01-sixteen-kb-timing"].ru}
   alt="Размеченная ось байтов для пробы с толстым заголовком в пределах одной TLS-сессии. Отметки на 8 KiB (late_stage_cutoff, когда уже виден ответ), 14 KiB (fat_threshold_reached, 16384 минус 2048 байт) и 16 KiB (FAT_HEADER_THRESHOLD_BYTES). Обрыв на пороге пишется как tcp_16kb_blocked — главный сигнал. Ниже classify_rst_origin делит сброс по времени: in_path_rst в пределах двойного RTT после SYN-ACK, server_rst позже."
 />
 
@@ -226,8 +230,9 @@ tcp_16kb_blocked   16680      3            server_rst  high
 
 До последнего вердикта добраться намеренно трудно: нужно, чтобы ни один IPv4-адрес из DoH и ни один запасной IPv6 не ответили на SYN, и чтобы это подтвердило второе независимое соединение. Пока подтверждения нет, раннер сидит в \`PendingSecondFlow\` и вердикт не выносит. Ложное срабатывание здесь загнало бы соединение на ненужный relay, поэтому раннер ждёт доказательств. Когда вердикт всё же выносится, раннер ставит \`arm_gate = OwnedStackOnly\`: TLS-приёмы пропускаются, и движок сразу переходит к собственному стеку, то есть к relay. Переписывать пакеты бессмысленно, если по адресу никого нет.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["02-verdict-decision-flow"].ru}
+  live={live["02-verdict-decision-flow"].ru}
   alt="Схема решения от исхода пробы к одному из четырёх вердиктов политики. Исход раскладывается по ProbeOutcomeBucket (Healthy, Attention, Failed, Inconclusive); ветка Failed несёт FailureClass. Четыре вердикта: TRANSPARENT_OK, OWNED_STACK_ONLY, NO_DIRECT_SOLUTION и IP_BLOCK_SUSPECT. IP_BLOCK_SUSPECT закрыт пунктирным узлом PendingSecondFlow, который ждёт второго независимого соединения, прежде чем вердикт сработает."
 />
 
@@ -261,8 +266,9 @@ tcp_16kb_blocked   16680      3            server_rst  high
 
 Запомненная политика проходит через три состояния: \`observed\`, \`validated\`, \`suppressed\`. Два провала валидированной политики подряд переводят её в suppressed и запирают на 24 часа; любой успех обнуляет счётчик провалов и снимает блокировку. Всего таблица хранит не больше 64 строк и забывает всё старше 90 дней. Стоит вернуться в знакомую сеть — и хранилище сразу применяет валидированную политику, а потом тихо перепроверяет в фоне. На каждом переходе между Wi-Fi и сотовой сетью отпечаток пересчитывается, и хранилище опрашивается заново. За недели у телефона складывается собственная карта того, какие сети ломают какие соединения и как именно.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["04-policy-state-machine"].ru}
+  live={live["04-policy-state-machine"].ru}
   alt="Машина состояний политики, запомненной по сетям. Состояния observed, validated, suppressed. Новая область входит в observed, валидируется в validated, успех оставляет её там же. Два отказа подряд у валидированной политики переводят её в suppressed с блокировкой на 24 часа; любой успех или истечение блокировки возвращают в validated. Ключ области — SHA-256-хеш; хранилище держит не больше 64 строк и забывает записи старше 90 дней."
 />
 
@@ -302,7 +308,7 @@ tcp_16kb_blocked   16680      3            server_rst  high
     date: "Apr 2026",
     isoDate: "2026-04-15",
     isoDateModified: "2026-11-03",
-    wordCount: 4605,
+    wordCount: 4606,
     outline: "h2 p25 f14 p63 h2 p8 l8 f14 p43 f14 p13 h3 p12 h3 p11 h3 p8 h2 p5 h3 p5 h3 p5 h3 p8 h3 p8 f14 h2 p40 h2 p109 h2 p25",
     summary:
       "Plain RAG has a geometric ceiling most benchmarks never probe. An LLM Wiki compiles the corpus once instead of re-retrieving on every query — here is what breaks when you build one.",
@@ -428,8 +434,9 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest
 
 Letta, Mem0, Zep, and every graph system above store their artefact in a database or index the reader never opens. The wiki is just markdown files.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["03-compute-shift-quadrant"].en}
+  live={live["03-compute-shift-quadrant"].en}
   alt="Quadrant positioning eight systems on two axes: query-time to ingest-time compute (horizontal), opaque store to human-readable artifact (vertical). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti, and GraphRAG cluster in the bottom half (opaque stores). LLM Wiki sits alone in the top-right quadrant (heavy ingest, markdown artifact)."
   caption="Figure 4. Where each system pays its compute. Seven shipped systems keep the artefact in an opaque store; only the wiki corner keeps the compiled output in files a reader can open."
 />
@@ -489,7 +496,7 @@ I don't have a neat ending. The wiki I built will rot in places I stop re-readin
     date: "Apr 2026",
     isoDate: "2026-04-15",
     isoDateModified: "2026-11-03",
-    wordCount: 4116,
+    wordCount: 4117,
     outline: "h2 p23 f14 p56 h2 p7 l8 f14 p27 f14 p24 h3 p11 h3 p10 h3 p8 h2 p4 h3 p5 h3 p5 h3 p8 h3 p11 f14 h2 p36 h2 p91 h2 p22",
     summary:
       "У обычного RAG есть геометрический потолок, до которого большинство бенчмарков не добираются. LLM Wiki компилирует корпус один раз вместо повторного поиска на каждый запрос — вот что ломается, когда её строишь.",
@@ -609,8 +616,9 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) — самый �
 
 Вики отличается тем, что результат компиляции — обычный markdown. Файлы, которые человек может открыть, отредактировать и прочитать. Системы памяти прячут артефакт в базу данных, граф-системы — в кластерное дерево или PageRank-скор. Когда что-то идёт не так, вики ломается у тебя на виду. Остальные ломаются за стеной абстракции, и ты узнаёшь об этом по качеству ответов, а не по состоянию хранилища.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["03-compute-shift-quadrant"].ru}
+  live={live["03-compute-shift-quadrant"].ru}
   alt="Квадрант, располагающий восемь систем по двум осям: вычисление на запросе ↔ на ингесте (горизонталь), непрозрачное хранилище ↔ читаемый человеком артефакт (вертикаль). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti и GraphRAG кучкуются в нижней половине (непрозрачные хранилища). LLM Wiki стоит одна в верхнем правом углу (тяжёлый ингест, markdown-артефакт)."
   caption="Рисунок 4. Где каждая система платит за вычисления. Семь выпущенных систем держат артефакт в непрозрачном хранилище; только вики-угол держит его в файлах, которые человек может открыть."
 />

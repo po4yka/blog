@@ -128,8 +128,9 @@ HippoRAG ([arXiv:2405.14831](https://arxiv.org/abs/2405.14831)) is the strangest
 
 Letta, Mem0, Zep, and every graph system above store their artefact in a database or index the reader never opens. The wiki is just markdown files.
 
-<BlogFigure
+<AnatomyFigure
   variants={figures["03-compute-shift-quadrant"].en}
+  live={live["03-compute-shift-quadrant"].en}
   alt="Quadrant positioning eight systems on two axes: query-time to ingest-time compute (horizontal), opaque store to human-readable artifact (vertical). Plain RAG, Letta / MemGPT, Mem0, LazyGraphRAG, HippoRAG, Zep / Graphiti, and GraphRAG cluster in the bottom half (opaque stores). LLM Wiki sits alone in the top-right quadrant (heavy ingest, markdown artifact)."
   caption="Figure 4. Where each system pays its compute. Seven shipped systems keep the artefact in an opaque store; only the wiki corner keeps the compiled output in files a reader can open."
 />
