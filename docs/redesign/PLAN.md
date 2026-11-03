@@ -431,7 +431,7 @@ Six numbered sub-phases. Canvas work is last. Each has its own PR, recording and
 
 ### Phase 12: Secondary pages and polish
 
-- **Scope:** a content-aware 404 (links drawn from real routes and posts), changelog filter by type, Privacy and Settings aligned to the new tokens, final polish pass with the `polish` and `audit` skills, a final `DESIGN.md` and `docs/Guidelines.md` consistency pass followed by `apply-skill-policy.sh`, a real-device pass, and the decision on which Lighthouse warnings become errors.
+- **Scope:** a content-aware 404 (links drawn from real routes and posts), changelog filter by type, Privacy and Settings aligned to the new tokens, final polish pass with the `site-design` and `better-interface` skills, a final `DESIGN.md` and `docs/Guidelines.md` consistency pass followed by `apply-skill-policy.sh`, a real-device pass, and the decision on which Lighthouse warnings become errors.
 - **Files:** `NotFoundIsland.tsx`, `ChangelogIsland.tsx`, `PrivacyPageIsland.tsx`, `SettingsIsland.tsx`.
 - **Acceptance:** `e2e/public-pages.spec.ts` texts still match ("Page not found", "Go home", "Changelog"); full CI green; final Lighthouse desktop and mobile within budget; field INP and LCP reviewed if RUM was approved; real-device results recorded.
 
