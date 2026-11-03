@@ -198,9 +198,12 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                     />
                   ),
                 )
-              : Array.from({ length: TOTAL_DAYS }, (_, i) => (
-                  <rect key={i} {...pos(i)} width={CELL} height={CELL} rx={2} fill={LEVEL_COLORS[0]} />
-                ))}
+              : // Faded when unavailable, so the empty grid does not read as a year of zero contributions.
+                <g opacity={status === "unavailable" ? 0.4 : 1}>
+                  {Array.from({ length: TOTAL_DAYS }, (_, i) => (
+                    <rect key={i} {...pos(i)} width={CELL} height={CELL} rx={2} fill={LEVEL_COLORS[0]} />
+                  ))}
+                </g>}
             {active !== null && (
               <rect
                 x={pos(active).x - 2}
