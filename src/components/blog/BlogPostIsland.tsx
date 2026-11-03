@@ -149,9 +149,11 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
           </div>
         </LessViewer>
 
-        <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />
-
-        <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
+        {/* The read-complete sentinel shares the pager's slot, so the stack adds one gap here, not two. */}
+        <div>
+          <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />
+          <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
+        </div>
       </div>
       {/* Outside the space-y-8 stack: as its last child, the hidden bar would give the pager a 2rem bottom margin. */}
       <MobileToc
