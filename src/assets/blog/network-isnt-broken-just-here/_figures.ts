@@ -8,20 +8,25 @@ import _f1EnDD from "./01-sixteen-kb-timing.en.dark.png";
 import _f1RuDL from "./01-sixteen-kb-timing.ru.light.png";
 import _f1RuDD from "./01-sixteen-kb-timing.ru.dark.png";
 
-import _f2EnDL from "./02-verdict-decision-flow.en.light.svg";
-import _f2EnDD from "./02-verdict-decision-flow.en.dark.svg";
-import _f2RuDL from "./02-verdict-decision-flow.ru.light.svg";
-import _f2RuDD from "./02-verdict-decision-flow.ru.dark.svg";
+import _f2EnDL from "./fat-header-probe.en.light.svg";
+import _f2EnDD from "./fat-header-probe.en.dark.svg";
+import _f2RuDL from "./fat-header-probe.ru.light.svg";
+import _f2RuDD from "./fat-header-probe.ru.dark.svg";
 
-import _f3EnDL from "./04-policy-state-machine.en.light.png";
-import _f3EnDD from "./04-policy-state-machine.en.dark.png";
-import _f3RuDL from "./04-policy-state-machine.ru.light.png";
-import _f3RuDD from "./04-policy-state-machine.ru.dark.png";
+import _f3EnDL from "./02-verdict-decision-flow.en.light.svg";
+import _f3EnDD from "./02-verdict-decision-flow.en.dark.svg";
+import _f3RuDL from "./02-verdict-decision-flow.ru.light.svg";
+import _f3RuDD from "./02-verdict-decision-flow.ru.dark.svg";
 
-import _f4EnDL from "./03-layer-map.en.light.png";
-import _f4EnDD from "./03-layer-map.en.dark.png";
-import _f4RuDL from "./03-layer-map.ru.light.png";
-import _f4RuDD from "./03-layer-map.ru.dark.png";
+import _f4EnDL from "./04-policy-state-machine.en.light.png";
+import _f4EnDD from "./04-policy-state-machine.en.dark.png";
+import _f4RuDL from "./04-policy-state-machine.ru.light.png";
+import _f4RuDD from "./04-policy-state-machine.ru.dark.png";
+
+import _f5EnDL from "./03-layer-map.en.light.png";
+import _f5EnDD from "./03-layer-map.en.dark.png";
+import _f5RuDL from "./03-layer-map.ru.light.png";
+import _f5RuDD from "./03-layer-map.ru.dark.png";
 
 export interface FigureVariants {
   desktopLight: ImageMetadata;
@@ -37,16 +42,37 @@ export const figures: Record<string, FigureSet> = {
     en: { desktopLight: _f1EnDL, desktopDark: _f1EnDD },
     ru: { desktopLight: _f1RuDL, desktopDark: _f1RuDD },
   },
-  "02-verdict-decision-flow": {
+  "fat-header-probe": {
     en: { desktopLight: _f2EnDL, desktopDark: _f2EnDD },
     ru: { desktopLight: _f2RuDL, desktopDark: _f2RuDD },
   },
-  "04-policy-state-machine": {
+  "02-verdict-decision-flow": {
     en: { desktopLight: _f3EnDL, desktopDark: _f3EnDD },
     ru: { desktopLight: _f3RuDL, desktopDark: _f3RuDD },
   },
-  "03-layer-map": {
+  "04-policy-state-machine": {
     en: { desktopLight: _f4EnDL, desktopDark: _f4EnDD },
     ru: { desktopLight: _f4RuDL, desktopDark: _f4RuDD },
+  },
+  "03-layer-map": {
+    en: { desktopLight: _f5EnDL, desktopDark: _f5EnDD },
+    ru: { desktopLight: _f5RuDL, desktopDark: _f5RuDD },
+  },
+};
+
+import _l2EnHtml from "./live/fat-header-probe.en.html?raw";
+import _l2EnJs from "./live/fat-header-probe.en.js?url&no-inline";
+import _l2RuHtml from "./live/fat-header-probe.ru.html?raw";
+import _l2RuJs from "./live/fat-header-probe.ru.js?url&no-inline";
+
+export interface LiveFigure {
+  html: string;
+  js: string;
+}
+
+export const live: Record<string, Record<"en" | "ru", LiveFigure>> = {
+  "fat-header-probe": {
+    en: { html: _l2EnHtml, js: _l2EnJs },
+    ru: { html: _l2RuHtml, js: _l2RuJs },
   },
 };

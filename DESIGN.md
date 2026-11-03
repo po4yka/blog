@@ -587,11 +587,15 @@ Durations and easings come from the tokens in `src/styles/tokens.css`: `--dur-in
 - Hover, press and focus feedback, under rule A3
 - Page and shared-element transitions, and the theme wipe (`src/styles/transitions.css`). The root crossfade on a page change is `--dur-base` and the main content fade is 200 ms. The post body slides in at 300 ms. The title of a post morphs from the blog list to the post page at `--dur-base`. A theme change from a visitor control shows a circular wipe at `--dur-base` that grows from that control, or from the viewport centre when the change comes from the keyboard or the terminal. All of these are off under reduced motion. A browser without the View Transitions API navigates and changes theme without animation. The home blog preview has no title morph. The blog image lightbox expands from the clicked inline image to the lightbox image and shrinks back on close, as one `lightbox-figure` group at `--dur-base` with `--ease-in-out` (`src/components/ImageLightbox/sharedElement.ts`); the exiting lightbox image is hidden on close, so one copy of the figure is painted. It waits up to 150 ms for the image to decode. It is off when the thumbnail is off-screen, and `?fig=` deep links and in-lightbox navigation are not animated.
 
+- Live figure state transitions, under rule A12. Added with the first live figure, the fat-header probe in "The Network Isn't Broken Everywhere"
+
 Existing state feedback stays as it is (menu open, form flash and the terminal caret blink). It is not a new class, and no new loop may use it. All other motion stays banned. A later phase adds a class (text decode, chart transitions, the hero field) only with its own amendment in the PR that first uses it.
 
 **Rule A2. Scroll effects.** Use CSS `animation-timeline` first, behind `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, and not under `data-motion="reduce"`, except for a position-state indicator (the blog reading progress rail), which keeps tracking under reduced motion because it shows where the visitor is and not decoration. The default state is the finished, visible state: content, full-page capture, print and no-JS views show the end state, and a rule whose header is 48px or more above the bottom of the viewport is fully drawn. Do not move content to `opacity: 0` and wait for scroll. Scroll-jacking and smooth-scroll libraries stay banned. `Reveal` stays a load-time fade, so below-the-fold content fades at load before the visitor reaches it. The `SectionHeader` rule (`.rule-scroll`, `src/styles/scroll.css`) is the first scroll-linked effect.
 
 **Rule A3. Hover and tap.** Hover, press and focus states (CSS or `whileHover` and `whileTap`) may change opacity, background, underline and outline. They never change width, height, margin, position or scale.
+
+**Rule A12. Live figures.** An `<AnatomyFigure>` (a live isometric figure from havamal's anatomy pipeline) may move its parts to the state the reader picks with a key or a click: the cards of the fat-header probe feed in and its blade drops. The motion shows the figure's state: the parts and the readout come from one model. Nothing moves until the reader acts, and each transition settles and stops. There is no idle tour, no auto-advance and no loop (the hero field stays the one ambient loop, rule A4). Under reduced motion, the site's or the system's, the figure jumps to the end state and still answers input. Off-screen it does not animate. Without JavaScript the still SVG shows the same end state.
 
 **Rule A9. Weights.** Use weights 400 and 500 for body and chrome, and 600 for emphasis (`.prose-blog strong` is 600; `.display-serif` is Piazzolla 560). The one exception is a variable-weight display moment on the hero name: the `.display-name-given` span at 300 and the `.display-name-family` span at 650 on the `wght` axis of Geist Sans (the `h1` itself stays 500). No other element uses 300 or 650.
 
@@ -613,6 +617,7 @@ Permitted:
 - `cell-in` keyframe on the activity heatmap cells (`ActivityCalendar`): a one-shot `--dur-fast` opacity fade after the data arrives, delayed 20 ms per week column. The hero sparkline path draws once with `rule-draw`
 - `progress-rail` keyframe on the blog reading progress rail (`src/styles/scroll.css`, rule A2)
 - `theme-wipe` keyframe for the circular theme change (`src/styles/transitions.css`)
+- Live figure transitions (rule A12): the parts of an `<AnatomyFigure>` move to the state the reader picked and stop; no tour or loop
 
 Not permitted:
 - Parallax, cursor-follow (the hero field's rule A6 pointer response is the one exception), scroll-velocity tickers
