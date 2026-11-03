@@ -46,6 +46,8 @@ test("under reduced motion the cover is printed at once", async ({ page }) => {
 test("pointing at a section dims the others and names it in the caption", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/blog/network-isnt-broken-just-here/");
+  // The island hydrates on idle; the numbers gain data-decode only after it mounts, so wait for that before hovering.
+  await expect(page.locator(".post-cover nav a span[data-decode]").first()).toBeAttached();
   const second = page.locator(".post-cover nav a").nth(1);
   await second.hover();
   await expect(page.locator(".cover-header .cover-block[data-dim]").first()).toBeAttached();
