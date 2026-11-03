@@ -7,11 +7,11 @@ test.describe("blog image lightbox", () => {
   test("opens from shared figure URL, navigates, and closes cleanly", async ({ page }) => {
     await page.goto(`${POST_URL}?fig=2`);
     await expect(page.getByRole("dialog", { name: "Image viewer" })).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText("02 / 03")).toBeVisible();
+    await expect(page.getByText("02 / 04")).toBeVisible();
 
     await page.getByRole("button", { name: "Next image" }).click();
     await expect(page).toHaveURL(/fig=3/);
-    await expect(page.getByText("03 / 03")).toBeVisible();
+    await expect(page.getByText("03 / 04")).toBeVisible();
 
     await page.getByRole("button", { name: "Close" }).click();
     await expect(page.getByRole("dialog", { name: "Image viewer" })).toBeHidden();
@@ -30,7 +30,7 @@ test.describe("blog image lightbox", () => {
 
     await page.getByRole("tab", { name: "Go to figure 2" }).click();
     await expect(page).toHaveURL(/fig=2/);
-    await expect(page.getByText("02 / 03")).toBeVisible();
+    await expect(page.getByText("02 / 04")).toBeVisible();
   });
   test.describe("shared-element transition", () => {
     test("runs on open and close, and leaves no view-transition-name behind", async ({ page, browserName }) => {
