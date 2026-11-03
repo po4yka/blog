@@ -27,7 +27,7 @@ export function PostPager({
   return (
     <nav
       aria-label={t("blogPost.postNav")}
-      className="pt-4 font-mono text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start"
+      className="panel p-4 font-mono text-mono-sm grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-start"
     >
       {prev ? (
         <a
@@ -44,7 +44,7 @@ export function PostPager({
           <span className="label-meta">{prev.date}</span>
         </a>
       ) : (
-        <span />
+        <span aria-hidden="true" className="hidden sm:block" />
       )}
       <a
         href={listHref}
@@ -68,7 +68,7 @@ export function PostPager({
           <span className="label-meta">{next.date}</span>
         </a>
       ) : (
-        <span />
+        <span aria-hidden="true" className="hidden sm:block" />
       )}
     </nav>
   );
