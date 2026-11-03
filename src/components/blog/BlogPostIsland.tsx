@@ -131,7 +131,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
         >
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
           <article className="blog-article min-w-0">
-            <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} />
+            <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} sections={toc.filter((i) => i.level === 2)} />
 
             {/* MDX Content rendered by Astro, passed as children */}
             <div

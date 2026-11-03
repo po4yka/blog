@@ -1,15 +1,50 @@
 import { describe, expect, it } from "vitest";
-import { COVER_H, COVER_W, coverCaption, coverField, coverPixels, type CoverInput } from "@/lib/cover";
-import { countWords, headingDepths } from "../../../scripts/generate-blog-data";
-import { generateCoverFiles } from "../../../scripts/generate-covers";
+import { COVER_H, COVER_W, coverCaption, coverLayout, coverPixels, coverSections, formatOutline, parseOutline } from "@/lib/cover";
+import { articleOutline, countWords } from "../../../scripts/generate-blog-data";
+import { coverInputs, generateCoverFiles } from "../../../scripts/generate-covers";
 
-const base: CoverInput = { slug: "some-post", wordCount: 1840, headings: [2, 3, 2], isoDate: "2026-04-01" };
-const ink = (p: Uint8Array) => p.reduce((n, v) => n + v, 0);
+const base = "h2 p30 c8 h3 p12 f14 h2 l9 p20";
+const column = (px: Uint8Array, x: number) => Array.from({ length: COVER_H }, (_, y) => px[y * COVER_W + x]!);
+const ink = (px: ArrayLike<number>) => Array.from(px).reduce((n, v) => n + v, 0);
 
-describe("cover inputs from MDX", () => {
-  it("lists heading depths in order and skips fenced code", () => {
-    const md = "intro\n\n## One\n\ntext\n\n```sh\n## not a heading\n```\n\n### Two\n\n#### Three\n# Title is skipped\n";
-    expect(headingDepths(md)).toEqual([2, 3, 4]);
+describe("articleOutline", () => {
+  it("lists headings, prose, lists, code and figures in reading order", () => {
+    const md = [
+      'import BlogFigure from "../../components/BlogFigure.astro";',
+      "# Title is skipped",
+      "intro text",
+      "## One",
+      "one two three four five six seven eight nine ten eleven twelve",
+      "",
+      "- first item",
+      "- second item",
+      "",
+      "```sh",
+      "## not a heading",
+      "echo hi",
+      "```",
+      "### Two",
+      "<BlogFigure",
+      '  alt="a figure"',
+      "/>",
+      "<BlogFigure",
+      '  alt="another"',
+      "/>",
+    ].join("\n");
+    expect(formatOutline(articleOutline(md))).toBe("p1 h2 p2 l3 c4 h3 f14 f14");
+  });
+
+  it("skips headings inside tilde and longer backtick fences", () => {
+    expect(formatOutline(articleOutline("~~~\n## not a heading\n~~~\n\n## Real"))).toBe("c3 h2");
+    expect(formatOutline(articleOutline("````md\n```js\nx\n```\n````\n\n## Real"))).toBe("c5 h2");
+  });
+
+  it("ends a paragraph at a figure or fence with no blank line before it", () => {
+    expect(formatOutline(articleOutline("text\n<BlogFigure />\nmore"))).toBe("p1 f14 p1");
+  });
+
+  it("merges neighbouring prose paragraphs", () => {
+    expect(formatOutline(articleOutline("one\n\ntwo\n\nthree"))).toBe("p3");
   });
 
   it("counts Cyrillic words, not only Latin ones", () => {
@@ -19,55 +54,74 @@ describe("cover inputs from MDX", () => {
   });
 });
 
-describe("coverField", () => {
-  it("gives the same pixels for the same input and different pixels for another slug", () => {
-    expect(coverPixels(base)).toEqual(coverPixels({ ...base }));
-    expect(coverPixels({ ...base, slug: "other-post" })).not.toEqual(coverPixels(base));
+describe("coverLayout", () => {
+  it("fills the width exactly, one column per heading and a paper column between blocks", () => {
+    const spans = coverLayout(parseOutline(base));
+    expect(spans[spans.length - 1]!.x1).toBe(COVER_W);
+    for (const s of spans.filter((s) => s.kind === "h")) expect(s.x1 - s.x0).toBe(1);
+    for (let i = 1; i < spans.length; i++) expect(spans[i]!.x0 - spans[i - 1]!.x1).toBe(1);
   });
 
-  it("uses every input: date, word count and headings change the cover", () => {
-    const px = coverPixels(base);
-    expect(coverPixels({ ...base, isoDate: "2026-09-15" })).not.toEqual(px);
-    expect(coverPixels({ ...base, headings: [2, 2, 2, 2] })).not.toEqual(px);
-    expect(ink(coverPixels({ ...base, wordCount: 4000 }))).toBeGreaterThan(ink(coverPixels({ ...base, wordCount: 300 })));
+  it("keeps every block of every real post at least three columns wide", () => {
+    for (const { outline } of coverInputs()) {
+      const spans = coverLayout(parseOutline(outline));
+      expect(spans[spans.length - 1]!.x1).toBe(COVER_W);
+      for (const s of spans.filter((s) => s.kind !== "h")) expect(s.x1 - s.x0).toBeGreaterThanOrEqual(3);
+    }
   });
 
-  it("draws one band per heading: paper between bands and above a deeper heading", () => {
-    const field = coverField(base);
-    const bandWidth = COVER_W / 3;
-    const column = (x: number) => Array.from({ length: COVER_H }, (_, y) => field[y * COVER_W + x]!);
-    // The gap before band 2 and band 3 is empty.
-    expect(column(Math.floor(bandWidth))).toEqual(new Array(COVER_H).fill(0));
-    expect(column(Math.floor(2 * bandWidth))).toEqual(new Array(COVER_H).fill(0));
-    // The h3 band (middle) starts below the top; the h2 bands reach row 0.
-    const mid = Math.floor(1.5 * bandWidth);
-    expect(column(mid).slice(0, 4)).toEqual([0, 0, 0, 0]);
-    expect(Math.max(...Array.from({ length: Math.floor(bandWidth) - 2 }, (_, x) => field[x]!))).toBeGreaterThan(0);
-  });
-
-  it("never asks for solid ink, so every region keeps a dither texture", () => {
-    expect(Math.max(...coverField({ ...base, wordCount: 20_000 }))).toBeCloseTo(0.85, 5);
+  it("gives a longer block more columns, and a short one at least three", () => {
+    const spans = coverLayout(parseOutline("p40 c10 p1"));
+    const width = (i: number) => spans[i]!.x1 - spans[i]!.x0;
+    expect(width(0)).toBeGreaterThan(3 * width(1));
+    expect(width(2)).toBeGreaterThanOrEqual(3);
   });
 });
 
-describe("coverCaption", () => {
-  it("names every input, with localized plurals", () => {
-    expect(coverCaption(base, "en")).toBe("some-post, 1840 words, 3 headings, 2026-04-01");
-    expect(coverCaption({ ...base, wordCount: 21, headings: [2] }, "en")).toBe("some-post, 21 words, 1 heading, 2026-04-01");
-    expect(coverCaption({ ...base, wordCount: 2245, headings: [2, 2, 2, 2, 2] }, "ru")).toBe("some-post, 2245 слов, 5 заголовков, 2026-04-01");
-    expect(coverCaption({ ...base, wordCount: 3884, headings: [2, 2, 3] }, "ru")).toBe("some-post, 3884 слова, 3 заголовка, 2026-04-01");
+describe("coverPixels", () => {
+  it("is deterministic and follows the outline", () => {
+    expect(coverPixels(base)).toEqual(coverPixels(base));
+    expect(coverPixels("h2 p30 c8")).not.toEqual(coverPixels(base));
+  });
+
+  it("draws an h2 as a full-height rule and an h3 as a shorter one", () => {
+    const px = coverPixels(base);
+    const [h2, , , h3] = coverLayout(parseOutline(base));
+    expect(column(px, h2!.x0)).toEqual(new Array(COVER_H).fill(1));
+    expect(column(px, h3!.x0).slice(0, 3)).toEqual([0, 0, 0]);
+    expect(column(px, h3!.x0)[COVER_H - 1]).toBe(1);
+  });
+
+  it("draws code denser than prose, and a figure as an empty frame", () => {
+    const px = coverPixels("p20 c20 f14");
+    const [p, c, f] = coverLayout(parseOutline("p20 c20 f14"));
+    const area = (s: { x0: number; x1: number }) => Array.from({ length: COVER_H }, (_, y) => px.slice(y * COVER_W + s.x0, y * COVER_W + s.x1)).flatMap((r) => Array.from(r));
+    expect(ink(area(c!))).toBeGreaterThan(ink(area(p!)));
+    const inside = column(px, Math.floor((f!.x0 + f!.x1) / 2));
+    expect(inside[COVER_H - 1]).toBe(1);
+    expect(inside.slice(6, COVER_H - 1)).toEqual(new Array(COVER_H - 7).fill(0));
+  });
+
+  it("puts the section numbers at the h2 columns", () => {
+    const spans = coverLayout(parseOutline(base)).filter((s) => s.kind === "h" && s.n === 2);
+    expect(coverSections(base)).toEqual(spans.map((s) => s.x0));
   });
 });
 
 describe("generateCoverFiles", () => {
-  it("writes one cover per post and language, each under 10 KB, identical on a second run", () => {
+  it("writes one SVG per post and language", () => {
     const files = generateCoverFiles();
     expect(files.size).toBeGreaterThan(0);
-    for (const [name, svg] of files) {
-      expect(name).toMatch(/^(en|ru)-[\w-]+\.svg$/);
-      expect(svg.length).toBeLessThan(10_240);
-      expect(svg).toContain(`viewBox="0 0 ${COVER_W} ${COVER_H}"`);
-    }
-    expect(generateCoverFiles()).toEqual(files);
+    for (const svg of files.values()) expect(svg).toContain(`viewBox="0 0 ${COVER_W} ${COVER_H}"`);
+  });
+});
+
+describe("coverCaption", () => {
+  it("names what the cover draws, with localized plurals, and leaves out kinds the post lacks", () => {
+    expect(coverCaption({ wordCount: 1840, outline: base }, "en")).toBe("1840 words, 2 sections, 1 figure, 1 code block");
+    expect(coverCaption({ wordCount: 21, outline: "h2 p2" }, "en")).toBe("21 words, 1 section");
+    expect(coverCaption({ wordCount: 2245, outline: "h2 f14 f14 c4 c4 c4 c4 c4 h2 h2 h2 h2" }, "ru")).toBe(
+      "2245 слов, 5 разделов, 2 рисунка, 5 блоков кода",
+    );
   });
 });

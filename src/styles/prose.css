@@ -186,6 +186,10 @@
   padding: 0.125em 0.375em;
   border-radius: 2px;
   color: var(--foreground);
+  /* The paragraph's hyphens: auto would print a hyphen inside identifiers
+     (tcp_16k-b_blocked). Break long ones without inserting a character. */
+  hyphens: manual;
+  overflow-wrap: break-word;
 }
 
 .prose-blog pre {

@@ -343,11 +343,13 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Post Covers
 
-- Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 6:1 ratio. The art is `aria-hidden`; the caption is real text
-- Source: `scripts/generate-covers.ts` writes `public/covers/<lang>-<slug>.svg` at build time (`generate:all`, checked by `validate:all`). Each is a 144x24 1-bit field from `coverField` in `src/lib/cover.ts`, ordered-dithered with `ditherField`
-- Seeds (rule A8), all from the post's own MDX: the slug hash picks the wave pattern, the word count sets the density, each heading is one band (an h2 band fills the height, each level deeper starts a third lower, two paper columns between bands), and the publish date shifts the phase. One cover per language, like the OG images; the two languages share the slug, headings and date, so they look related
-- Caption: `cover: <slug>, <words>, <headings>, <YYYY-MM-DD>` in `.label-meta`, with localized plurals
-- Colour: a CSS mask over `currentColor` at `var(--foreground)` 45%. Tone is capped below solid ink, so every region keeps a dither texture
+- Component: the `figure` at the end of `PostHeader` (`src/components/blog/PostHeader.tsx`), after the `h1`, its `time`, the tags and the "also available as" line, full prose width at a 9.2:1 ratio (4 CSS px per cell at the 46rem header width). The art is `aria-hidden`; the caption and the section numbers are real text
+- Source: `scripts/generate-covers.ts` writes `public/covers/<lang>-<slug>.svg` at build time (`generate:all`, checked by `validate:all`). Each is a 184x20 1-bit minimap from `coverPixels` in `src/lib/cover.ts`
+- Seed (rule A8): the post's outline, read from its MDX by `articleOutline` in `scripts/generate-blog-data.ts` and stored as `outline` in `blogData.ts` (tokens such as `h2 p38 f14 c6`). The x axis is reading order. Each block takes columns in proportion to its estimated rendered height in lines (prose and lists from their word count, code from its line count, a figure 14 lines), at least 3 columns, with one paper column between blocks
+- Marks: an h2 is a full-height 1-column rule, an h3 a shorter one, deeper headings match the content height; prose is a light ordered dither, code a dense one, a list rows of dots, a figure an empty frame. One cover per language, like the OG images
+- Section numbers: under the cover, `01`, `02`... in `.label-meta` at the column of each h2 rule, each a link to its heading (the h2 items of the TOC). A number closer than 12 columns to the previous one is left out; its rule stays
+- Caption: `cover: <words>, <sections>, <figures>, <code blocks>` in `.label-meta`, with localized plurals; a kind the post does not have is left out
+- Colour: a CSS mask over `currentColor` at `var(--foreground)` 60%
 - OG card: the same pixels, in the meta grey, as a 992px band between the title and the footer row of `public/og/<lang>-<slug>.png`
 - Budget: 0 KB runtime JS beyond the caption helper, each SVG under 10 KB
 
@@ -456,7 +458,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
-- Seed generative art from real inputs only and print the seed in its caption (rule A8): the slug hash for project plates; slug, word count, heading depths and publish date for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, heading structure and publish date
+- Seed generative art from real inputs only and print the seed in its caption (rule A8): the slug hash for project plates; the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent

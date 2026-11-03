@@ -317,7 +317,7 @@ export async function generateOgImages(): Promise<void> {
     const lang = post.lang ?? "en";
     const outFile = path.join(OUTPUT_DIR, `${lang}-${post.slug}.png`);
     const input = covers.get(`${lang}-${post.slug}`);
-    const cover = input && pixelsToSvg(coverPixels(input), COVER_W, COVER_H, "#6f6f75");
+    const cover = input && pixelsToSvg(coverPixels(input.outline), COVER_W, COVER_H, "#6f6f75");
     const png = await renderCard(post, cover);
     fs.writeFileSync(outFile, png);
     console.log(`Generated ${outFile}`);
