@@ -97,7 +97,7 @@ const en = {
   // blog preview (home section)
   "blogPreview.heading": "Latest Posts",
   "blogPreview.new": "new",
-  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 view all\u00a0\u2192",
+  "blogPreview.viewAll": "$ ls ./posts/ \u2014 all posts\u00a0\u2192",
   "blogPreview.viewAllLabel": "View all blog posts",
 
   // links
@@ -419,7 +419,7 @@ const ru: TranslationKeys = {
   // blog preview (home section)
   "blogPreview.heading": "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043f\u043e\u0441\u0442\u044b",
   "blogPreview.new": "\u043d\u043e\u0432\u043e\u0435",
-  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435\u00a0\u2192",
+  "blogPreview.viewAll": "$ ls ./posts/ \u2014 \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b\u00a0\u2192",
   "blogPreview.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b",
 
   // links
