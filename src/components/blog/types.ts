@@ -8,8 +8,8 @@ export interface PostMeta {
   category: string;
   readingTime?: number;
   wordCount?: number;
-  /** Heading depths in order; with wordCount and isoDate, the cover's inputs. */
-  headings?: number[];
+  /** Blocks in reading order; with wordCount, the cover's inputs. */
+  outline?: string;
 }
 
 export interface AdjacentPost {

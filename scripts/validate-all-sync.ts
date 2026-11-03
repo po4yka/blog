@@ -8,8 +8,6 @@ import { generateBlogDataSource } from "./generate-blog-data.js";
 import { generateProjectsDataSource } from "./generate-projects-data.js";
 import { generateExperienceDataSource } from "./generate-experience-data.js";
 import { generateSeedSource } from "./generate-seed.js";
-import { dirDrift, generatePlateFiles, PLATES_DIR } from "./generate-plates.js";
-import { COVERS_DIR, generateCoverFiles } from "./generate-covers.js";
 import { FIELD_SEED_FILE, parseFieldSeed } from "./generate-field-seed.js";
 import { posterDrift } from "./generate-field-poster.js";
 
@@ -81,20 +79,6 @@ for (const target of targets) {
     if (diffCount > 10) {
       console.error(`  ... and ${diffCount - 10} more differences.`);
     }
-  }
-}
-
-// Generated SVG directories must hold exactly the generated files.
-for (const [label, dir, files] of [
-  ["public/plates", PLATES_DIR, generatePlateFiles()],
-  ["public/covers", COVERS_DIR, generateCoverFiles()],
-] as const) {
-  const drift = dirDrift(dir, files);
-  if (drift.length > 0) {
-    failures++;
-    console.error(`${label}: OUT OF SYNC (${drift.join(", ")})`);
-  } else {
-    console.log(`${label}: in sync`);
   }
 }
 

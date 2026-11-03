@@ -14,6 +14,11 @@ export function postTitleStyle(slug: string): CSSProperties {
   return { viewTransitionName: postTitleTransitionName(slug), viewTransitionClass: "post-title" } as CSSProperties;
 }
 
+/** The cover morphs between the blog list row and the post header (view-transition-class "post-cover", transitions.css). */
+export function coverTransitionStyle(slug: string): CSSProperties {
+  return { viewTransitionName: postTitleTransitionName(slug).replace(/^post-title-/, "post-cover-"), viewTransitionClass: "post-cover" } as CSSProperties;
+}
+
 /** Reading time in minutes from the rendered body text (220 words per minute, at least 1). */
 export function countReadingMinutes(text: string): number {
   const words = text.trim().split(/\s+/).length;

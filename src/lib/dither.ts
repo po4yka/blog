@@ -16,9 +16,6 @@ export function hashHex(input: string, length = 8): string {
   return hash32(input).toString(16).padStart(8, "0").slice(0, length);
 }
 
-/** Caption of a project plate: it names the seed (the slug hash), never a metric. */
-export const plateCaption = (slug: string) => `slug#${hashHex(slug, 4)}`;
-
 /** mulberry32: a small seeded PRNG returning floats in [0, 1). */
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
@@ -50,6 +47,12 @@ const BAYER_8 = (() => {
   }
   return m.map((row) => row.map((v) => (v + 0.5) / 64));
 })();
+
+/** Ordered-dither threshold of the cell (x, y), in (0, 1): a value above it inks the cell. */
+export const bayerThreshold = (x: number, y: number) => BAYER_8[y & 7]![x & 7]!;
+
+/** Dissolve rank of the cell (x, y), 0 to 7: the eighth of the threshold range it falls in. Sparse cells come first. */
+export const bayerRank = (x: number, y: number) => Math.floor(bayerThreshold(x, y) * 8);
 
 export type DitherMode = "ordered" | "diffusion";
 
@@ -131,6 +134,11 @@ export function mirrorX(pixels: Uint8Array, width: number, height: number): Uint
  * mask, so the page colours it).
  */
 export function pixelsToSvg(pixels: Uint8Array, width: number, height: number, color = "#000"): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><path d="${pixelsToPath(pixels, width, height)}" stroke="${color}"/></svg>\n`;
+}
+
+/** The path data of `pixelsToSvg`: one 1-unit-wide horizontal stroke per run of ink. */
+export function pixelsToPath(pixels: ArrayLike<number>, width: number, height: number): string {
   let d = "";
   for (let y = 0; y < height; y++) {
     let x = 0;
@@ -146,7 +154,7 @@ export function pixelsToSvg(pixels: Uint8Array, width: number, height: number, c
       penX = x;
     }
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><path d="${d}" stroke="${color}"/></svg>\n`;
+  return d;
 }
 
 // --- Hero field (home page): density follows the weekly commit counts, left (oldest) to right (newest). ---

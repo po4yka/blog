@@ -97,7 +97,7 @@ function PolicyRu() {
 export function PrivacyPage() {
   return (
     <MotionProvider>
-    <div className="space-y-8 max-w-[46rem]">
+    <div className="space-y-8">
       <SectionHeader
         level={1}
         number="10"
@@ -129,8 +129,9 @@ export function PrivacyPage() {
 
       <LessViewer filename="privacy.log" meta={<T k="privacy.sections" />}>
         {/* Explicit font-sans: LessViewer's content wrapper is mono, and
-            prose-blog would force the serif blog voice. Neither fits this page. */}
-        <div className="font-sans text-foreground/80 text-[0.9375rem] leading-[1.7]">
+            prose-blog would force the serif blog voice. Neither fits this page.
+            The panels span the page grid like every other page; only the text keeps a reading measure. */}
+        <div className="font-sans text-foreground/80 text-[0.9375rem] leading-[1.7] max-w-[70ch]">
           <PolicyEn />
           <PolicyRu />
         </div>

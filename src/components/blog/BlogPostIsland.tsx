@@ -17,6 +17,7 @@ import { PostHeader } from "./PostHeader";
 import { PostPager } from "./PostPager";
 import { Toc } from "./Toc";
 import { useScrollSpy } from "./useScrollSpy";
+import { useCoverMap } from "./useCoverMap";
 import { useReadComplete } from "./useReadComplete";
 import { useResumePosition } from "./useResumePosition";
 import type { AdjacentPost, PostMeta, RelatedPost } from "./types";
@@ -72,6 +73,9 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
   const { saved: resumeAt, resume, dismiss: dismissResume } = useResumePosition(lang, slug, percent, reduceMotion);
   const activeId = useScrollSpy(toc, contentRef, tocRef);
   const tocLabel = t("blogPost.toc");
+  const coverRef = useRef<HTMLElement>(null);
+  const h2s = toc.filter((i) => i.level === 2);
+  const { activeFigure, onBlock } = useCoverMap(post.outline, h2s, contentRef, [coverRef, tocRef]);
 
   useEffect(() => {
     if (knownMinutes == null && contentRef.current) {
@@ -131,7 +135,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
         >
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
           <article className="blog-article min-w-0">
-            <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} />
+            <PostHeader post={post} slug={slug} lang={lang} listHref={listHref} sections={h2s} coverRef={coverRef} activeFigure={activeFigure} onBlock={onBlock} />
 
             {/* MDX Content rendered by Astro, passed as children */}
             <div
@@ -145,13 +149,21 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
 
             <PostFooter slug={slug} lang={lang} related={related} />
           </article>
-          <Toc items={toc} activeId={activeId} label={tocLabel} progressRef={tocRef} />
+          <Toc
+            items={toc}
+            activeId={activeId}
+            label={tocLabel}
+            progressRef={tocRef}
+            map={post.outline ? { outline: post.outline, activeFigure, onBlock } : undefined}
+          />
           </div>
         </LessViewer>
 
-        <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />
-
-        <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
+        {/* The read-complete sentinel shares the pager's slot, so the stack adds one gap here, not two. */}
+        <div>
+          <div ref={endRef} aria-hidden="true" style={{ height: 1 }} />
+          <PostPager prev={prev} next={next} lang={lang} listHref={listHref} />
+        </div>
       </div>
       {/* Outside the space-y-8 stack: as its last child, the hidden bar would give the pager a 2rem bottom margin. */}
       <MobileToc
