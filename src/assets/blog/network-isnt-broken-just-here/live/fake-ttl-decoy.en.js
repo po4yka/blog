@@ -870,7 +870,7 @@ function describe() {
 function send() {
   run = runDecoy(ttl);
   describe();
-  if (reducedMotion) { pose = finalPose(run); draw(); return; }
+  if (reducedMotion) { knob = knobGoal; pose = finalPose(run); draw(); return; }
   from = pose;
   clock = 0;
   kick();
