@@ -88,7 +88,7 @@ export function Cmd({
       </span>
       <span
         data-cmd-text
-        className="text-foreground min-w-0 break-all group-hover:opacity-100 transition-opacity duration-150"
+        className="text-foreground min-w-0 wrap-anywhere group-hover:opacity-100 transition-opacity duration-150"
         style={{ opacity: 0.92 }}
       >
         {children}

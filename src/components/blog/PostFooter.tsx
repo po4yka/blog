@@ -25,12 +25,12 @@ export function PostFooter({
           <span className="text-foreground font-medium">Nikita Pochaev</span>
           <span className="text-muted-foreground"> — {t("blogPost.authorRole")}</span>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-label">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-0 sm:gap-y-1 font-mono text-label">
           <a
             href="https://github.com/po4yka"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
+            className="inline-flex items-center min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
           >
             github.com/po4yka
             <span className="sr-only"> ({t("links.opensNewWindow")})</span>
@@ -39,7 +39,7 @@ export function PostFooter({
             href="https://linkedin.com/in/pochaev-nikita/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
+            className="inline-flex items-center min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline"
           >
             linkedin.com/in/pochaev-nikita
             <span className="sr-only"> ({t("links.opensNewWindow")})</span>

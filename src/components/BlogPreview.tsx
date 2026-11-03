@@ -66,9 +66,9 @@ function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: nu
               </Tag>
             </>
           )}
-          <span className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
-          {/* Title */}
-          <div className="relative min-w-0">
+          <span className="hidden sm:inline text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
+          {/* Title: its own line on phones, after the langs; inline from sm. */}
+          <div className="relative min-w-0 basis-full order-last sm:basis-auto sm:order-none">
             <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-200 font-sans text-mono">
               {title}
             </span>
@@ -108,7 +108,7 @@ export function BlogPreview() {
         <span className="select-none" style={{ color: "var(--emphasis)", fontWeight: 500 }} aria-hidden="true">
           $
         </span>
-        <span className="text-foreground min-w-0 break-all" style={{ opacity: 0.92 }}>
+        <span className="text-foreground min-w-0 wrap-anywhere" style={{ opacity: 0.92 }}>
           ls -t <Em>./posts/</Em> | head -3
         </span>
       </Reveal>

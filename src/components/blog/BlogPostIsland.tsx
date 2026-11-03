@@ -94,7 +94,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
         <Reveal
           as="a"
           href={listHref}
-          className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline transition-[color,text-decoration-color,opacity] duration-150 no-underline font-mono text-mono-sm"
+          className="inline-flex items-center gap-1.5 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-[color,text-decoration-color,opacity] duration-150 no-underline font-mono text-mono-sm"
         >
           <ArrowLeft size={12} />
           {t("blogPost.allPosts")}

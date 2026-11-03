@@ -31,13 +31,13 @@ export function Links() {
           link.href === undefined ? (
             <span
               key={link.label}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-border text-muted-foreground font-mono text-mono rounded-[2px] opacity-30 cursor-default pointer-events-none"
+              // Dashed border and a visible "soon" mark say "not yet" in readable text (no faded label).
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-dashed border-border text-muted-foreground-dim font-mono text-mono rounded-[2px] cursor-default"
             >
-              <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground-dim shrink-0" />
+              <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="shrink-0" />
               {link.label}
-              <span className="sr-only">
-                {" ("}
-                <T k="links.comingSoon" />)
+              <span className="label-meta">
+                <T k="links.comingSoon" />
               </span>
             </span>
           ) : (

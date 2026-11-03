@@ -73,13 +73,13 @@ export function PostHeader({
       <ul
         role="list"
         aria-label={tagsLabel}
-        className="mt-4 flex flex-wrap items-center gap-3 list-none m-0 p-0"
+        className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-4 sm:gap-y-3 list-none m-0 p-0"
       >
         {post.tags.map((tag) => (
           <li key={tag} role="listitem">
             <a
               href={`${listHref}?tag=${encodeURIComponent(tag)}`}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline font-mono text-label"
+              className="inline-flex items-center py-2 -my-2 sm:py-0 sm:my-0 text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline font-mono text-label"
             >
               #{tag}
             </a>
@@ -89,17 +89,17 @@ export function PostHeader({
       {/* Machine-readable twins of this post. They exist for coding
           agents and feed readers; showing them makes that part of
           the site visible to people too. */}
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta text-muted-foreground-dim">
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-4 sm:gap-y-1 label-meta text-muted-foreground-dim">
         <span>{t("blogPost.alsoAs")}</span>
-        {alsoAsLinks(slug, lang).map((f, i) => (
+        {alsoAsLinks(slug, lang).map((f, i, arr) => (
           <span key={f.label} className="flex items-center gap-x-3">
-            {i > 0 && <span aria-hidden="true">·</span>}
             <a
               href={f.href}
-              className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 no-underline"
+              className="inline-flex items-center py-2 -my-2 sm:py-0 sm:my-0 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 no-underline"
             >
               {f.label}
             </a>
+            {i < arr.length - 1 && <span aria-hidden="true">·</span>}
           </span>
         ))}
       </div>

@@ -86,18 +86,18 @@ const en = {
   // projects (home section)
   "projects.heading": "Selected Projects",
   "projects.featured": "featured",
-  "projects.viewAll": "$ ls ./projects/ \u2014 view all \u2192",
+  "projects.viewAll": "$ ls ./projects/ \u2014 view all\u00a0\u2192",
   "projects.viewAllLabel": "View all projects",
 
   // experience (home section)
   "experience.heading": "Experience",
-  "experience.viewAll": "$ git log --author=po4yka \u2014 full history \u2192",
+  "experience.viewAll": "$ git log --author=po4yka \u2014 full history\u00a0\u2192",
   "experience.viewAllLabel": "View all experience",
 
   // blog preview (home section)
   "blogPreview.heading": "Latest Posts",
   "blogPreview.new": "new",
-  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 view all \u2192",
+  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 view all\u00a0\u2192",
   "blogPreview.viewAllLabel": "View all blog posts",
 
   // links
@@ -267,6 +267,7 @@ const en = {
   "notFound.pageNotFound": "Page not found",
   "notFound.goBack": "\u2190 cd ~",
   "notFound.requested": "Requested",
+  "notFound.errorLabel": "Error",
   "notFound.closest": "Closest match",
   "notFound.pages": "Pages",
   "notFound.posts": "Posts",
@@ -407,18 +408,18 @@ const ru: TranslationKeys = {
   // projects (home section)
   "projects.heading": "\u0418\u0437\u0431\u0440\u0430\u043d\u043d\u044b\u0435 \u043f\u0440\u043e\u0435\u043a\u0442\u044b",
   "projects.featured": "\u0438\u0437\u0431\u0440\u0430\u043d\u043d\u043e\u0435",
-  "projects.viewAll": "$ ls ./projects/ \u2014 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u2192",
+  "projects.viewAll": "$ ls ./projects/ \u2014 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435\u00a0\u2192",
   "projects.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u0440\u043e\u0435\u043a\u0442\u044b",
 
   // experience (home section)
   "experience.heading": "\u041e\u043f\u044b\u0442",
-  "experience.viewAll": "$ git log --author=po4yka \u2014 \u043f\u043e\u043b\u043d\u0430\u044f \u0438\u0441\u0442\u043e\u0440\u0438\u044f \u2192",
+  "experience.viewAll": "$ git log --author=po4yka \u2014 \u043f\u043e\u043b\u043d\u0430\u044f \u0438\u0441\u0442\u043e\u0440\u0438\u044f\u00a0\u2192",
   "experience.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0435\u0441\u044c \u043e\u043f\u044b\u0442",
 
   // blog preview (home section)
   "blogPreview.heading": "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043f\u043e\u0441\u0442\u044b",
   "blogPreview.new": "\u043d\u043e\u0432\u043e\u0435",
-  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u2192",
+  "blogPreview.viewAll": "$ find ./posts/ -name \"*.md\" \u2014 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435\u00a0\u2192",
   "blogPreview.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b",
 
   // links
@@ -588,6 +589,7 @@ const ru: TranslationKeys = {
   "notFound.pageNotFound": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430",
   "notFound.goBack": "\u2190 cd ~",
   "notFound.requested": "\u0417\u0430\u043f\u0440\u043e\u0448\u0435\u043d\u043e",
+  "notFound.errorLabel": "\u041e\u0448\u0438\u0431\u043a\u0430",
   "notFound.closest": "\u0411\u043b\u0438\u0436\u0430\u0439\u0448\u0435\u0435 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435",
   "notFound.pages": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b",
   "notFound.posts": "\u0421\u0442\u0430\u0442\u044c\u0438",
