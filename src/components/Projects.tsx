@@ -3,7 +3,7 @@ import { Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { T } from "./ui/T";
 import { Plate } from "./ui/Plate";
-import { plateCaption } from "@/lib/dither";
+import { plateCaption } from "@/lib/plate";
 
 /** "owner/name" of the first GitHub link, or undefined: the spec sheet prints only real fields. */
 function repoOf(links: { href: string }[]): string | undefined {
@@ -40,7 +40,7 @@ export function Projects() {
               href={`/projects#${project.slug}`}
               className="group flex items-start gap-2 py-4 border-b border-border last:border-b-0 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]"
             >
-              <Plate slug={project.slug ?? project.id} size={32} className="hidden sm:block mt-0.5" />
+              <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={32} className="hidden sm:block mt-0.5" />
 
               {/* Tree branch prefix */}
               <span
@@ -102,7 +102,7 @@ export function Projects() {
                           </>
                         )}
                         <dt className={`inline ${SPEC_KEY}`}>MARK</dt>
-                        <dd className="inline m-0">{plateCaption(project.slug ?? project.id)}</dd>
+                        <dd className="inline m-0" data-decode="hover">{plateCaption(project.slug ?? project.id, project.platforms[0])}</dd>
                       </div>
                     </dl>
                   </div>

@@ -2,9 +2,12 @@ import { useLocale } from "@/stores/settingsStore";
 import type { Locale } from "@/lib/i18n";
 import { alsoAsLinks, formatIsoDate, isUpdated, postTitleStyle } from "@/lib/blog/format";
 import type { PostMeta } from "./types";
-import { COVER_H, COVER_W, coverCaption, coverPath, coverSections } from "@/lib/cover";
+import { useMemo, useState, type RefObject } from "react";
+import { useClientValue } from "@/hooks/useClientValue";
+import { COVER_W, coverArt, coverCaption, coverSections, countsLabel, sectionCounts } from "@/lib/cover";
 import type { TocItem } from "@/lib/blog/toc";
-import { maskStyle } from "@/components/ui/utils";
+import { CoverArt } from "./CoverArt";
+import { coverTransitionStyle } from "@/lib/blog/format";
 
 export function PostHeader({
   post,
@@ -12,6 +15,9 @@ export function PostHeader({
   lang,
   listHref,
   sections = [],
+  coverRef,
+  activeFigure = null,
+  onBlock,
 }: {
   post: PostMeta;
   slug: string;
@@ -19,6 +25,10 @@ export function PostHeader({
   listHref: string;
   /** The h2 items of the TOC; the cover numbers them under their columns. */
   sections?: TocItem[];
+  /** Gets `--read` and `--unread` from useCoverMap. */
+  coverRef?: RefObject<HTMLElement | null>;
+  activeFigure?: number | null;
+  onBlock?: (section: number, figure: number | null) => void;
 }) {
   const { t, locale } = useLocale();
   const tagsLabel = t("blogPost.tags");
@@ -95,17 +105,17 @@ export function PostHeader({
       </div>
       {/* Generative cover (rule A8): a minimap of this post's blocks; the numbers link to its sections. */}
       {post.wordCount !== undefined && post.outline && (
-        <figure className="mt-8 mb-0 mx-0">
-          <div
-            aria-hidden="true"
-            className="w-full text-foreground/60"
-            style={{ aspectRatio: `${COVER_W} / ${COVER_H}`, ...maskStyle(coverPath(lang, slug)) }}
-          />
-          <CoverSections columns={coverSections(post.outline)} sections={sections} label={t("blogPost.toc")} />
-          <figcaption className="mt-2 label-meta text-muted-foreground-dim">
-            {t("blogPost.cover")}: {coverCaption({ wordCount: post.wordCount, outline: post.outline }, locale)}
-          </figcaption>
-        </figure>
+        <PostCover
+          slug={slug}
+          outline={post.outline}
+          caption={`${t("blogPost.cover")}: ${coverCaption({ wordCount: post.wordCount, outline: post.outline }, locale)}`}
+          sections={sections}
+          label={t("blogPost.coverSections")}
+          locale={locale}
+          coverRef={coverRef}
+          activeFigure={activeFigure}
+          onBlock={onBlock}
+        />
       )}
     </header>
   );
@@ -114,31 +124,92 @@ export function PostHeader({
 /** Fewest columns between two numbered sections; a closer one keeps its rule on the cover but no number. */
 const MIN_LABEL_GAP = 12;
 
-/** Section numbers under the cover, each at the column of its h2 rule and linking to that heading. */
-function CoverSections({ columns, sections, label }: { columns: number[]; sections: TocItem[]; label: string }) {
+/**
+ * The cover, its section numbers and its caption. Pointing at a section (on the
+ * art or its number) dims the others and swaps the caption for that section's
+ * title and contents; both captions share one grid cell, so nothing moves.
+ */
+function PostCover({
+  slug,
+  outline,
+  caption,
+  sections,
+  label,
+  locale,
+  coverRef,
+  activeFigure,
+  onBlock,
+}: {
+  slug: string;
+  outline: string;
+  caption: string;
+  sections: TocItem[];
+  label: string;
+  locale: Locale;
+  coverRef?: RefObject<HTMLElement | null>;
+  activeFigure: number | null;
+  onBlock?: (section: number, figure: number | null) => void;
+}) {
+  const [hot, setHot] = useState<number | null>(null);
+  // Decode is set after mount: a scrambled frame before hydration ends is a mismatch (src/lib/decode.ts).
+  const mounted = useClientValue(() => true, false);
+  const art = useMemo(() => coverArt(outline), [outline]);
+  const columns = coverSections(outline);
   // The numbers pair by position; when the counts differ they would point at the wrong headings.
-  if (sections.length !== columns.length) return null;
-  const labels = sections.reduce<{ section: TocItem; x: number; n: string }[]>((out, section, i) => {
-    const x = columns[i]!;
-    const prev = out[out.length - 1];
-    if (!prev || x - prev.x >= MIN_LABEL_GAP) out.push({ section, x, n: String(i + 1).padStart(2, "0") });
-    return out;
-  }, []);
-  if (labels.length === 0) return null;
+  const paired = sections.length === columns.length ? sections : [];
+  const hotSection = hot !== null ? paired[hot] : undefined;
+  const hotCounts = hot !== null ? countsLabel(sectionCounts(art, hot), locale) : "";
+
   return (
-    <nav aria-label={label} className="relative mt-1 h-4 label-meta">
-      {labels.map(({ section, x, n }) => (
-        <a
-          key={section.id}
-          href={`#${section.id}`}
-          title={section.text}
-          aria-label={`${n} ${section.text}`}
-          className="absolute top-0 text-muted-foreground no-underline hover:text-foreground transition-colors duration-150"
-          style={{ left: `${(x / COVER_W) * 100}%` }}
+    <figure ref={coverRef} className="post-cover mt-8 mb-0 mx-0">
+      <CoverArt
+        outline={outline}
+        variant="header"
+        slug={slug}
+        className="cover-print w-full text-foreground/60"
+        style={coverTransitionStyle(slug)}
+        hot={hot}
+        activeFigure={activeFigure}
+        onHot={paired.length > 0 ? setHot : undefined}
+        onBlock={onBlock}
+      />
+      {paired.length > 0 && (
+        <nav aria-label={label} className="relative mt-1 h-4 label-meta">
+          {paired.map((section, i) => {
+            const x = columns[i]!;
+            if (i > 0 && x - columns[i - 1]! < MIN_LABEL_GAP) return null;
+            const n = String(i + 1).padStart(2, "0");
+            return (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                aria-label={`${n} ${section.text}`}
+                // The ::before pads the hit area to 44 px high without moving the digits.
+                className={`absolute top-0 no-underline transition-colors duration-150 before:absolute before:-inset-x-1.5 before:-inset-y-3.5 before:content-[''] ${hot === i ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                style={{ left: `${(x / COVER_W) * 100}%` }}
+                onPointerEnter={() => setHot(i)}
+                onPointerLeave={() => setHot(null)}
+                onFocus={() => setHot(i)}
+                onBlur={() => setHot(null)}
+              >
+                {/* Decode owns the aria-label of its element, so it runs on an inner span and the link keeps its name. */}
+                <span data-decode={mounted || undefined}>{n}</span>
+              </a>
+            );
+          })}
+        </nav>
+      )}
+      <figcaption className="mt-2 grid label-meta">
+        <span className={`[grid-area:1/1] text-muted-foreground-dim transition-opacity duration-100 ${hotSection ? "opacity-0" : ""}`}>
+          {caption}
+        </span>
+        <span
+          aria-hidden="true"
+          className={`[grid-area:1/1] truncate text-foreground/80 transition-opacity duration-100 ${hotSection ? "" : "opacity-0"}`}
         >
-          {n}
-        </a>
-      ))}
-    </nav>
+          {hotSection && `§${String(hot! + 1).padStart(2, "0")} ${hotSection.text}${hotCounts ? ` · ${hotCounts}` : ""}`}
+        </span>
+      </figcaption>
+    </figure>
   );
 }

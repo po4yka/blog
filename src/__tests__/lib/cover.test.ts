@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { COVER_H, COVER_W, coverCaption, coverLayout, coverPixels, coverSections, formatOutline, parseOutline } from "@/lib/cover";
+import { COVER_H, COVER_W, coverArt, coverCaption, coverLayout, coverPixels, coverReadPosition, coverSections, formatOutline, parseOutline } from "@/lib/cover";
+import { readBlogPosts } from "../../../scripts/generate-blog-data";
 import { articleOutline, countWords } from "../../../scripts/generate-blog-data";
-import { coverInputs, generateCoverFiles } from "../../../scripts/generate-covers";
 
 const base = "h2 p30 c8 h3 p12 f14 h2 l9 p20";
 const column = (px: Uint8Array, x: number) => Array.from({ length: COVER_H }, (_, y) => px[y * COVER_W + x]!);
@@ -63,7 +63,7 @@ describe("coverLayout", () => {
   });
 
   it("keeps every block of every real post at least three columns wide", () => {
-    for (const { outline } of coverInputs()) {
+    for (const { outline } of readBlogPosts()) {
       const spans = coverLayout(parseOutline(outline));
       expect(spans[spans.length - 1]!.x1).toBe(COVER_W);
       for (const s of spans.filter((s) => s.kind !== "h")) expect(s.x1 - s.x0).toBeGreaterThanOrEqual(3);
@@ -108,11 +108,45 @@ describe("coverPixels", () => {
   });
 });
 
-describe("generateCoverFiles", () => {
-  it("writes one SVG per post and language", () => {
-    const files = generateCoverFiles();
-    expect(files.size).toBeGreaterThan(0);
-    for (const svg of files.values()) expect(svg).toContain(`viewBox="0 0 ${COVER_W} ${COVER_H}"`);
+describe("coverArt", () => {
+  it("splits exactly the pixels of coverPixels into ranks and strokes", () => {
+    for (const { outline } of [{ outline: base }, ...readBlogPosts()]) {
+      const px = new Uint8Array(COVER_W * COVER_H);
+      for (const b of coverArt(outline)) {
+        for (const d of b.ranks) for (const m of d.matchAll(/M(\d+) (\d+)\.5h(\d+)/g)) px.fill(1, Number(m[2]) * COVER_W + Number(m[1]), Number(m[2]) * COVER_W + Number(m[1]) + Number(m[3]));
+        // A rule or a frame covers its columns at the rows coverPixels inks.
+        if (b.kind === "h" || b.kind === "f") for (let y = 0; y < COVER_H; y++) for (let x = b.x0; x < b.x1; x++) if (coverPixels(outline)[y * COVER_W + x]) px[y * COVER_W + x] = 1;
+      }
+      expect(px).toEqual(coverPixels(outline));
+    }
+  });
+
+  it("numbers sections from the first h2 and figures in reading order", () => {
+    const art = coverArt("p4 f14 h2 p3 f14 h2 c4");
+    expect(art.map((b) => b.section)).toEqual([-1, -1, 0, 0, 0, 1, 1]);
+    expect(art.map((b) => b.figure)).toEqual([-1, 0, -1, -1, 1, -1, -1]);
+  });
+
+  it("puts sparse pixels in early ranks: prose stops at rank 2, code reaches rank 5", () => {
+    const [p, c] = coverArt("p40 c40");
+    expect(p!.ranks.slice(3).every((d) => d === "")).toBe(true);
+    expect(c!.ranks[5]).not.toBe("");
+    expect(c!.ranks.slice(6).every((d) => d === "")).toBe(true);
+  });
+});
+
+describe("coverReadPosition", () => {
+  const anchors = [
+    { top: 100, x: 0 },
+    { top: 300, x: 0.2 },
+    { top: 1300, x: 1 },
+  ];
+  it("is 0 above the content, 1 below it, and linear inside each section", () => {
+    expect(coverReadPosition(50, anchors)).toBe(0);
+    expect(coverReadPosition(200, anchors)).toBeCloseTo(0.1, 5);
+    expect(coverReadPosition(800, anchors)).toBeCloseTo(0.6, 5);
+    expect(coverReadPosition(2000, anchors)).toBe(1);
+    expect(coverReadPosition(10, [])).toBe(0);
   });
 });
 

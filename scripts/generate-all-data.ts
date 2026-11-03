@@ -11,8 +11,6 @@ import { generateSeedSource } from "./generate-seed.js";
 import { generateBuildMetaSource } from "./generate-build-meta.js";
 import { generateChangelogSource } from "./generate-changelog.js";
 import { generateOgImages } from "./generate-og-images.js";
-import { writePlates } from "./generate-plates.js";
-import { writeCovers } from "./generate-covers.js";
 import { FIELD_SEED_FILE, generateFieldSeedSource, parseFieldSeed } from "./generate-field-seed.js";
 import { writeFieldPosters } from "./generate-field-poster.js";
 
@@ -82,7 +80,7 @@ for (const gen of generators) {
 // The posters render from the seed file the loop above just wrote.
 const writePosters = () => writeFieldPosters(parseFieldSeed(fs.readFileSync(FIELD_SEED_FILE, "utf-8")).counts);
 
-for (const [name, write] of [["plates", writePlates], ["covers", writeCovers], ["field posters", writePosters]] as const) {
+for (const [name, write] of [["field posters", writePosters]] as const) {
   try {
     write();
   } catch (err) {
