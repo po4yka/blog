@@ -1,3 +1,20 @@
+import { blogUrl, type Locale } from "@/lib/i18n";
+
+/** Language that a blog URL fixes (/blog = en, /blog/ru = ru). Undefined outside the blog. */
+export function blogRouteLang(pathname: string): Locale | undefined {
+  if (!/^\/blog(\/|$)/.test(pathname)) return undefined;
+  return /^\/blog\/ru(\/|$)/.test(pathname) ? "ru" : "en";
+}
+
+export function isBlogIndex(pathname: string): boolean {
+  return /^\/blog(\/ru)?\/?$/.test(pathname);
+}
+
+/** Where a Blog link goes: the index of the current blog route, else the index in the chosen language. */
+export function blogIndexPath(pathname: string, locale: string): string {
+  return blogUrl(blogRouteLang(pathname) ?? (locale === "ru" ? "ru" : "en"));
+}
+
 /** URL path of a post. Uses the RU page when it is the only version, or when the locale is ru and a RU version exists. */
 export function postPath(
   posts: readonly { slug: string; lang?: string }[],

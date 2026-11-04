@@ -1,9 +1,10 @@
+import { Fragment } from "react";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
 import { Em, Tag } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { Reveal } from "./ui/Reveal";
 import { T } from "./ui/T";
-import { blogUrl, type Locale } from "@/lib/i18n";
+import { blogUrl, t, type Locale } from "@/lib/i18n";
 
 interface GroupedPost {
   slug: string;
@@ -133,17 +134,23 @@ export function BlogPreview() {
       </div>
 
       <div className="pt-1">
-        <a
-          href="/blog"
-          className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
-        >
-          {/* The accessible name starts with the visible text (WCAG 2.5.3). */}
-          <T k="blogPreview.viewAll" />
-          <span className="sr-only">
-            {" — "}
-            <T k="blogPreview.viewAllLabel" />
-          </span>
-        </a>
+        {(["en", "ru"] as const).map((lang) => (
+          <Fragment key={lang}>
+            <a
+              href={blogUrl(lang)}
+              data-l={lang}
+              lang={lang === "ru" ? "ru" : undefined}
+              className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
+            >
+              {/* The accessible name starts with the visible text (WCAG 2.5.3). */}
+              {t(lang, "blogPreview.viewAll")}
+              <span className="sr-only">
+                {" — "}
+                {t(lang, "blogPreview.viewAllLabel")}
+              </span>
+            </a>{" "}
+          </Fragment>
+        ))}
       </div>
     </section>
   );

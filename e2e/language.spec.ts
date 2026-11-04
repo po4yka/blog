@@ -62,6 +62,71 @@ test.describe("Static sections follow the stored language", () => {
   });
 });
 
+test.describe("Blog language", () => {
+  // The first nav in the page. Its accessible name follows the language.
+  const primaryNav = (page: Page) => page.locator("nav").first();
+  const hydrated = (page: Page) => expect(page.locator("astro-island", { has: primaryNav(page) }).first()).not.toHaveAttribute("ssr");
+
+  test("the switcher moves between the blog indexes", async ({ page }) => {
+    await page.goto("/blog");
+    await hydrated(page);
+    await primaryNav(page).getByRole("button", { name: "RU", exact: true }).first().click();
+    await expect(page).toHaveURL(/\/blog\/ru\/?$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+
+    await hydrated(page);
+    await expect(primaryNav(page).getByRole("button", { name: "RU", exact: true }).first()).toHaveAttribute("aria-pressed", "true");
+    await primaryNav(page).getByRole("button", { name: "EN", exact: true }).first().click();
+    await expect(page).toHaveURL(/\/blog\/?$/);
+  });
+
+  test("after a soft navigation from a post, the switcher still moves between the indexes", async ({ page }) => {
+    await page.goto("/blog/rag-breaks-earlier-than-people-think");
+    await hydrated(page);
+    await primaryNav(page).getByRole("link", { name: "blog" }).click();
+    await expect(page).toHaveURL(/\/blog\/?$/);
+    await primaryNav(page).getByRole("button", { name: "RU", exact: true }).first().click();
+    await expect(page).toHaveURL(/\/blog\/ru\/?$/);
+  });
+
+  test("the lang command moves between the blog indexes", async ({ page }) => {
+    await page.goto("/blog");
+    await hydrated(page);
+    await page.keyboard.press("Control+k");
+    await page.getByRole("combobox").fill("Language: RU");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/blog\/ru\/?$/);
+  });
+
+  test("with Russian stored, every Blog link on the home page goes to the Russian index", async ({ page }) => {
+    await storeLocale(page, "ru");
+    await page.goto("/");
+    await hydrated(page);
+    await expect(primaryNav(page).getByRole("link", { name: "блог" })).toHaveAttribute("href", "/blog/ru");
+    const hrefs = await page.locator('a[href="/blog"], a[href="/blog/ru"]').evaluateAll((links) =>
+      links.filter((a) => a.getClientRects().length > 0).map((a) => a.getAttribute("href")),
+    );
+    expect(hrefs.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(hrefs)).toEqual(new Set(["/blog/ru"]));
+  });
+
+  test("with no stored language, the home page Blog links go to the English index", async ({ page }) => {
+    await page.goto("/");
+    await hydrated(page);
+    const hrefs = await page.locator('a[href="/blog"], a[href="/blog/ru"]').evaluateAll((links) =>
+      links.filter((a) => a.getClientRects().length > 0).map((a) => a.getAttribute("href")),
+    );
+    expect(new Set(hrefs)).toEqual(new Set(["/blog"]));
+  });
+
+  test("on a Russian post, the Blog link stays in Russian with English stored", async ({ page }) => {
+    await storeLocale(page, "en");
+    await page.goto("/blog/ru/rag-breaks-earlier-than-people-think");
+    await hydrated(page);
+    await expect(primaryNav(page).getByRole("link").filter({ hasText: "blog" })).toHaveAttribute("href", "/blog/ru");
+  });
+});
+
 test.describe("hero name", () => {
   test("the h1 has no reveal ancestor, so it paints at once", async ({ page }) => {
     await page.goto("/");

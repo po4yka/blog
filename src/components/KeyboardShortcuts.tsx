@@ -4,6 +4,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { switchTheme, centerOf, targetTheme } from "@/lib/themeTransition";
 import { PALETTE_EVENT } from "@/lib/palette";
 import { scrollBehavior } from "@/lib/motion";
+import { blogIndexPath } from "@/lib/blog/paths";
 
 const ShortcutsDialog = lazy(() => import("./KeyboardShortcutsDialog"));
 // The palette chunk loads on first open, or on idle after the first interaction.
@@ -140,7 +141,9 @@ export function KeyboardShortcuts() {
         setPendingChord(null);
         const route = NAV_ROUTES[e.key];
         if (route) {
-          window.location.assign(route);
+          window.location.assign(
+            e.key === "b" ? blogIndexPath(window.location.pathname, useSettingsStore.getState().locale) : route,
+          );
           e.preventDefault();
         }
         return;
