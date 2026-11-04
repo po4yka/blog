@@ -53,31 +53,55 @@ const { nonce } = Astro.locals;
   import { applyReducedMotion } from "@/lib/motion";
   import { applyLocale } from "@/lib/localeDom";
   import { setThemeColor } from "@/lib/themeColors";
+  import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
 
-  // Re-apply preferences after the View Transition DOM swap, which resets <html> attributes.
-  function applyPrefsFromStorage() {
+  // Blocked storage or a bad value means no preferences, as in the inline script above.
+  function readPrefs() {
     try {
       const raw = localStorage.getItem("site_preferences");
       const stored = raw ? JSON.parse(raw) : {};
-      const prefs = stored.state || stored;
+      return stored.state || stored;
+    } catch {
+      return {};
+    }
+  }
+
+  function applyThemeClass(root: HTMLElement, resolved: string) {
+    root.classList.toggle("dark", resolved === "dark");
+    root.classList.toggle("light", resolved === "light");
+  }
+
+  function resolveTheme(prefs: { theme?: string }): string {
+    const theme = prefs.theme || "system";
+    if (theme !== "system") return theme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  // The swap copies <html> attributes from the incoming page. Put the theme class there first:
+  // with no class for one style pass, <body> starts its colour transition from the light theme.
+  function applyThemeToIncoming(event: TransitionBeforeSwapEvent) {
+    applyThemeClass(event.newDocument.documentElement, resolveTheme(readPrefs()));
+  }
+
+  // Re-apply the other preferences after the View Transition DOM swap, which resets <html> attributes.
+  function applyPrefsFromStorage() {
+    try {
+      const prefs = readPrefs();
       applyReducedMotion(!!prefs.reduceMotion);
       applyLocale(prefs.locale === "ru" ? "ru" : "en");
       if (prefs.gridGuides === false) document.documentElement.setAttribute("data-grid", "off");
       else document.documentElement.removeAttribute("data-grid");
       if (prefs.effects === "reduced" || prefs.effects === "off") document.documentElement.setAttribute("data-effects", prefs.effects);
       else document.documentElement.removeAttribute("data-effects");
-      if (!raw) return;
       const sizes: Record<string, string> = { compact: "15px", default: "16px", large: "17px" };
       const size = sizes[prefs.fontSize];
       if (size) document.documentElement.style.setProperty("--font-size", size);
-      const theme = prefs.theme || "system";
-      const resolved = theme === "system"
-        ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-        : theme;
-      document.documentElement.classList.toggle("dark", resolved === "dark");
-      document.documentElement.classList.toggle("light", resolved === "light");
-      setThemeColor(resolved);
+      // Again here: the fallback animation runs between the two events, and the theme can change in it.
+      const resolved = resolveTheme(prefs);
+      applyThemeClass(document.documentElement, resolved);
+      setThemeColor(resolved === "dark" ? "dark" : "light");
     } catch {}
   }
+  document.addEventListener("astro:before-swap", applyThemeToIncoming);
   document.addEventListener("astro:after-swap", applyPrefsFromStorage);
 </script>

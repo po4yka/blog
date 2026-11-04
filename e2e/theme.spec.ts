@@ -73,6 +73,52 @@ test.describe("Theme switching and persistence", () => {
   });
 });
 
+test.describe("Theme across soft navigation", () => {
+  test.use({ colorScheme: "dark" });
+
+  // Samples <body> on every frame, so a flash of the other theme fails even if it ends well.
+  async function backgroundsDuringNavigation(page: Page): Promise<string[]> {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await page.evaluate(() => {
+      const seen = new Set<string>();
+      (window as unknown as { __backgrounds: Set<string> }).__backgrounds = seen;
+      const sample = () => {
+        seen.add(getComputedStyle(document.body).backgroundColor);
+        requestAnimationFrame(sample);
+      };
+      sample();
+    });
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "projects" }).click();
+    await expect(page.locator("#main-content")).toContainText("ls -lt");
+    await page.waitForTimeout(600);
+    return page.evaluate(() => [...(window as unknown as { __backgrounds: Set<string> }).__backgrounds]);
+  }
+
+  test("a visitor with no stored preferences stays in the OS theme, with no light frame", async ({ page }) => {
+    expect(await backgroundsDuringNavigation(page)).toEqual(["rgb(11, 11, 12)"]);
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    expect(await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY)).toBeNull();
+  });
+
+  test("a stored dark theme has no light frame", async ({ page }) => {
+    await page.addInitScript(
+      (key) => localStorage.setItem(key, JSON.stringify({ state: { theme: "dark" }, version: 3 })),
+      STORAGE_KEY,
+    );
+    expect(await backgroundsDuringNavigation(page)).toEqual(["rgb(11, 11, 12)"]);
+  });
+
+  test("a stored light theme stays light under a dark OS", async ({ page }) => {
+    await page.addInitScript(
+      (key) => localStorage.setItem(key, JSON.stringify({ state: { theme: "light" }, version: 3 })),
+      STORAGE_KEY,
+    );
+    expect(await backgroundsDuringNavigation(page)).toEqual(["rgb(245, 243, 238)"]);
+    await expect(page.locator("html")).toHaveClass(/\blight\b/);
+  });
+});
+
 test.describe("Reduced motion", () => {
   // <body> carries the theme fade (--dur-base, 240ms), so it shows whether transitions are cut.
   const bodyTransition = (page: import("@playwright/test").Page) =>
