@@ -1,9 +1,10 @@
+import { Fragment } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { T } from "@/components/ui/T";
 import { GITHUB_USERNAME } from "@/lib/constants";
 import { roles } from "@/data/experienceData";
-import { t, type Locale } from "@/lib/i18n";
+import { blogUrl, t, type Locale } from "@/lib/i18n";
 
 const CTA_BASE =
   "inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-[2px] border font-sans text-sm transition-colors duration-200 active:opacity-70";
@@ -76,9 +77,20 @@ export function HeroText() {
       </Reveal>
 
       <Reveal delay={0.24} className="flex flex-wrap gap-3 pt-1">
-        <a href="/blog" className={CTA_PRIMARY} data-umami-event="hero-cta" data-umami-event-target="blog">
-          <T k="hero.ctaBlog" />
-        </a>
+        {LOCALES.map((lang) => (
+          <Fragment key={lang}>
+            <a
+              href={blogUrl(lang)}
+              data-l={lang}
+              lang={lang === "ru" ? "ru" : undefined}
+              className={CTA_PRIMARY}
+              data-umami-event="hero-cta"
+              data-umami-event-target="blog"
+            >
+              {t(lang, "hero.ctaBlog")}
+            </a>{" "}
+          </Fragment>
+        ))}
         <a href="/projects" className={CTA_SECONDARY} data-umami-event="hero-cta" data-umami-event-target="projects">
           <T k="hero.ctaProjects" />
         </a>

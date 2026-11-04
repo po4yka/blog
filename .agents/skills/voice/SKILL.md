@@ -28,8 +28,6 @@ Fix these when you touch the file. Do not copy them.
 |---|---|---|
 | `src/lib/i18n.ts`, `about.p1` | "cares equally about the code ... the invisible infrastructure that lets a team ship with confidence" | Claims a value. It names no fact. "Ship with confidence" is a stock phrase. |
 | `src/lib/i18n.ts`, `about.p2suffix` | "I like teams that deploy often and debug rarely." | Slogan cadence. No fact behind it. |
-| `public/llms.txt`, About | "deep expertise", "architects scalable ... solutions" | Hype adjectives. The reader cannot check them. |
-| `public/llms.txt` | "60%+ code sharing", "cut deploy times by 70%" | Percentages that no file in `src/content/` backs. |
 | `src/lib/i18n.ts` | "coming soon" (`links.comingSoon`, `experiencePage.comingSoon`) | A placeholder on a live page. |
 | `src/components/ProjectsPageIsland.tsx`, `src/components/ExperiencePageIsland.tsx` | "Loaded po4yka.dev/projects" | Narrates a page load (see `site-design`). |
 
@@ -40,7 +38,7 @@ Fix these when you touch the file. Do not copy them.
 3. No hype adjectives: passionate, innovative, scalable, robust, seamless, powerful, cutting-edge, deep expertise, impactful. `docs/Guidelines.md` also bans "crafting digital experiences" and "building the future".
 4. No "not X, but Y" cadence ("not just an app, but a platform"). State Y.
 5. No placeholders and no "coming soon". Remove the slot or fill it with a real link.
-6. Use one role string: "AI Engineer & Senior Mobile Developer" (`hero.role`). Use the term "Kotlin Multiplatform". Do not write "KMM" or "Kotlin Multiplatform Mobile" in new text. Existing uses in `i18n.ts` and `llms.txt` should move to the one term when you edit them.
+6. Use one role string: "AI Engineer & Senior Mobile Developer" (`hero.role`). Use the term "Kotlin Multiplatform". Do not write "KMM" or "Kotlin Multiplatform Mobile" in new text.
 7. Write Russian as Russian. Re-think the sentence. Keep tool names in Latin script (Gradle, Kotlin, CI). Do not translate word by word.
 8. Do not use emoji. Do not use exclamation marks.
 9. Write English documentation in ASD-STE100 Simplified Technical English. Blog posts and personal copy may keep a human rhythm, but stay concrete.

@@ -119,8 +119,8 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
         <span aria-hidden="true">·</span>
         <span aria-hidden="true">{buildMeta.commitHash}</span>
         <span aria-hidden="true">·</span>
-        {/* Fixed slot: "system" on the server becomes "light (system)" after mount (14ch, the longest label). */}
-        <span aria-hidden="true" className="inline-block text-right" style={{ minWidth: "14ch" }}>
+        {/* Fixed slot: "system" on the server becomes "light (system)" after mount (14 characters, the longest label). ch excludes the bar's letter-spacing. */}
+        <span aria-hidden="true" className="inline-block text-right" style={{ minWidth: "calc(14 * (1ch + 0.06em))" }}>
           {themeLabel}
         </span>
         <span aria-hidden="true">·</span>

@@ -285,7 +285,7 @@ async function renderDefaultCard(): Promise<Buffer> {
                     },
                     children: [
                       { type: "span", props: { children: "@po4yka" } },
-                      { type: "span", props: { children: "Android · KMM · ML" } },
+                      { type: "span", props: { children: "Android · Kotlin Multiplatform · AI/ML" } },
                     ],
                   },
                 },

@@ -1,6 +1,7 @@
 import { registerCommand, type Command } from "@/lib/commands";
 import { CONTACT_EMAIL } from "@/lib/constants";
-import { locales, type Locale } from "@/lib/i18n";
+import { blogUrl, locales, type Locale } from "@/lib/i18n";
+import { blogRouteLang, isBlogIndex } from "@/lib/blog/paths";
 import { getSectionIds } from "@/lib/sections";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Em } from "../ui";
@@ -9,11 +10,15 @@ const lang: Command = {
   name: "lang",
   description: "Switch the site language",
   completions: (partial) => locales.filter((l) => l.startsWith(partial)),
-  execute: (args) => {
+  execute: (args, ctx) => {
     const value = args[0] ?? "";
     const locale = locales.find((l) => l === value);
     if (!locale) return `lang: invalid value "${value}". Use: ${locales.join(", ")}`;
     useSettingsStore.getState().setLocale(locale satisfies Locale);
+    // The URL fixes the language of a blog index, so the other language is the other index.
+    if (isBlogIndex(window.location.pathname) && blogRouteLang(window.location.pathname) !== locale) {
+      ctx.navigate(blogUrl(locale));
+    }
     return (
       <span>
         Language set to <Em>{locale}</Em>

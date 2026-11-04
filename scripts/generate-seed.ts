@@ -167,9 +167,9 @@ function generateSettingsSeed(): string {
     "-- Site settings\n" +
     "INSERT INTO site_settings (id, name, handle, role, bio, github, email, telegram, linkedin) VALUES\n" +
     "(1, 'Nikita Pochaev', '@po4yka',\n" +
-    " 'AI Engineer & Senior Mobile Developer — Android, Kotlin Multiplatform Mobile (KMM)',\n" +
-    " 'AI Engineer and Senior Mobile Developer. I ship native Android apps, architect Kotlin Multiplatform Mobile (KMM) shared modules, and integrate ML-powered features into production products. I care about clean architecture, reliable release pipelines, and tools that help teams ship better software.',\n" +
-    " 'https://github.com/po4yka', 'hello@po4yka.dev', 'https://t.me/po4yka', 'https://linkedin.com/in/po4yka');\n"
+    " 'AI Engineer & Senior Mobile Developer — Android, Kotlin Multiplatform',\n" +
+    " 'AI Engineer & Senior Mobile Developer at Garage IT. Works on Android apps, their CI/CD tooling, and multi-agent LLM systems.',\n" +
+    " 'https://github.com/po4yka', 'hello@po4yka.dev', 'https://t.me/po4yka', 'https://linkedin.com/in/pochaev-nikita');\n"
   );
 }
 

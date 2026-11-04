@@ -52,7 +52,7 @@ export const GET: APIRoute = ({ site }) => {
         origin,
         sameAs: [
           "https://github.com/po4yka",
-          "https://www.linkedin.com/in/po4yka",
+          "https://www.linkedin.com/in/pochaev-nikita",
           "https://x.com/po4yka",
           "https://t.me/po4yka",
         ],

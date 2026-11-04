@@ -7,6 +7,7 @@
  */
 
 import { useSettingsStore, type ThemeMode } from "@/stores/settingsStore";
+import { blogIndexPath } from "@/lib/blog/paths";
 
 interface WebMCPTool {
   name: string;
@@ -175,8 +176,12 @@ export async function registerWebMCP(): Promise<void> {
       },
       execute(input) {
         const { section } = input as { section: string };
-        const path = SECTION_PATHS[section];
-        if (!path) return { ok: false, error: "unknown section" };
+        const fixedPath = SECTION_PATHS[section];
+        if (!fixedPath) return { ok: false, error: "unknown section" };
+        const path =
+          section === "blog"
+            ? blogIndexPath(window.location.pathname, useSettingsStore.getState().locale)
+            : fixedPath;
         window.location.assign(path);
         return { ok: true, path };
       },

@@ -10,6 +10,7 @@ import { MotionProvider } from "./MotionProvider";
 import { Reveal } from "./ui/Reveal";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { blogUrl, type Locale, type TranslationKey } from "@/lib/i18n";
+import { blogIndexPath, blogRouteLang, isBlogIndex } from "@/lib/blog/paths";
 
 const navLinks: { labelKey: TranslationKey; href: string; exact?: boolean }[] = [
   { labelKey: "nav.home", href: "/", exact: true },
@@ -27,12 +28,11 @@ interface NavProps {
 
 export function Nav({ pathname: initialPathname, lang, translationSlug }: NavProps) {
   const otherLang: Locale = lang === "ru" ? "en" : "ru";
-  const translationUrl = translationSlug ? blogUrl(otherLang, translationSlug) : undefined;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentPathname, setCurrentPathname] = useState(initialPathname ?? "/");
   const { theme } = useSettings();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   // Update pathname on View Transition navigation (Nav is persisted)
   useEffect(() => {
@@ -81,9 +81,17 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
 
   // On blog surfaces the content language is fixed by the route; reflect the
   // page language in the switcher instead of the stored UI locale.
-  const blogPageLang: Locale | undefined = currentPathname.startsWith("/blog")
-    ? currentPathname.startsWith("/blog/ru") ? "ru" : "en"
-    : undefined;
+  const blogPageLang = blogRouteLang(currentPathname);
+
+  // A post links to its translation; the two blog indexes link to each other.
+  const translationUrl = translationSlug
+    ? blogUrl(otherLang, translationSlug)
+    : isBlogIndex(currentPathname)
+      ? blogUrl(blogPageLang === "ru" ? "en" : "ru")
+      : undefined;
+
+  const hrefOf = (link: (typeof navLinks)[number]) =>
+    link.labelKey === "nav.blog" ? blogIndexPath(currentPathname, locale) : link.href;
 
   const cycleTheme = (e: MouseEvent<HTMLButtonElement>) => {
     // targetTheme(), not the render's `theme`: a second click during a wipe must cycle from the pending theme.
@@ -136,7 +144,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               return (
                 <a
                   key={link.labelKey}
-                  href={link.href}
+                  href={hrefOf(link)}
                   aria-current={active ? "page" : undefined}
                   className={`px-3 py-1.5 font-sans text-mono-sm transition-colors duration-200 group whitespace-nowrap ${
                     active
@@ -242,7 +250,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
                   return (
                     <m.a
                       key={link.labelKey}
-                      href={link.href}
+                      href={hrefOf(link)}
                       aria-current={active ? "page" : undefined}
                       className={`py-3 px-3 font-sans text-mono transition-colors duration-200 whitespace-nowrap ${
                         active

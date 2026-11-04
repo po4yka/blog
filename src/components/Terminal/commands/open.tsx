@@ -1,7 +1,7 @@
 import { registerCommand } from "@/lib/commands";
 import { projects } from "@/data/projectsData";
 import { blogPostsMeta as blogPosts } from "@/data/blogMeta";
-import { postPath } from "@/lib/blog/paths";
+import { blogIndexPath, postPath } from "@/lib/blog/paths";
 import type { Command } from "@/lib/commands";
 
 const pages: Record<string, string> = {
@@ -30,8 +30,9 @@ const open: Command = {
     }
 
     if (pages[target]) {
-      ctx.navigate(pages[target]);
-      return `Navigating to ${pages[target]}...`;
+      const page = target === "blog" ? blogIndexPath(window.location.pathname, ctx.getLocale()) : pages[target];
+      ctx.navigate(page);
+      return `Navigating to ${page}...`;
     }
 
     const path = postPath(blogPosts, target, ctx.getLocale());
