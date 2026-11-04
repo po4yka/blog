@@ -3,6 +3,7 @@ import { blogPosts } from "@/data/blogData";
 import { projects } from "@/data/projectsData";
 import { roles, skills } from "@/data/experienceData";
 import { stripMdxSyntax } from "@/lib/blog/mdx-text";
+import { t } from "@/lib/i18n";
 
 export const prerender = true;
 
@@ -12,52 +13,20 @@ export const GET: APIRoute = () => {
   // Header
   sections.push("# Nikita Pochaev -- Full Site Content");
   sections.push("");
-  sections.push(
-    "> AI Engineer and Senior Mobile Developer specializing in Android, Kotlin Multiplatform Mobile (KMM), and ML-powered product features. Recognized for shipping production-grade mobile applications, building release automation pipelines, and integrating AI/ML into mobile products.",
-  );
+  sections.push(`> ${t("en", "hero.role")}. ${t("en", "hero.intro")}`);
   sections.push("");
 
-  // About
+  // About: only facts from the content sources. The Experience section below has the record.
+  const currentRoles = roles.filter((role) => role.period.endsWith("Present"));
   sections.push("## About Nikita Pochaev");
   sections.push("");
-  sections.push(
-    "Nikita Pochaev (@po4yka) is an AI Engineer and Senior Mobile Developer with deep expertise across the Android and iOS ecosystems. He architects scalable Kotlin Multiplatform Mobile (KMM) solutions that achieve 60%+ code sharing while preserving fully native user experiences on each platform — and brings the same engineering discipline to integrating ML-powered features into production mobile products.",
-  );
+  sections.push(`Nikita Pochaev (@po4yka). Based in ${currentRoles[0]?.location ?? roles[0]?.location}.`);
   sections.push("");
-  sections.push(
-    "Nikita is recognized for his expertise in MobileOps -- building release automation pipelines, optimizing Gradle build systems, and designing CI/CD infrastructure that dramatically reduces deploy times. He has led platform teams at scale, migrating large codebases (80+ screens) from legacy XML views to Jetpack Compose, reducing CI build times from 18 to 7 minutes through caching and parallelization strategies, and mentoring developers through career advancement.",
-  );
+  sections.push("Current roles:");
   sections.push("");
-  sections.push("### Areas of expertise");
-  sections.push("");
-  sections.push(
-    "- AI/ML integration -- embedding LLM-powered flows and on-device inference into native mobile experiences, bridging product intent and model capabilities",
-  );
-  sections.push(
-    "- Kotlin Multiplatform Mobile (KMM) architecture -- shared networking, persistence, and domain logic across Android and iOS",
-  );
-  sections.push(
-    "- Jetpack Compose and SwiftUI -- expert-level modern declarative UI, including Compose compiler stability optimization",
-  );
-  sections.push(
-    "- MobileOps and CI/CD -- Gradle build optimization, Fastlane distribution, release automation pipelines",
-  );
-  sections.push(
-    "- Developer tooling -- Gradle plugins, structured logging libraries, compiler metrics dashboards",
-  );
-  sections.push(
-    "- Mobile architecture -- offline-first patterns, modularization strategy, clean architecture at scale",
-  );
-  sections.push("");
-  sections.push("### Notable achievements");
-  sections.push("");
-  sections.push("- Designed shared KMP modules for multiple production projects, achieving 60%+ code sharing");
-  sections.push("- Built release automation pipelines that reduced deploy time by 70%");
-  sections.push("- Migrated 80+ screens from XML to Jetpack Compose");
-  sections.push("- Reduced CI build times from 18 minutes to 7 minutes");
-  sections.push("- Consulted on modularization strategy for a 500k LOC Android codebase");
-  sections.push("- Published open-source Android libraries with community adoption (200+ stars)");
-  sections.push("- Contributed to AndroidX and community libraries");
+  for (const role of currentRoles) {
+    sections.push(`- ${role.title} at ${role.company} (${role.period})`);
+  }
   sections.push("");
   sections.push("---");
   sections.push("");

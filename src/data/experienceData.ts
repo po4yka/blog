@@ -116,7 +116,8 @@ export const roles: Role[] = [
 export const skills: SkillGroup[] = [
   { label: "Languages", items: ["Kotlin", "Python", "Go", "Rust", "TypeScript"] },
   { label: "Android", items: ["Jetpack Compose", "Coroutines/Flow", "Koin", "OkHttp/Retrofit", "Gradle", "KSP", "R8"] },
-  { label: "AI/ML", items: ["LangGraph", "PydanticAI", "Temporal", "vLLM", "Langfuse", "MCP", "Claude Code"] },
+  { label: "iOS", items: ["Swift", "SwiftUI"] },
+  { label: "AI/ML", items: ["LangGraph", "PydanticAI", "Temporal", "vLLM", "Langfuse", "MCP", "Claude Code", "PyTorch", "On-device ML"] },
   { label: "Backend", items: ["Flask", "FastAPI", "Slack Bolt", "Google Play API", "Firebase"] },
   { label: "DevOps", items: ["GitLab CI", "Docker", "Kubernetes", "Helm", "OpenTelemetry", "GKE"] },
   { label: "Tools", items: ["Android Studio", "Obsidian", "Git", "Macrobenchmark", "Baseline Profiles"] },

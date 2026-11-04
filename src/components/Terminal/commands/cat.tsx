@@ -34,7 +34,7 @@ const cat: Command = {
     }
 
     if (target === "README.md") {
-      return "AI Engineer & Senior Mobile Developer -- Android, KMM, AI/ML, MobileOps";
+      return "AI Engineer & Senior Mobile Developer -- Android, Kotlin Multiplatform, AI/ML, MobileOps";
     }
 
     const project = projects.find((p) => p.slug === target);
