@@ -94,12 +94,12 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
 
   return (
     <MotionProvider>
-    {/* The nav's own transition-all (for the scroll-state background) also
+    {/* The nav's own transition (for the scroll-state background and blur) also
         carries the Reveal opacity fade, at its 300ms. */}
     <Reveal
       as="nav"
       aria-label={t("nav.primary")}
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-[background-color,backdrop-filter,opacity] duration-300 ${
         scrolled ? "backdrop-blur-sm" : ""
       }`}
       style={{
@@ -120,7 +120,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
             className="flex items-center gap-2 font-sans text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
           >
             <span
-              className="inline-block w-[8px] h-[8px] rounded-[1px]"
+              className="inline-block w-[8px] h-[8px] rounded-[2px]"
               style={{ backgroundColor: "var(--foreground)", opacity: 0.5 }}
             />
             po4yka

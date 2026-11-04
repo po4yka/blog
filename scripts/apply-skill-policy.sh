@@ -1,7 +1,7 @@
 #!/bin/bash
 # Mark vendored skills whose defaults contradict DESIGN.md (color, boldness,
-# heavy motion, greenfield redesigns, generic palettes) as explicit-invocation
-# only, for both runtimes:
+# heavy motion, greenfield redesigns, generic palettes) or duplicate a vendored
+# better-* skill as explicit-invocation only, for both runtimes:
 #   Claude Code: `disable-model-invocation: true` in SKILL.md frontmatter
 #   Codex:       `policy.allow_implicit_invocation: false` in agents/openai.yaml
 # The skills stay available via /name (Claude) or $name (Codex).
@@ -16,6 +16,13 @@ CHECK=0
 MANUAL_ONLY=(
   # Impeccable: push toward color, intensity, or effects the design system bans
   bolder colorize delight overdrive onboard extract teach-impeccable
+  # Impeccable: animate recommends motion that DESIGN.md rules A1/A3 ban;
+  # typeset, arrange, clarify are replaced by better-typography, better-layout, better-writing
+  animate typeset arrange clarify
+  # Vercel: fetches remote rules at run time; overlaps better-interface
+  web-design-guidelines
+  # accesslint: overlap better-accessibility
+  accesslint-reviewer accesslint-refactor
   # UI/UX Pro Max: generic palettes, fonts, and brand kits
   ui-ux-pro-max brand-system slides banner-design design-tokens
   # Superseded in-repo design system (phosphor accents, IBM Plex)

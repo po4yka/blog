@@ -44,7 +44,18 @@ Before visual or copy changes, read `DESIGN.md` (tokens, components, motion rule
 - Motion is limited to the permitted list in `DESIGN.md` (fades, opacity and background shifts, underline and rule draws, a few named keyframes); no `whileTap`/`whileHover` geometry changes, no pulse loops; respect reduced motion.
 - Content must be in the static HTML; islands are for interactive chrome only (AI crawlers do not run JavaScript).
 
-Third-party design skills (Impeccable, UI/UX Pro Max, Vercel) and the superseded `signal-deck` skill give generic or outdated advice. Where they conflict with the rules above, the project docs win: this is Astro with React islands (ignore Next.js/RSC guidance), icons are `lucide-react`, and no new fonts or palettes.
+Third-party design skills (Impeccable, UI/UX Pro Max, Interfaces from jakubkrehel, Vercel) and the superseded `signal-deck` skill give generic or outdated advice. Where they conflict with the rules above, the project docs win: this is Astro with React islands (ignore Next.js/RSC guidance), icons are `lucide-react`, and no new fonts or palettes.
+
+Design task routing:
+
+- New UI or visual change: `site-design`, then `add-island` or `add-data-panel`.
+- Copy: `voice`.
+- Accessibility: `better-accessibility`.
+- Change review before merge: `interface-review`.
+- Review in Claude Code: the `design-audit` agent.
+- Review in Codex: the `site-design` checklist plus `npx vitest run src/__tests__/design-rules.test.ts`.
+
+Never commit a harness or scratch route under `src/pages`: Astro prerenders it and the deploy publishes it.
 
 ## SEO and agent-discoverability surfaces
 
@@ -72,4 +83,4 @@ Commits follow Conventional Commits (enforced by commitlint in the `commit-msg` 
 
 ## Skills
 
-Repository skills live in `.agents/skills/` (read by Codex). Claude Code reads `.claude/skills/`; for skills this repo owns, those entries are symlinks to `.agents/skills/`, so edit the `.agents/skills/` copy. Vendored skills are refreshed by `scripts/update-*.sh` (which take the reviewed upstream commit SHA, or a clean local checkout for UI/UX Pro Max, and re-apply the policy themselves) or by `npx skills update` for the `skills-lock.json` entries, after which you must run `bash scripts/apply-skill-policy.sh`; after a skill update the pre-commit `validate:skills` check fails until you do. Editing `DESIGN.md` alone cannot fail it: re-check the script's `MANUAL_ONLY` list only when `DESIGN.md` adds or lifts a ban that a design skill's defaults contradict. Do not hand-edit vendored skills. That script marks design skills whose defaults contradict `DESIGN.md` as explicit-invocation only.
+Repository skills live in `.agents/skills/` (read by Codex). Claude Code reads `.claude/skills/`; for skills this repo owns, those entries are symlinks to `.agents/skills/`, so edit the `.agents/skills/` copy. Vendored skills are refreshed by `scripts/update-*.sh` (including `scripts/update-interfaces.sh`; they take the reviewed upstream commit SHA, or a clean local checkout for UI/UX Pro Max, and re-apply the policy themselves) or by `npx skills update` for the `skills-lock.json` entries, after which you must run `bash scripts/apply-skill-policy.sh`; after a skill update the pre-commit `validate:skills` check fails until you do. Editing `DESIGN.md` alone cannot fail it: re-check the script's `MANUAL_ONLY` list only when `DESIGN.md` adds or lifts a ban that a design skill's defaults contradict. Do not hand-edit vendored skills. That script marks design skills whose defaults contradict `DESIGN.md` as explicit-invocation only.

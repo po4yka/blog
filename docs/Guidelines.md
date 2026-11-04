@@ -15,7 +15,8 @@ The site should communicate the following clearly:
 - Nikita Pochaev is an **AI Engineer & Senior Mobile Developer**
 - Main focus: **Android**, **Kotlin Multiplatform**, **MobileOps**, **AI/ML integration**
 - The site should showcase: - selected apps and projects - links to **GitHub** - links to **Google Play** - links to **App Store** - a separate **blog / writing** section
-- The overall impression should be: - thoughtful - minimal - technical - precise - modern - credible - memorable without being loud
+- The overall impression should be: - thoughtful - technical - precise - credible - memorable without being loud
+- The concrete world is an operator console on a Swiss print grid, set in paper and ink, with real tool output as content (`DESIGN.md` section 1)
 
 The site should not feel corporate, over-marketed, gimmicky, or visually overdesigned.
 
@@ -633,4 +634,4 @@ This website should feel like:
 
 all at once, within one refined and coherent visual system.
 
-The result should be **minimal, credible, authored, technical, elegant, and memorable**.
+The result should be **precise, credible, authored, and technical: an operator console on a Swiss print grid, in paper and ink, with real tool output**.

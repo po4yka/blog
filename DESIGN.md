@@ -11,13 +11,13 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 **Key characteristics:**
 - Near-black graphite canvas (`#0b0b0c` dark) / warm paper (`#f5f3ee` light)
 - No chromatic accent. Emphasis = `--emphasis` (pure white dark / pure black light) + weight + underline
-- Geist Sans as the primary type voice; Geist Mono for code and operator labels only; **Piazzolla** (variable serif) exclusively for `.prose-blog` long-form reading
+- Geist Sans as the primary type voice; Geist Mono for code and operator labels only; **Piazzolla** (variable serif) exclusively for `.prose-blog` long-form reading and `.display-serif` blog titles
 - Flat operator panels: `1px solid var(--border)`, `2px border-radius`, no shadow, no window chrome
 - Numbered section system: every section except the hero opens with `SectionHeader` — `02 / ABOUT`, `03 / CONTACT`, `04 / PROJECTS`, `05 / EXPERIENCE`, `06 / WRITING` (blog preview), `07 / WRITING` (blog index), `08 / CHANGELOG` and `08 / ARCHITECTURE` (both on `/changelog`), `09 / SETTINGS`, `10 / PRIVACY`, `!! / NOT FOUND`. The hero has a plain `01 / IDENTITY` label above the name and a `whois` OperatorPanel also numbered `01`
 - Hairline rules as structural dividers — `var(--rule)` token
 - 12-column grid with faint column guides and registration marks on wide screens (see "Grid guides and registration marks" in section 5)
 - Restrained motion that carries state: fade-in on mount, rules and frames that draw on, opacity shift on hover (rule A1, section 9)
-- Terminal output uses real mobile dev tool patterns: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
+- Terminal output shows real data or a real captured run of a real tool (`adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`). Agents never invent output or narrate a page load
 
 ---
 
@@ -456,7 +456,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use operator panels (`OperatorPanel`, `PanelShell`, both built on `Panel`) as the primary content framing unit
 - Use `SectionHeader` with numbered labels (`04 / PROJECTS`) at the top of every major section except the hero
 - Build hierarchy through weight (400→500), opacity layers, and hairline rules — not color
-- Keep terminal output real, not invented — real mobile dev tools: `adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`
+- Keep terminal output real, not invented: it comes from real data or a real captured run of a real tool (`adb`, `gradle`, `xcode`, `fastlane`, `git`, `ktlint`). Never write output for a tool that did not run
 - Hide the GitHub-fed hero panels on mobile (`hidden sm:block`) to keep content scannable
 - Use underline-on-hover via `clip-path` animation — not color jumps
 - Respect reduced motion — `<html data-motion="reduce">` is set before paint when the OS asks for it or the visitor turns motion off in Settings; `tokens.css` cuts CSS animations and transitions under it, and Motion animations follow the same setting because `MotionProvider` reads the settings store (not the attribute)
@@ -515,7 +515,7 @@ Stack: Astro 7 + React 19 + TypeScript + Tailwind CSS 4 + Motion library
 Primary font: Geist Sans (all UI + headings, including h2/h3/h4 inside blog prose)
 Mono font: Geist Mono (code, terminal output, label-meta strips)
 Pixel font: Geist Pixel (decorative counters only, never body or labels)
-Serif font: Piazzolla (blog post body prose only — .prose-blog block text)
+Serif font: Piazzolla (blog prose and blog titles only — .prose-blog block text and .display-serif titles)
 Dark bg: #0b0b0c | Card: #141416 | Emphasis: #ffffff
 Light bg: #f5f3ee | Card: #fefefc  | Emphasis: #000000
 Border: rgba(233,232,228,0.10) dark | rgba(16,16,18,0.16) light
@@ -554,7 +554,10 @@ No shadow, no traffic lights. Header row label-meta left + titleExt right.
 
 **Status output:**
 ```
-Use <BootBlock> lines with "OK ·" / "INFO ·" / "WARN ·" prefixes.
+Use <BootBlock> only for real status that the page can read from a real source
+(build data, API state, a captured run). Do not narrate a page load.
+Do not invent lines to fill the block. Without real status, omit the block.
+Lines use "OK ·" / "INFO ·" / "WARN ·" prefixes.
 Prefix --font-mono 11px medium uppercase var(--muted-foreground); text 13px foreground /90.
 No color coding. Keep to 4–6 lines.
 ```
@@ -662,7 +665,7 @@ Before finalizing any UI output, verify:
 - [ ] No gradient backgrounds, no pill buttons, no shadows on flat panels
 - [ ] No chromatic accent — emphasis only via weight and `--emphasis` white/black
 - [ ] Numbered `SectionHeader` present on every major section
-- [ ] Terminal output contains real mobile dev tool names
+- [ ] Terminal output comes from real data or a real captured run; no invented tool output
 - [ ] WCAG AA contrast on all functional text
 - [ ] Reduced motion respected on all animations
 - [ ] One decorative signature per viewport; no two decorative blocks adjacent (rule A11)

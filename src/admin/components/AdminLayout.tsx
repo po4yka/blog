@@ -65,7 +65,7 @@ export function AdminLayout() {
                 to={link.path}
                 end={link.path === "/admin"}
                 className={({ isActive }) =>
-                  `w-full flex items-center gap-2.5 px-3 py-2 transition-all duration-200 text-left ${
+                  `w-full flex items-center gap-2.5 px-3 py-2 transition-colors duration-200 text-left ${
                     isActive
                       ? "bg-muted text-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"

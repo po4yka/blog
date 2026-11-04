@@ -134,7 +134,9 @@ Follow the project's anti-AI-slop guidelines from `docs/Guidelines.md`:
 
 Bad: "In this post, we'll explore the fascinating world of mobile CI/CD and discover how to build an innovative pipeline."
 
-Good: "Our mobile CI was slow and flaky. Here is how we cut build times from 45 minutes to 12 and stopped ignoring test failures."
+Good (from `src/content/blog/en/network-isnt-broken-just-here.mdx`): "The network itself is nominally fine: DNS resolves, other sites load, a ping to 8.8.8.8 comes back clean. What drops is specific connections, and always the same ones."
+
+Use a real fact, as in the Good example. Do not invent a metric or a before/after number.
 
 ## Checklist
 

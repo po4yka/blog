@@ -25,9 +25,7 @@ When unsure, use `client:visible` -- it is the project default.
 Create the component in `src/components/`:
 
 ```tsx
-import { motion } from "motion/react";
-import { useInView } from "@/hooks/useInView";
-import { MotionProvider } from "@/components/MotionProvider";
+import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/SectionHeader";
 
 interface Props {
@@ -35,24 +33,21 @@ interface Props {
 }
 
 export function MySection({ delay = 0 }: Props) {
-  const { ref, inView } = useInView(0.1);
-
   return (
-    <MotionProvider>
-      <section ref={ref} className="space-y-6">
-        <SectionHeader number="NN" label="LABEL" heading="Section title" meta="…" />
-        {/* Content with staggered animations */}
-      </section>
-    </MotionProvider>
+    <Reveal as="section" delay={delay} className="space-y-6">
+      <SectionHeader number="NN" label="LABEL" heading="Section title" meta="…" />
+      {/* Content */}
+    </Reveal>
   );
 }
 ```
 
 Conventions:
-- Accept an optional `delay` prop for staggered section reveals
-- Use `useInView(0.1)` for scroll-triggered animation (0.1 = 10% visible threshold)
-- Wrap in `MotionProvider` for motion context (handles `reduceMotion` preference)
-- Use `motion/react` (not `framer-motion`) -- this is the current import path
+- Accept an optional `delay` prop for staggered section reveals. It is in seconds, like Motion's `delay`
+- Use `<Reveal>` from `src/components/ui/Reveal` for entrance fades. It is a CSS fade on first render. It does not wait for scroll
+- `Reveal` props: `as` (element or component, default `div`), `delay` (seconds), `speed` (`fast`, `base`, `slow`), `instant` (no fade, for above-the-fold LCP content)
+- Do not hide content at `opacity: 0` in the server HTML, and do not hide content and wait for scroll (rule A2). Scroll-linked effects use CSS `animation-timeline` under rule A2
+- Use `motion/react` (not `framer-motion`) only for state transitions in the `DESIGN.md` section 9 permitted list. Wrap that code in `MotionProvider` (it handles the `reduceMotion` preference)
 
 ## Astro Page Integration
 
@@ -139,15 +134,14 @@ export function Wrapper() {
 ## File Naming
 
 - Page-level interactive sections: `src/components/<Name>.tsx` or `src/components/<Name>Island.tsx`
-- Shared utilities: `src/hooks/useInView.ts`, `src/components/MotionProvider.tsx`
+- Shared utilities: `src/components/ui/Reveal.tsx`, `src/components/MotionProvider.tsx`
 - UI primitives: `src/components/ui/` (dialog, sonner, utils)
 
 ## Checklist
 
 - [ ] Component created in `src/components/`
 - [ ] Correct `client:*` directive chosen and applied
-- [ ] `MotionProvider` wrapper for animated content
-- [ ] `useInView` for scroll-triggered reveals
+- [ ] `<Reveal>` for entrance fades; `MotionProvider` only around `motion/react` state transitions
 - [ ] `data-section-name` on the Astro wrapper
 - [ ] No browser API access during initial render (SSR safe)
 - [ ] Props are serializable (primitives only from Astro)

@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 name: accesslint-refactor
 description: "Fix accessibility issues across several files: restructure markup, extract accessible components, apply correct ARIA patterns. Use when the fixes are known, typically after an audit."
 allowed-tools: Read, Write, Edit, Glob, Grep, Skill, Task
