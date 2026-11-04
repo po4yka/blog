@@ -91,7 +91,8 @@ test.describe("Blog language", () => {
 
   test("the lang command moves between the blog indexes", async ({ page }) => {
     await page.goto("/blog");
-    await hydrated(page);
+    // Ctrl+K belongs to the KeyboardShortcuts island, which hydrates apart from the Nav.
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("Control+k");
     await page.getByRole("combobox").fill("Language: RU");
     await page.keyboard.press("Enter");
