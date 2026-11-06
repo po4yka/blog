@@ -6,7 +6,8 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const nodeServerVersion = "2.1.5";
+const nodeServerVersion = "2.1.6";
+const honoVersion = "4.13.16";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoots = [
   ".claude/cms-mcp",
@@ -26,6 +27,9 @@ async function verifyPackage(relativePackageRoot) {
   const nodeServerManifest = await readJson(
     resolve(packageRoot, "node_modules/@hono/node-server/package.json"),
   );
+  const honoManifest = await readJson(
+    resolve(packageRoot, "node_modules/hono/package.json"),
+  );
 
   assert.equal(
     manifest.dependencies?.["@hono/node-server"],
@@ -39,6 +43,12 @@ async function verifyPackage(relativePackageRoot) {
   );
   assert.equal(manifest.engines?.node, ">=20");
   assert.equal(nodeServerManifest.version, nodeServerVersion);
+  assert.equal(
+    manifest.overrides?.hono,
+    honoVersion,
+    `${relativePackageRoot} must apply hono ${honoVersion} to the SDK dependency`,
+  );
+  assert.equal(honoManifest.version, honoVersion);
 
   const [{ McpServer }, { StreamableHTTPServerTransport }, { Client }, clientTransportModule] =
     await Promise.all([
