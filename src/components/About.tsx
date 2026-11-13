@@ -21,7 +21,7 @@ export function About() {
         style={{ borderLeft: "1px solid var(--rule)" }}
       >
         <div
-          className="space-y-5 font-sans text-sm text-muted-foreground"
+          className="space-y-5 font-sans text-sm text-muted-foreground max-w-[70ch]"
           style={{ lineHeight: 1.8 }}
         >
           <Reveal as="p" speed="slow" delay={0.05}>

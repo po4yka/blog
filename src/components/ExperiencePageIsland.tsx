@@ -50,13 +50,13 @@ function RoleEntry({
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/60 font-sans text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
       {/* Highlights */}
       {role.highlights && (
-        <ul className="mt-2 space-y-1 pl-4">
+        <ul className="mt-2 space-y-1 pl-4 max-w-[70ch]">
           {role.highlights.map((h, i) => (
             <li
               key={i}
