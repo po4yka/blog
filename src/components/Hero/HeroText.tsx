@@ -13,12 +13,12 @@ const CTA_SECONDARY = `${CTA_BASE} bg-transparent border-border text-muted-foreg
 
 const LOCALES: Locale[] = ["en", "ru"];
 
-/** The name in one language: one real string, each word on its own line. */
+/** The name in one language: one real string; each word on its own line below lg, one line from lg. */
 function Name({ lang }: { lang: Locale }) {
   const [given = "", family = ""] = t(lang, "hero.name").split(" ");
   return (
     <span data-l={lang} lang={lang === "ru" ? "ru" : undefined}>
-      <span className="block display-name-given">{given}</span> <span className="block display-name-family">{family}</span>
+      <span className="block lg:inline display-name-given">{given}</span> <span className="block lg:inline display-name-family">{family}</span>
     </span>
   );
 }
@@ -32,14 +32,19 @@ export function HeroText() {
   const location = roles[0]?.location;
 
   return (
-    <div className="lg:col-span-7 space-y-5 @container">
-      {/* @container: the name (--step-6) is sized in cqi so it fills this column at every width. */}
+    <>
+    {/* Name row: all 12 columns. @container: the name is sized in cqi, so it fills the row at every width
+        (two lines below lg, one line from lg; theme.css). Below lg the negative margin
+        keeps the 20px step to the subtitle that the single column had (the grid row gap is 32px). */}
+    <div className="lg:col-span-12 space-y-5 max-lg:-mb-3 @container">
       <Reveal as="span" className="label-meta block">
         01 / IDENTITY
       </Reveal>
       <h1 id="hero-heading" className="display-name text-foreground">
         <Name lang="en" /> <Name lang="ru" />
       </h1>
+    </div>
+    <div className="lg:col-span-7 space-y-5">
       <Reveal as="p" delay={0.06} className="font-mono text-mono-lg text-foreground/80">
         <T k="hero.subtitle" />
       </Reveal>
@@ -116,5 +121,6 @@ export function HeroText() {
         <T k="palette.hint" />
       </p>
     </div>
+    </>
   );
 }

@@ -190,7 +190,7 @@ kbd {
   color: var(--foreground);
 }
 
-/* Hero name only (DESIGN.md A9): two lines, a light given name over a heavy family name. */
+/* Hero name only (DESIGN.md A9): a light given name and a heavy family name, on two lines below lg. */
 .display-name {
   font-family: var(--font-sans);
   font-size: var(--step-6);
@@ -207,6 +207,15 @@ kbd {
 
 .display-name-family {
   font-weight: 650;
+}
+
+/* From lg the name is one line across the 12 columns. The longer string, the Russian name, is
+   6.69em wide, so 14.4cqi fills the row with about 4% to spare; 10.5rem is that size at --grid-max. */
+@media (min-width: 1024px) {
+  .display-name {
+    font-size: clamp(3rem, 14.4cqi, 10.5rem);
+    white-space: nowrap;
+  }
 }
 
 /* Hero field (DESIGN.md hero field): a dithered layer behind the name. The zone is its own stacking
@@ -314,6 +323,10 @@ html[data-motion="reduce"] .hero-field-pause {
   font-size: var(--step-4);
   text-wrap: balance;
   font-feature-settings: "kern", "liga", "clig", "calt";
+}
+/* Post titles in the home 06 / WRITING rows: the same voice, one step below the /blog index. */
+.display-serif-row {
+  font-size: var(--step-3);
 }
 
 /* Operator-console label — numbered section IDs, metadata strips */
