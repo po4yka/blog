@@ -324,6 +324,10 @@ html[data-motion="reduce"] .hero-field-pause {
   text-wrap: balance;
   font-feature-settings: "kern", "liga", "clig", "calt";
 }
+/* Post titles in the home 06 / WRITING rows: the same voice, one step below the /blog index. */
+.display-serif-row {
+  font-size: var(--step-3);
+}
 
 /* Operator-console label — numbered section IDs, metadata strips */
 .label-meta {

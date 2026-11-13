@@ -8,7 +8,7 @@ import { OpenSourcePanel } from "@/components/Decorations";
   {/* JSON-LD lives in the body; Google recognizes application/ld+json anywhere in the document. */}
   <ProjectsJsonLd />
   <ProjectsPage client:load />
-  <!-- Epilogue: repos from GitHub by stars (real data). It was the second project list on the home page. -->
+  {/* Epilogue: repos from GitHub by stars (real data). It was the second project list on the home page. */}
   <div data-section-name="open-source" class="mt-8">
     <OpenSourcePanel client:visible delay={0.05} />
   </div>

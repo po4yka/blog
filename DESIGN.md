@@ -114,9 +114,9 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 | Class | Size | Weight | Tracking | Use |
 |-------|------|--------|----------|-----|
-| `display-name` | `--step-6`, clamp(48px–120px) below 1024px; clamp(48px–168px, 14.4cqi) from 1024px | 300 and 650 | -0.035em | Hero name only: two lines below 1024px, one line across the 12 columns from 1024px, rule A9 |
+| `display-name` | `--step-6`, `clamp(3rem, 24.5cqi, 7.5rem)` below 1024px; `clamp(3rem, 14.4cqi, 10.5rem)` from 1024px (48 to 120px and 48 to 168px at the 16px root) | 300 and 650 | -0.035em | Hero name only: two lines below 1024px, one line across the 12 columns from 1024px, rule A9 |
 | `display-1` | clamp(40px–64px) | 500 | -0.028em | Page-level identity |
-| `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles |
+| `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles; `.display-serif-row` sets the same face at `--step-3` (28–36px) for the post titles in the home `06 / WRITING` rows |
 | `h1` | clamp(28px–36px) | 500 | -0.015em | Page headings |
 | `h2` | 20px | 500 | -0.010em | Section headings |
 | `h3` | 17px | 500 | 0 | Sub-section headings |
@@ -126,7 +126,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 **Minimum text size: 11px**, everywhere including the admin SPA. Sizes in rem that can drop below it at the compact 15px root (the smallest of the three) use `max(11px, <rem>)` (the `text-xs` and `text-label` tokens do this). The fluid sizes of `display-1` (`--step-5`), `.display-serif` (`--step-4`), `h1` (`--step-3`) and the blog prose (`--step-0` to `--step-2`) come from tokens in `src/styles/tokens.css`.
 
-All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The exceptions are the post `<h1>`, the blog-index `<h2>` titles and the post titles in the home `06 / WRITING` rows (`<h3>`, one step smaller at `--step-3`), which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
+All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The exceptions are the post `<h1>`, the blog-index `<h2>` titles and the post titles in the home `06 / WRITING` rows (`<h3>` with `.display-serif-row`, one step smaller at `--step-3`), which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
 ### Hierarchy Rules
 
@@ -355,8 +355,8 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Reading progress (`useCoverMap`, rule A2): the read part keeps full ink and the rest falls to 35% once the reading line passes the top of the content. The position is linear inside each section, between the h2 anchors, so it matches the cover columns. A JS-written custom property, not a scroll animation, so it also works under reduced motion
 - Hover and focus (rule A3): pointing at a section on the cover, or focusing or hovering its number, dims the other blocks to 30% and swaps the caption by opacity for `§<n> <heading> · <figures>, <code blocks>`. A click on a section goes to its heading, a click on a frame to its figure. Figures link only when the page has exactly as many figures as the outline. The art is a pointer enhancement: the keyboard and screen reader path is the numbers (a `nav` named "Sections on the cover", each link padded to a 44 px hit area) and the TOC
 - TOC map: on `lg` and up the sticky TOC shows the same cover turned to run top to bottom (2 px a cell, 40 px wide) beside the list. It follows reading progress, and the frame of the figure in the middle band of the viewport fills at 40%
-- Blog list strip: each `/blog` row shows the cover at the header size, 4 px a cell (736 px wide, the row width on phones), so the strip is the row's image and the morph into the header cover does not scale. At rest only ranks 0 and 1 show; on row hover or focus the later ranks dissolve in, 40 ms per rank. Under `(hover: none)` the strip and the plates show full density at rest. The strip and the header cover share `view-transition-name: post-cover-<slug>`, so opening a post morphs the strip into the header cover (`--dur-base`, rule A1)
-- Home rows: each `06 / WRITING` row on the home page shows the same strip under its title, with no `view-transition-name` (only the `/blog` list marks the cover as arrived)
+- Blog list strip: each `/blog` row shows the cover at the header width, 46rem (4 px a cell and 736 px at the 16px root; the row width on phones), so the strip is the row's image and the morph into the header cover keeps its size. At rest only ranks 0 and 1 show; on row hover or focus the later ranks dissolve in, 40 ms per rank. Under `(hover: none)` the strip and the plates show full density at rest. The strip and the header cover share `view-transition-name: post-cover-<slug>`, so opening a post morphs the strip into the header cover (`--dur-base`, rule A1)
+- Home rows: the first `06 / WRITING` row on the home page (the newest post) shows the same strip under its title. Only one row has it, so the section holds one signature (rule A11). It has no `view-transition-name` (only the `/blog` list marks the cover as arrived)
 - OG card: the same pixels, in the meta grey, as a 992px band between the title and the footer row of `public/og/<lang>-<slug>.png`
 - Budget: no new JS on the list; on the post page the hover state and `useCoverMap` (one scroll listener throttled to a frame, one IntersectionObserver)
 
@@ -408,7 +408,7 @@ Two styles, both flat with a `2px` radius (never pill-shaped):
 
 The page shows its 12-column grid as faint vertical hairlines (guides) and a small crosshair (registration mark) on each end of a `SectionHeader` rule. Styles are in `src/styles/grid.css`. Both are decoration only.
 
-**Body column** (`.col-body`, `src/styles/grid.css`): from 1024px the content of each numbered home section (`02` to `06`) starts on column 4. The `SectionHeader` keeps the full 12 columns, so its label and heading hang in columns 1 to 3 and the body text keeps a short measure. Full-width data panels (git log, activity calendar) and the hero keep all 12 columns. Use it only on a direct child of a container that spans the page grid
+**Body column** (`.col-body`, `src/styles/grid.css`): from 1024px the content of each numbered home section (`02` to `06`) starts on column 4. The `SectionHeader` keeps the full 12 columns and its text starts on column 1, so the label and heading stand left of the body and the body text keeps a short measure. Full-width data panels (git log, activity calendar) and the hero keep all 12 columns. Use it only on a direct child of a container that spans the page grid
 
 **Tokens** (`src/styles/tokens.css`, "Layout grid" block)
 - `--grid-max`: 1240px
@@ -499,7 +499,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 |---------|--------|---------|
 | Hero `whois` panel | Stacked below the identity | Cols 8–12 |
 | Hero panel strip | Latest post and build only; the GitHub-fed sparkline and release panel are hidden below `sm` | 4-up strip below the split |
-| Hero layout | Stacked, identity-first | Split: two-line display name left + widgets right |
+| Hero layout | Stacked, identity-first, two-line name | One-line display name across 12 columns; under it identity text left + `whois` right |
 | Projects | Single-column tree list (home), entry list (`/projects`) | Tree list (home); sticky index plus entry list (`/projects`) |
 | Navigation | Hamburger → `var(--mobile-menu-bg)` overlay | Horizontal with border-bottom rule |
 | Blog post body | Full width, prose capped at 46rem; fixed bottom TOC bar with a bottom sheet | Article + 14rem sticky TOC; prose capped at 46rem |
@@ -584,8 +584,8 @@ Row separator: border-bottom 1px dashed var(--rule) (fieldCodes mode).
 
 - Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
 - Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title, blog-index titles and home post-row titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
-- Use `display-name` (`--step-6`, clamp 48–120px, and 48–168px on one line from 1024px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
-- Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles (the home post rows use `.display-serif` at `--step-3`); plain `display-2` elsewhere
+- Use `display-name` (`--step-6`, 3 to 7.5rem, and 3 to 10.5rem on one line from 1024px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
+- Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles (the home post rows add `.display-serif-row`, `--step-3`); plain `display-2` elsewhere
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
 - Do not extend `--font-serif` beyond blog prose — no serif on project cards, experience blocks, settings, or any chrome surface

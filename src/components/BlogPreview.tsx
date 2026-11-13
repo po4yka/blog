@@ -43,7 +43,7 @@ function groupPosts() {
 const ROW_CLASS =
   "group flex items-start gap-0 py-5 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]";
 
-/** One post row in one language: a meta line, the title in the blog serif, and the post's cover. */
+/** One post row in one language: a meta line and the title in the blog serif; the first row adds the post's cover. */
 function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: number; lang: Locale; dataL?: Locale }) {
   const entry = post.langs[lang];
   const title = entry?.title ?? post.slug;
@@ -83,16 +83,16 @@ function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: nu
           )}
         </div>
         {/* Title in the blog voice, one step below the /blog index titles. */}
-        <h3 className="mt-2 m-0 display-serif text-foreground/85 group-hover:text-foreground transition-colors duration-(--dur-fast) inline-block relative max-w-[46rem]" style={{ fontSize: "var(--step-3)" }}>
+        <h3 className="mt-2 m-0 display-serif display-serif-row text-foreground/85 group-hover:text-foreground transition-colors duration-(--dur-fast) inline-block relative max-w-[46rem]">
           {title}
           <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
         </h3>
-        {/* The post's cover (rule A8), as on /blog. No view-transition name here: only the /blog list marks the cover as arrived. */}
-        {entry?.outline && (
+        {/* The newest post's cover (rule A8), as on /blog. Only the first row has one, so the section holds
+            one signature (rule A11). No slug: the view transition and the arrival mark belong to the /blog list. */}
+        {index === 0 && entry?.outline && (
           <CoverArt
             outline={entry.outline}
             variant="strip"
-            slug={post.slug}
             className="mt-3 w-full max-w-[46rem] text-foreground/45 group-hover:text-foreground/75 group-focus-visible:text-foreground/75 transition-colors duration-(--dur-fast)"
           />
         )}

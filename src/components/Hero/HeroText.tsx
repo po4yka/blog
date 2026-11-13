@@ -34,8 +34,9 @@ export function HeroText() {
   return (
     <>
     {/* Name row: all 12 columns. @container: the name is sized in cqi, so it fills the row at every width
-        (two lines below lg, one line from lg; theme.css). */}
-    <div className="lg:col-span-12 space-y-5 @container">
+        (two lines below lg, one line from lg; theme.css). Below lg the negative margin
+        keeps the 20px step to the subtitle that the single column had (the grid row gap is 32px). */}
+    <div className="lg:col-span-12 space-y-5 max-lg:-mb-3 @container">
       <Reveal as="span" className="label-meta block">
         01 / IDENTITY
       </Reveal>
