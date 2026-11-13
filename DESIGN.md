@@ -114,7 +114,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 | Class | Size | Weight | Tracking | Use |
 |-------|------|--------|----------|-----|
-| `display-name` | `--step-6`, clamp(48px–120px) | 300 and 650 | -0.035em | Hero name only, two lines, rule A9 |
+| `display-name` | `--step-6`, clamp(48px–120px) below 1024px; clamp(48px–168px, 14.4cqi) from 1024px | 300 and 650 | -0.035em | Hero name only: two lines below 1024px, one line across the 12 columns from 1024px, rule A9 |
 | `display-1` | clamp(40px–64px) | 500 | -0.028em | Page-level identity |
 | `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles |
 | `h1` | clamp(28px–36px) | 500 | -0.015em | Page headings |
@@ -387,7 +387,7 @@ Two styles, both flat with a `2px` radius (never pill-shaped):
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
 **Grid column assignments:**
-- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` and `LatestReleasePanel` (both `client:visible`) are islands; the sparkline draws its dated labels only after its data arrives, so the static HTML never bakes in the build date. Both fetch from GitHub, and neither hydrates on mobile, where both are hidden
+- Hero: from 1024px the name is one line across cols 1–12 (it is the page's one display moment and the only element that uses the full grid as type); under it, identity (role, intro, meta strip, CTAs) cols 1–7 and the `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` and `LatestReleasePanel` (both `client:visible`) are islands; the sparkline draws its dated labels only after its data arrives, so the static HTML never bakes in the build date. Both fetch from GitHub, and neither hydrates on mobile, where both are hidden
 - Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem. The TOC is built at build time from the headings, so it is in the static HTML. On `lg+` the active item shows a 1px `--emphasis` line on its left edge that grows with the scroll position inside that section (`--section-progress`). Below `lg` a fixed bottom bar shows the active section and a "Contents" button that opens a native `<dialog>` bottom sheet with the same list. A 1px reading progress rail (`.progress-rail`) at the top of the viewport shows the scroll position of the post. The post body has no entrance fade (`LessViewer instant`), because it is the largest contentful paint element. On touch devices (`hover: none`) the heading permalinks are always visible and have a 44px tap target.
 - Project list: a single-column tree list on the home page; on `/projects` a sticky index (3 cols) beside the entry list (9 cols)
 - Experience timeline: a 9rem date column left of the rail, entries right of it (see "Experience Timeline")
@@ -584,7 +584,7 @@ Row separator: border-bottom 1px dashed var(--rule) (fieldCodes mode).
 
 - Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
 - Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title, blog-index titles and home post-row titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
-- Use `display-name` (`--step-6`, clamp 48–120px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
+- Use `display-name` (`--step-6`, clamp 48–120px, and 48–168px on one line from 1024px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
 - Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles (the home post rows use `.display-serif` at `--step-3`); plain `display-2` elsewhere
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
