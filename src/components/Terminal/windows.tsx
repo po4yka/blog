@@ -73,7 +73,8 @@ export function OperatorPanel({
     <div className={`flex font-mono ${lineCount > 0 ? "gap-0" : ""}`}>
       {lineCount > 0 && (
         <div
-          className="flex-none select-none py-5 pl-3 pr-2 text-right font-mono text-mono-sm"
+          // Hidden below sm: rows wrap there (label above value), so the numbers stop matching them.
+          className="hidden sm:block flex-none select-none py-5 pl-3 pr-2 text-right font-mono text-mono-sm"
           style={{
             color: "var(--muted-foreground-dim)",
             borderRight: "1px solid var(--border)",
