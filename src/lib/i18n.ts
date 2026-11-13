@@ -101,7 +101,6 @@ const en = {
   "blogPreview.viewAllLabel": "View all blog posts",
 
   // links
-  "links.comingSoon": "coming soon",
   "links.opensNewWindow": "opens in new window",
 
   // blog list
@@ -414,7 +413,6 @@ const ru: TranslationKeys = {
   "blogPreview.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b",
 
   // links
-  "links.comingSoon": "\u0441\u043a\u043e\u0440\u043e",
   "links.opensNewWindow": "\u043e\u0442\u043a\u0440\u043e\u0435\u0442\u0441\u044f \u0432 \u043d\u043e\u0432\u043e\u043c \u043e\u043a\u043d\u0435",
 
   // blog list
