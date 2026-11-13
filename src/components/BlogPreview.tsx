@@ -5,12 +5,13 @@ import { SectionHeader } from "./SectionHeader";
 import { Reveal } from "./ui/Reveal";
 import { T } from "./ui/T";
 import { blogUrl, t, type Locale } from "@/lib/i18n";
+import { CoverArt } from "./blog/CoverArt";
 
 interface GroupedPost {
   slug: string;
   date: string;
   isoDate?: string;
-  langs: Partial<Record<Locale, { title: string }>>;
+  langs: Partial<Record<Locale, { title: string; outline?: string }>>;
 }
 
 // A post is "new" based on publish recency, not the editorial `featured` flag
@@ -34,22 +35,23 @@ function groupPosts() {
       group = { slug: p.slug, date: p.date, isoDate: p.isoDate, langs: {} };
       bySlug.set(p.slug, group);
     }
-    group.langs[lang] = { title: p.title };
+    group.langs[lang] = { title: p.title, outline: p.outline };
   }
   return { previewPosts: [...bySlug.values()].slice(0, 3), totalPosts: bySlug.size };
 }
 
 const ROW_CLASS =
-  "group flex items-start gap-0 py-3.5 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]";
+  "group flex items-start gap-0 py-5 -mx-2 px-2 hover:bg-card transition-colors duration-150 rounded-[2px]";
 
-/** One post row in one language. */
+/** One post row in one language: a meta line and the title in the blog serif; the first row adds the post's cover. */
 function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: number; lang: Locale; dataL?: Locale }) {
-  const title = post.langs[lang]?.title ?? post.slug;
+  const entry = post.langs[lang];
+  const title = entry?.title ?? post.slug;
   const availLangs = Object.keys(post.langs) as Locale[];
   return (
     <a href={blogUrl(lang, post.slug)} className={ROW_CLASS} data-l={dataL} lang={lang}>
       <div className="flex-1 min-w-0">
-        {/* Rank line: 001 │ date │ [tag] │ title │ langs */}
+        {/* Meta line: 001 │ date │ [new] │ langs */}
         <div className="flex items-baseline gap-1.5 flex-wrap">
           <span
             className="text-muted-foreground-dim shrink-0 font-mono text-mono-sm tabular-nums select-none"
@@ -67,12 +69,6 @@ function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: nu
               </Tag>
             </>
           )}
-          <span className="hidden sm:inline text-muted-foreground-dim shrink-0 font-mono text-mono-sm select-none" aria-hidden="true">│</span>
-          {/* Title: its own line on phones, after the langs; inline from sm. */}
-          <div className="relative min-w-0 basis-full order-last sm:basis-auto sm:order-none sm:flex-1">
-            <span className="text-foreground font-sans text-mono">{title}</span>
-            <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
-          </div>
           {/* Available languages, pinned right; the row links to `lang`, shown brighter.
               Passive label: the other language is one locale switch away. */}
           {availLangs.length > 1 && (
@@ -86,6 +82,20 @@ function PreviewRow({ post, index, lang, dataL }: { post: GroupedPost; index: nu
             </span>
           )}
         </div>
+        {/* Title in the blog voice, one step below the /blog index titles. */}
+        <h3 className="mt-2 m-0 display-serif display-serif-row text-foreground/85 group-hover:text-foreground transition-colors duration-(--dur-fast) inline-block relative max-w-[46rem]">
+          {title}
+          <span className="blog-underline absolute left-0 right-0 bottom-[-0.15em] h-[2px]" />
+        </h3>
+        {/* The newest post's cover (rule A8), as on /blog. Only the first row has one, so the section holds
+            one signature (rule A11). No slug: the view transition and the arrival mark belong to the /blog list. */}
+        {index === 0 && entry?.outline && (
+          <CoverArt
+            outline={entry.outline}
+            variant="strip"
+            className="mt-3 w-full max-w-[46rem] text-foreground/45 group-hover:text-foreground/75 group-focus-visible:text-foreground/75 transition-colors duration-(--dur-fast)"
+          />
+        )}
       </div>
     </a>
   );
@@ -107,7 +117,7 @@ export function BlogPreview() {
       />
       {/* A static prompt line: the section ships no JS, so no click-to-copy. */}
       {/* Kept quieter than the post titles: the prompt is chrome, the titles are content. */}
-      <Reveal speed="fast" className="flex items-baseline gap-2 font-mono text-mono-sm min-w-0">
+      <Reveal speed="fast" className="col-body flex items-baseline gap-2 font-mono text-mono-sm min-w-0">
         <span className="select-none text-muted-foreground" aria-hidden="true">
           $
         </span>
@@ -116,7 +126,7 @@ export function BlogPreview() {
         </span>
       </Reveal>
 
-      <div className="space-y-0">
+      <div className="col-body space-y-0">
         {previewPosts.map((post, i) => (
           // The border sits on the wrapper, so the last post keeps last:border-b-0
           // whichever language anchor is visible.
@@ -133,7 +143,7 @@ export function BlogPreview() {
         ))}
       </div>
 
-      <div className="pt-1">
+      <div className="col-body pt-1">
         {(["en", "ru"] as const).map((lang) => (
           <Fragment key={lang}>
             <a

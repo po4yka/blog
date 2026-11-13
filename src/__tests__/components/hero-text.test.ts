@@ -23,7 +23,12 @@ describe("HeroText", () => {
 
   it("never fades the h1: no data-reveal on it or on its container", () => {
     expect(h1).not.toContain("data-reveal");
-    expect(out.startsWith('<div class="lg:col-span-7')).toBe(true);
+    // The name row is the first grid child and spans all 12 columns.
+    expect(out.startsWith('<div class="lg:col-span-12')).toBe(true);
+  });
+
+  it("puts no dim text over the hero field: --muted-foreground-dim is 3.47:1 on field ink at --field-opacity 0.20", () => {
+    expect(out).not.toContain("muted-foreground-dim");
   });
 
   it("keeps the CTA hrefs, analytics attributes and external-link rel", () => {

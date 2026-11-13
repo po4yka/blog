@@ -43,7 +43,7 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--nav-glass` | `rgba(11,11,12,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
 | `--nav-glass-subtle` | `rgba(11,11,12,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 16px 48px rgba(0,0,0,0.5)` | Floating overlays only (dialogs, dropdowns) |
-| `--field-opacity` | `0.10` | Hero field ink over `--background`; keeps all text at 4.5:1 or more (see "Hero Field") |
+| `--field-opacity` | `0.20` | Hero field ink over `--background`; keeps `--muted-foreground` and brighter text at 4.5:1 or more (see "Hero Field") |
 | `--popover` | `#141416` | Dialog and popover surface |
 | `--ring` | `rgba(255,255,255,0.28)` | Focus ring |
 | `--mobile-menu-bg` | `rgba(11,11,12,0.96)` | Mobile menu overlay fill |
@@ -69,7 +69,7 @@ Typography leads with **Geist Sans** for headings, navigation, UI labels, and si
 | `--nav-glass` | `rgba(245,243,238,0.85)` | Sticky nav backdrop after the page scrolls (with blur, rule A7) |
 | `--nav-glass-subtle` | `rgba(245,243,238,0.55)` | Sticky nav backdrop at the top of the page (no blur) |
 | `--overlay-shadow` | `0 12px 32px rgba(16,16,18,0.18)` | Floating overlays only (dialogs, dropdowns) |
-| `--field-opacity` | `0.10` | Hero field ink over `--background`; keeps all text at 4.5:1 or more (see "Hero Field") |
+| `--field-opacity` | `0.20` | Hero field ink over `--background`; keeps `--muted-foreground` and brighter text at 4.5:1 or more (see "Hero Field") |
 | `--popover` | `#fefefc` | Dialog and popover surface |
 | `--ring` | `rgba(0,0,0,0.32)` | Focus ring |
 | `--mobile-menu-bg` | `rgba(245,243,238,0.96)` | Mobile menu overlay fill |
@@ -114,9 +114,9 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 | Class | Size | Weight | Tracking | Use |
 |-------|------|--------|----------|-----|
-| `display-name` | `--step-6`, clamp(48px–120px) | 300 and 650 | -0.035em | Hero name only, two lines, rule A9 |
+| `display-name` | `--step-6`, `clamp(3rem, 24.5cqi, 7.5rem)` below 1024px; `clamp(3rem, 14.4cqi, 10.5rem)` from 1024px (48 to 120px and 48 to 168px at the 16px root) | 300 and 650 | -0.035em | Hero name only: two lines below 1024px, one line across the 12 columns from 1024px, rule A9 |
 | `display-1` | clamp(40px–64px) | 500 | -0.028em | Page-level identity |
-| `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles |
+| `display-2` | clamp(28px–40px) | 500 | -0.020em | Major section heads; with `.display-serif` (Piazzolla, wt 560, clamp 30–44px) for blog post titles and blog-index titles; `.display-serif-row` sets the same face at `--step-3` (28–36px) for the post titles in the home `06 / WRITING` rows |
 | `h1` | clamp(28px–36px) | 500 | -0.015em | Page headings |
 | `h2` | 20px | 500 | -0.010em | Section headings |
 | `h3` | 17px | 500 | 0 | Sub-section headings |
@@ -126,7 +126,7 @@ Fira Code is an optional fallback in the mono stack for code blocks where progra
 
 **Minimum text size: 11px**, everywhere including the admin SPA. Sizes in rem that can drop below it at the compact 15px root (the smallest of the three) use `max(11px, <rem>)` (the `text-xs` and `text-label` tokens do this). The fluid sizes of `display-1` (`--step-5`), `.display-serif` (`--step-4`), `h1` (`--step-3`) and the blog prose (`--step-0` to `--step-2`) come from tokens in `src/styles/tokens.css`.
 
-All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The two exceptions are the post `<h1>` and the blog-index `<h2>` titles, which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
+All headings use `--font-sans` — including h2/h3/h4 *inside* blog prose, so the TOC and the article structure stay in the same voice as site chrome. The exceptions are the post `<h1>`, the blog-index `<h2>` titles and the post titles in the home `06 / WRITING` rows (`<h3>` with `.display-serif-row`, one step smaller at `--step-3`), which take `.display-serif` (Piazzolla) so the blog has its own editorial voice against the geometric chrome. `label-meta` uses `--font-mono`. Blog post body prose uses `--font-serif` (Piazzolla) at a fluid 15 to 17px at the default 16px root (`--step-0`, rem-based, so it follows the Settings size), line-height 1.7, `letter-spacing: 0`, `font-feature-settings: "kern","liga","clig","calt"`, max-width 46rem (~70ch with Piazzolla).
 
 ### Hierarchy Rules
 
@@ -259,7 +259,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Project Plates
 
-- Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (48px). Hidden below `sm`
+- Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (96px, 12 px a cell, so each entry opens with its mark at the size of a real identity plate). Hidden below `sm`
 - Source: `plateArt` in `src/lib/plate.ts`, rendered as an inline SVG in the server HTML. Each is an 8x8 1-bit mark: a silhouette plus an ordered-dithered inside (`ditherField` in `src/lib/dither.ts`), mirrored on the vertical axis
 - Seeds (rule A8): the project's first platform picks the silhouette (backend: a rack, tooling: a hex nut, android: a phone, web: a browser window, anything else: a diamond), so projects of one kind look related; the FNV-1a hash of the slug picks the inside. A plate is an identity mark, not a metric. Its caption prints both seeds as `<kind> · seed <slug>`; the slug is text, because a hex digest beside a year reads as a commit hash (the `/projects` meta row and the `MARK` line of the home spec sheet)
 - Colour: the strokes are `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
@@ -309,7 +309,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 - Components: `src/components/Hero/DitherField.tsx` (`client:idle` island) inside `.hero-zone` (`position: relative; isolation: isolate`). `.hero-field` is absolute, `z-index: -1`, `pointer-events: none`, `aria-hidden`, with a bottom fade mask; it holds `.hero-field-poster` and a `<canvas>`. `.hero-field-row` holds the caption and the pause control. The server renders the poster, the caption and the button, so the static HTML is complete
 - Data (rule A8): `src/data/fieldSeed.ts`, generated by `scripts/generate-field-seed.ts` from `git log`: commits per day for the last 13 weeks (91 numbers) and the build hash. It refreshes like `buildMeta.ts` (CI or `BLOG_REFRESH_BUILD_META=1`). The caption names it: `FIELD: 13 weeks of commits to po4yka/blog, built <hash>`, or `FIELD: no data` when the seed is empty
-- Look: ink is `--foreground` at `--field-opacity` (0.10), nothing chromatic. Cells are 2 CSS px (coarser only past 720 cells on an axis). Density follows the seed from oldest week (left) to newest (right); the live name is echoed through a glyph mask drawn after `document.fonts.ready` with the CSS weights; a slow triangle-wave drift runs down the rows. `--field-opacity` keeps every text token at 4.5:1 or more over a solid ink pixel in both themes (worst case `--muted-foreground-dim`: 4.68:1 dark, 4.71:1 light). Recompute before raising it
+- Look: ink is `--foreground` at `--field-opacity` (0.20), nothing chromatic. Cells are 2 CSS px (coarser only past 720 cells on an axis). Density follows the seed from oldest week (left) to newest (right); the live name is echoed through a glyph mask drawn after `document.fonts.ready` with the CSS weights; a slow triangle-wave drift runs down the rows. `--field-opacity` keeps `--muted-foreground` and every brighter text token at 4.5:1 or more over a solid ink pixel in both themes (worst case `--muted-foreground`: 4.92:1 dark, 5.15:1 light). `--muted-foreground-dim` is 3.47:1 on field ink, so no text over the field uses it: the hero meta strip and the shortcut hint are `--muted-foreground`, and text inside the solid `whois` panel does not sit on the field. The value was 0.10 until the field read as noise; 0.20 makes the 13 weeks of commits a visible relief. Recompute before raising it
 - Loop (A4): 15 fps at most, half resolution, DPR 1; paused off-screen, when the document is hidden and by the visitor. Per frame, column density and row wave are tabled once and the pointer math runs only inside the pointer box. Lazy JS 2.6 KB gzip (budget 6 KB)
 - Pointer (A6): only under `(pointer: fine) and (hover: hover)`, only while the field is live and not paused. The dither near the pointer samples up to 7 cells further out inside an 18 cell radius. No listener exists on coarse pointers or in any still or paused state. It never moves layout and nothing depends on it
 - Poster: frame 0 of the same field without the name mask, painted through `mask-image`, never the LCP element. It shows before the canvas draws and stays under data saver. One poster per layout range (`public/field-poster-{phone,small,tablet,desktop}.png`, below 480px, 480 to 767px, 768 to 1023px, 1024px and up), generated by `scripts/generate-field-poster.ts` at 1 image px per cell and drawn at 2 CSS px per cell, never stretched, so its cells match the canvas. Each is sized to the largest field in its range; a narrower field shows the poster's left part, so the density spread differs a little from the canvas, which fits all weeks into the layer's width. A visitor loads only the one their layout matches (7.4 to 11.4 KB, budget 20 KB each). The media queries in `theme.css` mirror the generator's `POSTERS` table
@@ -355,7 +355,8 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 - Reading progress (`useCoverMap`, rule A2): the read part keeps full ink and the rest falls to 35% once the reading line passes the top of the content. The position is linear inside each section, between the h2 anchors, so it matches the cover columns. A JS-written custom property, not a scroll animation, so it also works under reduced motion
 - Hover and focus (rule A3): pointing at a section on the cover, or focusing or hovering its number, dims the other blocks to 30% and swaps the caption by opacity for `§<n> <heading> · <figures>, <code blocks>`. A click on a section goes to its heading, a click on a frame to its figure. Figures link only when the page has exactly as many figures as the outline. The art is a pointer enhancement: the keyboard and screen reader path is the numbers (a `nav` named "Sections on the cover", each link padded to a 44 px hit area) and the TOC
 - TOC map: on `lg` and up the sticky TOC shows the same cover turned to run top to bottom (2 px a cell, 40 px wide) beside the list. It follows reading progress, and the frame of the figure in the middle band of the viewport fills at 40%
-- Blog list strip: each `/blog` row shows the cover at 2 px a cell (368 px wide). At rest only ranks 0 and 1 show; on row hover or focus the later ranks dissolve in, 40 ms per rank. Under `(hover: none)` the strip and the plates show full density at rest. The strip and the header cover share `view-transition-name: post-cover-<slug>`, so opening a post morphs the strip into the header cover (`--dur-base`, rule A1)
+- Blog list strip: each `/blog` row shows the cover at the header width, 46rem (4 px a cell and 736 px at the 16px root; the row width on phones), so the strip is the row's image and the morph into the header cover keeps its size. At rest only ranks 0 and 1 show; on row hover or focus the later ranks dissolve in, 40 ms per rank. Under `(hover: none)` the strip and the plates show full density at rest. The strip and the header cover share `view-transition-name: post-cover-<slug>`, so opening a post morphs the strip into the header cover (`--dur-base`, rule A1)
+- Home rows: the first `06 / WRITING` row on the home page (the newest post) shows the same strip under its title. Only one row has it, so the section holds one signature (rule A11). It has no `view-transition-name` (only the `/blog` list marks the cover as arrived)
 - OG card: the same pixels, in the meta grey, as a 992px band between the title and the footer row of `public/og/<lang>-<slug>.png`
 - Budget: no new JS on the list; on the post page the hover state and `useCoverMap` (one scroll listener throttled to a frame, one IntersectionObserver)
 
@@ -386,7 +387,7 @@ Two styles, both flat with a `2px` radius (never pill-shaped):
 - **Whitespace:** generous. Panels need breathing room. Never pack sections tightly.
 
 **Grid column assignments:**
-- Hero: identity (name, role, intro, meta strip, CTAs) cols 1–7, `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` and `LatestReleasePanel` (both `client:visible`) are islands; the sparkline draws its dated labels only after its data arrives, so the static HTML never bakes in the build date. Both fetch from GitHub, and neither hydrates on mobile, where both are hidden
+- Hero: from 1024px the name is one line across cols 1–12 (it is the page's one display moment and the only element that uses the full grid as type); under it, identity (role, intro, meta strip, CTAs) cols 1–7 and the `whois` spec-sheet panel cols 8–12; a 4-up strip of real-data panels (latest post, build, activity, release) sits below the split. Only the two content panels render on mobile. The name is on two lines (given name, family name) at `--step-6` (`.display-name`). The hero is static server markup in `src/components/Hero/` with no island on the identity path, so the name is in the HTML in both languages and the `h1` paints at once with no reveal. Only `ActivitySparkline` and `LatestReleasePanel` (both `client:visible`) are islands; the sparkline draws its dated labels only after its data arrives, so the static HTML never bakes in the build date. Both fetch from GitHub, and neither hydrates on mobile, where both are hidden
 - Blog post: two-track layout on `lg+` — article column (capped at 46rem prose) + `14rem` sticky TOC sidebar (`lg:grid-cols-[minmax(0,1fr)_14rem] gap-10`). Below `lg` the sidebar hides and the article spans full width of the `LessViewer` panel, prose still capped at 46rem. The TOC is built at build time from the headings, so it is in the static HTML. On `lg+` the active item shows a 1px `--emphasis` line on its left edge that grows with the scroll position inside that section (`--section-progress`). Below `lg` a fixed bottom bar shows the active section and a "Contents" button that opens a native `<dialog>` bottom sheet with the same list. A 1px reading progress rail (`.progress-rail`) at the top of the viewport shows the scroll position of the post. The post body has no entrance fade (`LessViewer instant`), because it is the largest contentful paint element. On touch devices (`hover: none`) the heading permalinks are always visible and have a 44px tap target.
 - Project list: a single-column tree list on the home page; on `/projects` a sticky index (3 cols) beside the entry list (9 cols)
 - Experience timeline: a 9rem date column left of the rail, entries right of it (see "Experience Timeline")
@@ -406,6 +407,8 @@ Two styles, both flat with a `2px` radius (never pill-shaped):
 ### Grid guides and registration marks
 
 The page shows its 12-column grid as faint vertical hairlines (guides) and a small crosshair (registration mark) on each end of a `SectionHeader` rule. Styles are in `src/styles/grid.css`. Both are decoration only.
+
+**Body column** (`.col-body`, `src/styles/grid.css`): from 1024px the content of each numbered home section (`02` to `06`) starts on column 4. The `SectionHeader` keeps the full 12 columns and its text starts on column 1, so the label and heading stand left of the body and the body text keeps a short measure. Full-width data panels (git log, activity calendar) and the hero keep all 12 columns. Use it only on a direct child of a container that spans the page grid
 
 **Tokens** (`src/styles/tokens.css`, "Layout grid" block)
 - `--grid-max`: 1240px
@@ -496,7 +499,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 |---------|--------|---------|
 | Hero `whois` panel | Stacked below the identity | Cols 8–12 |
 | Hero panel strip | Latest post and build only; the GitHub-fed sparkline and release panel are hidden below `sm` | 4-up strip below the split |
-| Hero layout | Stacked, identity-first | Split: two-line display name left + widgets right |
+| Hero layout | Stacked, identity-first, two-line name | One-line display name across 12 columns; under it identity text left + `whois` right |
 | Projects | Single-column tree list (home), entry list (`/projects`) | Tree list (home); sticky index plus entry list (`/projects`) |
 | Navigation | Hamburger → `var(--mobile-menu-bg)` overlay | Horizontal with border-bottom rule |
 | Blog post body | Full width, prose capped at 46rem; fixed bottom TOC bar with a bottom sheet | Article + 14rem sticky TOC; prose capped at 46rem |
@@ -580,9 +583,9 @@ Row separator: border-bottom 1px dashed var(--rule) (fieldCodes mode).
 ### Typography guidance
 
 - Use `--font-sans` for everything except code, terminal output, `.label-meta` strips, and `.prose-blog` body paragraphs
-- Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title and blog-index titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
-- Use `display-name` (`--step-6`, clamp 48–120px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
-- Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles; plain `display-2` elsewhere
+- Use `--font-serif` inside `.prose-blog` body text and, via `.display-serif`, on the post title, blog-index titles and home post-row titles only. Headings inside the prose stay in `--font-sans` — do not switch the TOC or h2/h3 to serif
+- Use `display-name` (`--step-6`, 3 to 7.5rem, and 3 to 10.5rem on one line from 1024px, wt 300 given name and 650 family name, tracking -0.035em) for the hero name only; use `display-1` (clamp 40–64px, wt 500, tracking -0.028em) for other page-level identity
+- Use `display-2 display-serif` (Piazzolla, clamp 30–44px, wt 560) for blog post titles and blog-index titles (the home post rows add `.display-serif-row`, `--step-3`); plain `display-2` elsewhere
 - Use `h2` (20px, wt 500) for section headings inside `SectionHeader`
 - Never use `--font-mono` for prose or headings
 - Do not extend `--font-serif` beyond blog prose — no serif on project cards, experience blocks, settings, or any chrome surface

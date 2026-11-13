@@ -82,8 +82,8 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
   const mounted = useClientValue(() => true, false);
 
   return (
-    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-4">
-      <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={48} className="hidden sm:block mt-1" />
+    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-6">
+      <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={96} className="hidden sm:block mt-1" />
       <div className="flex-1 min-w-0">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">

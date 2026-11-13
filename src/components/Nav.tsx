@@ -169,7 +169,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
         </div>
 
         {/* Right group: lang switch + theme toggle + status (desktop) + mobile controls */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="parse-guard flex items-center gap-3 shrink-0">
           {/* Desktop right controls */}
           <div className="hidden md:flex items-center gap-4">
             <button
@@ -225,6 +225,8 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
+          {/* End marker for .parse-guard (site.css): it must stay the last child. */}
+          <span data-parse-end hidden />
         </div>
       </div>
 
