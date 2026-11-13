@@ -11,11 +11,6 @@ export function hash32(input: string): number {
   return h >>> 0;
 }
 
-/** First `length` hex digits of `hash32(input)`, the form captions print. */
-export function hashHex(input: string, length = 8): string {
-  return hash32(input).toString(16).padStart(8, "0").slice(0, length);
-}
-
 /** mulberry32: a small seeded PRNG returning floats in [0, 1). */
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
