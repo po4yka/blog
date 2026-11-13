@@ -80,7 +80,7 @@ export function Projects() {
                   {/* Description and spec sheet share one grid cell, so the row keeps its height
                       when hover or focus swaps them (opacity only). The spec sheet repeats
                       /projects fields, so it is hidden from assistive tech. */}
-                  <div className="grid min-w-0 flex-1">
+                  <div className="grid min-w-0 flex-1 max-w-[70ch]">
                     <p className="[grid-area:1/1] text-muted-foreground group-hover:opacity-0 group-focus-visible:opacity-0 transition-opacity duration-200 font-sans text-sm leading-[1.55] line-clamp-2">
                       {project.description}
                     </p>

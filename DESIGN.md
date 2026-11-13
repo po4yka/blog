@@ -261,7 +261,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 - Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (48px). Hidden below `sm`
 - Source: `plateArt` in `src/lib/plate.ts`, rendered as an inline SVG in the server HTML. Each is an 8x8 1-bit mark: a silhouette plus an ordered-dithered inside (`ditherField` in `src/lib/dither.ts`), mirrored on the vertical axis
-- Seeds (rule A8): the project's first platform picks the silhouette (backend: a rack, tooling: a hex nut, android: a phone, web: a browser window, anything else: a diamond), so projects of one kind look related; the FNV-1a hash of the slug picks the inside. A plate is an identity mark, not a metric. Its caption prints both seeds as `<kind> · slug#<4 hex>` (the `/projects` meta row and the `MARK` line of the home spec sheet)
+- Seeds (rule A8): the project's first platform picks the silhouette (backend: a rack, tooling: a hex nut, android: a phone, web: a browser window, anything else: a diamond), so projects of one kind look related; the FNV-1a hash of the slug picks the inside. A plate is an identity mark, not a metric. Its caption prints both seeds as `<kind> · seed <slug>`; the slug is text, because a hex digest beside a year reads as a commit hash (the `/projects` meta row and the `MARK` line of the home spec sheet)
 - Colour: the strokes are `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
 - Hover and keyboard focus (rule A3): the pixels a higher density adds dissolve in one Bayer rank at a time (`plate-late`, 40 ms per rank), by opacity alone; they leave at once. The caption decodes at the same moment (`data-decode="hover"`, see "Decode"). On the home rows the description and a spec sheet (`STACK`, `PLATFORMS`, `REPO` when a GitHub link exists, `MARK`) share one grid cell and swap by opacity, so the row height never changes. The spec sheet repeats `projects.json` fields and is `aria-hidden`
 - Budget: 0 KB runtime JS beyond the decode script, under 1 KB of markup per plate
@@ -464,7 +464,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
-- Seed generative art from real inputs only and print the seed in its caption (rule A8): the first platform and the slug hash for project plates; the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
+- Seed generative art from real inputs only and print the seed in its caption (rule A8): the first platform and the slug for project plates (the caption prints the slug; its hash picks the pixels); the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent

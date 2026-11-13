@@ -12,7 +12,7 @@ describe("plateKind and plateCaption", () => {
     expect(plateKind("Android")).toBe("android");
     expect(plateKind("Quantum")).toBe("other");
     expect(plateKind(undefined)).toBe("other");
-    expect(plateCaption("copilot", "Backend")).toMatch(/^backend · slug#[0-9a-f]{4}$/);
+    expect(plateCaption("copilot", "Backend")).toBe("backend · seed copilot");
   });
 });
 

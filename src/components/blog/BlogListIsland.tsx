@@ -29,7 +29,7 @@ const POST_FORMS: Parameters<typeof pluralize>[2] = {
 
 export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIslandProps) {
   const { t, locale } = useLocale();
-  const { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered, featured } =
+  const { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered } =
     usePostFilters(posts);
   const lang = (langProp ?? "en") as Locale;
   useCoverArrival();
@@ -44,32 +44,6 @@ export function BlogListIsland({ posts, categories, lang: langProp }: BlogListIs
         label="WRITING"
         heading={<T k="blog.heading" />}
         meta={<TCount n={posts.length} forms={POST_FORMS} />}
-      />
-
-      {/* Boot block — compressed to 2 lines; the "{n} POSTS" meta in
-          SectionHeader already carries the count, and the INFO line below
-          carries the "Reading: …" pointer (was duplicated in the header). */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                <T k="terminal.mounted" /> <Em>{lang === "ru" ? "po4yka.dev/blog/ru" : "po4yka.dev/blog"}</Em>
-              </>
-            ),
-          },
-          {
-            status: "INFO",
-            text: featured ? (
-              <>
-                {t("blog.reading")}: <Em>posts/{featured.slug}.txt</Em>
-              </>
-            ) : (
-              t("blog.browseAll")
-            ),
-          },
-        ]}
       />
 
       {/* Post listing */}

@@ -59,7 +59,7 @@ export function Experience() {
                   </span>
                 </div>
                 <p
-                  className="mt-1.5 text-muted-foreground font-sans text-mono"
+                  className="mt-1.5 text-muted-foreground font-sans text-mono max-w-[70ch]"
                   style={{ lineHeight: 1.7 }}
                 >
                   {role.description}

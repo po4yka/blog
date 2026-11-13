@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ditherField, hash32, hashHex, markField, mirrorX, mulberry32, pixelsToSvg } from "@/lib/dither";
+import { ditherField, hash32, markField, mirrorX, mulberry32, pixelsToSvg } from "@/lib/dither";
 
 const ink = (p: Uint8Array) => p.reduce((n, v) => n + v, 0);
 
@@ -7,7 +7,6 @@ describe("hash32", () => {
   it("matches the FNV-1a reference values", () => {
     expect(hash32("")).toBe(0x811c9dc5);
     expect(hash32("a")).toBe(0xe40c292c);
-    expect(hashHex("a", 4)).toBe("e40c");
   });
 });
 

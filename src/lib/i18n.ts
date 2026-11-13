@@ -101,15 +101,12 @@ const en = {
   "blogPreview.viewAllLabel": "View all blog posts",
 
   // links
-  "links.comingSoon": "coming soon",
   "links.opensNewWindow": "opens in new window",
 
   // blog list
   "blog.all": "All",
   "blog.filterByCategory": "Filter by category",
   "blog.publishedPosts": "published posts \u2014 more queued",
-  "blog.reading": "Reading",
-  "blog.browseAll": "Browse all posts below",
   "blog.noPosts": "no posts found",
   "blog.postsTitle": "posts",
   "blog.featured": "featured",
@@ -229,11 +226,8 @@ const en = {
   "terminal.systemLog": "System log",
   "terminal.copyCommand": "click to copy command",
   "terminal.copied": "Command copied",
-  "terminal.mounted": "Mounted",
-  "terminal.loaded": "Loaded",
   "privacy.heading": "Privacy",
   "privacy.lastUpdated": "last updated: 2026-06",
-  "privacy.noTrackers": "No third-party trackers, no ads, no data sold",
   "privacy.sections": "5 sections",
   "settings.system": "system",
   "settings.motion": "motion",
@@ -317,14 +311,10 @@ const en = {
 
   // experience page
   "experiencePage.positionsIndexed": "positions indexed",
-  "experiencePage.sortedByDate": "Sorted by date, most recent first",
   "experiencePage.cvComingSoon": "$ wget po4yka.dev/cv.pdf \u2014 coming soon",
   "experiencePage.comingSoon": "coming soon",
 
   // projects page
-  "projectsPage.entriesFound": "entries found",
-  "projectsPage.mountedIndex": "Mounted projects index",
-  "projectsPage.detailsInline": "Details & store links rendered inline",
   "projectsPage.entries": "entries",
   "projectsPage.indexLabel": "Project index",
 
@@ -423,15 +413,12 @@ const ru: TranslationKeys = {
   "blogPreview.viewAllLabel": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b",
 
   // links
-  "links.comingSoon": "\u0441\u043a\u043e\u0440\u043e",
   "links.opensNewWindow": "\u043e\u0442\u043a\u0440\u043e\u0435\u0442\u0441\u044f \u0432 \u043d\u043e\u0432\u043e\u043c \u043e\u043a\u043d\u0435",
 
   // blog list
   "blog.all": "\u0412\u0441\u0435",
   "blog.filterByCategory": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438",
   "blog.publishedPosts": "\u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043d\u044b\u0445 \u043f\u043e\u0441\u0442\u043e\u0432 \u2014 \u0435\u0449\u0435 \u0432 \u043e\u0447\u0435\u0440\u0435\u0434\u0438",
-  "blog.reading": "\u0427\u0442\u0435\u043d\u0438\u0435",
-  "blog.browseAll": "\u0421\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u043f\u043e\u0441\u0442\u044b \u043d\u0438\u0436\u0435",
   "blog.noPosts": "\u043f\u043e\u0441\u0442\u044b \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b",
   "blog.postsTitle": "\u043f\u043e\u0441\u0442\u044b",
   "blog.featured": "\u0438\u0437\u0431\u0440\u0430\u043d\u043d\u043e\u0435",
@@ -551,11 +538,8 @@ const ru: TranslationKeys = {
   "terminal.systemLog": "\u0421\u0438\u0441\u0442\u0435\u043c\u043d\u044b\u0439 \u0436\u0443\u0440\u043d\u0430\u043b",
   "terminal.copyCommand": "\u043d\u0430\u0436\u043c\u0438\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u043c\u0430\u043d\u0434\u0443",
   "terminal.copied": "\u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u0430",
-  "terminal.mounted": "\u0421\u043c\u043e\u043d\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
-  "terminal.loaded": "\u0417\u0430\u0433\u0440\u0443\u0436\u0435\u043d\u043e",
   "privacy.heading": "\u041a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c",
   "privacy.lastUpdated": "\u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u043e: 2026-06",
-  "privacy.noTrackers": "\u041d\u0435\u0442 \u0441\u0442\u043e\u0440\u043e\u043d\u043d\u0438\u0445 \u0442\u0440\u0435\u043a\u0435\u0440\u043e\u0432, \u043d\u0435\u0442 \u0440\u0435\u043a\u043b\u0430\u043c\u044b, \u0434\u0430\u043d\u043d\u044b\u0435 \u043d\u0435 \u043f\u0440\u043e\u0434\u0430\u044e\u0442\u0441\u044f",
   "privacy.sections": "5 \u0440\u0430\u0437\u0434\u0435\u043b\u043e\u0432",
   "settings.system": "\u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f",
   "settings.motion": "\u0430\u043d\u0438\u043c\u0430\u0446\u0438\u044f",
@@ -639,14 +623,10 @@ const ru: TranslationKeys = {
 
   // experience page
   "experiencePage.positionsIndexed": "\u043f\u043e\u0437\u0438\u0446\u0438\u0439 \u043f\u0440\u043e\u0438\u043d\u0434\u0435\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
-  "experiencePage.sortedByDate": "\u041e\u0442\u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u043f\u043e \u0434\u0430\u0442\u0435, \u043d\u043e\u0432\u044b\u0435 \u0441\u043d\u0430\u0447\u0430\u043b\u0430",
   "experiencePage.cvComingSoon": "$ wget po4yka.dev/cv.pdf \u2014 \u0441\u043a\u043e\u0440\u043e",
   "experiencePage.comingSoon": "\u0441\u043a\u043e\u0440\u043e",
 
   // projects page
-  "projectsPage.entriesFound": "\u0437\u0430\u043f\u0438\u0441\u0435\u0439 \u043d\u0430\u0439\u0434\u0435\u043d\u043e",
-  "projectsPage.mountedIndex": "\u0421\u043c\u043e\u043d\u0442\u0438\u0440\u043e\u0432\u0430\u043d \u0438\u043d\u0434\u0435\u043a\u0441 \u043f\u0440\u043e\u0435\u043a\u0442\u043e\u0432",
-  "projectsPage.detailsInline": "\u041f\u043e\u0434\u0440\u043e\u0431\u043d\u043e\u0441\u0442\u0438 \u0438 \u0441\u0441\u044b\u043b\u043a\u0438 \u043d\u0430 \u0441\u0442\u043e\u0440\u044b \u0440\u0430\u0437\u0432\u0451\u0440\u043d\u0443\u0442\u044b \u043d\u0438\u0436\u0435",
   "projectsPage.entries": "\u0437\u0430\u043f\u0438\u0441\u0435\u0439",
   "projectsPage.indexLabel": "\u0421\u043f\u0438\u0441\u043e\u043a \u043f\u0440\u043e\u0435\u043a\u0442\u043e\u0432",
 

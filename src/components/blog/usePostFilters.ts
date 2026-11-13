@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import type { BlogPostMeta } from "@/types";
-import { ALL_CATEGORY, filterPosts, findFeatured, readTagParam, withTagParam } from "@/lib/blog/filter";
+import { ALL_CATEGORY, filterPosts, readTagParam, withTagParam } from "@/lib/blog/filter";
 
 function replaceTagInUrl(tag: string | null) {
   if (typeof window !== "undefined" && typeof history !== "undefined") {
@@ -33,7 +33,5 @@ export function usePostFilters(posts: BlogPostMeta[]) {
     [activeCategory, activeTag, posts],
   );
 
-  const featured = useMemo(() => findFeatured(posts), [posts]);
-
-  return { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered, featured };
+  return { activeCategory, setActiveCategory, activeTag, selectTag, clearTag, filtered };
 }
