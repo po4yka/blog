@@ -76,7 +76,8 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
                 <span className="sr-only">, {t("terminal.copyHash")}</span>
               </button>
               <span className="text-foreground/75 flex-1 truncate">{c.msg}</span>
-              <span className="text-muted-foreground shrink-0 text-label">
+              {/* Hidden below sm: at 375px the date left the message about 12 characters. */}
+              <span className="hidden sm:inline text-muted-foreground shrink-0 text-label">
                 {c.date}
               </span>
             </m.div>
