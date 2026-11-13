@@ -117,7 +117,7 @@ export function BlogPreview() {
       />
       {/* A static prompt line: the section ships no JS, so no click-to-copy. */}
       {/* Kept quieter than the post titles: the prompt is chrome, the titles are content. */}
-      <Reveal speed="fast" className="flex items-baseline gap-2 font-mono text-mono-sm min-w-0">
+      <Reveal speed="fast" className="col-body flex items-baseline gap-2 font-mono text-mono-sm min-w-0">
         <span className="select-none text-muted-foreground" aria-hidden="true">
           $
         </span>
@@ -126,7 +126,7 @@ export function BlogPreview() {
         </span>
       </Reveal>
 
-      <div className="space-y-0">
+      <div className="col-body space-y-0">
         {previewPosts.map((post, i) => (
           // The border sits on the wrapper, so the last post keeps last:border-b-0
           // whichever language anchor is visible.
@@ -143,7 +143,7 @@ export function BlogPreview() {
         ))}
       </div>
 
-      <div className="pt-1">
+      <div className="col-body pt-1">
         {(["en", "ru"] as const).map((lang) => (
           <Fragment key={lang}>
             <a

@@ -408,6 +408,8 @@ Two styles, both flat with a `2px` radius (never pill-shaped):
 
 The page shows its 12-column grid as faint vertical hairlines (guides) and a small crosshair (registration mark) on each end of a `SectionHeader` rule. Styles are in `src/styles/grid.css`. Both are decoration only.
 
+**Body column** (`.col-body`, `src/styles/grid.css`): from 1024px the content of each numbered home section (`02` to `06`) starts on column 4. The `SectionHeader` keeps the full 12 columns, so its label and heading hang in columns 1 to 3 and the body text keeps a short measure. Full-width data panels (git log, activity calendar) and the hero keep all 12 columns. Use it only on a direct child of a container that spans the page grid
+
 **Tokens** (`src/styles/tokens.css`, "Layout grid" block)
 - `--grid-max`: 1240px
 - `--grid-cols`: 12

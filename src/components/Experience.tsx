@@ -14,7 +14,7 @@ export function Experience() {
         meta={`${roles.length} ROLES`}
         id="experience-heading"
       />
-      <div className="space-y-0">
+      <div className="col-body space-y-0">
           {roles.slice(0, 3).map((role) => {
             const current = role.period.endsWith(" — Present");
             return (
@@ -92,7 +92,7 @@ export function Experience() {
           })}
       </div>
 
-      <div className="pt-1">
+      <div className="col-body pt-1">
         <a
           href="/experience"
           className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
