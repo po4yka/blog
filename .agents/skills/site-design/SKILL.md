@@ -25,9 +25,9 @@ If a generic design skill or a user-level skill disagrees with `DESIGN.md`, `DES
 | Server-only bilingual text | `T` | `src/components/ui/T.tsx` |
 | Metadata strip, label after a number | `.label-meta` | `src/styles/theme.css` |
 | Project identity mark | Plate (`plateArt`, `ditherField`) | `src/lib/plate.ts`, `src/lib/dither.ts`; section 4, "Project Plates", rule A8 |
-| Blog prose | `.prose-blog` (Piazzolla body only); `.display-serif` on post and blog-index titles | `src/styles/prose.css` (`.prose-blog`), `src/styles/theme.css` (`.display-serif`); section 9, "Typography guidance" |
+| Blog prose | `.prose-blog` (Piazzolla body only); `.display-serif` on post, blog-index and home post-row titles | `src/styles/prose.css` (`.prose-blog`), `src/styles/theme.css` (`.display-serif`); section 9, "Typography guidance" |
 
-Piazzolla lanes: body text of `.prose-blog`, plus post titles and blog-index titles. Headings inside prose stay Geist Sans. Geist Mono is for code, terminal output and `.label-meta`. Geist Pixel is for decorative counters only.
+Piazzolla lanes: body text of `.prose-blog`, plus post titles, blog-index titles and the post titles in the home writing rows. Headings inside prose stay Geist Sans. Geist Mono is for code, terminal output and `.label-meta`. Geist Pixel is for decorative counters only.
 
 `BootBlock` (`OK ·`, `INFO ·`, `WARN ·`) is for real status only, at most 6 lines. It is not filler. If there is no real status, omit the block.
 
