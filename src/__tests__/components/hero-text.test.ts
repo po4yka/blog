@@ -27,6 +27,10 @@ describe("HeroText", () => {
     expect(out.startsWith('<div class="lg:col-span-12')).toBe(true);
   });
 
+  it("puts no dim text over the hero field: --muted-foreground-dim is 3.47:1 on field ink at --field-opacity 0.20", () => {
+    expect(out).not.toContain("muted-foreground-dim");
+  });
+
   it("keeps the CTA hrefs, analytics attributes and external-link rel", () => {
     for (const [href, target] of [
       ["/blog", "blog"],

@@ -58,7 +58,7 @@ export function HeroText() {
       <Reveal
         as="ul"
         delay={0.18}
-        className="label-meta text-muted-foreground-dim flex flex-wrap items-center gap-x-2 gap-y-1 list-none m-0 p-0"
+        className="label-meta flex flex-wrap items-center gap-x-2 gap-y-1 list-none m-0 p-0"
       >
         {location && <li>{location}</li>}
         {location && <li aria-hidden="true">·</li>}
@@ -117,7 +117,7 @@ export function HeroText() {
       </Reveal>
 
       {/* Static text: the nav button is the clickable opener. Keyboard hints only where a keyboard is likely. */}
-      <p className="label-meta text-muted-foreground-dim hidden [@media(hover:hover)_and_(pointer:fine)]:block">
+      <p className="label-meta hidden [@media(hover:hover)_and_(pointer:fine)]:block">
         <T k="palette.hint" />
       </p>
     </div>

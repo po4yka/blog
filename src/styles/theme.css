@@ -232,7 +232,7 @@ kbd {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  /* Fade toward the bottom edge. Contrast does not depend on it: --field-opacity already clears 4.5:1 for every text token. */
+  /* Fade toward the bottom edge. Contrast does not depend on it: --field-opacity already clears 4.5:1 for every text token allowed over the field (no --muted-foreground-dim). */
   mask-image: linear-gradient(to bottom, #000 55%, transparent 90%);
 }
 
