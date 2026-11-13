@@ -21,7 +21,7 @@ test("home rows show a plate, and hover swaps in the spec sheet and dissolves th
   await expect(late).toHaveCSS("opacity", "1");
   await expect(rows.first().locator("p")).toHaveCSS("opacity", "0");
   await expect(spec).toContainText("STACK");
-  await expect(spec).toContainText(/MARK\s*[a-z]+ · slug#[0-9a-f]{4}/);
+  await expect(spec).toContainText(/MARK\s*[a-z]+ · seed [a-z0-9-]+/);
   expect(await rowHeights(page)).toEqual(before);
 
   // Keyboard focus shows the same state as hover.
@@ -38,7 +38,7 @@ test("every /projects entry has an 8x8 plate and a caption naming both seeds", a
   for (const slug of slugs) {
     const entry = page.locator(`[id="${slug}"]`);
     await expect(entry.locator("svg.plate-art")).toHaveAttribute("viewBox", "0 0 8 8");
-    await expect(entry).toContainText(/(backend|tooling|android|web|other) · slug#[0-9a-f]{4}/);
+    await expect(entry).toContainText(new RegExp(`(backend|tooling|android|web|other) · seed ${slug}`));
   }
   // Keyboard focus inside an entry dissolves its plate too (the row is a div, so :focus-within).
   const linked = page.locator("ul > li > div[id]", { has: page.locator("a") }).first();

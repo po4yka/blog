@@ -1,6 +1,6 @@
 import { Reveal } from "./ui/Reveal";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BootBlock, Cmd, Em, OperatorPanel } from "./Terminal";
+import { Cmd, Em, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { T } from "./ui/T";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -50,13 +50,13 @@ function RoleEntry({
         </span>
       </div>
 
-      <p className="mt-2 text-foreground/60 font-sans text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
         {role.description}
       </p>
 
       {/* Highlights */}
       {role.highlights && (
-        <ul className="mt-2 space-y-1 pl-4">
+        <ul className="mt-2 space-y-1 pl-4 max-w-[70ch]">
           {role.highlights.map((h, i) => (
             <li
               key={i}
@@ -213,22 +213,6 @@ export function ExperiencePage() {
         label="EXPERIENCE"
         heading={<T k="experience.heading" />}
         meta={`${roles.length} ${t("experiencePage.positionsIndexed")}`}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                Loaded <Em>po4yka.dev/experience</Em>
-              </>
-            ),
-          },
-          { status: "OK", text: <>{roles.length} {t("experiencePage.positionsIndexed")}</> },
-          { status: "INFO", text: t("experiencePage.sortedByDate") },
-        ]}
       />
 
       {/* Resume log */}

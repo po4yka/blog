@@ -5,7 +5,7 @@ import { useSettings, useLocale, type Effects, type FontSize, type ThemeMode } f
 import type { TranslationKey } from "@/lib/i18n";
 import { useClientValue } from "@/hooks/useClientValue";
 import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
-import { Cmd, Em, BootBlock, OperatorPanel } from "./Terminal";
+import { Cmd, Em, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { T } from "./ui/T";
@@ -133,21 +133,6 @@ export function Settings() {
         label="SETTINGS"
         heading={<T k="settings.heading" />}
         meta={<T k="settings.storedLocally" />}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                <T k="terminal.mounted" /> <Em>po4yka.dev/settings</Em>
-              </>
-            ),
-          },
-          { status: "INFO", text: <T k="settings.storedLocally" /> },
-        ]}
       />
 
       {/* Settings command */}

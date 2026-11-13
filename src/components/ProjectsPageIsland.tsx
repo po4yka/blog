@@ -8,7 +8,7 @@ function GithubIcon({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
-import { BootBlock, Cmd, Em, Tag, OperatorPanel } from "./Terminal";
+import { Cmd, Em, Tag, OperatorPanel } from "./Terminal";
 import { Panel } from "./ui/Panel";
 import { Plate } from "./ui/Plate";
 import { plateCaption } from "@/lib/plate";
@@ -82,8 +82,8 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
   const mounted = useClientValue(() => true, false);
 
   return (
-    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-4">
-      <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={48} className="hidden sm:block mt-1" />
+    <div id={project.slug} className="py-5 border-b border-dashed border-rule last:border-b-0 group scroll-mt-20 flex gap-6">
+      <Plate slug={project.slug ?? project.id} platform={project.platforms[0]} size={96} className="hidden sm:block mt-1" />
       <div className="flex-1 min-w-0">
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -123,13 +123,13 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-sans text-mono" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
         {project.description}
       </p>
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/75 pl-6 font-sans text-mono-sm" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-foreground/75 pl-6 font-sans text-mono-sm max-w-[70ch]" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}
@@ -200,22 +200,6 @@ export function ProjectsPage() {
         label="PROJECTS"
         heading={<T k="projects.pageHeading" />}
         meta={`${projects.length} ${t("projectsPage.entries")}`}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                Loaded <Em>po4yka.dev/projects</Em>
-              </>
-            ),
-          },
-          { status: "OK", text: `${t("projectsPage.mountedIndex")} — ${projects.length} ${t("projectsPage.entriesFound")}` },
-          { status: "INFO", text: t("projectsPage.detailsInline") },
-        ]}
       />
 
       {/* List command */}

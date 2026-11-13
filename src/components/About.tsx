@@ -17,11 +17,11 @@ export function About() {
       <Reveal
         speed="slow"
         delay={0.05}
-        className="relative pl-6 md:pl-8 font-mono"
+        className="col-body relative pl-6 md:pl-8 font-mono"
         style={{ borderLeft: "1px solid var(--rule)" }}
       >
         <div
-          className="space-y-5 font-sans text-sm text-muted-foreground"
+          className="space-y-5 font-sans text-sm text-muted-foreground max-w-[70ch]"
           style={{ lineHeight: 1.8 }}
         >
           <Reveal as="p" speed="slow" delay={0.05}>

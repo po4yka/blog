@@ -9,6 +9,9 @@ import type { TocItem } from "@/lib/blog/toc";
 import { CoverArt } from "./CoverArt";
 import { coverTransitionStyle } from "@/lib/blog/format";
 
+/** Separator dots show from sm up: on a phone the rows wrap, and a dot then hangs at the end of a line. */
+const SEP = "hidden sm:inline";
+
 export function PostHeader({
   post,
   slug,
@@ -39,11 +42,11 @@ export function PostHeader({
       <h1 className="display-2 display-serif text-foreground" style={postTitleStyle(slug)}>
         {post.title}
       </h1>
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 label-meta">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-3 gap-y-1 label-meta">
         <span>
           {t("blogPost.author")} <span className="text-foreground font-medium">Nikita Pochaev</span>
         </span>
-        <span aria-hidden="true">·</span>
+        <span aria-hidden="true" className={SEP}>·</span>
         <span>
           {t("blogPost.date")}{" "}
           <time
@@ -55,7 +58,7 @@ export function PostHeader({
         </span>
         {showUpdated && (
           <>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className={SEP}>·</span>
             <span>
               {t("blogPost.updated")}{" "}
               <time dateTime={post.isoDateModified} className="text-foreground/80">
@@ -64,7 +67,7 @@ export function PostHeader({
             </span>
           </>
         )}
-        <span aria-hidden="true">·</span>
+        <span aria-hidden="true" className={SEP}>·</span>
         <span>
           {t("blogPost.category")} <span className="text-foreground/80">{post.category}</span>
         </span>
@@ -99,7 +102,7 @@ export function PostHeader({
             >
               {f.label}
             </a>
-            {i < arr.length - 1 && <span aria-hidden="true">·</span>}
+            {i < arr.length - 1 && <span aria-hidden="true" className={SEP}>·</span>}
           </span>
         ))}
       </div>

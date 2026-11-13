@@ -1,4 +1,4 @@
-import { Mail, Play, Apple, Briefcase, FolderGit2, Send } from "lucide-react";
+import { Mail, Briefcase, FolderGit2, Send } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { SectionHeader } from "./SectionHeader";
@@ -6,10 +6,8 @@ import { Reveal } from "./ui/Reveal";
 import { T } from "./ui/T";
 import { CONTACT_EMAIL, GITHUB_USERNAME } from "@/lib/constants";
 
-const links: { Icon: LucideIcon; label: string; href: string | undefined }[] = [
+const links: { Icon: LucideIcon; label: string; href: string }[] = [
   { Icon: Mail, label: "email", href: `mailto:${CONTACT_EMAIL}` },
-  { Icon: Play, label: "google play", href: undefined },
-  { Icon: Apple, label: "app store", href: undefined },
   { Icon: Briefcase, label: "linkedin", href: "https://linkedin.com/in/pochaev-nikita/" },
   { Icon: FolderGit2, label: "github", href: `https://github.com/${GITHUB_USERNAME}` },
   { Icon: Send, label: "telegram", href: "https://t.me/po4yka" },
@@ -23,24 +21,10 @@ export function Links() {
         number="03"
         label="CONTACT"
         heading={<T k="links.heading" />}
-        meta={`${links.filter((l) => l.href).length}/${links.length} ACTIVE`}
         id="links-heading"
       />
-      <Reveal className="flex flex-wrap gap-2" speed="slow">
-        {links.map((link, i) =>
-          link.href === undefined ? (
-            <span
-              key={link.label}
-              // Dashed border and a visible "soon" mark say "not yet" in readable text (no faded label).
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 min-h-[44px] border border-dashed border-border text-muted-foreground-dim font-mono text-mono rounded-[2px] cursor-default"
-            >
-              <link.Icon size={13} strokeWidth={1.8} aria-hidden="true" className="shrink-0" />
-              {link.label}
-              <span className="label-meta">
-                <T k="links.comingSoon" />
-              </span>
-            </span>
-          ) : (
+      <Reveal className="col-body flex flex-wrap gap-2" speed="slow">
+        {links.map((link, i) => (
             // The chip keeps its own colour transition, so the fade sits on a wrapper.
             <Reveal key={link.label} className="flex" delay={0.05 + i * 0.04}>
             <a
@@ -59,8 +43,7 @@ export function Links() {
               )}
             </a>
             </Reveal>
-          )
-        )}
+        ))}
       </Reveal>
     </section>
   );
