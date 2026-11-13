@@ -259,7 +259,7 @@ No pill-shaped buttons (9999px radius). No gradient buttons. No oversized CTAs.
 
 ### Project Plates
 
-- Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (48px). Hidden below `sm`
+- Component: `src/components/ui/Plate.tsx`, on the home project rows (32px) and on `/projects` entries (96px, 12 px a cell, so each entry opens with its mark at the size of a real identity plate). Hidden below `sm`
 - Source: `plateArt` in `src/lib/plate.ts`, rendered as an inline SVG in the server HTML. Each is an 8x8 1-bit mark: a silhouette plus an ordered-dithered inside (`ditherField` in `src/lib/dither.ts`), mirrored on the vertical axis
 - Seeds (rule A8): the project's first platform picks the silhouette (backend: a rack, tooling: a hex nut, android: a phone, web: a browser window, anything else: a diamond), so projects of one kind look related; the FNV-1a hash of the slug picks the inside. A plate is an identity mark, not a metric. Its caption prints both seeds as `<kind> · seed <slug>`; the slug is text, because a hex digest beside a year reads as a commit hash (the `/projects` meta row and the `MARK` line of the home spec sheet)
 - Colour: the strokes are `currentColor`, so a plate is `var(--foreground)` at reduced opacity in both themes, with no fill colour of its own
