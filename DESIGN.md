@@ -464,7 +464,7 @@ Depth comes from **background tone shifts** and **hairline borders** — not sha
 - Use IBM 3270-style field codes (`[01] KEY ......: value`) in InfoTable for dense data display
 - Use `.label-meta` (mono 11px uppercase letter-spaced) for all metadata strips and the section label after the number (the number itself is Geist Pixel, rule A10)
 - Use `font-variant-numeric: tabular-nums` on all numeric data
-- Seed generative art from real inputs only and print the seed in its caption (rule A8): the first platform and the slug hash for project plates; the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
+- Seed generative art from real inputs only and print the seed in its caption (rule A8): the first platform and the slug for project plates (the caption prints the slug; its hash picks the pixels); the outline of the post (its headings, prose, lists, code and figures in reading order) for post covers. Allowed seeds are build-time `git log` day counts, GitHub public events, `projects.json` fields, and a post's slug, word count, block structure and publish date
 
 ### Don't
 - No chromatic accent colors — no purple, no teal, no amber as accent
