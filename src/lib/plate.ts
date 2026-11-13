@@ -1,7 +1,7 @@
 // Project plates (rule A8): an 8x8 1-bit mark. The silhouette comes from the
 // project's first platform, so projects of one kind look related; the detail
 // inside it comes from the slug hash, so no two plates are the same.
-import { bayerRank, ditherField, hash32, hashHex, markField, mirrorX } from "./dither";
+import { bayerRank, ditherField, hash32, markField, mirrorX } from "./dither";
 
 export const PLATE_SIZE = 8;
 /** Share of the inside that is ink at rest, and on hover or focus. */
@@ -28,8 +28,8 @@ export function plateKind(platform: string | undefined): string {
   return key in SILHOUETTES ? key : "other";
 }
 
-/** Caption of a plate: it names both seeds, the silhouette and the slug hash, never a metric. */
-export const plateCaption = (slug: string, platform: string | undefined) => `${plateKind(platform)} · slug#${hashHex(slug, 4)}`;
+/** Caption of a plate: it names both seeds, the silhouette and the slug, never a metric. The slug is printed as text: a hex digest beside a year reads as a commit. */
+export const plateCaption = (slug: string, platform: string | undefined) => `${plateKind(platform)} · seed ${slug}`;
 
 export interface PlateArt {
   /** Path data of the outline and of the inside pixels shown at rest. */
