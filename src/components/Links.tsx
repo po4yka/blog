@@ -23,7 +23,7 @@ export function Links() {
         heading={<T k="links.heading" />}
         id="links-heading"
       />
-      <Reveal className="flex flex-wrap gap-2" speed="slow">
+      <Reveal className="col-body flex flex-wrap gap-2" speed="slow">
         {links.map((link, i) => (
             // The chip keeps its own colour transition, so the fade sits on a wrapper.
             <Reveal key={link.label} className="flex" delay={0.05 + i * 0.04}>

@@ -44,7 +44,7 @@ function Whois({ lang }: { lang: Locale }) {
 /** Hero whois spec sheet. Server-only (no client directive), both languages in the HTML. */
 export function HeroWhois() {
   return (
-    <Reveal delay={0.12} className="lg:col-span-5 space-y-3 lg:pt-7">
+    <Reveal delay={0.12} className="lg:col-span-5 space-y-3">
       {/* Static line: Cmd is a click-to-copy button and this component is never hydrated. */}
       <div className="flex items-baseline gap-2 font-mono text-mono-lg min-w-0">
         <span className="select-none" style={{ color: "var(--emphasis)", fontWeight: 500 }}>

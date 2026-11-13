@@ -11,7 +11,7 @@ import { T } from "./ui/T";
 export function Architecture() {
   const flow = (i: number) => ({ className: "arch-flow", pathLength: 1, style: { "--i": i } as CSSProperties });
   return (
-    <section aria-labelledby="architecture-heading" className="space-y-6">
+    <section id="architecture" aria-labelledby="architecture-heading" className="space-y-6 scroll-mt-20">
       <SectionHeader
         id="architecture-heading"
         number="08"

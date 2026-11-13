@@ -42,13 +42,13 @@ export function PostRow({
         <p className="mt-3 text-[0.9375rem] leading-[1.6] text-muted-foreground line-clamp-2 max-w-[56ch]">
           {post.summary}
         </p>
-        {/* The post's cover at 2 px a cell; it dissolves to full density on hover and morphs into the post header. */}
+        {/* The post's cover at the header size (4 px a cell at 46rem); it dissolves to full density on hover and morphs into the post header. */}
         {post.outline && (
           <CoverArt
             outline={post.outline}
             variant="strip"
             slug={post.slug}
-            className="mt-4 w-full max-w-[23rem] text-foreground/45 group-hover:text-foreground/75 group-focus-visible:text-foreground/75 transition-colors duration-150"
+            className="mt-4 w-full max-w-[46rem] text-foreground/45 group-hover:text-foreground/75 group-focus-visible:text-foreground/75 transition-colors duration-150"
             style={coverTransitionStyle(post.slug)}
           />
         )}

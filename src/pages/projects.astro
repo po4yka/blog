@@ -2,9 +2,14 @@
 import MainLayout from "@/layouts/MainLayout.astro";
 import { ProjectsPage } from "@/components/ProjectsPageIsland";
 import ProjectsJsonLd from "@/components/ProjectsJsonLd.astro";
+import { OpenSourcePanel } from "@/components/Decorations";
 ---
 <MainLayout title="Projects — Nikita Pochaev" description="Open-source and professional projects by Nikita Pochaev: Android apps and libraries, Kotlin CI tooling, and multi-agent LLM systems.">
   {/* JSON-LD lives in the body; Google recognizes application/ld+json anywhere in the document. */}
   <ProjectsJsonLd />
   <ProjectsPage client:load />
+  {/* Epilogue: repos from GitHub by stars (real data). It was the second project list on the home page. */}
+  <div data-section-name="open-source" class="mt-8">
+    <OpenSourcePanel client:visible delay={0.05} />
+  </div>
 </MainLayout>

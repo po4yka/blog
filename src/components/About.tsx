@@ -17,7 +17,7 @@ export function About() {
       <Reveal
         speed="slow"
         delay={0.05}
-        className="relative pl-6 md:pl-8 font-mono"
+        className="col-body relative pl-6 md:pl-8 font-mono"
         style={{ borderLeft: "1px solid var(--rule)" }}
       >
         <div
