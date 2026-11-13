@@ -10,10 +10,6 @@ export function filterPosts(posts: BlogPostMeta[], category: string, tag: string
   });
 }
 
-export function findFeatured(posts: BlogPostMeta[]): BlogPostMeta | undefined {
-  return posts.find((p) => p.featured);
-}
-
 /** Every tag used by the posts, once each, in first-seen order. */
 export function uniqueTags(posts: BlogPostMeta[]): string[] {
   return [...new Set(posts.flatMap((p) => p.tags))];

@@ -8,7 +8,7 @@ function GithubIcon({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
-import { BootBlock, Cmd, Em, Tag, OperatorPanel } from "./Terminal";
+import { Cmd, Em, Tag, OperatorPanel } from "./Terminal";
 import { Panel } from "./ui/Panel";
 import { Plate } from "./ui/Plate";
 import { plateCaption } from "@/lib/plate";
@@ -200,22 +200,6 @@ export function ProjectsPage() {
         label="PROJECTS"
         heading={<T k="projects.pageHeading" />}
         meta={`${projects.length} ${t("projectsPage.entries")}`}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                Loaded <Em>po4yka.dev/projects</Em>
-              </>
-            ),
-          },
-          { status: "OK", text: `${t("projectsPage.mountedIndex")} — ${projects.length} ${t("projectsPage.entriesFound")}` },
-          { status: "INFO", text: t("projectsPage.detailsInline") },
-        ]}
       />
 
       {/* List command */}

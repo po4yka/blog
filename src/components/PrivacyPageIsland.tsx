@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Em, BootBlock, Cmd, LessViewer } from "./Terminal";
+import { Em, Cmd, LessViewer } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
 import { T } from "./ui/T";
@@ -105,21 +105,6 @@ export function PrivacyPage() {
         heading={<T k="privacy.heading" />}
         meta={<T k="privacy.lastUpdated" />}
         marks={false}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                <T k="terminal.loaded" /> <Em>po4yka.dev/privacy</Em>
-              </>
-            ),
-          },
-          { status: "INFO", text: <T k="privacy.noTrackers" /> },
-        ]}
       />
 
       {/* Privacy log */}

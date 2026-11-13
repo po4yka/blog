@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterPosts, findFeatured, readTagParam, uniqueTags, withTagParam } from "@/lib/blog/filter";
+import { filterPosts, readTagParam, uniqueTags, withTagParam } from "@/lib/blog/filter";
 import type { BlogPostMeta } from "@/types";
 
 const post = (slug: string, category: string, tags: string[], featured?: boolean): BlogPostMeta => ({
@@ -31,13 +31,6 @@ describe("filterPosts", () => {
 
   it("returns nothing for an unknown tag", () => {
     expect(filterPosts(posts, "All", "nope")).toEqual([]);
-  });
-});
-
-describe("findFeatured", () => {
-  it("returns the first featured post or undefined", () => {
-    expect(findFeatured(posts)?.slug).toBe("b");
-    expect(findFeatured([post("x", "AI", [])])).toBeUndefined();
   });
 });
 

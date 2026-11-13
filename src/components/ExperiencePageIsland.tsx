@@ -1,6 +1,6 @@
 import { Reveal } from "./ui/Reveal";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BootBlock, Cmd, Em, OperatorPanel } from "./Terminal";
+import { Cmd, Em, OperatorPanel } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { T } from "./ui/T";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -213,22 +213,6 @@ export function ExperiencePage() {
         label="EXPERIENCE"
         heading={<T k="experience.heading" />}
         meta={`${roles.length} ${t("experiencePage.positionsIndexed")}`}
-      />
-
-      {/* Boot */}
-      <BootBlock
-        lines={[
-          {
-            status: "OK",
-            text: (
-              <>
-                Loaded <Em>po4yka.dev/experience</Em>
-              </>
-            ),
-          },
-          { status: "OK", text: <>{roles.length} {t("experiencePage.positionsIndexed")}</> },
-          { status: "INFO", text: t("experiencePage.sortedByDate") },
-        ]}
       />
 
       {/* Resume log */}
