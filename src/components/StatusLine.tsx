@@ -111,7 +111,7 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
         <span className="truncate">{pathLabel(pathname)}</span>
       </div>
 
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="parse-guard flex items-center gap-3 shrink-0">
         {/* Fixed slot: TOP / 42% / BOT change width as you scroll, which would shift the bar. */}
         <span aria-hidden="true" className="inline-block text-right" style={{ minWidth: "4ch" }}>
           {position}
@@ -149,6 +149,8 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
             <span aria-hidden="true">top</span>
           </button>
         </span>
+        {/* End marker for .parse-guard (site.css): it must stay the last child. */}
+        <span data-parse-end hidden />
       </div>
     </div>
     {/* Below md: one-line bar that opens a sheet with the same items. Hidden on pages with the

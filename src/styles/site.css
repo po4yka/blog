@@ -51,3 +51,10 @@
     display: none;
   }
 }
+
+/* A right-aligned group grows leftward while its HTML still streams in: on a slow network each new
+   child moves it, which is a layout shift (e2e/cls.spec.ts). The group stays invisible until its
+   last child, the [data-parse-end] marker, is parsed, so it appears once at its final place. */
+.parse-guard:not(:has(> [data-parse-end])) {
+  visibility: hidden;
+}

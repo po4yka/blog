@@ -70,6 +70,8 @@ test("hero sparkline draws a path, labels today, and reads days by keyboard", as
   await page.setViewportSize({ width: 1280, height: 800 });
   await mockGitHub(page);
   await page.goto("/");
+  // The operator strip sits below the one-line name, under the fold at 800px; the sparkline is client:visible.
+  await page.evaluate(() => window.scrollTo(0, 400));
   const panel = page.locator("section[aria-labelledby='hero-heading']").getByRole("group", { name: /Public GitHub events/ });
   await expect(panel.locator("path")).toHaveCount(1);
   await expect(page.locator("section[aria-labelledby='hero-heading']")).toContainText("TODAY 3");
