@@ -6,7 +6,7 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const nodeServerVersion = "2.1.6";
+const nodeServerVersion = "2.1.9";
 const honoVersion = "4.13.16";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoots = [
