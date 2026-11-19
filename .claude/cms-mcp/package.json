@@ -14,17 +14,17 @@
     "test": "npm run typecheck && npm run build && node test/smoke.mjs"
   },
   "dependencies": {
-    "@hono/node-server": "2.1.6",
+    "@hono/node-server": "2.1.9",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "gray-matter": "^4.0.3"
   },
   "overrides": {
-    "hono": "4.13.16",
-    "@hono/node-server": "2.1.6",
+    "hono": "4.13.19",
+    "@hono/node-server": "2.1.9",
     "body-parser": ">=2.4.0",
     "fast-uri": "3.1.9",
     "js-yaml": "3.15.2",
-    "ip-address": "10.7.4",
+    "ip-address": "10.7.6",
     "qs": ">=6.16.1",
     "zod": ">=4.6.6"
   },
