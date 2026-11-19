@@ -703,4 +703,4 @@ INSERT INTO site_settings (id, name, handle, role, bio, github, email, telegram,
 (1, 'Nikita Pochaev', '@po4yka',
  'AI Engineer & Senior Mobile Developer — Android, Kotlin Multiplatform',
  'AI Engineer & Senior Mobile Developer at Garage IT. Works on Android apps, their CI/CD tooling, and multi-agent LLM systems.',
- 'https://github.com/po4yka', 'hello@po4yka.dev', 'https://t.me/po4yka', 'https://linkedin.com/in/pochaev-nikita');
+ 'https://github.com/po4yka', 'pochaev.nik@gmail.com', 'https://t.me/po4yka', 'https://linkedin.com/in/pochaev-nikita');

@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { postIsoDate } from "../src/lib/blog/dates.js";
+import { CONTACT_EMAIL } from "../src/lib/constants.js";
 
 const BLOG_DIR = path.resolve("src/content/blog");
 const PROJECTS_FILE = path.resolve("src/content/projects.json");
@@ -169,7 +170,7 @@ function generateSettingsSeed(): string {
     "(1, 'Nikita Pochaev', '@po4yka',\n" +
     " 'AI Engineer & Senior Mobile Developer — Android, Kotlin Multiplatform',\n" +
     " 'AI Engineer & Senior Mobile Developer at Garage IT. Works on Android apps, their CI/CD tooling, and multi-agent LLM systems.',\n" +
-    " 'https://github.com/po4yka', 'hello@po4yka.dev', 'https://t.me/po4yka', 'https://linkedin.com/in/pochaev-nikita');\n"
+    ` 'https://github.com/po4yka', '${escapeSql(CONTACT_EMAIL)}', 'https://t.me/po4yka', 'https://linkedin.com/in/pochaev-nikita');\n`
   );
 }
 

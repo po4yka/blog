@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { CONTACT_EMAIL } from "@/lib/constants";
 import { Em, Cmd, LessViewer } from "./Terminal";
 import { SectionHeader } from "./SectionHeader";
 import { MotionProvider } from "./MotionProvider";
@@ -22,8 +23,8 @@ const umami = (
   </a>
 );
 const mail = (
-  <a href="mailto:hello@po4yka.dev" className={LINK}>
-    hello@po4yka.dev
+  <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
+    {CONTACT_EMAIL}
   </a>
 );
 
