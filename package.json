@@ -104,7 +104,7 @@
     "@emnapi/runtime": "1.11.3",
     "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.0",
     "@shikijs/transformers": "^4.6.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query-devtools": "^5.106.1",
