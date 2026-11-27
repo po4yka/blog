@@ -87,17 +87,10 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
         rel="noopener noreferrer"
         className={`block group relative ${BODY_CLASS}`}
       >
-        <span
-          aria-hidden="true"
-          className="absolute top-3 right-5 text-label text-muted-foreground-dim group-hover:text-foreground transition-colors duration-150 select-none uppercase"
-        >
-          {t("release.open")} →
-        </span>
-
-        <div className="space-y-1.5 pr-20">
+        <div className="space-y-1.5">
           <div className="flex items-baseline justify-between gap-4 min-w-0">
             <span className="text-muted-foreground/80 text-mono-sm shrink-0">{t("release.repo")}</span>
-            <span className="text-foreground/90 text-mono-sm text-right truncate min-w-0">
+            <span className="text-foreground/90 text-mono-sm text-right truncate min-w-0" title={release.repo}>
               {release.repo}
             </span>
           </div>
@@ -110,12 +103,18 @@ export function LatestReleasePanel({ delay = 0 }: { delay?: number }) {
           {release.name && (
             <div className="flex items-baseline justify-between gap-4 min-w-0">
               <span className="text-muted-foreground/80 text-mono-sm shrink-0">{t("release.name")}</span>
-              <span className="text-muted-foreground text-mono-sm text-right truncate min-w-0">
+              <span className="text-muted-foreground text-mono-sm text-right truncate min-w-0" title={release.name}>
                 {release.name}
               </span>
             </div>
           )}
         </div>
+        <span
+          aria-hidden="true"
+          className="mt-2 block text-right text-label text-muted-foreground-dim group-hover:text-foreground transition-colors duration-150 select-none uppercase"
+        >
+          {t("release.open")} →
+        </span>
         <span className="sr-only"> ({t("links.opensNewWindow")})</span>
       </a>
     </PanelShell>

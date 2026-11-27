@@ -59,7 +59,6 @@ export function HeroWhois() {
         titleExt="~/po4yka | main"
         sectionNumber="01"
         delay={0.1}
-        lineNumbers={4}
         statusLine
         instant
       >

@@ -8,7 +8,7 @@ import { closestRoutes, type KnownRoute } from "@/lib/routeMatch";
 // The path never changes while the page is open.
 const noSubscribe = () => () => {};
 
-const LINK ="py-1.5 sm:py-0 text-foreground/80 hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150";
+const LINK = "hit-44 text-foreground/80 hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150";
 
 function RouteList({ routes }: { routes: KnownRoute[] }) {
   return (
@@ -114,7 +114,7 @@ export function NotFound({ routes }: { routes: KnownRoute[] }) {
               href="/"
               aria-label={t("notFound.goHome")}
               title={t("notFound.goHome")}
-              className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 min-h-11 sm:min-h-0 text-mono"
+              className="text-foreground/80 hover:text-foreground hover:underline transition-colors cursor-pointer inline-flex items-center gap-2 min-h-11 md:min-h-0 text-mono"
             >
               {t("notFound.goBack")}
             </a>

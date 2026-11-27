@@ -101,6 +101,7 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
           href={`https://github.com/${GITHUB_USERNAME}`}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`GitHub (${t("links.opensNewWindow")})`}
           className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150"
         >
           → GH
@@ -110,8 +111,9 @@ export function ActivitySparkline({ delay = 0 }: { delay?: number }) {
     >
       <div className="px-5 py-3">
         <p
-          className="text-label select-none truncate"
-          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 14, lineHeight: "14px" }}
+          className="text-label select-none"
+          // Two lines reserved: the summary wraps in a narrow panel, and the height stays fixed as the readout changes.
+          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.08em", minHeight: 28, lineHeight: "14px" }}
         >
           <span className={active !== null ? "text-foreground/90" : "text-muted-foreground-dim"}>{readout}</span>
         </p>

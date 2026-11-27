@@ -54,7 +54,7 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${release.repo} ${release.tagName} (${t("links.opensNewWindow")})`}
-      className="inline-flex flex-wrap items-baseline gap-x-2 font-mono text-mono-sm text-muted-foreground hover:text-foreground transition-colors duration-150 tabular-nums"
+      className="hit-44 inline-flex flex-wrap items-baseline gap-x-2 font-mono text-mono-sm text-muted-foreground hover:text-foreground transition-colors duration-150 tabular-nums"
     >
       <span>
         {tag ? (
@@ -159,10 +159,10 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             <a
               key={link.href}
               href={link.href}
-              className="inline-flex items-center gap-1 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
+              className="inline-flex items-center gap-1 min-h-11 md:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${link.type} (${t("links.opensNewWindow")})`}
+              aria-label={`${project.name}: ${link.type} (${t("links.opensNewWindow")})`}
               data-umami-event="click-project-link"
               data-umami-event-target={`${project.name}:${link.type}`}
             >

@@ -24,7 +24,7 @@ export function CategoryFilter({
           <button
             onClick={() => onSelect(cat)}
             aria-pressed={activeCategory === cat}
-            className={`inline-flex items-center px-1.5 py-0.5 min-h-11 sm:min-h-0 transition-colors duration-150 cursor-pointer text-label ${
+            className={`inline-flex items-center px-1.5 py-0.5 min-h-11 md:min-h-0 transition-colors duration-150 cursor-pointer text-label ${
               activeCategory === cat
                 ? "text-foreground font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -49,7 +49,7 @@ export function ActiveTagChip({ tag, onClear }: { tag: string; onClear: () => vo
       <button
         onClick={onClear}
         aria-label={t("blogPost.clearFilter")}
-        className="text-muted-foreground hover:text-foreground transition-colors duration-150 cursor-pointer inline-flex items-center justify-center min-h-11 min-w-11 -my-3 sm:min-h-0 sm:min-w-0 sm:my-0"
+        className="text-muted-foreground hover:text-foreground transition-colors duration-150 cursor-pointer inline-flex items-center justify-center min-h-11 min-w-11 -my-3 md:min-h-0 md:min-w-0 sm:my-0"
       >
         ×
       </button>

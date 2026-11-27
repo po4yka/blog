@@ -18,6 +18,7 @@ const SHORTCUT_GROUPS: { labelKey: TranslationKey; shortcuts: { keys: string; de
     shortcuts: [
       { keys: "j", descKey: "shortcuts.nextSection" },
       { keys: "k", descKey: "shortcuts.prevSection" },
+      { keys: "g g", descKey: "blogPost.scrollToTop" },
     ],
   },
   {

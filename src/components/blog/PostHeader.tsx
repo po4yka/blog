@@ -82,7 +82,7 @@ export function PostHeader({
           <li key={tag} role="listitem">
             <a
               href={`${listHref}?tag=${encodeURIComponent(tag)}`}
-              className="inline-flex items-center py-2 -my-2 sm:py-0 sm:my-0 text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline font-mono text-label"
+              className="hit-44 inline-flex items-center text-muted-foreground hover:text-foreground transition-colors duration-150 no-underline font-mono text-label"
             >
               #{tag}
             </a>
@@ -98,7 +98,7 @@ export function PostHeader({
           <span key={f.label} className="flex items-center gap-x-3">
             <a
               href={f.href}
-              className="inline-flex items-center py-2 -my-2 sm:py-0 sm:my-0 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 no-underline"
+              className="hit-44 inline-flex items-center text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 no-underline"
             >
               {f.label}
             </a>

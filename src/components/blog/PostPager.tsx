@@ -48,7 +48,7 @@ export function PostPager({
       )}
       <a
         href={listHref}
-        className="inline-flex items-center justify-center gap-1.5 min-h-11 sm:min-h-0 font-mono text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline sm:justify-self-center sm:self-center"
+        className="inline-flex items-center justify-center gap-1.5 min-h-11 md:min-h-0 font-mono text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 no-underline sm:justify-self-center sm:self-center"
       >
         <ArrowUp size={12} />
         {t("blogPost.allPosts")}

@@ -32,20 +32,20 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-x-4">
             <a
               href="/changelog"
-              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 md:min-h-0"
             >
               {t("footer.changelog")}
             </a>
             {/* The diagram closes /changelog, below every release; this is the direct way to it. */}
             <a
               href="/changelog#architecture"
-              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 md:min-h-0"
             >
               {t("footer.architecture")}
             </a>
             <a
               href="/privacy"
-              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 sm:min-h-0"
+              className="label-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center min-h-11 md:min-h-0"
             >
               {t("footer.privacy")}
             </a>

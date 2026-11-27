@@ -94,7 +94,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
         <Reveal
           as="a"
           href={listHref}
-          className="inline-flex items-center gap-1.5 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-[color,text-decoration-color,opacity] duration-150 no-underline font-mono text-mono-sm"
+          className="inline-flex items-center gap-1.5 min-h-11 md:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-[color,text-decoration-color,opacity] duration-150 no-underline font-mono text-mono-sm"
         >
           <ArrowLeft size={12} />
           {t("blogPost.allPosts")}
@@ -110,7 +110,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
             <button
               type="button"
               onClick={resume}
-              className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer min-h-[44px] sm:min-h-0 py-2 sm:py-0"
+              className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer min-h-[44px] md:min-h-0 py-2 md:py-0"
             >
               -- {t("blogPost.resumeAt")} {resumeAt}% --
             </button>
@@ -118,7 +118,7 @@ function BlogPost({ post, slug, prev, next, related, toc, children, lang: langPr
               type="button"
               onClick={dismissResume}
               aria-label={t("blogPost.resumeDismiss")}
-              className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150 cursor-pointer min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
+              className="text-muted-foreground-dim hover:text-foreground transition-colors duration-150 cursor-pointer min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
             >
               <span aria-hidden="true">×</span>
             </button>

@@ -139,6 +139,11 @@ export function KeyboardShortcuts() {
       if (pendingChord === "g") {
         clearTimeout(chordTimeout.current);
         setPendingChord(null);
+        if (e.key === "g") {
+          window.scrollTo({ top: 0, behavior: scrollBehavior() });
+          e.preventDefault();
+          return;
+        }
         const route = NAV_ROUTES[e.key];
         if (route) {
           window.location.assign(

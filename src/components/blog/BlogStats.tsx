@@ -32,7 +32,7 @@ export function BlogStats({
               key={tag}
               onClick={() => onTagClick(tag)}
               aria-pressed={activeTag === tag}
-              className={`inline-flex items-center min-h-11 sm:min-h-0 text-label transition-colors duration-150 cursor-pointer ${
+              className={`inline-flex items-center min-h-11 md:min-h-0 text-label transition-colors duration-150 cursor-pointer ${
                 activeTag === tag ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
               }`}
             >

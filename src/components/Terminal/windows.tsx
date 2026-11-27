@@ -34,7 +34,6 @@ export function RevealPanel({ delay = 0, instant = false, ...panel }: PanelProps
  *
  * Optional density props:
  *   sectionNumber — `01`, `02`… for the operator-console left-label prefix
- *   lineNumbers   — opt-in line-number gutter (count or `true` for 10 rows)
  *   statusLine    — bottom meta line (true for default vim-style string)
  *   titleExt      — right-side metadata (path, branch, mode)
  */
@@ -44,7 +43,6 @@ export function OperatorPanel({
   children,
   delay = 0,
   className = "",
-  lineNumbers,
   statusLine,
   titleExt,
   instant = false,
@@ -54,42 +52,21 @@ export function OperatorPanel({
   children: ReactNode;
   delay?: number;
   className?: string;
-  lineNumbers?: boolean | number;
   statusLine?: boolean | string | ReactNode;
   titleExt?: string;
   /** Skip the entrance fade. Use for above-the-fold LCP content. */
   instant?: boolean;
 }) {
-  const lineCount = typeof lineNumbers === "number" ? lineNumbers : lineNumbers ? 10 : 0;
   const resolvedLabel = label ?? "";
 
   const defaultStatus = resolvedLabel
-    ? `${resolvedLabel}  ·  ${lineCount || 1}:1  ·  main`
+    ? `${resolvedLabel}  ·  1:1  ·  main`
     : `1:1  ·  main`;
   const statusContent = statusLine === true ? defaultStatus : statusLine || null;
 
   const hasHeader = resolvedLabel || sectionNumber || titleExt;
   const body = (
-    <div className={`flex font-mono ${lineCount > 0 ? "gap-0" : ""}`}>
-      {lineCount > 0 && (
-        <div
-          // Hidden below sm: rows wrap there (label above value), so the numbers stop matching them.
-          className="hidden sm:block flex-none select-none py-5 pl-3 pr-2 text-right font-mono text-mono-sm"
-          style={{
-            color: "var(--muted-foreground-dim)",
-            borderRight: "1px solid var(--border)",
-            minWidth: "2.5rem",
-            lineHeight: 1.75,
-          }}
-          aria-hidden="true"
-        >
-          {Array.from({ length: lineCount }, (_, i) => (
-            <div key={i + 1}>{String(i + 1).padStart(2, "0")}</div>
-          ))}
-        </div>
-      )}
-      <div className="flex-1 min-w-0 p-5 md:p-6">{children}</div>
-    </div>
+    <div className="font-mono p-5 md:p-6">{children}</div>
   );
   const frameClass = className || undefined;
 
