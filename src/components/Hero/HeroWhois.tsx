@@ -10,26 +10,9 @@ function Whois({ lang }: { lang: Locale }) {
         fieldCodes
         instant
         rows={[
-          {
-            label: t(lang, "hero.infoRole"),
-            value: <span className="text-foreground font-medium">{t(lang, "hero.role")}</span>,
-          },
+          { label: t(lang, "hero.infoCompany"), value: <span className="text-foreground font-medium">{t(lang, "hero.companyValue")}</span> },
+          { label: t(lang, "hero.infoBase"), value: <span className="text-foreground/80">{t(lang, "hero.baseValue")}</span> },
           { label: t(lang, "hero.infoHandle"), value: <Em>@po4yka</Em> },
-          {
-            label: t(lang, "hero.infoFocus"),
-            value: (
-              <span className="text-foreground/80">
-                {t(lang, "hero.focusValue")
-                  .split("\n")
-                  .map((line, i) => (
-                    <span key={line}>
-                      {i > 0 && <br />}
-                      {line}
-                    </span>
-                  ))}
-              </span>
-            ),
-          },
           {
             label: t(lang, "hero.infoStatus"),
             value: <span className="text-foreground/80">{t(lang, "hero.statusValue")}</span>,

@@ -3,7 +3,6 @@ import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { T } from "@/components/ui/T";
 import { GITHUB_USERNAME } from "@/lib/constants";
-import { roles } from "@/data/experienceData";
 import { blogUrl, t, type Locale } from "@/lib/i18n";
 
 const CTA_BASE =
@@ -30,8 +29,6 @@ function Name({ lang }: { lang: Locale }) {
  * other line fades in with a short CSS stagger.
  */
 export function HeroText() {
-  const location = roles[0]?.location;
-
   return (
     <>
     {/* Name row: all 12 columns. @container: the name is sized in cqi, so it fills the row at every width
@@ -53,34 +50,6 @@ export function HeroText() {
       <p className="font-sans text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[38rem]">
         <T k="hero.intro" />
       </p>
-
-      {/* Meta strip: real, current facts only. The strip keeps only the first
-          status clause so it stays one line on phones. */}
-      <Reveal
-        as="ul"
-        delay={0.18}
-        className="label-meta flex flex-wrap items-center gap-x-2 gap-y-1 list-none m-0 p-0"
-      >
-        {location && <li>{location}</li>}
-        {location && <li aria-hidden="true">·</li>}
-        <li>
-          <a
-            href={`https://github.com/${GITHUB_USERNAME}`}
-            // A 44px touch area from ::after keeps the one-line meta strip at its height.
-            className="relative hover:text-foreground transition-colors duration-200 [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:-inset-y-4 [@media(pointer:coarse)]:after:content-['']"
-          >
-            @{GITHUB_USERNAME}
-          </a>
-        </li>
-        <li aria-hidden="true">·</li>
-        <li>
-          {LOCALES.map((lang) => (
-            <span key={lang} data-l={lang} lang={lang === "ru" ? "ru" : undefined}>
-              {t(lang, "hero.statusValue").split(" · ")[0]}
-            </span>
-          ))}
-        </li>
-      </Reveal>
 
       <Reveal delay={0.24} className="flex flex-wrap gap-3 pt-1">
         {LOCALES.map((lang) => (
