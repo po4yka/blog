@@ -140,7 +140,7 @@ export function AdminLayout() {
               po4yka.dev
             </span>
             <span
-              className="ml-2 font-mono text-muted-foreground/40"
+              className="ml-2 font-mono text-muted-foreground-dim"
               style={{ fontSize: "max(11px, 0.6875rem)" }}
             >
               ADMIN
@@ -149,7 +149,7 @@ export function AdminLayout() {
           <button
             onClick={signOut}
             aria-label="Sign out"
-            className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center text-muted-foreground-dim hover:text-foreground transition-colors"
           >
             <LogOut size={16} />
           </button>
@@ -186,7 +186,7 @@ export function AdminLayout() {
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-32">
-              <span className="font-mono text-muted-foreground/40" style={{ fontSize: "0.75rem" }}>
+              <span className="font-mono text-muted-foreground-dim" style={{ fontSize: "0.75rem" }}>
                 Loading…
               </span>
             </div>

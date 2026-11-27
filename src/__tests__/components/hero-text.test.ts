@@ -53,8 +53,8 @@ describe("HeroText", () => {
   });
 
   it("fades the small lines but not the LCP candidates (name and intro)", () => {
-    // label, subtitle, meta strip, CTAs
-    expect(out.match(/data-reveal/g)?.length).toBe(4);
+    // label, subtitle, CTAs (location, handle and status moved to the whois panel)
+    expect(out.match(/data-reveal/g)?.length).toBe(3);
     const introTag = out.match(/<p[^>]*class="font-sans[^"]*"[^>]*>/)?.[0];
     expect(introTag).toBeDefined();
     expect(introTag).not.toContain("data-reveal");

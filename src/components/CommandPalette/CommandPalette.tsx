@@ -223,7 +223,7 @@ export default function CommandPalette({ open, onOpenChange, opener }: Props) {
                         id={optionId(item.id)}
                         role="option"
                         aria-selected={selected}
-                        onClick={() => execute(item.command)}
+                        onClick={() => execute(item.command, item.command.startsWith("copy "))}
                         onMouseMove={() => {
                           if (selected) return;
                           fromMouse.current = true;

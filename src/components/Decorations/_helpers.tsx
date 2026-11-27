@@ -14,7 +14,7 @@ export function PanelShell({
   delay?: number;
 }) {
   return (
-    <RevealPanel tone="translucent" className="font-mono" delay={delay}>
+    <RevealPanel tone="translucent" className="font-mono h-full" delay={delay}>
       <div className="relative flex items-baseline justify-between px-4 py-2">
         <span className="label-meta">{label}</span>
         {labelRight && (

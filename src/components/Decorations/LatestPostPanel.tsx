@@ -18,14 +18,7 @@ function PostLink({ post, lang }: { post: BlogPostMeta; lang: Locale }) {
       data-l={lang}
       lang={lang}
     >
-      <span
-        aria-hidden="true"
-        className="absolute top-3.5 right-5 text-label text-muted-foreground-dim group-hover:text-foreground transition-colors duration-150 select-none"
-      >
-        <span className="uppercase"><T k="hero.latestPostRead" /></span> →
-      </span>
-
-      <p className="text-foreground/85 text-mono-sm leading-snug group-hover:text-foreground transition-colors duration-150 line-clamp-2 pr-20">
+      <p className="text-foreground/85 text-mono-sm leading-snug group-hover:text-foreground transition-colors duration-150 line-clamp-2">
         {post.title}
       </p>
 
@@ -53,6 +46,12 @@ function PostLink({ post, lang }: { post: BlogPostMeta; lang: Locale }) {
             <span>#{primaryTag.toLowerCase().replace(/\s+/g, "-")}</span>
           </>
         )}
+        <span
+          aria-hidden="true"
+          className="ml-auto group-hover:text-foreground transition-colors duration-150 select-none"
+        >
+          <span className="uppercase"><T k="hero.latestPostRead" /></span> →
+        </span>
       </div>
     </a>
   );

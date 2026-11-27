@@ -20,17 +20,18 @@ export function Architecture() {
         description={<T k="architecture.description" />}
       />
       <figure className="arch m-0 border border-border rounded-[2px] p-4">
+        {/* The text alternative lives here, not in an svg aria-label, so <T> can give it in both languages. */}
+        <figcaption className="sr-only"><T k="architecture.diagramLabel" /></figcaption>
         {/* Phones scroll the diagram sideways instead of shrinking its 11px labels;
             wide screens cap it so the labels do not grow past ~13px. */}
         <p className="md:hidden m-0 mb-3 label-meta text-muted-foreground-dim">
           <T k="architecture.scrollHint" /> →
         </p>
-        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Architecture diagram">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-labelledby="architecture-heading">
         <svg
           viewBox="0 0 680 264"
           className="block w-full min-w-[600px] max-w-[800px] mx-auto h-auto text-foreground"
-          role="img"
-          aria-label="Diagram: browser, Cloudflare edge with static assets, the Worker, caches.default, api.github.com and D1"
+          aria-hidden="true"
         >
           <g fill="none" stroke="var(--border)">
             <rect x="144" y="8" width="360" height="248" strokeDasharray="4 3" />

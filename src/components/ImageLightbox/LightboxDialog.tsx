@@ -78,8 +78,9 @@ export function LightboxDialog({ state, effectiveDark, isMobile }: Props) {
                 });
               }}
             >
+              {/* The backdrop is always dark, so dark tokens apply inside in both themes. */}
               <m.div
-                className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4 py-10 sm:px-12"
+                className="dark fixed inset-0 z-50 flex flex-col items-center justify-center px-4 py-10 sm:px-12"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

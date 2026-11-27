@@ -67,7 +67,7 @@ export function Cmd({
   return (
     <Reveal
       ref={ref}
-      className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg min-w-0 min-h-11 sm:min-h-0 active:opacity-70"
+      className="flex items-baseline gap-2 group cursor-pointer font-mono text-mono-lg min-w-0 min-h-11 md:min-h-0 active:opacity-70"
       speed="fast"
       delay={delay}
       onClick={handleCopy}

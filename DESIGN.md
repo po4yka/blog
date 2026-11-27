@@ -158,7 +158,7 @@ Flat bordered containers replace the former macOS window chrome. No traffic ligh
 - Header row: 32px tall, hairline `border-bottom: 1px solid var(--rule)`
 - Header left: `<span class="label-meta">{sectionNumber} / {LABEL}</span>`
 - Header right: `titleExt` in `--font-mono` 11px `--muted-foreground-dim`
-- Opt-in props: `lineNumbers` (left gutter), `statusLine` (vim-style bottom bar)
+- Opt-in prop: `statusLine` (vim-style bottom bar)
 
 **Terminal kit** (`src/components/Terminal/`)
 - `Em` is emphasis text: `--emphasis` at weight 500 (`Terminal/ui.tsx`).

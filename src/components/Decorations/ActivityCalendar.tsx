@@ -178,7 +178,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
               </text>
             ))}
             {LABELLED_DAYS.map((d) => (
-              <text key={d} x={LABEL_W - 6} y={HEAD_H + d * PITCH + 10} textAnchor="end" fill="currentColor" opacity={0.7}>
+              <text key={d} x={LABEL_W - 6} y={HEAD_H + d * PITCH + 10} textAnchor="end" fill="currentColor">
                 {shortWeekday(d, locale)}
               </text>
             ))}
@@ -195,6 +195,7 @@ export function ActivityCalendar({ delay = 0 }: { delay?: number }) {
                       className="cell-in"
                       style={{ "--col": Math.floor(i / DAYS_PER_WEEK) } as CSSProperties}
                       onMouseEnter={() => setActive(i)}
+                      onClick={() => setActive(i)}
                     />
                   ),
                 )

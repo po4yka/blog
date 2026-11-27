@@ -5,7 +5,7 @@ test.use({ viewport: { width: 1280, height: 800 } });
 const rowHeights = (page: import("@playwright/test").Page) =>
   page.locator("#projects a.group").evaluateAll((rows) => rows.map((r) => r.getBoundingClientRect().height));
 
-test("home rows show a plate, and hover swaps in the spec sheet and dissolves the plate without moving layout", async ({ page }) => {
+test("home rows show a plate, keep the description and spec sheet visible, and hover dissolves the plate without moving layout", async ({ page }) => {
   await page.goto("/");
   const rows = page.locator("#projects a.group");
   await rows.first().scrollIntoViewIfNeeded();
@@ -14,12 +14,14 @@ test("home rows show a plate, and hover swaps in the spec sheet and dissolves th
   const before = await rowHeights(page);
   const spec = rows.first().locator("dl");
   const late = rows.first().locator(".plate-late").first();
-  await expect(spec).toHaveCSS("opacity", "0");
+  // Description and spec sheet are both readable without hover, and hover hides neither.
+  await expect(rows.first().locator("p")).toHaveCSS("opacity", "1");
+  await expect(spec).toHaveCSS("opacity", "1");
   await expect(late).toHaveCSS("opacity", "0");
   await rows.first().hover();
-  await expect(spec).toHaveCSS("opacity", "1");
   await expect(late).toHaveCSS("opacity", "1");
-  await expect(rows.first().locator("p")).toHaveCSS("opacity", "0");
+  await expect(rows.first().locator("p")).toHaveCSS("opacity", "1");
+  await expect(spec).toHaveCSS("opacity", "1");
   await expect(spec).toContainText("STACK");
   await expect(spec).toContainText(/MARK\s*[a-z]+ · seed [a-z0-9-]+/);
   expect(await rowHeights(page)).toEqual(before);
@@ -27,7 +29,6 @@ test("home rows show a plate, and hover swaps in the spec sheet and dissolves th
   // Keyboard focus shows the same state as hover.
   await page.mouse.move(0, 0);
   await rows.nth(1).focus();
-  await expect(rows.nth(1).locator("dl")).toHaveCSS("opacity", "1");
   await expect(rows.nth(1).locator(".plate-late").first()).toHaveCSS("opacity", "1");
 });
 

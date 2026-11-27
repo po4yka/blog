@@ -54,7 +54,7 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${release.repo} ${release.tagName} (${t("links.opensNewWindow")})`}
-      className="inline-flex flex-wrap items-baseline gap-x-2 font-mono text-mono-sm text-muted-foreground hover:text-foreground transition-colors duration-150 tabular-nums"
+      className="hit-44 inline-flex flex-wrap items-baseline gap-x-2 font-mono text-mono-sm text-muted-foreground hover:text-foreground transition-colors duration-150 tabular-nums"
     >
       <span>
         {tag ? (
@@ -75,7 +75,7 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
   );
 }
 
-function ProjectEntry({ project, releases }: { project: Project; releases: ReleaseMap }) {
+function ProjectEntry({ project, releases, last }: { project: Project; releases: ReleaseMap; last: boolean }) {
   const { t, locale } = useLocale();
   const release = repoNames(project).map((r) => releases[r]).find((r): r is GitHubProjectRelease => !!r);
   // Decode is set after mount: a scrambled frame before hydration ends is a mismatch (src/lib/decode.ts).
@@ -92,7 +92,7 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             className="text-muted-foreground-dim shrink-0 text-label"
             aria-hidden="true"
           >
-            ├──
+            {last ? "└──" : "├──"}
           </span>
           <h2
             className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium"
@@ -123,13 +123,13 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/80 group-hover:text-foreground transition-colors duration-150 pl-6 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
         {project.description}
       </p>
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/75 pl-6 font-sans text-mono-sm max-w-[70ch]" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-muted-foreground pl-6 font-sans text-mono-sm max-w-[70ch]" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}
@@ -159,10 +159,10 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             <a
               key={link.href}
               href={link.href}
-              className="inline-flex items-center gap-1 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
+              className="inline-flex items-center gap-1 min-h-11 md:min-h-0 text-muted-foreground hover:text-foreground hover:underline transition-colors duration-150 text-label"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${link.type} (${t("links.opensNewWindow")})`}
+              aria-label={`${project.name}: ${link.type} (${t("links.opensNewWindow")})`}
               data-umami-event="click-project-link"
               data-umami-event-target={`${project.name}:${link.type}`}
             >
@@ -251,9 +251,9 @@ export function ProjectsPage() {
             statusLine
           >
             <ul className="list-none m-0 p-0">
-              {projects.map((project) => (
+              {projects.map((project, i) => (
                 <li key={project.slug}>
-                  <ProjectEntry project={project} releases={releases} />
+                  <ProjectEntry project={project} releases={releases} last={i === projects.length - 1} />
                 </li>
               ))}
             </ul>

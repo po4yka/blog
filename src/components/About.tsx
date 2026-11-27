@@ -28,14 +28,7 @@ export function About() {
             <T k="about.p1" />
           </Reveal>
           <Reveal as="p" speed="slow" delay={0.05 + stagger.base}>
-            <T k="about.p2prefix" />{" "}
-            <span className="text-foreground font-medium">
-              <T k="about.p2kmp" />
-            </span>{" "}
-            <T k="about.p2suffix" />
-          </Reveal>
-          <Reveal as="p" speed="slow" delay={0.05 + stagger.base * 2}>
-            <T k="about.p3" />
+            <T k="about.p2" />
           </Reveal>
         </div>
       </Reveal>

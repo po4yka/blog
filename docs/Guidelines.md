@@ -138,8 +138,7 @@ The site should feel like a **well-used workstation**, not a freshly opened one.
 
 **Information density inside operator panels:**
 - IBM 3270-style field codes: `[01] FIELD ......: value` format in InfoTable (fieldCodes mode)
-- Vim/less-style line number gutter on the left of panel content (lineNumbers prop)
-- Optional status bar at the bottom of a panel (statusLine prop). With `true` it shows `label · N:1 · main` (N is the `lineNumbers` count, or 1; just `1:1 · main` when there is no label); pass a string or node for real content. The `-- NORMAL --` / `-- INSERT --` mode text belongs to the global `StatusLine`, not to panels
+- Optional status bar at the bottom of a panel (statusLine prop). With `true` it shows `label · 1:1 · main` (just `1:1 · main` when there is no label); pass a string or node for real content. The `-- NORMAL --` / `-- INSERT --` mode text belongs to the global `StatusLine`, not to panels
 - Secondary metadata in panel header right slot: `title | ~/path | branch` (titleExt prop)
 
 **List and content formatting:**
@@ -352,7 +351,7 @@ Cards may be used, but do not rely on them for every layout.
 
 The project uses a flat operator-panel kit as its primary design system. All components use `1px solid var(--border)`, `border-radius: 2px`, no shadow, no traffic lights, no window chrome gradients.
 
-- **OperatorPanel** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `lineNumbers` and `statusLine` props; replaces former macOS window mockup
+- **OperatorPanel** -- flat operator panel with a `.label-meta` header row (`sectionNumber / LABEL` left, `titleExt` right); opt-in `statusLine` prop; replaces former macOS window mockup
 - **SectionHeader** -- shared component; numbered label row + heading (`h2`, or `h1` with `level={1}` on page headers) + `border-bottom: 1px solid var(--rule)`; applied to every home section and primary page header
 - **BootBlock** -- status output lines prefixed with `OK ·` / `INFO ·` / `WARN ·` in `--muted-foreground`; no color coding; keep to 4–6 lines
 - **Cmd** -- `$ command` prompt line in `--font-mono`; prompt `$` at full `--emphasis` weight 500, command at 0.92 opacity, 15px; click or Enter copies; introduces content sections

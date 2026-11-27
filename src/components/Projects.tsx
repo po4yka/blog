@@ -18,7 +18,8 @@ const SPEC_KEY = "text-muted-foreground-dim mr-2";
 
 /** Server-only (no client directive): static HTML with both languages, no JS. */
 export function Projects() {
-  const homeProjects = projects.slice(0, 4);
+  // Featured first (stable sort keeps file order inside each group), so non-featured entries only fill gaps.
+  const homeProjects = [...projects].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)).slice(0, 4);
 
   return (
     <section id="projects" aria-labelledby="projects-heading" className="space-y-5">
@@ -77,22 +78,18 @@ export function Projects() {
                   >
                     {cont} └─
                   </span>
-                  {/* Description and spec sheet share one grid cell, so the row keeps its height
-                      when hover or focus swaps them (opacity only). The spec sheet repeats
-                      /projects fields, so it is hidden from assistive tech. */}
-                  <div className="grid min-w-0 flex-1 max-w-[70ch]">
-                    <p className="[grid-area:1/1] text-muted-foreground group-hover:opacity-0 group-focus-visible:opacity-0 transition-opacity duration-200 font-sans text-sm leading-[1.55] line-clamp-2">
+                  {/* Description first, spec sheet under it; both stay visible on hover and focus. */}
+                  <div className="min-w-0 flex-1 max-w-[70ch]">
+                    <p className="text-muted-foreground font-sans text-sm leading-[1.55] line-clamp-2">
                       {project.description}
                     </p>
-                    <dl
-                      aria-hidden="true"
-                      className="[grid-area:1/1] m-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200 font-mono text-mono-sm leading-[1.55] text-foreground/80 min-w-0"
-                    >
-                      <div className="truncate">
+                    {/* overflow-wrap: anywhere lets the unbroken REPO path wrap at 320px instead of widening the page. */}
+                    <dl className="mt-1.5 m-0 font-mono text-mono-sm leading-[1.55] text-muted-foreground min-w-0 [overflow-wrap:anywhere]">
+                      <div>
                         <dt className={`inline ${SPEC_KEY}`}>STACK</dt>
                         <dd className="inline m-0">{project.tags.join(" · ")}</dd>
                       </div>
-                      <div className="truncate">
+                      <div>
                         <dt className={`inline ${SPEC_KEY}`}>PLATFORMS</dt>
                         <dd className="inline m-0 mr-3">{project.platforms.join(" / ")}</dd>
                         {repoOf(project.links) && (
@@ -117,7 +114,7 @@ export function Projects() {
       <div className="col-body pt-1">
         <a
           href="/projects"
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* The accessible name starts with the visible text (WCAG 2.5.3);
               the sr-only part says where the link goes. */}

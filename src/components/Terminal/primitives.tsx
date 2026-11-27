@@ -236,7 +236,7 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
 
       <form onSubmit={handleSubmit} className="flex items-center gap-2">
         <span aria-hidden="true" style={{ color: "var(--emphasis)", fontWeight: 500 }}>~$</span>
-        <div className="relative flex-1">
+        <div className="relative flex-1 border-b border-transparent focus-within:border-emphasis transition-colors duration-150">
           <input
             id="terminal-input"
             value={input}
@@ -245,15 +245,16 @@ export function TerminalPrompt({ delay = 0 }: { delay?: number }) {
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             aria-label={t("footer.terminalInputLabel")}
-            className="w-full bg-transparent outline-none text-foreground text-mono font-mono"
-            style={{ caretColor: "var(--emphasis)" }}
+            className="w-full bg-transparent outline-none text-foreground text-base md:text-mono font-mono"
+            // The block cursor below stands in for the caret on an empty line; showing both draws two cursors.
+            style={{ caretColor: input ? "var(--emphasis)" : "transparent" }}
             placeholder={focused ? "" : t("footer.terminalPlaceholder")}
             autoComplete="off"
             spellCheck={false}
           />
           {suggestion && input && (
             <span
-              className="pointer-events-none absolute top-0 left-0 text-mono font-mono whitespace-pre"
+              className="pointer-events-none absolute top-0 left-0 text-base md:text-mono font-mono whitespace-pre"
               style={{ color: "var(--muted-foreground-dim)" }}
               aria-hidden="true"
             >

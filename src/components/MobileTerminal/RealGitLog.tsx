@@ -85,7 +85,7 @@ export function RealGitLog({ delay = 0 }: { delay?: number }) {
           {/* Filler rows keep the reserved height; the first says why it is empty. */}
           {Array.from({ length: fillers }, (_, i) => (
             <div key={`filler-${i}`} className={`${ROW_CLASS} text-muted-foreground`} style={{ lineHeight: 1.7 }}>
-              {i === 0 && status === "unavailable" ? t("terminal.commitFeedUnavailable") : "\u00a0"}
+              {i === 0 && status === "unavailable" ? t("terminal.commitFeedUnavailable") : i === 0 && status === "loading" ? t("release.loading") : "\u00a0"}
             </div>
           ))}
         </div>

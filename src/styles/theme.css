@@ -569,3 +569,23 @@ html {
   content-visibility: auto;
   contain-intrinsic-block-size: auto 12lh;
 }
+
+/* 44px touch target centred on a small inline link, without changing its layout. Layered so position utilities still win (same technique as the footnote refs in prose.css). */
+@layer components {
+@media (pointer: coarse) {
+  .hit-44,
+  .code-block-copy {
+    position: relative;
+  }
+  .hit-44::after,
+  .code-block-copy::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+}

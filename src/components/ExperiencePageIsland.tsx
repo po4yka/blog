@@ -45,7 +45,10 @@ function RoleEntry({
         <span className="text-muted-foreground font-mono text-mono-sm">
           {role.company}
           {role.location && (
-            <span className="text-muted-foreground ml-2 sm:hidden">{role.location}</span>
+            <span className="sm:hidden">
+              <span className="text-muted-foreground-dim" aria-hidden="true">{" · "}</span>
+              {role.location}
+            </span>
           )}
         </span>
       </div>
@@ -100,8 +103,8 @@ function RoleEntry({
 
 function SkillsSection({ group }: { group: SkillGroup }) {
   return (
-    <div className="flex gap-4 py-1 font-mono text-mono-sm">
-      <span className="text-muted-foreground shrink-0" style={{ minWidth: "100px" }}>
+    <div className="flex flex-col sm:flex-row gap-x-4 gap-y-0.5 py-1 font-mono text-mono-sm">
+      <span className="text-muted-foreground shrink-0 sm:min-w-[100px]">
         {group.label}
       </span>
       <span className="text-foreground/80">

@@ -125,7 +125,7 @@ export function Nav({ pathname: initialPathname, lang, translationSlug }: NavPro
           {/* Logo / prefix */}
           <a
             href="/"
-            className="flex items-center gap-2 font-sans text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
+            className="flex items-center gap-2 min-h-11 md:min-h-0 font-sans text-mono text-muted-foreground hover:text-foreground transition-colors duration-200 shrink-0 whitespace-nowrap"
           >
             <span
               className="inline-block w-[8px] h-[8px] rounded-[2px]"

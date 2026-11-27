@@ -59,7 +59,7 @@ export function ChangelogPage() {
               type="button"
               onClick={() => setFilter(value)}
               aria-pressed={filter === value}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 min-h-11 sm:min-h-0 rounded-[2px] border font-mono text-label cursor-pointer transition-colors duration-150 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 min-h-11 md:min-h-0 rounded-[2px] border font-mono text-label cursor-pointer transition-colors duration-150 ${
                 filter === value
                   ? "text-foreground font-medium border-border bg-muted"
                   : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -108,7 +108,7 @@ export function ChangelogPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${entry.hash} (${t("links.opensNewWindow")})`}
-                    className="inline-flex items-center min-h-11 sm:min-h-0 font-mono text-mono-sm text-muted-foreground-dim hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 tabular-nums"
+                    className="inline-flex items-center min-h-11 md:min-h-0 font-mono text-mono-sm text-muted-foreground-dim hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 tabular-nums"
                   >
                     {entry.hash}
                   </a>

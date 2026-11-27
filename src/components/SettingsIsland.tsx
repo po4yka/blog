@@ -49,7 +49,7 @@ function OptionButton({
       type="button"
       onClick={onClick}
       aria-pressed={pressed}
-      className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 rounded-[2px] border cursor-pointer text-sm transition-colors duration-150 active:opacity-70 ${
+      className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 min-h-11 min-w-11 md:min-h-0 md:min-w-0 rounded-[2px] border cursor-pointer text-sm transition-colors duration-150 active:opacity-70 ${
         pressed
           ? "text-foreground font-medium border-border bg-muted"
           : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
@@ -243,7 +243,7 @@ export function Settings() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-2 min-h-11 sm:min-h-0 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer font-mono text-mono-sm active:opacity-70"
+              className="inline-flex items-center gap-2 min-h-11 md:min-h-0 text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors duration-150 cursor-pointer font-mono text-mono-sm active:opacity-70"
             >
               <RotateCcw size={12} aria-hidden="true" />
               {tt("settings.resetDefaults")}

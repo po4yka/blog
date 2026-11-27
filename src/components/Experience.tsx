@@ -20,11 +20,12 @@ export function Experience() {
             return (
             <div
               key={role.period}
-              className="grid grid-cols-1 lg:grid-cols-12 lg:gap-4 py-5 border-b border-border last:border-b-0 -mx-2 px-2 rounded-[2px]"
+              className="grid grid-cols-1 lg:grid-cols-9 lg:gap-x-(--grid-gap) py-5 border-b border-border last:border-b-0 -mx-2 px-2 rounded-[2px]"
             >
-              <div className="lg:col-span-8">
+              {/* 9 columns with the page gap match the 9 page columns .col-body spans, so the rail border sits on a grid guide. */}
+              <div className="lg:col-span-6">
                 <div className="flex items-baseline justify-between lg:justify-start gap-4 flex-wrap">
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex flex-wrap items-baseline gap-x-2 min-w-0">
                     {/* Status marker: ● current, ○ past */}
                     <span
                       className="shrink-0 font-mono text-mono-sm select-none"
@@ -44,6 +45,9 @@ export function Experience() {
                       className="text-foreground/80 text-sm font-medium font-sans"
                     >
                       {role.title}
+                    </span>
+                    <span className="text-muted-foreground-dim font-mono text-mono-sm select-none" aria-hidden="true">
+                      ·
                     </span>
                     <span
                       className="text-muted-foreground font-mono text-mono-sm"
@@ -80,7 +84,7 @@ export function Experience() {
 
               {/* Desktop timeline rail: period right-aligned against a continuous hairline */}
               <div
-                className="hidden lg:flex lg:col-span-4 items-start justify-end pl-4"
+                className="hidden lg:flex lg:col-span-3 items-start justify-end pl-4"
                 style={{ borderLeft: "1px solid var(--rule)" }}
               >
                 <span className="text-muted-foreground font-mono text-mono-sm tabular-nums">
@@ -95,7 +99,7 @@ export function Experience() {
       <div className="col-body pt-1">
         <a
           href="/experience"
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* The accessible name starts with the visible text (WCAG 2.5.3). */}
           <T k="experience.viewAll" />
