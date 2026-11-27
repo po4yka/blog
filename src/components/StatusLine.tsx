@@ -93,7 +93,7 @@ export function StatusLine({ pathname: initialPathname = "/" }: { pathname?: str
   return (
     <>
     <div
-      className="no-print hidden md:flex fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-4 px-(--grid-pad) font-mono select-none"
+      className="no-print hidden md:flex fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-4 font-mono select-none"
       style={{
         height: 28,
         fontSize: 11,

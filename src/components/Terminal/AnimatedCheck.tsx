@@ -3,6 +3,7 @@ import { m } from "motion/react";
 export function AnimatedCheck({ size = 12 }: { size?: number }) {
   return (
     <m.svg
+      aria-hidden="true"
       width={size}
       height={size}
       viewBox="0 0 24 24"

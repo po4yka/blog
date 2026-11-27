@@ -41,6 +41,7 @@ export function MobileToc({
         <span className="min-w-0 flex-1 self-center truncate text-muted-foreground">{current?.text}</span>
         <button
           type="button"
+          aria-haspopup="dialog"
           onClick={() => dialogRef.current?.showModal()}
           className="h-11 shrink-0 cursor-pointer px-3 text-foreground underline underline-offset-4 active:opacity-70"
         >

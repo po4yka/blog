@@ -23,7 +23,7 @@ export function CopyLinkButton() {
 
   return (
     <>
-      <button onClick={handleCopy} className={COPY_BTN_CLASS}>
+      <button type="button" onClick={handleCopy} className={COPY_BTN_CLASS}>
         {copied ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><Link2 size={11} /> {t("blogPost.copyLink")}</>}
       </button>
       <span role="status" className="sr-only">{copied ? t("blogPost.copied") : ""}</span>
@@ -57,7 +57,7 @@ export function CopyMarkdownButton({ slug, lang }: { slug: string; lang: Locale 
 
   return (
     <>
-      <button onClick={handleCopy} className={COPY_BTN_CLASS}>
+      <button type="button" onClick={handleCopy} className={COPY_BTN_CLASS}>
         {state === "copied" ? <><AnimatedCheck size={11} /> {t("blogPost.copied")}</> : <><FileCode2 size={11} /> {label}</>}
       </button>
       <span role="status" className="sr-only">

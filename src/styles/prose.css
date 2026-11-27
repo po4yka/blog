@@ -58,8 +58,9 @@
   opacity: 1;
 }
 
+/* Same offset as [data-section-name]: clears the 44px sticky nav with room to spare. */
 .prose-blog :is(h2, h3, h4) {
-  scroll-margin-top: 3rem;
+  scroll-margin-top: 4rem;
 }
 
 /* Clears the sticky nav when the j/k shortcuts jump between homepage sections. */
@@ -548,10 +549,11 @@
   width: min(32rem, calc(100vw - 2rem));
   max-height: 70vh;
   padding: 1rem;
-  background: var(--background);
+  background: var(--popover);
   color: var(--foreground);
   border: 1px solid var(--border);
   border-radius: 2px;
+  box-shadow: var(--overlay-shadow);
 }
 
 .prose-blog [data-footnotes] li[popover] p {

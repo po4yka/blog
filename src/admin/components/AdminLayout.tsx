@@ -133,12 +133,13 @@ export function AdminLayout() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <span
-              className="font-mono text-foreground/80"
+            <a
+              href="/"
+              className="hit-44 font-mono text-foreground/80 hover:text-foreground transition-colors duration-200"
               style={{ fontSize: "0.75rem", fontWeight: 500 }}
             >
               po4yka.dev
-            </span>
+            </a>
             <span
               className="ml-2 font-mono text-muted-foreground-dim"
               style={{ fontSize: "max(11px, 0.6875rem)" }}
