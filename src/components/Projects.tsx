@@ -83,7 +83,8 @@ export function Projects() {
                     <p className="text-muted-foreground font-sans text-sm leading-[1.55] line-clamp-2">
                       {project.description}
                     </p>
-                    <dl className="mt-1.5 m-0 font-mono text-mono-sm leading-[1.55] text-muted-foreground min-w-0">
+                    {/* overflow-wrap: anywhere lets the unbroken REPO path wrap at 320px instead of widening the page. */}
+                    <dl className="mt-1.5 m-0 font-mono text-mono-sm leading-[1.55] text-muted-foreground min-w-0 [overflow-wrap:anywhere]">
                       <div>
                         <dt className={`inline ${SPEC_KEY}`}>STACK</dt>
                         <dd className="inline m-0">{project.tags.join(" · ")}</dd>
