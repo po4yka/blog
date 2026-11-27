@@ -113,7 +113,7 @@ export function OpenSourcePanel({ delay = 0 }: { delay?: number }) {
                   <span className="label-meta shrink-0 w-[18px]">{"\u00a0"}</span>
                   <div className="flex-1 min-w-0">
                     <span className="text-muted-foreground text-mono-sm">
-                      {i === 0 && status === "unavailable" ? t("projects.repoListUnavailable") : "\u00a0"}
+                      {i === 0 && status === "unavailable" ? t("projects.repoListUnavailable") : i === 0 && status === "loading" ? t("release.loading") : "\u00a0"}
                     </span>
                     <p className="text-label mt-0.5">{"\u00a0"}</p>
                   </div>

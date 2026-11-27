@@ -9,7 +9,8 @@ import { blogUrl, t, type Locale } from "@/lib/i18n";
 const CTA_BASE =
   "inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-[2px] border font-sans text-sm transition-colors duration-200 active:opacity-70";
 const CTA_PRIMARY = `${CTA_BASE} bg-muted border-border text-foreground hover:bg-secondary`;
-const CTA_SECONDARY = `${CTA_BASE} bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-rule`;
+// Opaque so the dither field does not show through and blur the 1px border.
+const CTA_SECONDARY = `${CTA_BASE} bg-background border-border text-muted-foreground hover:text-foreground hover:border-rule`;
 
 const LOCALES: Locale[] = ["en", "ru"];
 

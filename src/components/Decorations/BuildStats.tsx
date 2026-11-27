@@ -37,7 +37,7 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
           href={`https://github.com/${GH_REPO}/commit/${buildMeta.commitHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hit-44 text-foreground/90 hover:text-foreground hover:underline decoration-dotted underline-offset-2 transition-colors duration-150"
+          className="hit-44 text-foreground/90 hover:text-foreground underline decoration-dotted underline-offset-2 transition-colors duration-150"
         >
           <span data-decode>{buildMeta.commitHash}</span>
           <span className="sr-only">
@@ -65,7 +65,7 @@ export function BuildStats({ delay = 0 }: { delay?: number }) {
     <PanelShell
       label={<T k="hero.buildLabel" />}
       labelRight={
-        <a href="/changelog" className="hit-44 hover:text-foreground transition-colors duration-150">
+        <a href="/changelog" className="hit-44 underline decoration-dotted underline-offset-2 hover:text-foreground transition-colors duration-150">
           <T k="hero.buildChangelog" />
         </a>
       }

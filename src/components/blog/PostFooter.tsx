@@ -22,7 +22,7 @@ export function PostFooter({
       {/* Author row */}
       <div className="space-y-2">
         <div className="font-sans text-[0.9375rem] leading-snug">
-          <span className="text-foreground font-medium">Nikita Pochaev</span>
+          <span className="text-foreground font-medium">{t("hero.name")}</span>
           <span className="text-muted-foreground"> — {t("blogPost.authorRole")}</span>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-0 sm:gap-y-1 font-mono text-label">

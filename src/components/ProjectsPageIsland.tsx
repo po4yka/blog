@@ -75,7 +75,7 @@ function ReleaseLine({ release, locale, t }: { release: GitHubProjectRelease; lo
   );
 }
 
-function ProjectEntry({ project, releases }: { project: Project; releases: ReleaseMap }) {
+function ProjectEntry({ project, releases, last }: { project: Project; releases: ReleaseMap; last: boolean }) {
   const { t, locale } = useLocale();
   const release = repoNames(project).map((r) => releases[r]).find((r): r is GitHubProjectRelease => !!r);
   // Decode is set after mount: a scrambled frame before hydration ends is a mismatch (src/lib/decode.ts).
@@ -92,7 +92,7 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
             className="text-muted-foreground-dim shrink-0 text-label"
             aria-hidden="true"
           >
-            ├──
+            {last ? "└──" : "├──"}
           </span>
           <h2
             className="text-foreground/85 group-hover:text-foreground transition-colors duration-150 font-sans text-mono-lg font-medium"
@@ -123,13 +123,13 @@ function ProjectEntry({ project, releases }: { project: Project; releases: Relea
       </div>
 
       {/* Description */}
-      <p className="mt-2 text-foreground/60 group-hover:text-foreground/75 transition-colors duration-150 pl-6 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
+      <p className="mt-2 text-foreground/80 group-hover:text-foreground transition-colors duration-150 pl-6 font-sans text-mono max-w-[70ch]" style={{ lineHeight: 1.75 }}>
         {project.description}
       </p>
 
       {/* Long description */}
       {project.longDescription && (
-        <p className="mt-2 text-foreground/75 pl-6 font-sans text-mono-sm max-w-[70ch]" style={{ lineHeight: 1.7 }}>
+        <p className="mt-2 text-muted-foreground pl-6 font-sans text-mono-sm max-w-[70ch]" style={{ lineHeight: 1.7 }}>
           {project.longDescription}
         </p>
       )}
@@ -251,9 +251,9 @@ export function ProjectsPage() {
             statusLine
           >
             <ul className="list-none m-0 p-0">
-              {projects.map((project) => (
+              {projects.map((project, i) => (
                 <li key={project.slug}>
-                  <ProjectEntry project={project} releases={releases} />
+                  <ProjectEntry project={project} releases={releases} last={i === projects.length - 1} />
                 </li>
               ))}
             </ul>

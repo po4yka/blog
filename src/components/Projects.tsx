@@ -113,7 +113,7 @@ export function Projects() {
       <div className="col-body pt-1">
         <a
           href="/projects"
-          className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
+          className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors duration-200 inline-flex items-center min-h-[44px] font-mono text-mono-sm"
         >
           {/* The accessible name starts with the visible text (WCAG 2.5.3);
               the sr-only part says where the link goes. */}

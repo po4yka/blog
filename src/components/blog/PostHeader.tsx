@@ -44,7 +44,7 @@ export function PostHeader({
       </h1>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-3 gap-y-1 label-meta">
         <span>
-          {t("blogPost.author")} <span className="text-foreground font-medium">Nikita Pochaev</span>
+          {t("blogPost.author")} <span className="text-foreground font-medium">{t("hero.name")}</span>
         </span>
         <span aria-hidden="true" className={SEP}>·</span>
         <span>
